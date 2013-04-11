@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.velonuboso</groupId>
-  <artifactId>made</artifactId>
+  <artifactId>madecore</artifactId>
   <version>0.1</version>
   <packaging>jar</packaging>
 
-  <name>made</name>
+  <name>MADE Core</name>
   <url>http://maven.apache.org</url>
 
   <properties>
