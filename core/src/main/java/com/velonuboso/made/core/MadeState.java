@@ -29,57 +29,89 @@ import java.util.List;
 public class MadeState {
     
     private Environment env;
-    private String name;
-    private boolean isInitial;
-    private boolean isFinal;
+    private State state;
     private Date dateFrom;
     private String event;
     private MadeAgent target;
-    
-    
-    public MadeState(Environment env, String name, boolean isInitial, boolean isFinal, Date dateFrom, String event, MadeAgent target) {
-        this.name = name;
-        this.isInitial = isInitial;
-        this.isFinal = isFinal;
+
+    public MadeState(Environment env, State state, Date dateFrom, String event, MadeAgent target) {
+        this.env = env;
+        this.state = state;
         this.dateFrom = dateFrom;
         this.event = event;
         this.target = target;
     }
 
-    public MadeState getNextState(MadeAgent source, MadeAgent related){
-        return env.getNextState(this, source, related);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        boolean ret = obj instanceof MadeState? 
-                (((MadeState) obj).getName().compareTo(this.getName())==0): 
-                false;
-        return ret;
-    }
-    
-    public String getName(){
-        return name;
+    /**
+     * @return the env
+     */
+    public Environment getEnv() {
+        return env;
     }
 
-    public boolean isInitial(){
-        return isInitial;
+    /**
+     * @param env the env to set
+     */
+    public void setEnv(Environment env) {
+        this.env = env;
     }
 
-    public boolean isFinal(){
-        return isFinal;
+    /**
+     * @return the state
+     */
+    public State getState() {
+        return state;
     }
 
-    public Date getDateFrom(){
+    /**
+     * @param state the state to set
+     */
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    /**
+     * @return the dateFrom
+     */
+    public Date getDateFrom() {
         return dateFrom;
     }
 
-    public String getEvent(){
+    /**
+     * @param dateFrom the dateFrom to set
+     */
+    public void setDateFrom(Date dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    /**
+     * @return the event
+     */
+    public String getEvent() {
         return event;
     }
 
-    public MadeAgent getTarget(){
+    /**
+     * @param event the event to set
+     */
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    /**
+     * @return the target
+     */
+    public MadeAgent getTarget() {
         return target;
     }
+
+    /**
+     * @param target the target to set
+     */
+    public void setTarget(MadeAgent target) {
+        this.target = target;
+    }
+    
+    
     
 }

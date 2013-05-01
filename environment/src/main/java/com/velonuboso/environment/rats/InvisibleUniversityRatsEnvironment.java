@@ -43,7 +43,6 @@ public class InvisibleUniversityRatsEnvironment implements Environment {
     private static final int PARAM_SIZE = 100;
     private static final int mapWidth = 50;
     private static final int mapHeight = 50;
-    private static final int neighborhoodSize = 5;
     private static final String FEATURE_STRENGTH = "strength";
     private static final String FEATURE_DEXTRESITY = "dextresity";
     private static final String FEATURE_INTELLIGENCE = "intelligence";
@@ -52,6 +51,7 @@ public class InvisibleUniversityRatsEnvironment implements Environment {
     private float[] params = null;
     private HashSet<MadeAgent>[][] map;
     private HashMap<MadeAgent, Position> agents;
+    EnvironmentVariables vars = null;
 
     public static void main(String[] args) {
         float[] params = new float[PARAM_SIZE];
@@ -60,18 +60,16 @@ public class InvisibleUniversityRatsEnvironment implements Environment {
 
         // TESTS
         Random r = new Random();
-        System.out.println("Random male name = " + env.getRandomName(r, Gender.MALE) + " " + env.getRandomNickname(r) + " " + env.getRandomSurname(r));
-        System.out.println("Random female name = " + env.getRandomName(r, Gender.FEMALE) + " " + env.getRandomNickname(r) + " " + env.getRandomSurname(r));
-
-
-        BasicRunner runner = new BasicRunner(env, true, new Date("1800-01-01"), new Date(), 0.0001f);
+        BasicRunner runner = new BasicRunner(env, true, new Date("1800/01/01"), new Date(), 0.0001f);
         runner.start();
     }
 
     public InvisibleUniversityRatsEnvironment(float[] params) {
         this.params = params;
         map = new HashSet[mapWidth][mapHeight];
-
+        
+        vars = new EnvironmentVariables(params);
+        
         for (int i = 0; i < mapWidth; i++) {
             for (int j = 0; j < mapWidth; j++) {
                 map[i][j] = new HashSet<MadeAgent>();
@@ -82,6 +80,9 @@ public class InvisibleUniversityRatsEnvironment implements Environment {
     }
 
     public List<MadeAgent> getNeighborhood(Position pos) {
+        
+        int neighborhoodSize = (int)(10*vars.getVal(EnvironmentVariables.IND_NEIGHBORHOOD_CELLS));
+        
         int x0 = (int) (pos.getX() - neighborhoodSize < 0
                 ? 0
                 : pos.getX() - neighborhoodSize);
@@ -145,6 +146,8 @@ public class InvisibleUniversityRatsEnvironment implements Environment {
     }
 
     public List<MadeState> getRandomStates(Random random) {
+        // TODO
+        //MadeState st = new MadeState(env, FEATURE_HEALTH, true, true, null, FEATURE_HEALTH, null)
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -201,6 +204,6 @@ public class InvisibleUniversityRatsEnvironment implements Environment {
     }
 
     public int getNumberOfInitialAgents() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (int)(50f*vars.getVal(EnvironmentVariables.IND_NUMBER_OF_INITIAL_AGENTS));
     }
 }

@@ -40,7 +40,7 @@ public class Diary {
     public void AddLine(Date date, MadeState state, String event, MadeAgent target) {
         Line diaryLine = new Line(
                 format.format(date),
-                state.getName(),
+                state.getState().toString(),
                 event,
                 target.getSimpleFullName() + " (" + target.getIdentifier() + ")");
         lines.add(diaryLine);
