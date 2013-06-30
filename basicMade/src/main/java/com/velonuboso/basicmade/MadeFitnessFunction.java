@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
+
 package com.velonuboso.basicmade;
+
+import org.jgap.FitnessFunction;
+import org.jgap.IChromosome;
 
 /**
  *
  * @author Ruben
  */
-class Position {
-    
-    public static Position NULL_POSITION;
-    static{
-        NULL_POSITION = new Position(-1,-1);
-    }
-    
-    public int x, y;
+public class MadeFitnessFunction extends FitnessFunction{
 
-    public Position() {
+    static int getGeneNumber() {
+        return MadeEnvironment.NUMBER_OF_PROFILES*MadeAgent.NUMBER_OF_FEATURES;
     }
 
-    public Position(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
+    public static int AVERAGE = 10;
     
+    @Override
+    protected double evaluate(IChromosome ic) {
+        double ret = 0;
+        for (int i=0; i<AVERAGE; i++){
+            MadeEnvironment env = new MadeEnvironment(ic);
+            ret += env.runEnvironment(false);
+        }
+        return ret / (double)AVERAGE;
+    }
     
 }

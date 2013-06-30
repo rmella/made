@@ -22,13 +22,29 @@ import java.util.Random;
  * @author Ruben Hector Garcia Ortega <raiben@gmail.com>
  */
 public enum Gender {
+
+    /**
+     * Male.
+     */
     MALE,
+    /**
+     * Female.
+     */
     FEMALE;
-    
-    public static Gender getRandomGender(Random r){
-        if (r == null){
-            r = new Random();
+
+    /**
+     * gets a random gender.
+     *
+     * @param r the random number generator
+     * @return the random gender
+     */
+    public static Gender getRandomGender(final Random r) {
+        Random random;
+        if (r == null) {
+            random = new Random();
+        } else {
+            random = r;
         }
-        return Gender.values()[r.nextInt(1)];
+        return Gender.values()[random.nextInt(1)];
     }
 }

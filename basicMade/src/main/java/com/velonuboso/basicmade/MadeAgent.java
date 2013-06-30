@@ -1,6 +1,17 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013 Rubén Héctor García <raiben@gmail.com>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.velonuboso.basicmade;
 
@@ -25,9 +36,6 @@ public class MadeAgent {
     private static final int FEATURE_HUNGRY_LEVEL = 7;
     private static final int FEATURE_LOVE = 8;
     private static final int FEATURE_CHARACTER = 9;
-    
-    
-    
     private int id;
     private Gender gender;
     private int profile;
@@ -35,12 +43,10 @@ public class MadeAgent {
     private String surname;
     private String nickname;
     private MadeEnvironment env;
-    
     private Random r;
     private int days = -1;
     private boolean alive = false;
     private int maxDays = -1;
-    
     private double profileVariance;
     private int energy;
     private int maxEnergy;
@@ -51,16 +57,13 @@ public class MadeAgent {
     private double hungryLevel;
     private double love;
     private double character;
-    
     private MadeAgent inLoveWith;
-    
     private int x = -1;
     private int y = -1;
     private boolean log;
     private StringBuffer strb;
-
     private HashSet<String> labels;
-    
+
     public MadeAgent(int id, Gender gender, int profile, String name,
             String surname, String nickname, MadeEnvironment env,
             Random r, boolean log) {
@@ -81,62 +84,50 @@ public class MadeAgent {
 
         days = 0;
         // A Rattus rattus Norvegicus can live 12 months (360 days)
-        maxDays = (int) 
-                (
-                200 + 
-                (200*env.getVal(profile, FEATURE_LIFE))+
-                ((200*env.getVal(profile, FEATURE_LIFE))*(((r.nextDouble()*2)-1)*profileVariance))   
-                );
+        maxDays = (int) (200
+                + (200 * env.getVal(profile, FEATURE_LIFE))
+                + ((200 * env.getVal(profile, FEATURE_LIFE))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
         // About one week without eating
-        maxEnergy = (int) 
-                (
-                3 + 
-                (3*env.getVal(profile, FEATURE_HEALTH))+
-                ((3*env.getVal(profile, FEATURE_HEALTH))*(((r.nextDouble()*2)-1)*profileVariance))   
-                );
+        maxEnergy = (int) (3
+                + (3 * env.getVal(profile, FEATURE_HEALTH))
+                + ((3 * env.getVal(profile, FEATURE_HEALTH))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
         energy = maxEnergy;
 
         // between 1 and 15 cells to search food
-        smell = (int)
-                (
-                3 + 
-                (3*env.getVal(profile, FEATURE_SMELL))+
-                ((3*env.getVal(profile, FEATURE_SMELL))*(((r.nextDouble()*2)-1)*profileVariance))   
-                );
+        smell = (int) (3
+                + (3 * env.getVal(profile, FEATURE_SMELL))
+                + ((3 * env.getVal(profile, FEATURE_SMELL))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
 
-        nutrition = (int)
-                (
-                1 + 
-                (1*env.getVal(profile, FEATURE_METHABOLISM))+
-                ((1*env.getVal(profile, FEATURE_METHABOLISM))*(((r.nextDouble()*2)-1)*profileVariance))   
-                );
-        
+        nutrition = (int) (1
+                + (1 * env.getVal(profile, FEATURE_METHABOLISM))
+                + ((1 * env.getVal(profile, FEATURE_METHABOLISM))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
+
         hungryLevel = env.getVal(profile, FEATURE_HUNGRY_LEVEL);
-            
-        bite = (int)
-                (
-                5 + 
-                (5*env.getVal(profile, FEATURE_BITE))+
-                ((5*env.getVal(profile, FEATURE_BITE))*(((r.nextDouble()*2)-1)*profileVariance))   
-                );
-        fur = (int)
-                (
-                5 + 
-                (5*env.getVal(profile, FEATURE_FUR))+
-                ((5*env.getVal(profile, FEATURE_FUR))*(((r.nextDouble()*2)-1)*profileVariance))   
-                );
-        
+
+        bite = (int) (5
+                + (5 * env.getVal(profile, FEATURE_BITE))
+                + ((5 * env.getVal(profile, FEATURE_BITE))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
+        fur = (int) (5
+                + (5 * env.getVal(profile, FEATURE_FUR))
+                + ((5 * env.getVal(profile, FEATURE_FUR))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
+
         love = env.getVal(profile, FEATURE_LOVE);
-        
+
         character = env.getVal(profile, FEATURE_CHARACTER);
-        
+
         if (log) {
             strb = new StringBuffer();
             addline(days, "BORN");
         }
-        
+
         labels = new HashSet<String>();
     }
 
@@ -163,24 +154,24 @@ public class MadeAgent {
                     p = env.findFoodWithAgent(this, smell);
                     if (p != null) {
                         MadeAgent target = env.getAgent(p);
-                        if (this.getBite() > target.getFur()){
+                        if (this.getBite() > target.getFur()) {
                             target.nudge(this);
-                            addline(days, "NUDGE_OK "+target.id);
+                            addline(days, "NUDGE_OK " + target.id);
                             addline(days, "EAT " + nutrition);
                             env.moveAgent(this, p);
                             env.eatFood(p);
                             energy += nutrition;
-                        }else{
+                        } else {
                             target.defended(this);
-                            addline(days, "NUDGE_FAILED "+target.id);
+                            addline(days, "NUDGE_FAILED " + target.id);
                         }
                     }
                 }
             } else {
                 Position p = env.getFreePosition(this, smell);
-                if (p!=null){
+                if (p != null) {
                     env.moveAgent(this, p);
-                    addline(days, "MOVE "+p.x+" "+p.y);
+                    addline(days, "MOVE " + p.x + " " + p.y);
                 }
             }
 
@@ -215,13 +206,13 @@ public class MadeAgent {
         ret += "Fur: " + fur + "\n";
         ret += "Love: " + love + "\n";
         ret += "Character: " + character + "\n";
-        
-        ret += "Labels: "+"{";
-        for (String key:labels){
-            ret+="key ";
+
+        ret += "Labels: " + "{";
+        for (String key : labels) {
+            ret += "key ";
         }
         ret += "}\n";
-        
+
         return ret;
     }
 
@@ -246,26 +237,26 @@ public class MadeAgent {
                 }
             }
         }
-        if (arr.size()>0){
+        if (arr.size() > 0) {
             Position p = null;
-            if (arr.size() == 1){
+            if (arr.size() == 1) {
                 p = arr.get(0);
-            }else{
-                p = arr.get(r.nextInt(arr.size()-1));
+            } else {
+                p = arr.get(r.nextInt(arr.size() - 1));
             }
             env.moveAgent(this, p);
-            this.energy --;
-            addline(days, "NUDGED "+source.id);
-        }else{
+            this.energy--;
+            addline(days, "NUDGED " + source.id);
+        } else {
             alive = false;
             addline(days, "DIE");
         }
     }
-    
+
     private void defended(MadeAgent source) {
-        addline(days, "DEFENDED "+source.id);
+        addline(days, "DEFENDED " + source.id);
     }
-    
+
     // getters and setters
     public int getX() {
         return x;
