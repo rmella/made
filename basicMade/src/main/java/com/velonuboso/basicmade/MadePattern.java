@@ -29,6 +29,7 @@ import javassist.CtNewMethod;
 import javax.naming.Binding;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
+import org.apache.commons.math3.analysis.function.Gaussian;
 
 /**
  *
@@ -54,12 +55,15 @@ public class MadePattern {
         
         ClassPool pool = ClassPool.getDefault();
         CtClass evalClass = pool.makeClass("Eval"+label);
+
+        String weight2 = weight.replace("gaussian", "com.velonuboso.basicmade.MadePattern.gaussian");
+
         evalClass.addMethod(
                 CtNewMethod.make(
                 "public double getWeight(int p, int pm, int a, int am) {"
-                + "return ("+condition+")?((double)"+weight+"):0.0;"
+                + "return ("+condition+")?((double)"+weight2+"):0.0;"
                 + "}", evalClass));
-         Class clazz = evalClass.toClass();
+        Class clazz = evalClass.toClass();
          evaluator = clazz.newInstance();
          
          Class[] formalParams = new Class[] { int.class, int.class, int.class, int.class };
@@ -94,5 +98,10 @@ public class MadePattern {
             found = true;
         }
         return found;
+    }
+
+    public static double gaussian (double value, double target, double amplitude){
+        Gaussian g = new Gaussian();
+        return g.value(3*(target-value)/amplitude);
     }
 }

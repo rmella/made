@@ -25,7 +25,7 @@ import java.util.Random;
  */
 public class MadeAgent {
 
-    public static int NUMBER_OF_FEATURES = 10;
+    public static int NUMBER_OF_FEATURES = 12;
     private static final int FEATURE_BITE = 0; // attack
     private static final int FEATURE_FUR = 1; // defense
     private static final int FEATURE_PROFILE_VARIANCE = 2;
@@ -34,8 +34,12 @@ public class MadeAgent {
     private static final int FEATURE_SMELL = 5;
     private static final int FEATURE_METHABOLISM = 6;
     private static final int FEATURE_HUNGRY_LEVEL = 7;
-    private static final int FEATURE_LOVE = 8;
-    private static final int FEATURE_CHARACTER = 9;
+    private static final int FEATURE_PROCREATION = 8;
+    private static final int FEATURE_ENJOYABLE = 9;
+    private static final int FEATURE_AGE_TO_BE_ADULT = 10;
+    private static final int FEATURE_PREGNANCY_TIME = 11;
+
+
     private int id;
     private Gender gender;
     private int profile;
@@ -45,7 +49,7 @@ public class MadeAgent {
     private MadeEnvironment env;
     private Random r;
     private int days = -1;
-    private boolean alive = false;
+
     private int maxDays = -1;
     private double profileVariance;
     private int energy;
@@ -55,21 +59,32 @@ public class MadeAgent {
     private int bite;
     private int fur;
     private double hungryLevel;
-    private double love;
-    private double character;
-    private MadeAgent inLoveWith;
+    private double procreation;
+    private double enjoyable;
+    private double personality;
+    
     private int x = -1;
     private int y = -1;
-    private boolean log;
+    private boolean logSheet;
+    private boolean logSummary;
     private StringBuffer strb;
     private HashSet<String> labels;
+    private int ageToBeAdult;
 
-    public MadeAgent(int id, Gender gender, int profile, String name,
+    // States
+    private boolean alive = false;
+    private int pregnancy = 0; // 0 = not-pregnant; otherwise, the days to have a child
+    private boolean child = true;
+    private MadeAgent inLoveWith;
+
+    MadeEvaluator e = MadeEvaluator.getInstance();
+
+    public MadeAgent(int id, int date, Gender gender, int profile, String name,
             String surname, String nickname, MadeEnvironment env,
-            Random r, boolean log) {
+            Random r, boolean logSheet) {
 
         profileVariance = env.getVal(profile, FEATURE_PROFILE_VARIANCE);
-        this.log = log;
+        this.logSheet = logSheet;
 
         this.id = id;
         this.gender = gender;
@@ -84,48 +99,64 @@ public class MadeAgent {
 
         days = 0;
         // A Rattus rattus Norvegicus can live 12 months (360 days)
-        maxDays = (int) (200
-                + (200 * env.getVal(profile, FEATURE_LIFE))
-                + ((200 * env.getVal(profile, FEATURE_LIFE))
+
+        int BASE_DAYS = e.getProperty(e.BASE_DAYS);
+        maxDays = (int) (BASE_DAYS
+                + (BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
+                + ((BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
         // About one week without eating
-        maxEnergy = (int) (3
-                + (3 * env.getVal(profile, FEATURE_HEALTH))
-                + ((3 * env.getVal(profile, FEATURE_HEALTH))
+        int BASE_ENERGY = e.getProperty(e.BASE_ENERGY);
+        maxEnergy = (int) (BASE_ENERGY
+                + (BASE_ENERGY * env.getVal(profile, FEATURE_HEALTH))
+                + ((BASE_ENERGY * env.getVal(profile, FEATURE_HEALTH))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
         energy = maxEnergy;
 
         // between 1 and 15 cells to search food
-        smell = (int) (3
-                + (3 * env.getVal(profile, FEATURE_SMELL))
-                + ((3 * env.getVal(profile, FEATURE_SMELL))
+        int BASE_SMELL = e.getProperty(e.BASE_SMELL);
+        smell = (int) (BASE_SMELL
+                + (BASE_SMELL * env.getVal(profile, FEATURE_SMELL))
+                + ((BASE_SMELL * env.getVal(profile, FEATURE_SMELL))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
-
-        nutrition = (int) (1
-                + (1 * env.getVal(profile, FEATURE_METHABOLISM))
-                + ((1 * env.getVal(profile, FEATURE_METHABOLISM))
+        int BASE_NUTRITION = e.getProperty(e.BASE_NUTRITION);
+        nutrition = (int) (BASE_NUTRITION
+                + (BASE_NUTRITION * env.getVal(profile, FEATURE_METHABOLISM))
+                + ((BASE_NUTRITION * env.getVal(profile, FEATURE_METHABOLISM))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
         hungryLevel = env.getVal(profile, FEATURE_HUNGRY_LEVEL);
 
-        bite = (int) (5
-                + (5 * env.getVal(profile, FEATURE_BITE))
-                + ((5 * env.getVal(profile, FEATURE_BITE))
-                * (((r.nextDouble() * 2) - 1) * profileVariance)));
-        fur = (int) (5
-                + (5 * env.getVal(profile, FEATURE_FUR))
-                + ((5 * env.getVal(profile, FEATURE_FUR))
+        int BASE_BITE = e.getProperty(e.BASE_BITE);
+        bite = (int) (BASE_BITE
+                + (BASE_BITE * env.getVal(profile, FEATURE_BITE))
+                + ((BASE_BITE * env.getVal(profile, FEATURE_BITE))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
-        love = env.getVal(profile, FEATURE_LOVE);
+        int BASE_FUR = e.getProperty(e.BASE_FUR);
+        fur = (int) (BASE_FUR
+                + (BASE_FUR * env.getVal(profile, FEATURE_FUR))
+                + ((BASE_FUR * env.getVal(profile, FEATURE_FUR))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
-        character = env.getVal(profile, FEATURE_CHARACTER);
+        procreation = env.getVal(profile, FEATURE_PROCREATION);
 
-        if (log) {
+        enjoyable = env.getVal(profile, FEATURE_ENJOYABLE);
+
+        personality = r.nextDouble();
+
+        if (gender == gender.FEMALE){
+            int BASE_AGE_TO_BE_ADULT_FEMALE = e.getProperty(e.BASE_AGE_TO_BE_ADULT_FEMALE);
+            ageToBeAdult = (int) (BASE_AGE_TO_BE_ADULT_FEMALE
+                + (BASE_AGE_TO_BE_ADULT_FEMALE * env.getVal(profile, FEATURE_AGE_TO_BE_ADULT))
+                + ((BASE_AGE_TO_BE_ADULT_FEMALE * env.getVal(profile, FEATURE_AGE_TO_BE_ADULT))
+                * (((r.nextDouble() * 2) - 1) * profileVariance)));
+        }
+        if (logSheet) {
             strb = new StringBuffer();
-            addline(days, "BORN");
+            addline(days, MadeState.BORN+ " " + this.gender);
         }
 
         labels = new HashSet<String>();
@@ -138,15 +169,23 @@ public class MadeAgent {
     void justLive() {
         days++;
         energy--;
+
+        if (pregnancy > 0){
+            pregnancy --;
+            if (pregnancy == 0){
+                env.newAgents(this, inLoveWith, 10);
+            }
+        }
+
         if (days > maxDays || energy <= 0) {
             alive = false;
-            addline(days, "DIE");
+            addline(days, MadeState.DIE +" ");
         } else {
             if (energy < maxEnergy * hungryLevel + (1 - 2 * r.nextDouble())) {
-                addline(days, "HUNGRY " + energy);
+                addline(days, MadeState.HUNGRY +" " + energy);
                 Position p = env.findFreeFood(this, smell);
                 if (p != null) {
-                    addline(days, "EAT " + nutrition);
+                    addline(days, MadeState.EAT +" " + nutrition);
                     env.moveAgent(this, p);
                     env.eatFood(p);
                     energy += nutrition;
@@ -156,22 +195,50 @@ public class MadeAgent {
                         MadeAgent target = env.getAgent(p);
                         if (this.getBite() > target.getFur()) {
                             target.nudge(this);
-                            addline(days, "NUDGE_OK " + target.id);
-                            addline(days, "EAT " + nutrition);
+                            addline(days, MadeState.NUDGE_OK +" " + target.id);
+                            addline(days, MadeState.EAT +" " + nutrition);
                             env.moveAgent(this, p);
                             env.eatFood(p);
                             energy += nutrition;
                         } else {
                             target.defended(this);
-                            addline(days, "NUDGE_FAILED " + target.id);
+                            addline(days, MadeState.NUDGE_FAILED+" " + target.id);
                         }
                     }
                 }
             } else {
-                Position p = env.getFreePosition(this, smell);
-                if (p != null) {
-                    env.moveAgent(this, p);
-                    addline(days, "MOVE " + p.x + " " + p.y);
+                if (this.gender == gender.FEMALE){
+                    if (pregnancy == 0){
+                        if (r.nextDouble()<=procreation){
+                            ArrayList<MadeAgent> partners = env.getAgentsAround(this, smell);
+                            MadeAgent partner = null;
+                            int t = 0;
+                            while (t<partners.size() && partner == null){
+                                MadeAgent madeAgent = partners.get(t);
+                                if (madeAgent.likes(this) && this.likes(madeAgent)){
+                                    partner = madeAgent;
+                                }
+                                t++;
+                            }
+
+                            int BASE_PREGNANCY_TIME = e.getProperty(e.BASE_PREGNANCY_TIME);
+                            if (partner!=null){
+                                this.inLoveWith = partner;
+                                partner.inLoveWith = this;
+                                this.pregnancy = (int)
+                                    (BASE_PREGNANCY_TIME
+                                    + (BASE_PREGNANCY_TIME * env.getVal(profile, FEATURE_PREGNANCY_TIME))
+                                    + ((BASE_PREGNANCY_TIME * env.getVal(profile, FEATURE_PREGNANCY_TIME))
+                                    * (((r.nextDouble() * 2) - 1) * profileVariance)));
+                            }
+                        }
+                    }
+                }else{
+                    Position p = env.getFreePosition(this, smell);
+                    if (p != null) {
+                        env.moveAgent(this, p);
+                        addline(days, MadeState.MOVE +" " + p.x + " " + p.y);
+                    }
                 }
             }
 
@@ -204,8 +271,8 @@ public class MadeAgent {
         ret += "Hungry level: " + hungryLevel + "\n";
         ret += "Bite: " + bite + "\n";
         ret += "Fur: " + fur + "\n";
-        ret += "Love: " + love + "\n";
-        ret += "Character: " + character + "\n";
+        ret += "Love: " + procreation + "\n";
+        ret += "Character: " + personality + "\n";
 
         ret += "Labels: " + "{";
         for (String key : labels) {
@@ -220,15 +287,15 @@ public class MadeAgent {
         if (strb == null) {
             strb = new StringBuffer();
         }
-        strb.append(days + ":" + action + "\n");
+        strb.append(days + ":" + "@" +action + "\n");
     }
 
     private void nudge(MadeAgent source) {
         ArrayList<Position> arr = new ArrayList<Position>();
         for (int a = x - 1; a < x + 2; a += 2) {
-            if (a > 0 && a < MadeEnvironment.MAP_DIMENSION) {
+            if (a > 0 && a < e.getProperty(e.MAP_DIMENSION)) {
                 for (int b = y - 1; b < y + 2; b += 2) {
-                    if (b > 0 && b < MadeEnvironment.MAP_DIMENSION) {
+                    if (b > 0 && b < e.getProperty(e.MAP_DIMENSION)) {
                         Position p = new Position();
                         p.x = a;
                         p.y = b;
@@ -246,15 +313,15 @@ public class MadeAgent {
             }
             env.moveAgent(this, p);
             this.energy--;
-            addline(days, "NUDGED " + source.id);
+            addline(days, MadeState.NUDGED +" " + source.id);
         } else {
             alive = false;
-            addline(days, "DIE");
+            addline(days, MadeState.DIE +" ");
         }
     }
 
     private void defended(MadeAgent source) {
-        addline(days, "DEFENDED " + source.id);
+        addline(days, MadeState.DEFENDED +" " + source.id);
     }
 
     // getters and setters
@@ -305,4 +372,36 @@ public class MadeAgent {
     void addLabel(String label) {
         labels.add(label);
     }
+
+    private boolean likes(MadeAgent target) {
+        double minPer = Math.min(this.personality,target.personality);
+        double maxPer = Math.max(this.personality,target.personality);
+        double minDistance1 = Math.abs(maxPer-minPer);
+        double minDistance2 = Math.abs(minPer+10-maxPer);
+        double distance = Math.min(minDistance1, minDistance2);
+        
+        // max distance = 5, so normalizing consist on dividing between 5
+        double distanceRelation = distance / 5.0;
+        double rel = ((this.enjoyable+target.enjoyable)/2.0) / distanceRelation;
+        return rel>=1;
+    }
+
+    public int getProfile() {
+        return profile;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public HashSet<String> getLabels() {
+        return labels;
+    }
+
+    
+   
 }

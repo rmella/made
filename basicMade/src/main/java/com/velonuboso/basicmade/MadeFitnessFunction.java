@@ -27,19 +27,19 @@ import org.jgap.IChromosome;
 public class MadeFitnessFunction extends FitnessFunction{
 
     static int getGeneNumber() {
-        return MadeEnvironment.NUMBER_OF_PROFILES*MadeAgent.NUMBER_OF_FEATURES;
+        MadeEvaluator e = MadeEvaluator.getInstance();
+        return e.getProperty(e.NUMBER_OF_PROFILES)*MadeAgent.NUMBER_OF_FEATURES;
     }
-
-    public static int AVERAGE = 10;
     
     @Override
     protected double evaluate(IChromosome ic) {
+        MadeEvaluator e = MadeEvaluator.getInstance();
         double ret = 0;
-        for (int i=0; i<AVERAGE; i++){
+        for (int i=0; i<e.getProperty(e.AVERAGE); i++){
             MadeEnvironment env = new MadeEnvironment(ic);
             ret += env.runEnvironment(false);
         }
-        return ret / (double)AVERAGE;
+        return ret / (double)e.getProperty(e.AVERAGE);
     }
     
 }

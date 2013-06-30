@@ -32,21 +32,14 @@ import org.jgap.impl.DoubleGene;
 public class App {
 
     /**
-     * max allowed evaluation (generations) of the genetic algorithm.
-     */
-    public static final int MAX_ALLOWED_EVOLUTIONS = 20; //5000;
-    /**
-     * population size for the genetic algorithm.
-     */
-    private static final int POPULATION_SIZE = 100; //500;
-
-    /**
      * main method.
      *
      * @param args shell arguments
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
+
+        MadeEvaluator e = MadeEvaluator.getInstance();
 
         Configuration conf = new DefaultConfiguration();
         FitnessFunction myFunc = new MadeFitnessFunction();
@@ -62,13 +55,13 @@ public class App {
         Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
         conf.setSampleChromosome(sampleChromosome);
 
-        conf.setPopulationSize(POPULATION_SIZE);
+        conf.setPopulationSize(e.getProperty(e.POPULATION_SIZE));
         Genotype population = Genotype.randomInitialGenotype(conf);
 
         // show a sample of a random solution
-        MadeEnvironment environment = new MadeEnvironment(
+        MadeEnvironment environment1 = new MadeEnvironment(
                 population.getPopulation().getChromosome(0));
-        environment.runEnvironment(true);
+        environment1.runEnvironment(false);
 
         // start iterating
         IChromosome bestSolutionSoFar = population.getFittestChromosome();
@@ -78,7 +71,7 @@ public class App {
 
         double fitness = bestSolutionSoFar.getFitnessValue();
 
-        for (int i = 0; i < MAX_ALLOWED_EVOLUTIONS; i++) {
+        for (int i = 0; i < e.getProperty(e.MAX_ALLOWED_EVOLUTIONS); i++) {
             System.out.println("Iteration: " + i);
             population.evolve();
             bestSolutionSoFar = population.getFittestChromosome();
@@ -91,7 +84,13 @@ public class App {
         }
 
         // show a sample
-        environment = new MadeEnvironment(bestSolutionSoFar);
-        environment.runEnvironment(true);
+        MadeEnvironment environment2 = new MadeEnvironment(bestSolutionSoFar);
+        environment2.runEnvironment(false);
+
+        System.out.println("SUMMARY 1:");
+        System.out.println(environment1.getSummary());
+        System.out.println("SUMMARY 2:");
+        System.out.println(environment2.getSummary());
+
     }
 }
