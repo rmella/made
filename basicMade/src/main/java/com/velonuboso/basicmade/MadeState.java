@@ -28,5 +28,9 @@ public enum MadeState {
     NUDGE_FAILED,
     DEFENDED,
     MOVE,
+    LOOK_FOR_PARTNER,
+    PARTNER_FOUND,
+    PREGNANT,
+    PARENT,
     DIE
 }

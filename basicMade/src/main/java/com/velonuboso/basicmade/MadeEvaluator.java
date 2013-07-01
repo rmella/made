@@ -39,6 +39,7 @@ public class MadeEvaluator {
     public static String POPULATION_SIZE="global.POPULATION_SIZE";
 
     public static String NUMBER_OF_PROFILES = "global.NUMBER_OF_PROFILES";
+    public static String NUMBER_OF_INITIAL_AGENTS = "global.NUMBER_OF_INITIAL_AGENTS";
     public static String MAP_DIMENSION = "global.MAP_DIMENSION";
     public static String FOOD = "global.FOOD";
     public static String DAYS = "global.DAYS";
@@ -56,9 +57,11 @@ public class MadeEvaluator {
 
 
 
+
     private static MadeEvaluator instance;
     private Properties prop;
     private ArrayList<MadePattern> patterns;
+
 
 
     private MadeEvaluator() throws CannotCompileException, Exception {

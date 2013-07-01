@@ -209,7 +209,11 @@ public class MadeAgent {
             } else {
                 if (this.gender == gender.FEMALE){
                     if (pregnancy == 0){
-                        if (r.nextDouble()<=procreation){
+
+                        if (days >= ageToBeAdult && inLoveWith == null && r.nextDouble()<=procreation){
+
+                            addline(days, MadeState.LOOK_FOR_PARTNER.toString());
+
                             ArrayList<MadeAgent> partners = env.getAgentsAround(this, smell);
                             MadeAgent partner = null;
                             int t = 0;
@@ -223,6 +227,10 @@ public class MadeAgent {
 
                             int BASE_PREGNANCY_TIME = e.getProperty(e.BASE_PREGNANCY_TIME);
                             if (partner!=null){
+
+                                addline(days, MadeState.PARTNER_FOUND + " " + partner.getId());
+                                partner.addline(days,  MadeState.PARTNER_FOUND + " " + this.getId());
+
                                 this.inLoveWith = partner;
                                 partner.inLoveWith = this;
                                 this.pregnancy = (int)
@@ -230,6 +238,8 @@ public class MadeAgent {
                                     + (BASE_PREGNANCY_TIME * env.getVal(profile, FEATURE_PREGNANCY_TIME))
                                     + ((BASE_PREGNANCY_TIME * env.getVal(profile, FEATURE_PREGNANCY_TIME))
                                     * (((r.nextDouble() * 2) - 1) * profileVariance)));
+
+                                addline(days, MadeState.PREGNANT + " " + partner.getId());
                             }
                         }
                     }
@@ -253,37 +263,8 @@ public class MadeAgent {
         }
     }
 
-    public String getSheet() {
-        String ret = "";
-        ret += "------------------------------------" + "\n";
-        ret += "Name: " + name + " (" + nickname + ") " + surname + "\n";
-        ret += "Id: " + id + "\n";
-        ret += "Gender: " + gender + "\n";
-        ret += "Variance: " + profileVariance + "\n";
-        ret += "Profile: " + profile + "\n";
-        ret += "Alive: " + alive + "\n";
-        ret += "Days: " + days + "\n";
-        ret += "MaxDays: " + maxDays + "\n";
-        ret += "Energy: " + energy + "\n";
-        ret += "Maximum energy: " + maxEnergy + "\n";
-        ret += "Smell: " + smell + "\n";
-        ret += "Nutrition: " + nutrition + "\n";
-        ret += "Hungry level: " + hungryLevel + "\n";
-        ret += "Bite: " + bite + "\n";
-        ret += "Fur: " + fur + "\n";
-        ret += "Love: " + procreation + "\n";
-        ret += "Character: " + personality + "\n";
 
-        ret += "Labels: " + "{";
-        for (String key : labels) {
-            ret += "key ";
-        }
-        ret += "}\n";
-
-        return ret;
-    }
-
-    private void addline(int days, String action) {
+    public void addline(int days, String action) {
         if (strb == null) {
             strb = new StringBuffer();
         }
@@ -323,6 +304,54 @@ public class MadeAgent {
     private void defended(MadeAgent source) {
         addline(days, MadeState.DEFENDED +" " + source.id);
     }
+
+    private boolean likes(MadeAgent target) {
+        double minPer = Math.min(this.personality,target.personality);
+        double maxPer = Math.max(this.personality,target.personality);
+        double minDistance1 = Math.abs(maxPer-minPer);
+        double minDistance2 = Math.abs(minPer+10-maxPer);
+        double distance = Math.min(minDistance1, minDistance2);
+
+        // max distance = 5, so normalizing consist on dividing between 5
+        double distanceRelation = distance / 5.0;
+        double rel = ((this.enjoyable+target.enjoyable)/2.0) / distanceRelation;
+        return rel>=1;
+    }
+
+
+    // -------------------------------------------------------------------------
+
+    public String getSheet() {
+        String ret = "";
+        ret += "------------------------------------" + "\n";
+        ret += "Name: " + name + " (" + nickname + ") " + surname + "\n";
+        ret += "Id: " + id + "\n";
+        ret += "Gender: " + gender + "\n";
+        ret += "Variance: " + profileVariance + "\n";
+        ret += "Profile: " + profile + "\n";
+        ret += "Alive: " + alive + "\n";
+        ret += "Days: " + days + "\n";
+        ret += "MaxDays: " + maxDays + "\n";
+        ret += "Energy: " + energy + "\n";
+        ret += "Maximum energy: " + maxEnergy + "\n";
+        ret += "Smell: " + smell + "\n";
+        ret += "Nutrition: " + nutrition + "\n";
+        ret += "Hungry level: " + hungryLevel + "\n";
+        ret += "Bite: " + bite + "\n";
+        ret += "Fur: " + fur + "\n";
+        ret += "Procreation: " + procreation + "\n";
+        ret += "Character: " + personality + "\n";
+
+        ret += "Labels: " + "{";
+        for (String key : labels) {
+            ret += "key ";
+        }
+        ret += "}\n";
+
+        return ret;
+    }
+
+    //--------------------------------------------------------------------------
 
     // getters and setters
     public int getX() {
@@ -373,19 +402,6 @@ public class MadeAgent {
         labels.add(label);
     }
 
-    private boolean likes(MadeAgent target) {
-        double minPer = Math.min(this.personality,target.personality);
-        double maxPer = Math.max(this.personality,target.personality);
-        double minDistance1 = Math.abs(maxPer-minPer);
-        double minDistance2 = Math.abs(minPer+10-maxPer);
-        double distance = Math.min(minDistance1, minDistance2);
-        
-        // max distance = 5, so normalizing consist on dividing between 5
-        double distanceRelation = distance / 5.0;
-        double rel = ((this.enjoyable+target.enjoyable)/2.0) / distanceRelation;
-        return rel>=1;
-    }
-
     public int getProfile() {
         return profile;
     }
@@ -401,7 +417,4 @@ public class MadeAgent {
     public HashSet<String> getLabels() {
         return labels;
     }
-
-    
-   
 }

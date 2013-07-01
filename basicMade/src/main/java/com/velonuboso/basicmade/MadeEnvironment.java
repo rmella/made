@@ -30,6 +30,7 @@ public class MadeEnvironment {
 
     
     private int numberOfProfiles;
+    private int numberOfInitialAgents;
     private int mapDimension;
     private int food;
     private int days;
@@ -48,10 +49,10 @@ public class MadeEnvironment {
 
         MadeEvaluator e = MadeEvaluator.getInstance();
         numberOfProfiles = e.getProperty(e.NUMBER_OF_PROFILES);
+        numberOfInitialAgents = e.getProperty(e.NUMBER_OF_INITIAL_AGENTS);
         mapDimension = e.getProperty(e.MAP_DIMENSION);
         food = e.getProperty(e.FOOD);
         days = e.getProperty(e.DAYS);
-
 
         this.iChromosome = c;
         mapAgents = new int[mapDimension][mapDimension];
@@ -83,12 +84,14 @@ public class MadeEnvironment {
         currDate = 0;
         this.log = log;
 
-        for (int i = 0; i < numberOfProfiles * 2; i++) {
+        int currentProfile = 0;
+
+        for (int i = 0; i < numberOfInitialAgents; i++) {
             Gender g = i % 2 == 0 ? Gender.MALE : Gender.FEMALE;
             String name = RatNameHelper.getInstance().getRandomName(r, g);
             String surname = RatNameHelper.getInstance().getRandomSurname(r);
             String nickname = RatNameHelper.getInstance().getRandomNickname(r);
-            MadeAgent a = new MadeAgent(counter, currDate, g, i / 2, name, surname, nickname, this, r, log);
+            MadeAgent a = new MadeAgent(counter, currDate, g, currentProfile, name, surname, nickname, this, r, log);
             agents.add(a);
             aliveAgents.add(a);
             int x, y;
@@ -100,6 +103,7 @@ public class MadeEnvironment {
             a.setX(x);
             a.setY(y);
             counter++;
+            currentProfile = (currentProfile + 1) % numberOfProfiles;
         }
 
         for (currDate = 0; currDate < days; currDate++) {
@@ -333,7 +337,7 @@ public class MadeEnvironment {
 
     void newAgents(MadeAgent aThis, MadeAgent inLoveWith, int numberOfChildren) {
         ArrayList<Position> p = getFreePositions(aThis, 3);
-        for (int i = 0; i < p.size(); i++) {
+        for (int i = 0; i < p.size() && i<numberOfChildren; i++) {
             Position pos = p.get(i);
             Gender g = i % 2 == 0 ? Gender.MALE : Gender.FEMALE;
             String name = RatNameHelper.getInstance().getRandomName(r, g);
@@ -356,6 +360,9 @@ public class MadeEnvironment {
             MadeAgent a = new MadeAgent(counter, currDate, g, profile, name, surname, nickname, this, r, log);
             agents.add(a);
             aliveAgents.add(a);
+
+            aThis.addline(a.getDays(), MadeState.PARENT + " " + inLoveWith.getId());
+            inLoveWith.addline(inLoveWith.getDays(), MadeState.PARENT + " " + a.getId());
 
             mapAgents[pos.x][pos.y] = counter;
             a.setX(pos.x);

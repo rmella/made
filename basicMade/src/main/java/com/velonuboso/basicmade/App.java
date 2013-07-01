@@ -15,6 +15,7 @@
  */
 package com.velonuboso.basicmade;
 
+import java.text.DecimalFormat;
 import org.jgap.Chromosome;
 import org.jgap.Configuration;
 import org.jgap.FitnessFunction;
@@ -38,6 +39,9 @@ public class App {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
+
+
+        long t0 = System.currentTimeMillis();
 
         MadeEvaluator e = MadeEvaluator.getInstance();
 
@@ -63,34 +67,73 @@ public class App {
                 population.getPopulation().getChromosome(0));
         environment1.runEnvironment(false);
 
+        IChromosome firstSolution = population.getPopulation().getChromosome(0);
+        System.out.println(
+                df2.format(-1)+";"
+                +df3.format(firstSolution.getFitnessValue())
+                +";"+printIChromosome(firstSolution)
+                );
+
+
         // start iterating
         IChromosome bestSolutionSoFar = population.getFittestChromosome();
-
-        System.out.println("Best solution: " + bestSolutionSoFar);
-        System.out.println("fitness: " + bestSolutionSoFar.getFitnessValue());
-
+        System.out.println(
+                df2.format(0)+";"
+                +df3.format(bestSolutionSoFar.getFitnessValue())
+                +";"+printIChromosome(bestSolutionSoFar)
+                );
+        
         double fitness = bestSolutionSoFar.getFitnessValue();
 
         for (int i = 0; i < e.getProperty(e.MAX_ALLOWED_EVOLUTIONS); i++) {
-            System.out.println("Iteration: " + i);
             population.evolve();
             bestSolutionSoFar = population.getFittestChromosome();
+
+            System.out.println(
+                df2.format(i+1)
+                +";"+df3.format(bestSolutionSoFar.getFitnessValue())
+                +";"+printIChromosome(bestSolutionSoFar)
+                );
+            
             if (bestSolutionSoFar.getFitnessValue() > fitness) {
-                System.out.println("Best solution: " + bestSolutionSoFar);
-                System.out.println("fitness: "
-                        + bestSolutionSoFar.getFitnessValue());
                 fitness = bestSolutionSoFar.getFitnessValue();
             }
+
         }
+
+        long t1 = System.currentTimeMillis();
+
+        System.out.println("Tiempo de ejecución: "+(t1-t0)+"ms");
 
         // show a sample
         MadeEnvironment environment2 = new MadeEnvironment(bestSolutionSoFar);
-        environment2.runEnvironment(false);
+        environment2.runEnvironment(true);
 
         System.out.println("SUMMARY 1:");
         System.out.println(environment1.getSummary());
         System.out.println("SUMMARY 2:");
         System.out.println(environment2.getSummary());
 
+    }
+
+    static DecimalFormat df = new DecimalFormat("#.###");
+    static DecimalFormat df2 = new DecimalFormat("###");
+    static DecimalFormat df3 = new DecimalFormat("###.#####");
+
+
+    public static String printIChromosome(IChromosome ic){
+        StringBuilder str = new StringBuilder();
+        Gene[] genes = ic.getGenes();
+        boolean first = true;
+        for (Gene gene : genes) {
+            str.append(df.format((Double)gene.getAllele()));
+            if (!first){
+                str.append(";");
+            }else{
+                first = false;
+            }
+        }
+
+        return str.toString();
     }
 }
