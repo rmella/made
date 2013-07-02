@@ -7,16 +7,15 @@
 \documentclass[twoside,12pt]{Latex/Classes/PhDthesisPSnPDF}
 \include{Latex/Macros/Macros}
 
+\graphicspath{ {./figures/} }
 
-%: ----------------------------------------------------------------------
-%:                  TITLE PAGE: name, degree,..
-% ----------------------------------------------------------------------
+
 \ifpdf  
     \pdfinfo { /Title  (PhD)
                /Creator (TeX)
                /Producer (pdfTeX)
                /Author (Rubén Héctor García Ortega)
-               /CreationDate (D:20130705120000)  %format D:YYYYMMDDhhmmss
+               /CreationDate (D:20130705120000)
                /ModDate (D:YYYYMMDDhhmm)
                /Subject (xyz)
                /Keywords (keyword1, keyword2, keyword3) }
@@ -25,17 +24,11 @@
 \fi
 
 
-% Title of the dissertation
 \title{MADE: Massive Artificial Drama Engine for non player characters}
 
 
-% ----------------------------------------------------------------------
-% This section below defines front covert (external and internal)
-% Shield logo
-\crest{\includegraphics[width=2cm]{Deusto_Shield}}
-% Full logo
-%\crest{\includegraphics[width=6cm]{UDeusto}}
-\university{Universidad de Granada}
+\crest{\includegraphics[width=10cm]{logo_ugr.jpg}}
+\university{}
 \degree{Trabajo Fin de Master presentado por }
 \author{Rubén Héctor García Ortega} 
 \collegeordept{}
@@ -49,15 +42,10 @@
 \degreedate{Julio de \the\year}
 
 
-% ----------------------------------------------------------------------
-% turn of those nasty overfull and underfull hboxes
 \hbadness=10000
 \hfuzz=50pt
 
 
-%: --------------------------------------------------------------
-%:                  FRONT MATTER: dedications, abstract,..
-% --------------------------------------------------------------
 
 \begin{document}
 
@@ -67,65 +55,36 @@
 \renewcommand\baselinestretch{1.2}
 \baselineskip=18pt plus1pt
 
-% Watermark
-%\watermark{DRAFT	DRAFT	DRAFT	DRAFT	DRAFT	DRAFT	DRAFT	DRAFT	DRAFT}
 
 
-%: ----------------------- generate cover page ------------------------
-\maketitle  % command to print the title page with above variables
-% Title back
-\include{0_frontmatter/title_back}
+\maketitle
 
-%: ----------------------- abstract ------------------------
-% Your institution may have specific regulations if you need an abstract and where it is to be placed in the document. The default here is just after title.
-% The original template provides and abstractseparate environment, if your institution requires them to be separate. I think it's easier to print the abstract from the complete thesis by restricting printing to the relevant page.
-% \begin{abstractseparate}
-%   \input{Abstract/abstract}
-% \end{abstractseparate}
+\include{title_back}
 
-
-%: ----------------------- tie in front matter ------------------------
-% The frontmatter text starts here
 \frontmatter
 
-\include{0_frontmatter/dedication}
+\include{dedication}
 
-\include{0_frontmatter/abstract}
+\include{abstract}
 
-\include{0_frontmatter/acknowledgement}
+%\include{acknowledgement}
 
-% As abstract contains various languages we set the main language again
 \selectlanguage{spanish}
-
-
-%: ----------------------- contents ------------------------
 
 \setcounter{secnumdepth}{5} % organisational level that receives a numbers
 \setcounter{tocdepth}{5}    % print table of contents for level 3
 
 
-%%You can also add extra lines to the ToC or to force extra unnumbered section headings to be included. For example, if you wanted to add an entry called Preface, and you didn't want the Preface to be numbered, you'd use these commands:
-%\ subsection*{Preface}
-%\addcontentsline{toc}{subsection}{Preface} 
 
 \tableofcontents            % print the table of contents
-% levels are: 0 - chapter, 1 - section, 2 - subsection, 3 - subsection
-
-%: ----------------------- list of figures/tables ------------------------
-
 \listoffigures	% print list of figures
 \listoftables  % print list of tables
 
 
-%: ----------------------- glossary ------------------------
-
-% Tie in external source file for definitions: /0_frontmatter/glossary.tex
-% Glossary entries can also be defined in the main text. See glossary.tex
-\include{0_frontmatter/glossary}
+\include{glossary}
 
 %\begin{multicols}{2} % \begin{multicols}{#columns}[header text][space]
 %\begin{footnotesize} % scriptsize(7) < footnotesize(8) < small (9) < normal (10)
-
 %\printnomenclature[1.5cm] % [] = distance between entry and description
 
 \printnomenclature % [] = distance between entry and description
@@ -142,10 +101,10 @@
 %:                  MAIN DOCUMENT SECTION
 % --------------------------------------------------------------
 
-% the main text starts here with the introduction, 1st chapter,...
+
 \mainmatter
 
-%\renewcommand{\chaptername}{} % uncomment to print only "1" not "Chapter 1"
+\renewcommand{\chaptername}{} % uncomment to print only "1" not "Chapter 1"
 \pagestyle{fancy}
 
 %: ----------------------- subdocuments ------------------------
@@ -155,24 +114,24 @@
 
 %: ----------------------- introduction ------------------------
 % introduction
-\include{1_introduction/0_index}	
-\include{1_introduction/1_motivation}	
+\include{introduction}	
+\include{motivation}	
 
 %: ----------------------- related work ------------------------
 % introduction
-\include{2_state_of_the_art/0_index}	
+\include{state_of_the_art}	
 
 %: ----------------------- overall methodology ------------------------
 % introduction
-\include{3_overall_methodology/0_index}
+\include{methodology}
 	
 %: ----------------------- experiments and results ------------------------
 % introduction
-\include{4_experiments_and_results/0_index}	
+\include{validation}	
 	
 %: ----------------------- conclusion ------------------------
 % introduction
-\include{5_conclusion/0_index}	
+\include{conclusions}	
 	
 
 % --------------------------------------------------------------
@@ -235,7 +194,7 @@
 %\addcontentsline{toc}{section}{References}
 %
 
-\bibliography{9_backmatter/references} % adjust this to fit your BibTex file
+\bibliography{references} % adjust this to fit your BibTex file
 
 % --------------------------------------------------------------
 % Various bibliography styles exit. Replace above style as desired.
@@ -259,7 +218,7 @@
 
 
 %: Declaration of originality
-\include{9_backmatter/declaration}
+\include{declaration}
 
 
 \end{document}

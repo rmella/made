@@ -440,7 +440,7 @@
     %{\@textadvisor \@advisortwo \par}
     {\@advisortwo \par}
 	\vspace*{4ex}
-    {\@textsignaturecandidate \hspace*{15ex}\@textsignatureadvisor \hspace*{15ex}\@textsignatureadvisor \par}
+    {\@textsignaturecandidate \hspace*{30ex}\@textsignatureadvisor \par}
 	\vspace*{15ex}
     {\@cityofbirth, \@degreedate}
 }%end large
