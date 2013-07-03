@@ -58,3 +58,45 @@ La figura \ref{fig:panorama_ficcion} muestra de manera esquematizada el panorama
 \label{objetivos}
 
 MADE es un motor de drama artificial masivo para personajes no jugadores, es decir, una herramienta que permite crear mundos coherentes, con personajes y tramas interesantes, de manera automática.
+
+
+
+\section{Nomenclatura}
+
+MADE es un sistema bioinspirado de dos niveles:
+
+\begin{itemize}
+\item El primer nivel es un sistema multiagente cuya misión es la de generar un conjunto de tramas y personajes coherentes entre sí.
+\item El segundo nivel es un algoritmo genético que permite obtener perfiles de los agentes para que emerjan tramas interesantes a partir de arquetipos literarios. 
+\end{itemize}
+
+Para evitar confusiones a la hora de referirnos a elementos de un nivel u otro, he optado por utilizar nombres diferentes para los conceptos de indivíduo, población y descendencia.\\
+
+\textbf{Agente Vs. Indivíduo}\\
+
+\begin{description}
+\item[Agente:] (Primer nivel, sistema multiagente) Un agente es una entidad capaz de percibir su entorno, procesar tales percepciones y responder o actuar en su entorno
+%CITE http://books.google.es/books?id=PDCtUvMReVIC&lpg=PA113&ots=4K9piEO5wA&lr&pg=PR2#v=onepage&q&f=false 
+
+\item[Indivíduo:] (Segundo nivel, algoritmo genético) Cada elemento de la población en el algoritmo genético. Tiene asociado un cromosoma. 
+\end{description}
+
+\textbf{Grupo de agentes / demografía Vs. Población}\\
+
+\begin{description}
+\item[Grupo de agentes / demografía:] (Primer nivel, sistema multiagente) Conjunto de agentes que viven en el Entorno MADE.
+% REF
+
+\item[Indivíduo:] (Segundo nivel, algoritmo genético) Conjunto de indivíduos para una iteración dada, y que evoluciona para premiar a los indivíduos con mayor fitness.
+\end{description}
+
+\textbf{Agentes hijos Vs. Descendencia}\\
+
+\begin{description}
+\item[Agentes hijos:] (Primer nivel, sistema multiagente) Conjunto de agentes que viven en el Entorno MADE.
+% REF
+
+\item[Descendencia:] (Segundo nivel, algoritmo genético) Conjunto de indivíduos que combinan las características de ambos cromosomas padres.
+\end{description}
+
+El término Generación no se considera ambiguo y se utilizará sólo para el segundo nivel (algoritmo genético). En el primer nivel dicho concepto está presente para cada indivíduo que nace, pero no es relevante. En su lugar, cada iteración que permite la ejecución de los agentes irá asociado a una medida de tiempo (en el caso del prototipo, serán días)
