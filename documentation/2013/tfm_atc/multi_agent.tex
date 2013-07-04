@@ -1,0 +1,124 @@
+\chapter{Sistema multiagente bottom-up para la coherencia de tramas}
+
+El primer objetivo del proyecto es conseguir crear un contexto de personajes primarios, secundarios y extras coherente, es decir, en el que todos los elementos interaccionan con el entorno y entre sí con unas reglas definidas, generando una combinación única de acciones entrelazadas e interrelacionadas.
+
+La hipótesis es utilizar una aproximación bottom-up para generar un conjunto base de agentes que coexistan en un Entorno MADE y eventualmente tengan sucesión, de modo que a lo largo del tiempo la demografía el mundo virtual se renueve, llegando al momento en el que se produce la historia que se desea narrar. En este punto, todo agente tiene unas características coherentes con su entorno.
+
+Si las reglas que definen las acciones y personalidad de los agentes son adecuadas, la solución será óptima para la historia que el creador desea narrar. En última instancia, el objetivo de MADE no es únicamente el de conseguir un mundo coherente y adecuado para el creador y la historia finales, sino que además esas historias sean interesantes. La aproximación para abordar la obtención de esos parámetros específicos queda detallada en la sección \ref{cha:genetic_algorithm}.
+
+
+\section{Entorno MADE}
+
+El entorno MADE se define como aquel donde conviven los agentes y que coordina su funcionamiento. Sus funciones son las siguientes:
+
+\begin{description}
+   \item[Crear un conjunto inicial de agentes:] 
+
+ 	El entorno MADE inicializará un conjunto de agentes huérfanos , de edad 0 y perfil asignado secuencialmente. Dichos agentes acaban de nacer en el entorno MADE y deben competir o colaborar para sobrevivir.
+   
+   \item[Posicionar a los agentes en un mapa:] El Entorno MADE dispone de un mapa, inicialmente cuadrado, compuesto por celdas que pueden ser ocupadas por un único agente. El Entorno ofrece mecanismos para que los agentes descubran a otros agentes en el vecindario y puedan interactuar con ellos.
+   
+   \item[Iniciar y controlar el paso el tiempo:] Tras la creación y posicionamiento del conjunto inicial de agentes, el Entorno MADE inicializa el contador de tiempo.
+   
+   \item[Permitir que cada agente se ejecute durante una unidad de tiempo:] El entorno MADE entra en un bucle que finaliza cuando haya iterado el número de unidades de tiempo especificadas en su ejecución. Dicho bucle incluye obtener todos los agentes vivos, reordenar la lista, permitir que cada agente ejecute una iteración de su  ciclo de vida, y eliminar del mapa los agentes que ya no están vivos. 
+   
+   \item[Ejercer de agente externo que cambia el entorno:] Cada iteración realizada por el entorno MADE implica la colocación de un número de raciones de comida en celdas aleatorias. Un agente sólo podrá comer cuando se halle sobre una celda con ración, por lo que se permitirá que los agentes puedan mover a otros de manera forzosa.
+    
+   \item[Ofrecer servicios a los agentes:] El Entorno MADE permite a los agentes consultar qué celdas cercanas tienen comida, qué celdas cercanas están ocupadas, qué agentes se encuentran en una posición cercana y qué posiciones cercanas pueden ocupar.
+   
+   \item[Decidir el perfil de los agentes:] MADE permite la existencia de diferentes perfiles de agentes. Un perfil de agente será un conjunto de probabilidades que rigen sus características y comportamiento.
+   
+\end{description}
+
+%TODO hablar de madkit y por qué no me ha valido: Necesito realizar demasiadas ejecuciones para cada entorno, así que no me vale un sistema que modele los agentes en tiempo real.
+
+%TODO Hablar de cómo la ejecución secuencial evita condiciones de carrera y bloqueos 
+
+\section{Agente MADE}
+
+%CITE http://es.wikipedia.org/wiki/Agente_inteligente_(Inteligencia_Artificial)
+\textit{Un agente inteligente, es una entidad capaz de percibir su entorno, procesar tales percepciones y responder o actuar en su entorno de manera racional, es decir, de manera correcta y tendiendo a maximizar un resultado esperado. Es capaz de percibir su medioambiente con la ayuda de sensores y actuar en ese medio utilizando actuadores (elementos que reaccionan a un estímulo realizando una acción).
+En este contexto la racionalidad es la característica que posee una elección de ser correcta, más específicamente, de tender a maximizar un resultado esperado. Este concepto de racionalidad es más general y por ello más adecuado que inteligencia (la cual sugiere entendimiento) para describir el comportamiento de los agentes inteligentes. Por este motivo es mayor el consenso en llamarlos agentes racionales.}
+
+Un agente MADE es aquel que es ejecutado por un Entorno MADE y que utiliza a este para comunicarse con otros agentes.
+
+En las siguientes subsecciones se detallará en funcionamiento del agente MADE implementado para el prototipo y pruebas.
+
+
+\subsection{Las ratas que viven bajo la Universidad Invisible en Ankh-Morpork }
+
+El proyecto MADE ofrece un abanico inmenso de posibilidades de implementación. Para este Trabajo Fin de Máster se ha optado por implementar una sociedad con una base literaria: Las ratas que viven bajo la Universidad Invisible de la ciudad de Ankh-Morpork, del Universo de Mundodisco, de Terry Prattchet. Las razones por las que se han elegido dichos agentes son las siguientes:
+
+\begin{itemize}
+\item Se trata de personajes de conducta simple. Comenzar modelando a personajes humanos fue un error que ya se cometió en el inicio del proceso creativo de MADE,y que se deshecho debido a su inmensa complejidad; sin embargo, los personajes seleccionados pueden complicarse si se desea. En el universo de Mundodisco, estas ratas han sido empapadas por constantes fugas de magia que emanan de la Universidad Invisible, por lo que es de imaginar que se le puedan atribuir ciertos comportamientos humanos.
+\item No existe apenas literatura sobre ellas, salvo menciones en algún libro, por lo que ofrecen una libertad absoluta a la hora de modelarlas.
+\item Experimentar con ratas en una Universidad es algo, históricamente, muy científico.
+\end{itemize}
+
+\subsubsection{Diagrama de estados}
+
+Los agentes seleccionados tienen una serie de estados que quedan descritos en el siguiente diagrama:
+
+%TODO figura estados
+
+\subsubsection{Parametrización de un agente}
+
+Un agente queda parametrizado según los siguientes valores reales, que en su conjunto definen un perfil:
+
+\begin{description}
+\item[FEATURE\_BITE:] La fuerza del mordisco, utilizada para desplazar a otro agente de su posición cuando el primero desea ocuparla para poder comerse una ración de comida.
+\item[FEATURE\_FUR:] Cantidad de pelaje, que sirve a la rata para defenderse de una dentellada de su atacante que intenta desplazarla a otra posición.
+\item[FEATURE\_PROFILE\_VARIANCE:] Variabilidad de las caracterícticas de los agentes que tienen este perfil.
+\item[FEATURE\_HEALTH:] Vitalidad del agente que define sus puntos de vida.
+\item[FEATURE\_LIFE:] Edad máxima del agente.
+\item[FEATURE\_SMELL:] Radio de visión del agente para buscar comida, realizar movimientos o localizar pareja.
+\item[FEATURE\_METHABOLISM:] Energía que aporta cada porción de comida
+\item[FEATURE\_HUNGRY\_LEVEL:] Facilidad para sentir hambre ante una baja energía.
+\item[FEATURE\_PROCREATION:] Necesidad de procreación del agente (hembra)
+\item[FEATURE\_ENJOYABLE:] Carisma del agente o facilidad para encontrar pareja.
+\item[FEATURE\_AGE\_TO\_BE\_ADULT:] Define la edad a partir de la cual una rata se considera adulta y por lo tanto puede procrear.
+\item[FEATURE\_PREGNANCY\_TIME:] Duración del embarazo del agente (hembra)
+\item[FEATURE\_KINDNESS:] Amabilidad o probabilidad de que el agente ceda su posición a otro para que este pueda obtener comida.
+\end{description} 
+
+Todos los parámetros anteriores son valores reales entre 0 y 1, normalizados y que se utilizan para asignar valores al agente.
+%TODO mal explicado
+
+\subsubsection{Características básicas}
+
+
+\begin{table}[h]
+\caption{caracteríctias de un agente} %title of the table
+\centering % centering table
+\begin{tabular}{| l | c | r |} % creating eight columns
+\hline\hline
+Caracteríctica & Descripción & Cálculo\\
+\hline % inserts single-line
+aa & aa & aa\\
+\hline % inserts single-line
+\end{tabular}
+\label{tab:caracteristicas}
+\end{table}
+
+
+\subsubsection{Alimentación}
+
+%TODO comida
+
+\subsubsection{Competitividad}
+
+
+\subsubsection{Mecanismos de disminución de la fricción}
+
+
+\subsubsection{Paternidad / Maternidad}
+
+
+\subsubsection{Perfiles y variabilidad}
+
+
+\subsubsection{Registro de actividad de cada agente}
+
+Las transiciones entre estados generan una secuencia de registros en formato log, que, junto a una ficha personal, detallan la vida de cada agente y permiten su posterior análisis.
+
+%TODO formato 
