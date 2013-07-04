@@ -300,70 +300,50 @@ El pseudocódigo para la ejecución principal del entorno MADE es el siguiente:
 
 El pseudocódigo para la ejecución del agente es el siguiente:
 
-\begin{enumerate}
- \item días vividos + +
- \item energía --
- \item Si embarazada > 0
- \begin{enumerate}
-  \item embarazada - -
-  \item Si embarazada == 0
-  \begin{enumerate}
-   \item Nacimiento de máximo 10 agentes que heredan nombre y perfil de los
-padres
-  \end{enumerate}
- \end{enumerate}
+
+
+\begin{verbatim}
+ - días vividos + +
+ - energía --
+ - Si embarazada > 0
+   - embarazada - -
+   - Si embarazada == 0
+     - Nacimiento de máximo 10 agentes que heredan
+       nombre y perfil de los padres
+ - Si días vividos mayor que Edad máxima o 
+   energía <= que 0
+   - vivo = false
+ - Si no
+  - Si tiene hambre
+    - p = Buscar posición cercana con comida y sin 
+      ocupar
+     - Si p no existe
+       - p = Buscar posición cercana con comida y 
+         ocupada
+       - Si p existe
+         - Si agente atacado es amable
+           - mover agente atacado a una posición 
+             cercana
+         - Si no, si dentellada es mayor que pelaje
+           del objetivo
+           - mover agente atacado una posición cercana
+           - energía de agente atacado - - 
+    - Si p existe
+      - mover a p
+      - comer una ración
+      - energía += metabolismo
+  - Si no, 
+    - Si es mujer y embarazada == 0 y desea tener
+      descendencia y no tiene pareja
+      - l = buscar agentes masculinos cerca
+      - Si l existe
+        - ag = primer agente compatible
+        - Si ag existe
+          - ag es pareja
+          - embarazo = tiempo de gestación
+    - Si no, desplazarse por el mapa
  
- \item Si días vividos mayor que Edad máxima o energía menor o igual que 0
- \begin{enumerate}
-  \item vivo = false
- \end{enumerate}
- \item Si no
- \begin{enumerate}
-  \item Si tiene hambre
-  \begin{enumerate}
-   \item p = Buscar posición cercana con comida y sin ocupar
-   \begin{enumerate}
-    \item Si p no existe
-    \begin{itemize}
-     \item p = Buscar posición cercana con comida y ocupada
-     \item Si p existe
-     \begin{itemize}
-      \item Si agente atacado es amable
-      \begin{itemize}
-       \item mover agente atacado a una posición cercana
-      \end{itemize}
-      \item Si no, si dentellada es mayor que pelaje del objetivo
-      \begin{itemize}
-       \item mover agente atacado una posición cercana
-       \item energía de agente atacado - -
-      \end{itemize}
-     \end{itemize}
-    \end{itemize}
-   \end{enumerate}
-   \item Si p existe
-   \begin{enumerate}
-    \item mover a p
-    \item comer una ración
-    \item energía += metabolismo
-   \end{enumerate}
-  \end{enumerate}
-  \item Si no,  Si es mujer y embarazada == 0 y desea tener descendencia y no
-tiene pareja
-  \begin{enumerate}
-   \item l = buscar agentes masculinos cerca
-   \item Si l existe
-   \begin{enumerate}
-    \item ag = primer agente compatible
-    \item Si ag existe
-    \begin{itemize}
-     \item ag es pareja
-     \item embarazo = tiempo de gestación
-    \end{itemize}
-   \end{enumerate}
-  \end{enumerate}
-  \item Si no, desplazarse por el mapa
- \end{enumerate}
-\end{enumerate}
+\end{verbatim}
 
 
 
