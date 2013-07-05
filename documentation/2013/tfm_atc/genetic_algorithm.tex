@@ -1,0 +1,223 @@
+
+\chapter{Algoritmo genético para la búsqueda de arquetipos emergentes}
+\label{cha:genetic_algorithm}
+
+Llegados a este punto, disponemos de un sistema auto-organizativo de vida
+artificial que simula el paso del tiempo sobre una sociedad, registrando todas
+las acciones que realizan sus agentes.
+
+Los agentes disponen de mecanismos para competir por los recursos, cooperar y
+tener descendencia. El momento de realización de cada acción, su frecuencia
+y efectividad están definidos por las características del agente, que a
+su vez están generadas a partir de los valores definidos en el perfil. Todas
+las acciones realizadas por los agentes tienen una coherencia respecto a los
+demás agentes y el entorno.
+
+El objetivo de este apartado consiste en la búsqueda de arquetipos emergentes.
+La ejecución de un entorno MADE es un proceso estocástico: su ejecución es
+azarosa pero orientada por el conjunto de parámetros de los perfiles,
+que influyen directamente en las decisiones y características de los agentes. A
+priori, es difícil predecir qué efecto tiene el aumento o la disminución del
+valor de un parámetro específico en el entorno. Tampoco habrá dos 
+ejecuciones iguales, así que tendremos que trabajar utilizando cálculos
+estadísticos.
+
+Los registros de los agentes pueden llegar a tener unas mil líneas. Si
+obtenemos un sistema para procesar esas líneas podríamos evaluar el
+comportamiento del agente.
+
+La hipótesis planteada es la siguiente:\\
+
+
+
+Utilizando un algoritmo genético donde:
+
+\begin{itemize}
+\item Se fijan características del entorno como el tamaño del mapa, el número
+inicial de agentes o el número de perfiles.
+\item Los genes que forman el cromosoma son cada uno de los parámetros de los
+perfiles disponibles para los agentes.
+\item La función fitness viene definida por el usuario mediante:
+  \begin{itemize}
+   \item el uso de expresiones regulares que son capaces de encontrar arquetipos
+en los registros de los agentes
+   \item una asignación de valor a la población en función del
+número de agentes que cumplen un arquetipos
+  \end{itemize}
+\end{itemize}
+
+  
+
+Seríamos capaces de optimizar los valores de los perfiles de manera que la
+ejecución de un Entorno MADE genere agentes con vidas ``interesantes'' según el
+modelado hecho por el usuario de arquetipos y patrones.
+
+Por ejemplo: Partiendo del entorno prototipo diseñado con ratas, podríamos
+buscar dos contextos diferentes:
+
+Caso 1: el autor desea un contexto de ciencia ficción distrópica:
+El contexto deseado podría ser una sociedad que ve mermada su población por la
+falta de víveres. Las arquetipos que nos interesarían podrían ser de villanos y
+supervivientes, con mucha acción y violencia.
+
+Caso 2: el autor desea contar una soap opera:
+El contexto deseado podría ser una sociedad floreciente, donde no hay
+excesiva falta de recursos.Podrían premiarse los arquetipos de relaciones
+amorosas, la venganza, las experiencias personales.
+
+Ninguno de los arquetipos citados anteriormente han sido modelados de manera
+directa en el comportamiento de nuestras ratas.
+
+
+\section{Parametrización del algoritmo genético}
+
+El sistema MADE provee un sistema para permitir que el usuario pueda definir su
+función fitness de manera cómoda y muy versátil. Para ello, puede editarse el
+fichero ``evaluation.properties'' para trabajar con las propiedades descritas
+a continuación:
+
+Se permite editar un conjunto de parámetros
+necesarios para la ejecución del algoritmo genético: número máximo de
+generaciones, tamaño de la población y número de perfiles. Es importante
+destacar que el tamaño del cromosoma es directamente proporcional al número de
+perfiles.
+
+\begin{verbatim}
+# ---
+# Global variables
+# max allowed evaluation (generations) of the 
+# genetic algorithm.
+global.MAX_ALLOWED_EVOLUTIONS=30
+# population size for the genetic algorithm.
+global.POPULATION_SIZE=20
+global.NUMBER_OF_PROFILES=1
+#---
+\end{verbatim}
+
+
+El sistema MADE permite definir la función de fitness. Para ello se usa un
+sistema de scripting sencillo que permite al sistema MADE ejecutar expresiones y
+código fuente java de manera muy específica:
+
+\begin{verbatim}
+#---
+# Labels
+# p = number of agents (dead or alive)
+# pm = Number of agents that match the state
+# a = number of alive agents
+# am = number of alive agents that match the state
+
+# growing population
+label.alivepopulation.r=.*
+label.alivepopulation.c=a>30 && a<90
+label.alivepopulation.w=gaussian((double)am, 60.0, 30.0)
+#---
+\end{verbatim}
+
+Cada arquetipo o característica de la población que desee evaluarse debe estar
+presente en el fichero mediante el uso de tres propiedades y debe asociarse de
+manera única con una etiqueta:
+
+\begin{description}
+ \item[label.(nombre\_de\_etiqueta).r] Propiedad que define la expresión regular
+que será buscada en el registro de cada agente. Nota importante: El símbolo
+``\\" siempre debe aparecer doble.
+ \item[label.(nombre\_de\_etiqueta).c] Propiedad que define la condición
+que debe cumplir la población respecto al número de agentes que poseen la
+etiqueta. El sistema provee cuatro variables que pueden ser utilizadas:
+\begin{description}
+ \item[p:] número total de agentes que viven o han vivido durante la ejecución.
+ \item[pm:]  número total de agentes que viven o han vivido durante la
+ejecución y que tienen la etiqueta.
+ \item[a] número de agentes vivos en el momento del fin de la ejecución.
+ \item[am] número de agentes  vivos en el momento del fin de la ejecución. y
+que tienen la etiqueta.
+\end{description}
+ \item[label.(nombre\_de\_etiqueta).w] Propiedad que define el peso que consigue
+el Entorno MADE ejecutado. Además de proveerse las cuatro variables utilizables
+en la anterior propiedad, se ofrece la función \textit{gaussian}, que recibe
+como parámetro el valor que se quiere medir, el valor objetivo y la distancia a
+éste a partir de la cual el valor debe aportar peso al fitness. Para ponderar
+el fitness basta con aplicar un factor multiplicativo.
+\end{description}
+
+
+
+
+%\section{Arquetipos}
+%
+%A modo de ejemplo está sección incluye algunos famosos arquetipos de la
+%literatura ampliamente utilizados.
+%
+%El sistema de detección de arquetipos de MADE está basado en búsqueda de
+%patrones mediante expresiones regulares.
+%
+%% CITA
+%% http://www.ehowenespanol.com/lista-arquetipos-
+%% frecuentes-literatura-info_124368/
+%
+%\subsection*{Héroe}
+%El héroe es el personaje que supera obstáculos y salva el día. Usualmente se
+%embarca en algún tipo de misión, ya sea física o espiritual. El héroe puede ser
+%un caballero de brillante armadura, un oficial de policía o un político buscando
+%lograr cambios. Los ejemplos específicos incluyen a Robin Hood, Luke Skywalker y
+%a la Mujer Maravilla. La calidad que hace que un personaje sea realmente heroico
+%es su deseo de dar más importancia a otros que a sí mismo.
+%
+%En el contexto Made, un héroe podría ser aquel que siempre se ha desplaza amablemente para dejar comida a los demás pero nunca ha muerto de hambre ni ha
+%causado daño a otro agente.
+%
+%Se modela según la siguiente expresión regular:
+%
+%
+%\subsection*{Villano}
+%Ablestock.com/AbleStock.com/Getty Images
+%Trabajando contra el héroe está el villano. Este personaje emplea la fuerza
+%bruta o la astucia para perjudicar el trabajo del héroe. A menudo no es
+%reconocido por quien de verdad es hasta que la historia haya avanzado. Algunas
+%veces un grupo puede aparecer en lugar de un villano, como una corporación que
+%está contaminando deliberadamente el agua. El rol del villano es ser finalmente
+%derrotado por el héroe.
+%
+%\subsection*{Figura maternal}
+%En la literatura, el rol de la madre es cuidar y guiar a su familia. Este
+%arquetipo maternal no tiene que ser literalmente una madre ni las personas a las
+%que cuida tienen que ser su familia. El hada madrina de la literatura infantil
+%es un buen ejemplo. Esta figura maternal algunas veces es un líder espiritual o
+%una fuente de vida para la comunidad. En la mayoría de casos, la figura materna
+%recibe mucho amor y respeto por los personajes de la historia.
+%
+%\subsection{Figura paterna}
+%Al líder y protector de un grupo usualmente se le considera como una figura
+%paterna. Moisés de la Biblia es un ejemplo de este arquetipo ya que condujo a su
+%gente fuera de Egipto. Un niño huérfano puede buscar una figura paterna para
+%proveer estabilidad a su mundo. En las culturas en donde los roles de los
+%géneros son más fluidos, las cualidades de las figuras paterna y materna pueden
+%estar mezcladas o los dos roles pueden ser representados por un solo personaje.
+%
+%\subsection{El débil}
+%El débil es el personaje que siempre parece estar en desventaja. El patito feo,
+%por ejemplo, se destacó por todas las razones incorrectas. En el final de la
+%historia, el personaje supera las dificultades y gana respeto. Este arquetipo
+%funciona mejor cuando el lector puede sentirse identificado con el personaje
+%débil. El lector invierte emocionalmente en este personaje y comparte su éxito
+%final.
+%
+%\subsection{El viaje}
+%En "El Señor de los Anillos", Frodo y sus acompañantes viajan cientos de
+%kilómetros para completar su misión épica. A este tipo de narrativa se la conoce
+%como viaje y es familiar para casi todos los lectores. Usualmente se requiere
+%que el héroe deje la comodidad del hogar detrás y lleve a cabo una misión que no
+%tiene ninguna garantía de lograr con éxito. El viaje está lleno de obstáculos y
+%distracciones pero el fracaso no es una opción. En el camino, el grupo de
+%miembros aprende más sobre el mundo y sobre su lugar en él.
+%
+%\subsection{La caída}
+%La historia bíblica de la expulsión de Adán y Eva del Jardín del Edén es la
+%historia arquetípica de la caída de la gracia. Este tipo de historia involucra
+%que los personajes pierdan algún poder o privilegio. Algunas veces los
+%personajes que caen no son agradables y el lector disfruta viéndolos caer. En
+%otros casos, los personajes generalmente son buenos pero cometieron algún error
+%que descarriló sus esperanzas y sueños. Una caída de la gracia puede ser una
+%oportunidad para que el personaje aprenda una lección importante sobre la vida y
+%el mundo.

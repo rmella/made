@@ -1,0 +1,236 @@
+% ----------------------------------------------------------------------
+%             Plantilla basada en la de la Universidad of Deusto:
+%             http://softwarelibre.deusto.es/wp-content/uploads/2011/
+%             11/phd-template_v.1.0.zip
+% ----------------------------------------------------------------------
+
+\documentclass[twoside,12pt]{Latex/Classes/PhDthesisPSnPDF}
+\include{Latex/Macros/Macros}
+
+\graphicspath{ {./figures/} }
+
+
+\ifpdf  
+    \pdfinfo { /Title  (PhD)
+               /Creator (TeX)
+               /Producer (pdfTeX)
+               /Author (Rubén Héctor García Ortega)
+               /CreationDate (D:20130705120000)
+               /ModDate (D:YYYYMMDDhhmm)
+               /Subject (xyz)
+               /Keywords (keyword1, keyword2, keyword3) }
+    \pdfcatalog { /PageMode (/UseOutlines)
+                  /OpenAction (fitbh)  }
+\fi
+
+
+\title{MADE: Massive Artificial Drama Engine for non player characters}
+
+
+\crest{\includegraphics[width=10cm]{logo_ugr.jpg}}
+\university{}
+\degree{Trabajo Fin de Master presentado por }
+\author{Rubén Héctor García Ortega} 
+\collegeordept{}
+\textadvisor{Dirigido por }
+\advisor{Dr. Juan Julián Merelo Guervós}
+\advisortwo{}
+\textsignaturecandidate{El alumno}
+\textsignatureadvisor{El director}
+\cityofbirth{Granada}
+%\degreedate{\monthname \ \the\year}
+\degreedate{Julio de \the\year}
+
+
+\hbadness=10000
+\hfuzz=50pt
+
+
+
+\begin{document}
+
+\selectlanguage{spanish}
+
+% sets line spacing
+\renewcommand\baselinestretch{1.2}
+\baselineskip=18pt plus1pt
+
+
+
+\maketitle
+
+\include{title_back}
+
+\frontmatter
+
+\include{dedication}
+
+\include{abstract}
+
+%\include{acknowledgement}
+
+\selectlanguage{spanish}
+
+\setcounter{secnumdepth}{5} % organisational level that receives a numbers
+\setcounter{tocdepth}{5}    % print table of contents for level 3
+
+
+
+\tableofcontents            % print the table of contents
+%\listoffigures	% print list of figures
+%\listoftables  % print list of tables
+%
+%
+%\include{glossary}
+%
+%%\begin{multicols}{2} % \begin{multicols}{#columns}[header text][space]
+%%\begin{footnotesize} % scriptsize(7) < footnotesize(8) < small (9) < normal (10)
+%%\printnomenclature[1.5cm] % [] = distance between entry and description
+%
+%\printnomenclature % [] = distance between entry and description
+%
+%\label{sec:glossary} % target name for links to glossary
+%
+%%\end{footnotesize}
+%%\end{multicols}
+
+
+
+
+%: --------------------------------------------------------------
+%:                  MAIN DOCUMENT SECTION
+% --------------------------------------------------------------
+
+
+\mainmatter
+
+\renewcommand{\chaptername}{} % uncomment to print only "1" not "Chapter 1"
+\pagestyle{fancy}
+
+%: ----------------------- subdocuments ------------------------
+
+% Parts of the thesis are included below. Rename the files as required.
+% But take care that the paths match. You can also change the order of appearance by moving the include commands.
+
+%: ----------------------- introduction ------------------------
+% introduction
+\include{introduction}	
+
+%: ----------------------- related work ------------------------
+% introduction
+\include{state_of_the_art}
+
+\chapter{prueba}
+
+hola \cite{web_arquetipos}
+
+%\include{technologies}	
+
+
+\include{multi_agent}
+
+
+\include{genetic_algorithm}
+
+
+%: ----------------------- overall methodology ------------------------
+% introduction
+\include{methodology}
+	
+%: ----------------------- experiments and results ------------------------
+% introduction
+\include{results}	
+	
+%: ----------------------- conclusion ------------------------
+% introduction
+\include{conclusions}	
+	
+
+% --------------------------------------------------------------
+%:                  BACK MATTER: appendices, refs,..
+% --------------------------------------------------------------
+
+% the back matter: appendix and references close the thesis
+\backmatter
+
+
+%: ----------------------- appendix ------------------------
+
+%\appendix
+
+
+%: ----------------------- bibliography ------------------------
+
+
+
+% The section below defines how references are listed and formatted
+% The default below is 2 columns, small font, complete author names.
+% Entries are also linked back to the page number in the text and to external URL if provided in the BibTex file.
+
+
+% Original version:
+
+% PhDbiblio-url2 = names small caps, title bold & hyperlinked, link to page 
+%\begin{multicols}{2} % \begin{multicols}{ # columns}[ header text][ space]
+%\begin{tiny} % tiny(5) < scriptsize(7) < footnotesize(8) < small (9)
+%
+%\bibliographystyle{Latex/Classes/PhDbiblio-url2} % Title is link if provided
+%\renewcommand{\bibname}{References} % changes the header; default: Bibliography
+%
+%\bibliography{9_backmatter/references} % adjust this to fit your BibTex file
+%
+%\end{tiny}
+%\end{multicols}
+
+
+
+% Show all bibliography entries
+%\nocite*
+
+
+
+% If we want bibliography backreference, use unsrt first and the desidered one after
+
+%\bibliographystyle{unsrt} % Defines the bibliography style
+
+\bibliographystyle{alpha} % Defines the bibliography style
+
+%\bibliographystyle{apa-good} % Defines the bibliography style
+%\bibliographystyle{natbib} % Defines the bibliography style
+
+%\bibliographystyle{plainurl}
+
+%\renewcommand{\bibname}{References} % changes the header; default: Bibliography
+
+%To include the references/works cited/bibliography in your Table of Contents, right before the bibliography command, use the command
+%\addcontentsline{toc}{section}{References}
+%
+
+\bibliography{made} % adjust this to fit your BibTex file
+
+% --------------------------------------------------------------
+% Various bibliography styles exit. Replace above style as desired.
+
+% in-text refs: (1) (1; 2)
+% ref list: alphabetical; author(s) in small caps; initials last name; page(s)
+%\bibliographystyle{Latex/Classes/PhDbiblio-case} % title forced lower case
+%\bibliographystyle{Latex/Classes/PhDbiblio-bold} % title as in bibtex but bold
+%\bibliographystyle{Latex/Classes/PhDbiblio-url} % bold + www link if provided
+
+%\bibliographystyle{Latex/Classes/jmb} % calls style file jmb.bst
+% in-text refs: author (year) without brackets
+% ref list: alphabetical; author(s) in normal font; last name, initials; page(s)
+
+%\bibliographystyle{plainnat} % calls style file plainnat.bst
+% in-text refs: author (year) without brackets
+% (this works with package natbib)
+
+
+% --------------------------------------------------------------
+
+
+%: Declaration of originality
+\include{declaration}
+
+
+\end{document}

@@ -1,0 +1,97 @@
+
+
+%\begin{savequote}[50mm]
+%Historical methodology, as I see it, is a product of common sense applied to circumstances. 
+%\qauthor{Samuel E. Morison}
+%\end{savequote}
+
+
+\chapter{Metodología general}
+\label{cha:Overall methodology}
+
+La metodología de evaluación del sistema MADE consitirá en el siguiente proceso:
+
+\begin{itemize}
+ \item Definición de los parámetros de ejecución del Entorno MADE
+ \item Definición de la función fitness
+ \item Estudio de la variabilidad del fitness para soluciones aleatorias
+ \item Definición de los parámetros de ejecución del algoritmo genético
+ \item Ejecución del algoritmo para diferente número de perfiles
+ \item Obtención de la mejor solución para los diferentes perfiles
+ \item Análisis de los valores obtenidos
+\end{itemize}
+
+\section{Definición de los parámetros de ejecución del Entorno MADE}
+
+El entorno MADE se ejecutará con los siguientes parámetros:
+
+\begin{verbatim}
+global.NUMBER_OF_PROFILES=1
+global.NUMBER_OF_INITIAL_AGENTS=30
+global.MAP_DIMENSION=30
+global.FOOD=20
+global.DAYS=2000
+
+base.BASE_DAYS = 200
+base.BASE_ENERGY = 5
+base.BASE_SMELL = 3
+base.BASE_NUTRITION = 4
+base.BASE_BITE = 5
+base.BASE_FUR = 5
+base.BASE_AGE_TO_BE_ADULT_FEMALE = 42
+base.BASE_AGE_TO_BE_ADULT_MALE = 49
+base.BASE_PREGNANCY_TIME = 30
+\end{verbatim}
+
+\section{Definición de la función Fitness}
+
+Se han utilizado las siguientes etiquetas, condiciones y pesos. 
+
+\begin{verbatim}
+
+# growing population
+label.alivepopulation.r=.*
+label.alivepopulation.c=a>30 && a<90
+label.alivepopulation.w=gaussian((double)am, 60.0, 30.0)
+
+# 1 opressed
+label.opressed.r=[\\.\\s]*@DEFENDED[^@]*@DEFENDED[\\.\\s]*
+label.opressed.c=am>=a*0.05 && am<=a*0.2
+label.opressed.w=gaussian(a==0? 0: (double)am /(double)a, 0.15, 0.15)
+
+# a warrior
+label.warrior.r=[\\.\\s]*@NUDGE_OK[\\.\\s]*{5}
+label.warrior.c=pm>=a*0.05 && pm<=a*0.2
+label.warrior.w=gaussian(p==0? 0: (double)pm /(double)p, 0.15, 0.15)
+
+# an indefense
+label.indefense.r=[\\.\\s]*@NUDGED[\\.\\s]*{10}
+label.indefense.c=pm>=p*0.05 && pm<=p*0.2
+label.indefense.w=gaussian(p==0? 0: (double)pm /(double)p, 0.15, 0.15)
+
+# failed warrior
+label.failedwarrior.r=[\\.\\s]*@NUDGE_FAILED[\\.\\s]*{10}
+label.failedwarrior.c=pm>=p*0.05 && pm<=p*0.2
+label.failedwarrior.w=gaussian(p==0? 0: (double)pm /(double)p, 0.15, 0.15)
+
+\end{verbatim}
+
+
+
+\section{Estudio de la variabilidad del fitness}
+
+Se estudiará la variabilidad del fitness para 100 cromosomas, mediante la
+ejecución de 100 Entornos MADE utilizando dichos cromosomas.
+
+Utilizando los datos anteriores, se elegirá un número de iteraciones que
+ofrezca una media significativa, y se utilizará para calcular el fitness medio
+de cada indivíduo de la población del algoritmo genético.
+
+
+\section{Parámetros de ejecución del algoritmo genético}
+
+\begin{verbatim}
+ global.MAX_ALLOWED_EVOLUTIONS=30
+ global.POPULATION_SIZE=20
+ global.NUMBER_OF_PROFILES={1,2,3,4}
+\end{verbatim}
