@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Ruben.
+ * Copyright 2013 Rubén Héctor García <raiben@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.velonuboso.basicmade;
+
+package com.velonuboso.made.core;
 
 /**
  *
  * @author Ruben
  */
-public enum MadeState {
-    BORN,
-    HUNGRY,
-    EAT,
-    NUDGE_OK,
-    NUDGED,
-    NUDGE_FAILED,
-    DEFENDED,
-    MOVE,
-    LOOK_FOR_PARTNER,
-    PARTNER_FOUND,
-    PREGNANT,
-    PARENT,
-    DIE
+public class Position {
+    
+    public static Position NULL_POSITION;
+    static{
+        NULL_POSITION = new Position(-1,-1);
+    }
+    
+    public int x, y;
+
+    public Position() {
+    }
+
+    public Position(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+    
+    
 }

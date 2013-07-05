@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.velonuboso.basicmade;
+package com.velonuboso.made.prototype;
 
+import com.velonuboso.made.core.MadeAgentInterface;
+import com.velonuboso.made.core.MadeEvaluatorInterface;
+import com.velonuboso.made.core.MadePattern;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ import javassist.CannotCompileException;
  *
  * @author Ruben
  */
-public class MadeEvaluator {
+public class RatEvaluator implements MadeEvaluatorInterface {
 
     public static String MAX_ALLOWED_EVOLUTIONS="global.MAX_ALLOWED_EVOLUTIONS";
     public static String POPULATION_SIZE="global.POPULATION_SIZE";
@@ -44,6 +47,8 @@ public class MadeEvaluator {
     public static String FOOD = "global.FOOD";
     public static String DAYS = "global.DAYS";
     public static String AVERAGE = "global.AVERAGE";
+
+    public static String LOG_FITNESS = "global.LOG_FITNESS";
 
     public static String BASE_DAYS = "base.BASE_DAYS";
     public static String BASE_ENERGY = "base.BASE_ENERGY";
@@ -58,13 +63,14 @@ public class MadeEvaluator {
 
 
 
-    private static MadeEvaluator instance;
+    private static RatEvaluator instance;
     private Properties prop;
     private ArrayList<MadePattern> patterns;
+    private Boolean logFitness = null;
+    private Integer average;
 
 
-
-    private MadeEvaluator() throws CannotCompileException, Exception {
+    private RatEvaluator() throws CannotCompileException, Exception {
         patterns = new ArrayList<MadePattern>();
 
         URL url = this.getClass().getClassLoader().getResource("evaluation.properties");
@@ -89,24 +95,25 @@ public class MadeEvaluator {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(MadeEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RatEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static MadeEvaluator getInstance() {
+    public static RatEvaluator getInstance() {
         if (instance == null) {
             try {
-                instance = new MadeEvaluator();
+                instance = new RatEvaluator();
             } catch (CannotCompileException ex) {
-                Logger.getLogger(MadeEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RatEvaluator.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Exception ex) {
-                Logger.getLogger(MadeEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RatEvaluator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return instance;
     }
 
-    public double getFitness(ArrayList<MadeAgent> agents) {
+    @Override
+    public double getFitness(ArrayList<MadeAgentInterface> agents) {
         double f = 0;
         int p = 0;
         HashMap<String, Integer> pm = new HashMap<String, Integer>();
@@ -122,7 +129,7 @@ public class MadeEvaluator {
             }
         }
 
-        for (MadeAgent madeAgent : agents) {
+        for (MadeAgentInterface madeAgent : agents) {
             p++;
             if (madeAgent.isAlive()) {
                 a++;
@@ -147,16 +154,52 @@ public class MadeEvaluator {
             }
         }
 
+        boolean logFitness = RatEvaluator.getInstance().logFitness();
+        String logString = "";
+
+
         for (MadePattern madePattern : patterns) {
-            f += madePattern.getWeight(p, pm.get(madePattern.getLabel()),
+
+            double d = madePattern.getWeight(p, pm.get(madePattern.getLabel()),
                     a, am.get(madePattern.getLabel()));
+
+            if (logFitness){ logString+=(d + ";");}
+
+            f += d;
         }
 
+        if (logFitness){
+            logString+=(f + ";");
+            System.out.println(logString);
+        }
         return f;
     }
 
     public int getProperty(String key){
+
+        if (key == AVERAGE && average!=null){
+            return average;
+        }
+
         Object val = prop.get(key);
         return Integer.parseInt((String)val);
     }
+
+    public boolean logFitness(){
+        if (logFitness == null){
+            return (Boolean.parseBoolean((String)prop.get(LOG_FITNESS)));
+        }else{
+            return logFitness;
+        }
+    }
+
+    public void setLogFitness(Boolean logFitness) {
+        this.logFitness = logFitness;
+    }
+
+    public void setAverage(Integer average) {
+        this.average = average;
+    }
+    
+    
 }

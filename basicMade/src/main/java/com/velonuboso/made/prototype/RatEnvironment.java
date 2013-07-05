@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.velonuboso.basicmade;
+package com.velonuboso.made.prototype;
 
+import com.velonuboso.made.core.MadeEnvironmentInterface;
+import com.velonuboso.made.core.Position;
+import com.velonuboso.made.core.Gender;
+import com.velonuboso.made.core.MadeAgentInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +30,7 @@ import org.jgap.IChromosome;
  *
  * @author Ruben
  */
-public class MadeEnvironment {
+public class RatEnvironment implements MadeEnvironmentInterface {
 
     
     private int numberOfProfiles;
@@ -39,15 +43,15 @@ public class MadeEnvironment {
     private int[][] mapFood = null;
     IChromosome iChromosome = null;
     int counter;
-    ArrayList<MadeAgent> agents = new ArrayList<MadeAgent>();
-    ArrayList<MadeAgent> aliveAgents = new ArrayList<MadeAgent>();
+    ArrayList<MadeAgentInterface> agents = new ArrayList<MadeAgentInterface>();
+    ArrayList<RatAgent> aliveAgents = new ArrayList<RatAgent>();
     Random r;
     int currDate;
     boolean log = false;
 
-    public MadeEnvironment(IChromosome c) {
+    public RatEnvironment(IChromosome c) {
 
-        MadeEvaluator e = MadeEvaluator.getInstance();
+        RatEvaluator e = RatEvaluator.getInstance();
         numberOfProfiles = e.getProperty(e.NUMBER_OF_PROFILES);
         numberOfInitialAgents = e.getProperty(e.NUMBER_OF_INITIAL_AGENTS);
         mapDimension = e.getProperty(e.MAP_DIMENSION);
@@ -71,14 +75,16 @@ public class MadeEnvironment {
         r = new Random();
     }
 
+    @Override
     public double getVal(int profile, int position) {
-        if (profile > numberOfProfiles || position > MadeAgent.NUMBER_OF_FEATURES) {
+        if (profile > numberOfProfiles || position > RatAgent.NUMBER_OF_FEATURES) {
             throw new IndexOutOfBoundsException();
         }
-        int p = (profile * MadeAgent.NUMBER_OF_FEATURES) + position;
+        int p = (profile * RatAgent.NUMBER_OF_FEATURES) + position;
         return (Double) iChromosome.getGene(p).getAllele();
     }
 
+    @Override
     public double runEnvironment(boolean log) {
 
         currDate = 0;
@@ -88,10 +94,8 @@ public class MadeEnvironment {
 
         for (int i = 0; i < numberOfInitialAgents; i++) {
             Gender g = i % 2 == 0 ? Gender.MALE : Gender.FEMALE;
-            String name = RatNameHelper.getInstance().getRandomName(r, g);
-            String surname = RatNameHelper.getInstance().getRandomSurname(r);
-            String nickname = RatNameHelper.getInstance().getRandomNickname(r);
-            MadeAgent a = new MadeAgent(counter, currDate, g, currentProfile, name, surname, nickname, this, r, log);
+            
+            RatAgent a = new RatAgent(counter, currDate, g, currentProfile, this, r, log);
             agents.add(a);
             aliveAgents.add(a);
             int x, y;
@@ -116,14 +120,14 @@ public class MadeEnvironment {
             }
 
             // shuffle the alive agents and play
-            ArrayList<MadeAgent> tempAliveAgents = new ArrayList<MadeAgent>();
+            ArrayList<RatAgent> tempAliveAgents = new ArrayList<RatAgent>();
             for (int i = 0; i < aliveAgents.size(); i++) {
                 tempAliveAgents.add(aliveAgents.get(i));
             }
 
             Collections.shuffle(tempAliveAgents, r);
             for (int j = 0; j < tempAliveAgents.size(); j++) {
-                MadeAgent a = tempAliveAgents.get(j);
+                RatAgent a = tempAliveAgents.get(j);
                 if (a.isAlive()) {
                     a.justLive();
                 }
@@ -133,7 +137,7 @@ public class MadeEnvironment {
             for (int x = 0; x < mapDimension; x++) {
                 for (int y = 0; y < mapDimension; y++) {
                     if (mapAgents[x][y] != -1 && !agents.get(mapAgents[x][y]).isAlive()) {
-                        agents.get(mapAgents[x][y]).setPosition(Position.NULL_POSITION);
+                        ((RatAgent)agents.get(mapAgents[x][y])).setPosition(Position.NULL_POSITION);
                         aliveAgents.remove(agents.get(mapAgents[x][y]));
                         mapAgents[x][y] = -1;
                     }
@@ -149,10 +153,10 @@ public class MadeEnvironment {
         }
 
         // evaluate
-        return MadeEvaluator.getInstance().getFitness(agents);
+        return RatEvaluator.getInstance().getFitness(agents);
     }
 
-    Position findFreeFood(MadeAgent source, int smell) {
+    Position findFreeFood(RatAgent source, int smell) {
         Position pos = source.getPosition();
 
         Position ret = new Position();
@@ -194,11 +198,11 @@ public class MadeEnvironment {
         }
     }
 
-    Position getPosition(MadeAgent source) {
+    Position getPosition(RatAgent source) {
         return source.getPosition();
     }
 
-    void moveAgent(MadeAgent source, Position t) {
+    void moveAgent(RatAgent source, Position t) {
         Position p = source.getPosition();
         mapAgents[p.x][p.y] = -1;
         mapAgents[t.x][t.y] = source.getId();
@@ -211,7 +215,7 @@ public class MadeEnvironment {
         mapFood[p.x][p.y]--;
     }
 
-    Position findFoodWithAgent(MadeAgent source, int smell) {
+    Position findFoodWithAgent(RatAgent source, int smell) {
         Position pos = source.getPosition();
 
         Position ret = new Position();
@@ -247,11 +251,11 @@ public class MadeEnvironment {
         return null;
     }
 
-    MadeAgent getAgent(Position p) {
-        return agents.get(mapAgents[p.x][p.y]);
+    RatAgent getAgent(Position p) {
+        return ((RatAgent)agents.get(mapAgents[p.x][p.y]));
     }
 
-    Position getFreePosition(MadeAgent source, int smell) {
+    Position getFreePosition(RatAgent source, int smell) {
         ArrayList<Position> positions = getFreePositions(source, smell);
         if (positions.size() == 0) {
             return null;
@@ -264,7 +268,7 @@ public class MadeEnvironment {
         }
     }
 
-    ArrayList<Position> getFreePositions(MadeAgent source, int smell) {
+    ArrayList<Position> getFreePositions(RatAgent source, int smell) {
 
         Position pos = source.getPosition();
 
@@ -300,11 +304,11 @@ public class MadeEnvironment {
 
     }
 
-    ArrayList<MadeAgent> getAgentsAround(MadeAgent source, int smell) {
+    ArrayList<RatAgent> getAgentsAround(RatAgent source, int smell) {
 
         Position pos = source.getPosition();
 
-        ArrayList<MadeAgent> ret = new ArrayList<MadeAgent>();
+        ArrayList<RatAgent> ret = new ArrayList<RatAgent>();
 
         int px0 = pos.x - smell;
         if (px0 < 0) {
@@ -327,7 +331,7 @@ public class MadeEnvironment {
         for (int x = px0; x < px1; x++) {
             for (int y = py0; y < py1; y++) {
                 if (mapAgents[x][y] != -1 && x != pos.x && y != pos.y) {
-                    ret.add(agents.get(mapAgents[x][y]));
+                    ret.add(((RatAgent)agents.get(mapAgents[x][y])));
                 }
             }
         }
@@ -335,7 +339,7 @@ public class MadeEnvironment {
         return ret;
     }
 
-    void newAgents(MadeAgent aThis, MadeAgent inLoveWith, int numberOfChildren) {
+    void newAgents(RatAgent aThis, RatAgent inLoveWith, int numberOfChildren) {
         ArrayList<Position> p = getFreePositions(aThis, 3);
         for (int i = 0; i < p.size() && i<numberOfChildren; i++) {
             Position pos = p.get(i);
@@ -357,12 +361,12 @@ public class MadeEnvironment {
                     profile = r.nextInt(numberOfProfiles);
             }
 
-            MadeAgent a = new MadeAgent(counter, currDate, g, profile, name, surname, nickname, this, r, log);
+            RatAgent a = new RatAgent(counter, currDate, g, profile, name, surname, nickname, this, r, log);
             agents.add(a);
             aliveAgents.add(a);
 
-            aThis.addline(a.getDays(), MadeState.PARENT + " " + inLoveWith.getId());
-            inLoveWith.addline(inLoveWith.getDays(), MadeState.PARENT + " " + a.getId());
+            aThis.addline(a.getDays(), RatState.PARENT + " " + inLoveWith.getId());
+            inLoveWith.addline(inLoveWith.getDays(), RatState.PARENT + " " + a.getId());
 
             mapAgents[pos.x][pos.y] = counter;
             a.setX(pos.x);
@@ -371,10 +375,11 @@ public class MadeEnvironment {
         }
     }
 
+    @Override
     public String getSummary() {
         StringBuffer str = new StringBuffer();
 
-        HashMap<String, ArrayList<MadeAgent>> labels = new HashMap<String, ArrayList<MadeAgent>>();
+        HashMap<String, ArrayList<RatAgent>> labels = new HashMap<String, ArrayList<RatAgent>>();
 
         int total = 0;
         int alive = 0;
@@ -383,11 +388,11 @@ public class MadeEnvironment {
         int ageAverage = 0;
 
         for (int i = 0; i < agents.size(); i++) {
-            MadeAgent ma = agents.get(i);
+            RatAgent ma = ((RatAgent)agents.get(i));
             HashSet<String> agentLabels = ma.getLabels();
             for (String label : agentLabels) {
                 if (labels.get(label) == null) {
-                    labels.put(label, new ArrayList<MadeAgent>());
+                    labels.put(label, new ArrayList<RatAgent>());
                 }
                 labels.get(label).add(ma);
             }

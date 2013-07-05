@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.velonuboso.basicmade;
+package com.velonuboso.made.prototype;
 
 import java.text.DecimalFormat;
 import org.jgap.Chromosome;
@@ -43,16 +43,16 @@ public class App {
 
         long t0 = System.currentTimeMillis();
 
-        MadeEvaluator e = MadeEvaluator.getInstance();
+        RatEvaluator e = RatEvaluator.getInstance();
 
         Configuration conf = new DefaultConfiguration();
-        FitnessFunction myFunc = new MadeFitnessFunction();
+        FitnessFunction myFunc = new RatFitnessFunction();
 
         conf.setFitnessFunction(myFunc);
 
         Gene[] sampleGenes =
-                new Gene[MadeFitnessFunction.getGeneNumber()];
-        for (int i = 0; i < MadeFitnessFunction.getGeneNumber(); i++) {
+                new Gene[RatFitnessFunction.getGeneNumber()];
+        for (int i = 0; i < RatFitnessFunction.getGeneNumber(); i++) {
             sampleGenes[i] = new DoubleGene(conf, 0, 1);
         }
 
@@ -63,7 +63,7 @@ public class App {
         Genotype population = Genotype.randomInitialGenotype(conf);
 
         // show a sample of a random solution
-        MadeEnvironment environment1 = new MadeEnvironment(
+        RatEnvironment environment1 = new RatEnvironment(
                 population.getPopulation().getChromosome(0));
         environment1.runEnvironment(false);
 
@@ -106,7 +106,7 @@ public class App {
         System.out.println("Tiempo de ejecución: "+(t1-t0)+"ms");
 
         // show a sample
-        MadeEnvironment environment2 = new MadeEnvironment(bestSolutionSoFar);
+        RatEnvironment environment2 = new RatEnvironment(bestSolutionSoFar);
         environment2.runEnvironment(true);
 
         System.out.println("SUMMARY 1:");

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.velonuboso.basicmade;
+package com.velonuboso.made.prototype;
 
+import com.velonuboso.made.core.Gender;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

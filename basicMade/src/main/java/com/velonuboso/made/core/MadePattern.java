@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.velonuboso.basicmade;
+package com.velonuboso.made.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -15,8 +15,9 @@
  */
 
 
-package com.velonuboso.basicmade;
+package com.velonuboso.made.prototype;
 
+import com.velonuboso.made.core.MadeFitnessFunctionInterface;
 import org.jgap.FitnessFunction;
 import org.jgap.IChromosome;
 
@@ -24,19 +25,19 @@ import org.jgap.IChromosome;
  *
  * @author Ruben
  */
-public class MadeFitnessFunction extends FitnessFunction{
+public class RatFitnessFunction extends FitnessFunction implements MadeFitnessFunctionInterface{
 
     static int getGeneNumber() {
-        MadeEvaluator e = MadeEvaluator.getInstance();
-        return e.getProperty(e.NUMBER_OF_PROFILES)*MadeAgent.NUMBER_OF_FEATURES;
+        RatEvaluator e = RatEvaluator.getInstance();
+        return e.getProperty(e.NUMBER_OF_PROFILES)*RatAgent.NUMBER_OF_FEATURES;
     }
     
     @Override
-    protected double evaluate(IChromosome ic) {
-        MadeEvaluator e = MadeEvaluator.getInstance();
+    public double evaluate(IChromosome ic) {
+        RatEvaluator e = RatEvaluator.getInstance();
         double ret = 0;
         for (int i=0; i<e.getProperty(e.AVERAGE); i++){
-            MadeEnvironment env = new MadeEnvironment(ic);
+            RatEnvironment env = new RatEnvironment(ic);
             ret += env.runEnvironment(false);
         }
         return ret / (double)e.getProperty(e.AVERAGE);
