@@ -127,11 +127,11 @@ public class App {
         boolean first = true;
         for (Gene gene : genes) {
             str.append(df.format((Double)gene.getAllele()));
-            if (!first){
+            //if (!first){
                 str.append(";");
-            }else{
-                first = false;
-            }
+            //}else{
+            //    first = false;
+            //}
         }
 
         return str.toString();
