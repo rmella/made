@@ -25,6 +25,6 @@ public interface MadeEnvironmentInterface {
 
     double getVal(int profile, int position);
 
-    double runEnvironment(boolean log);
+    double runEnvironment(boolean log, boolean graph);
 
 }

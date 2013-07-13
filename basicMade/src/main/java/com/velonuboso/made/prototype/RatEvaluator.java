@@ -185,6 +185,12 @@ public class RatEvaluator implements MadeEvaluatorInterface {
         return Integer.parseInt((String)val);
     }
 
+    public String getStringProperty(String key){
+
+        return (String)prop.get(key);
+    }
+
+
     public boolean logFitness(){
         if (logFitness == null){
             return (Boolean.parseBoolean((String)prop.get(LOG_FITNESS)));

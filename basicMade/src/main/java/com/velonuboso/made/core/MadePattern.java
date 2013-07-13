@@ -56,7 +56,7 @@ public class MadePattern {
         ClassPool pool = ClassPool.getDefault();
         CtClass evalClass = pool.makeClass("Eval"+label);
 
-        String weight2 = weight.replace("gaussian", "com.velonuboso.basicmade.MadePattern.gaussian");
+        String weight2 = weight.replace("gaussian", "com.velonuboso.made.core.MadePattern.gaussian");
 
         evalClass.addMethod(
                 CtNewMethod.make(
@@ -104,4 +104,5 @@ public class MadePattern {
         Gaussian g = new Gaussian();
         return g.value(3*(target-value)/amplitude);
     }
+
 }

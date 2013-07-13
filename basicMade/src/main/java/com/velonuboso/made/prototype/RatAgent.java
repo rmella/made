@@ -423,7 +423,7 @@ public class RatAgent implements MadeAgentInterface {
         return days;
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
@@ -459,5 +459,9 @@ public class RatAgent implements MadeAgentInterface {
 
     public double getKindness() {
         return kindness;
+    }
+
+    public Gender getGender() {
+        return gender;
     }
 }

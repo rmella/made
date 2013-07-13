@@ -25,7 +25,7 @@ import org.jgap.IChromosome;
  *
  * @author Ruben
  */
-public class RatFitnessFunction extends FitnessFunction implements MadeFitnessFunctionInterface{
+public class RatFitnessFunctionGrqph extends FitnessFunction implements MadeFitnessFunctionInterface{
 
 
     static int getGeneNumber() {
@@ -39,7 +39,7 @@ public class RatFitnessFunction extends FitnessFunction implements MadeFitnessFu
         double ret = 0;
         for (int i=0; i<e.getProperty(e.AVERAGE); i++){
             RatEnvironment env = new RatEnvironment(ic);
-            ret += env.runEnvironment(false, false);
+            ret += env.runEnvironment(false, true);
         }
         return ret / (double)e.getProperty(e.AVERAGE);
     }

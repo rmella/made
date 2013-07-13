@@ -65,7 +65,7 @@ public class App {
         // show a sample of a random solution
         RatEnvironment environment1 = new RatEnvironment(
                 population.getPopulation().getChromosome(0));
-        environment1.runEnvironment(false);
+        environment1.runEnvironment(false, false);
 
         IChromosome firstSolution = population.getPopulation().getChromosome(0);
         System.out.println(
@@ -107,7 +107,7 @@ public class App {
 
         // show a sample
         RatEnvironment environment2 = new RatEnvironment(bestSolutionSoFar);
-        environment2.runEnvironment(true);
+        environment2.runEnvironment(true, true);
 
         System.out.println("SUMMARY 1:");
         System.out.println(environment1.getSummary());
