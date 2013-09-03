@@ -25,6 +25,12 @@ import org.jgap.IChromosome;
 import org.jgap.impl.DefaultConfiguration;
 import org.jgap.impl.DoubleGene;
 
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.BooleanOptionHandler;
+
 /**
  * Main class that can run the full experiment.
  *
@@ -32,14 +38,39 @@ import org.jgap.impl.DoubleGene;
  */
 public class App {
 
+
+
+    public static void main(String[] args) {
+        try{
+            new App().doMain(args);
+        }catch(Exception e){
+            boolean debug = false;
+            int i=0;
+            while(!debug && i<args.length){
+                if (args[i].toLowerCase().compareTo("-debug")==0){
+                    debug = true;
+                }
+                i++;
+            }
+            if(debug) e.printStackTrace();
+            else{
+                System.err.println("Error: "+e.getMessage());
+                System.err.println("For a full stacktrace please use -debug");
+            }
+        }
+    }
+
     /**
      * main method.
      *
      * @param args shell arguments
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void doMain(String[] args) throws Exception {
 
+        Parameters.createInstance(args);
+
+        
 
         long t0 = System.currentTimeMillis();
 
