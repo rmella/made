@@ -111,14 +111,14 @@ public class RatAgent implements MadeAgentInterface {
         days = 0;
         // A Rattus rattus Norvegicus can live 12 months (360 days)
 
-        int BASE_DAYS = e.getProperty(e.BASE_DAYS);
+        int BASE_DAYS = Parameters.getInstance().getBaseDays();
         maxDays = (int) (BASE_DAYS
                 + (BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
                 + ((BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
         // About one week without eating
-        int BASE_ENERGY = e.getProperty(e.BASE_ENERGY);
+        int BASE_ENERGY = Parameters.getInstance().getBaseEnergy();
         maxEnergy = (int) (BASE_ENERGY
                 + (BASE_ENERGY * env.getVal(profile, FEATURE_HEALTH))
                 + ((BASE_ENERGY * env.getVal(profile, FEATURE_HEALTH))
@@ -126,13 +126,13 @@ public class RatAgent implements MadeAgentInterface {
         energy = maxEnergy;
 
         // between 1 and 15 cells to search food
-        int BASE_SMELL = e.getProperty(e.BASE_SMELL);
+        int BASE_SMELL = Parameters.getInstance().getBaseSmell();
         smell = (int) (BASE_SMELL
                 + (BASE_SMELL * env.getVal(profile, FEATURE_SMELL))
                 + ((BASE_SMELL * env.getVal(profile, FEATURE_SMELL))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
-        int BASE_NUTRITION = e.getProperty(e.BASE_NUTRITION);
+        int BASE_NUTRITION = Parameters.getInstance().getBaseNutrition();
         nutrition = (int) (BASE_NUTRITION
                 + (BASE_NUTRITION * env.getVal(profile, FEATURE_METHABOLISM))
                 + ((BASE_NUTRITION * env.getVal(profile, FEATURE_METHABOLISM))
@@ -140,13 +140,13 @@ public class RatAgent implements MadeAgentInterface {
 
         hungryLevel = env.getVal(profile, FEATURE_HUNGRY_LEVEL);
 
-        int BASE_BITE = e.getProperty(e.BASE_BITE);
+        int BASE_BITE = Parameters.getInstance().getBaseByte();
         bite = (int) (BASE_BITE
                 + (BASE_BITE * env.getVal(profile, FEATURE_BITE))
                 + ((BASE_BITE * env.getVal(profile, FEATURE_BITE))
                 * (((r.nextDouble() * 2) - 1) * profileVariance)));
 
-        int BASE_FUR = e.getProperty(e.BASE_FUR);
+        int BASE_FUR = Parameters.getInstance().getBaseFur();
         fur = (int) (BASE_FUR
                 + (BASE_FUR * env.getVal(profile, FEATURE_FUR))
                 + ((BASE_FUR * env.getVal(profile, FEATURE_FUR))
@@ -161,7 +161,7 @@ public class RatAgent implements MadeAgentInterface {
         personality = r.nextDouble();
 
         if (gender == gender.FEMALE) {
-            int BASE_AGE_TO_BE_ADULT_FEMALE = e.getProperty(e.BASE_AGE_TO_BE_ADULT_FEMALE);
+            int BASE_AGE_TO_BE_ADULT_FEMALE = Parameters.getInstance().getBaseAgeToBeAdultFemale();
             ageToBeAdult = (int) (BASE_AGE_TO_BE_ADULT_FEMALE
                     + (BASE_AGE_TO_BE_ADULT_FEMALE * env.getVal(profile, FEATURE_AGE_TO_BE_ADULT))
                     + ((BASE_AGE_TO_BE_ADULT_FEMALE * env.getVal(profile, FEATURE_AGE_TO_BE_ADULT))
@@ -263,7 +263,7 @@ public class RatAgent implements MadeAgentInterface {
                         t++;
                     }
 
-                    int BASE_PREGNANCY_TIME = e.getProperty(e.BASE_PREGNANCY_TIME);
+                    int BASE_PREGNANCY_TIME = Parameters.getInstance().getBasePregnancyTime();
                     if (partner != null) {
 
                         addline(days, RatState.PARTNER_FOUND + " " + partner.getId());
@@ -311,9 +311,9 @@ public class RatAgent implements MadeAgentInterface {
     private void nudge(RatAgent source) {
         ArrayList<Position> arr = new ArrayList<Position>();
         for (int a = x - 1; a < x + 2; a += 2) {
-            if (a > 0 && a < e.getProperty(e.MAP_DIMENSION)) {
+            if (a > 0 && a < Parameters.getInstance().getNumberOfCells()) {
                 for (int b = y - 1; b < y + 2; b += 2) {
-                    if (b > 0 && b < e.getProperty(e.MAP_DIMENSION)) {
+                    if (b > 0 && b < Parameters.getInstance().getNumberOfCells()) {
                         Position p = new Position();
                         p.x = a;
                         p.y = b;

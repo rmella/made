@@ -70,7 +70,9 @@ public class App {
 
         Parameters.createInstance(args);
 
-        
+        if (Parameters.getInstance().isHelp()){
+            return;
+        }
 
         long t0 = System.currentTimeMillis();
 
@@ -90,7 +92,7 @@ public class App {
         Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
         conf.setSampleChromosome(sampleChromosome);
 
-        conf.setPopulationSize(e.getProperty(e.POPULATION_SIZE));
+        conf.setPopulationSize(Parameters.getInstance().getPopulation());
         Genotype population = Genotype.randomInitialGenotype(conf);
 
         // show a sample of a random solution
@@ -116,7 +118,7 @@ public class App {
         
         double fitness = bestSolutionSoFar.getFitnessValue();
 
-        for (int i = 0; i < e.getProperty(e.MAX_ALLOWED_EVOLUTIONS); i++) {
+        for (int i = 0; i < Parameters.getInstance().getNumberOfGenerations(); i++) {
             population.evolve();
             bestSolutionSoFar = population.getFittestChromosome();
 

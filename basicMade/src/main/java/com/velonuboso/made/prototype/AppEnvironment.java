@@ -41,6 +41,7 @@ public class AppEnvironment {
      * @param args shell arguments
      * @throws Exception
      */
+    /*
     public static void main(String[] args) throws Exception {
 
         String result = RatEvaluator.getInstance().getStringProperty("sample.chromosome");
@@ -73,7 +74,7 @@ public class AppEnvironment {
                 +";"+printIChromosome(givenChromosome)
                 );
     }
-
+*/
     static DecimalFormat df = new DecimalFormat("#.###");
     static DecimalFormat df2 = new DecimalFormat("###");
     static DecimalFormat df3 = new DecimalFormat("###.#####");

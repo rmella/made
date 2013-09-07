@@ -53,11 +53,11 @@ public class RatEnvironment implements MadeEnvironmentInterface {
     public RatEnvironment(IChromosome c) {
 
         RatEvaluator e = RatEvaluator.getInstance();
-        numberOfProfiles = e.getProperty(e.NUMBER_OF_PROFILES);
-        numberOfInitialAgents = e.getProperty(e.NUMBER_OF_INITIAL_AGENTS);
-        mapDimension = e.getProperty(e.MAP_DIMENSION);
-        food = e.getProperty(e.FOOD);
-        days = e.getProperty(e.DAYS);
+        numberOfProfiles = Parameters.getInstance().getNumberOfProfiles();
+        numberOfInitialAgents = Parameters.getInstance().getNumberOfInitialAgents();
+        mapDimension = Parameters.getInstance().getNumberOfCells();
+        food = Parameters.getInstance().getNumberOfFoodPieces();
+        days = Parameters.getInstance().getNumberOfDays();
 
         this.iChromosome = c;
         mapAgents = new int[mapDimension][mapDimension];

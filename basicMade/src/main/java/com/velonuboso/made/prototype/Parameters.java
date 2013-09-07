@@ -33,66 +33,98 @@ import org.kohsuke.args4j.spi.OptionHandler;
 public class Parameters {
 
     CmdLineParser parser;
-    @Option(name = "--debug", aliases = {"-d"}, usage = "A full backtrace will be shown on error")
+    @Option(name = "--debug", aliases = {"-d"}, usage = "a full backtrace will be shown on error")
     private boolean debug = false;
 
-    @Option(name = "--runAutotest", aliases = {"-ra"}, usage = "The environment is executed "
+    @Option(name = "--runAutotest", aliases = {"-ra"}, usage = "the environment is executed "
             + "in autotest mode and calculates the average number of executions "
             + "in a randomly generated environment "
             + "(or given  with the parameter -chromosome) whose tipical "
             + "deviation is under 0.5")
     private boolean runAutotest = false;
     
-    @Option(name = "--runChromosome", aliases = {"-rc"}, usage = "The environment executes "
+    @Option(name = "--runChromosome", aliases = {"-rc"}, usage = "the environment executes "
             + "an environment.")
     private boolean runChromosome = false;
     
-    @Option(name = "--runExperiment", aliases = {"-re"}, usage = "The environment executes "
+    @Option(name = "--runExperiment", aliases = {"-re"}, usage = "the environment executes "
             + "an autotest and calculates the average number of executions in a "
             + "randomly generated environment whose tipical "
             + "deviation is under 0.5")
     private boolean runExperiment = false;
     
-    @Option(name = "--chromosome", aliases = {"-c"}, usage = "If autotest or runChromosome, "
+    @Option(name = "--chromosome", aliases = {"-c"}, usage = "if -autoTest or -runChromosome, "
             + "use this chromosome. "
             + "If runExperiment, place it in the initial population",
             metaVar = "[COMMA_SEPARATED_VALUES]")
     private String chromosome = null;
     
-    @Option(name = "--showSheets", aliases = {"-ss"}, usage = "If -runChromosome, all the agents' "
+    @Option(name = "--showSheets", aliases = {"-ss"}, usage = "if -runChromosome, all the agents' "
             + "lifes are shown and also a summary")
     private boolean showSheets;
     
-    @Option(name = "--saveRatMap", aliases = {"-sm"}, usage = "Stores the rat map in a file (graphviz needed)")
+    @Option(name = "--saveRatMap", aliases = {"-sm"}, usage = "stores the rat map in a file (graphviz needed)")
     private File saveRatMap = new File(".");
     
-    @Option(name = "--generations", aliases = {"-eg"}, usage = "Number of generations of the experiment")
+    @Option(name = "--generations", aliases = {"-eg"}, usage = "number of generations of the experiment")
     private int numberOfGenerations;
     
-    @Option(name = "--population", aliases = {"-ep"}, usage = "If -runExperiment, population of the experiment")
+    @Option(name = "--population", aliases = {"-ep"}, usage = "if -runExperiment, population of the experiment")
     private int population;
     
-    @Option(name = "--numberOfProfiles", aliases = {"-np"}, usage = "Number of profiles", required = true)
-    private int numberOfProfiles;
+    @Option(name = "--numberOfProfiles", aliases = {"-np"}, usage = "number of profiles, default = 1")
+    private int numberOfProfiles = 1;
     
-    @Option(name = "--numberOfInitialAgents", aliases = {"-ni"}, usage = "Number of initial agents", required = true)
-    private int numberOfInitialAgents;
+    @Option(name = "--numberOfInitialAgents", aliases = {"-ni"}, usage = "number of initial agents, default = 20")
+    private int numberOfInitialAgents = 20;
     
-    @Option(name = "--numberOfCells", aliases = {"-nc"}, usage = "Dimension of the square map", required = true)
-    private int numberOfCells;
+    @Option(name = "--numberOfCells", aliases = {"-nc"}, usage = "dimension of the square map")
+    private int numberOfCells = 20;
     
-    @Option(name = "--numberOfFoodPieces", aliases = {"-nf"}, usage = "Number of food pieces each day", required = true)
-    private int numberOfFoodPieces;
+    @Option(name = "--numberOfFoodPieces", aliases = {"-nf"}, usage = "number of food pieces each day, default = 20")
+    private int numberOfFoodPieces = 20;
     
-    @Option(name = "--numberOfDays", aliases = {"-nd"}, usage = "Number of days to execute", required = true)
-    private int numberOfDays;
+    @Option(name = "--numberOfDays", aliases = {"-nd"}, usage = "number of days to execute, default = 1000")
+    private int numberOfDays = 1000;
     
-    @Option(name = "--numberOfExecutions", aliases = {"-ne"}, usage = "If runExperiment, number of times a world is "
+    @Option(name = "--numberOfExecutions", aliases = {"-ne"}, usage = "if runExperiment, number of times a world is "
             + "executed to retrieve the average")
     private int numberOfExecutions;
     
     @Option(name = "--patterns",  aliases = {"-p"}, usage = "the pattern file name")
     private File patterns = new File(".");
+
+    @Option(name = "--baseDays",  aliases = {"-bd"}, usage = "the pattern file name, default = 200")
+    private int baseDays = 200;
+
+    @Option(name = "--baseEnergy",  aliases = {"-be"}, usage = "the pattern file name, default = 5")
+    private int baseEnergy = 5;
+
+    @Option(name = "--baseSmell",  aliases = {"-bs"}, usage = "the pattern file name, default = 3")
+    private int baseSmell = 3;
+
+    @Option(name = "--baseNutrition",  aliases = {"-bn"}, usage = "the pattern file name, default = 4")
+    private int baseNutrition = 4;
+
+    @Option(name = "--baseByte",  aliases = {"-bb"}, usage = "the pattern file name, default = 5")
+    private int baseByte = 5;
+
+    @Option(name = "--baseFur",  aliases = {"-bf"}, usage = "the pattern file name, default = 5")
+    private int baseFur = 5;
+
+    @Option(name = "--baseAgeToBeAdultFemale",  aliases = {"-btaf"}, usage = "the pattern file name, default = 42")
+    private int baseAgeToBeAdultFemale = 42;
+
+    @Option(name = "--baseToBeAdultMale",  aliases = {"-btam"}, usage = "the pattern file name,default = 49")
+    private int baseToBeAdultMale = 49;
+
+    @Option(name = "--basePregnancyTime",  aliases = {"-bp"}, usage = "the pattern file name, default = 30")
+    private int basePregnancyTime = 30;
+
+    @Option(name = "--help", aliases = "-h", usage = "print help")
+    private boolean help = false;
+
+
     private static Parameters instance = null;
 
     private Parameters(String[] args) throws CmdLineException {
@@ -105,6 +137,15 @@ public class Parameters {
 
 
             int run = 0;
+
+            if (help){
+                System.err.println("java SampleMain [options...] arguments...");
+                parser.printUsage(System.err);
+                System.err.println();
+                System.err.println("Example: java SampleMain" + parser.printExample(OptionHandlerFilter.ALL));
+                return;
+            }
+
             if (runAutotest) run++;
             if (runChromosome) run++;
             if (runExperiment) run++;
@@ -112,18 +153,18 @@ public class Parameters {
             if (run==0){
                 throw new CmdLineException (parser,
                         "One execution mode must be chosen: "
-                        + "runAutotest, runChromosome or runExperiment");
+                        + "-runAutotest, -runChromosome or -runExperiment");
             }
             if (run > 2){
                 throw new CmdLineException (parser,
                         "Only one execution mode must be chosen: "
-                        + "runAutotest, runChromosome or runExperiment");
+                        + "-runAutotest, -runChromosome or -runExperiment");
             }
 
             if (runExperiment){
                 if (numberOfGenerations<=0){
                     throw new CmdLineException (parser,
-                            "numberOfGeneration must be set");
+                            "numberOfGenerations must be set");
                 }
                 if (population<=0){
                     throw new CmdLineException (parser,
@@ -224,8 +265,75 @@ public class Parameters {
         return saveRatMap;
     }
 
-    public int getWorldExecutions() {
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public boolean isHelp() {
+        return help;
+    }
+
+    public boolean isRunAutotest() {
+        return runAutotest;
+    }
+
+    public boolean isRunChromosome() {
+        return runChromosome;
+    }
+
+    public boolean isRunExperiment() {
+        return runExperiment;
+    }
+
+    public boolean isShowSheets() {
+        return showSheets;
+    }
+
+    public void setNumberOfExecutions(int numberOfExecutions) {
+        this.numberOfExecutions = numberOfExecutions;
+    }
+
+    public int getBaseAgeToBeAdultFemale() {
+        return baseAgeToBeAdultFemale;
+    }
+
+    public int getBaseByte() {
+        return baseByte;
+    }
+
+    public int getBaseDays() {
+        return baseDays;
+    }
+
+    public int getBaseEnergy() {
+        return baseEnergy;
+    }
+
+    public int getBaseFur() {
+        return baseFur;
+    }
+
+    public int getBaseNutrition() {
+        return baseNutrition;
+    }
+
+    public int getBasePregnancyTime() {
+        return basePregnancyTime;
+    }
+
+    public int getBaseSmell() {
+        return baseSmell;
+    }
+
+    public int getBaseToBeAdultMale() {
+        return baseToBeAdultMale;
+    }
+
+    public int getNumberOfExecutions() {
         return numberOfExecutions;
     }
+
+    
     
 }

@@ -61,14 +61,14 @@ public class AppVariabilityTester {
         Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
         conf.setSampleChromosome(sampleChromosome);
 
-        conf.setPopulationSize(e.getProperty(e.POPULATION_SIZE));
+        conf.setPopulationSize(Parameters.getInstance().getPopulation());
         Genotype population = Genotype.randomInitialGenotype(conf);
 
         // show a sample of a random solution
         for (int i=0; i<10; i++){
             Integer inds[] = new Integer[]{5,10,15,20,30,40,50,60,70, 80, 90, 100};
             for (Integer ind : inds) {
-                RatEvaluator.getInstance().setAverage(ind);
+                Parameters.getInstance().setNumberOfExecutions(ind);
                 Gene genes[] = population.getPopulation().getChromosome(i).getGenes();
                 IChromosome cr = new Chromosome(conf, genes);
                 double av = cr.getFitnessValue();

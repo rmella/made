@@ -38,6 +38,7 @@ import javassist.CannotCompileException;
  */
 public class RatEvaluator implements MadeEvaluatorInterface {
 
+    /*
     public static String MAX_ALLOWED_EVOLUTIONS="global.MAX_ALLOWED_EVOLUTIONS";
     public static String POPULATION_SIZE="global.POPULATION_SIZE";
 
@@ -60,7 +61,7 @@ public class RatEvaluator implements MadeEvaluatorInterface {
     public static String BASE_AGE_TO_BE_ADULT_MALE = "base.BASE_AGE_TO_BE_ADULT_MALE";
     public static String BASE_PREGNANCY_TIME = "base.BASE_PREGNANCY_TIME";
 
-
+    */
 
 
     private static RatEvaluator instance;
@@ -154,7 +155,7 @@ public class RatEvaluator implements MadeEvaluatorInterface {
             }
         }
 
-        boolean logFitness = RatEvaluator.getInstance().logFitness();
+        //boolean logFitness = Parameters.getInstance().islogFitness();
         String logString = "";
 
 
@@ -163,7 +164,7 @@ public class RatEvaluator implements MadeEvaluatorInterface {
             double d = madePattern.getWeight(p, pm.get(madePattern.getLabel()),
                     a, am.get(madePattern.getLabel()));
 
-            if (logFitness){ logString+=(d + ";");}
+            //if (logFitness){ logString+=(d + ";");}
 
             f += d;
         }
@@ -175,6 +176,7 @@ public class RatEvaluator implements MadeEvaluatorInterface {
         return f;
     }
 
+    /*
     public int getProperty(String key){
 
         if (key == AVERAGE && average!=null){
@@ -206,6 +208,6 @@ public class RatEvaluator implements MadeEvaluatorInterface {
     public void setAverage(Integer average) {
         this.average = average;
     }
-    
+    */
     
 }
