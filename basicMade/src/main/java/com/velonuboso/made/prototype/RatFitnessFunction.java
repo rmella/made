@@ -44,4 +44,20 @@ public class RatFitnessFunction extends FitnessFunction implements MadeFitnessFu
         return ret / (double)Parameters.getInstance().getNumberOfExecutions();
     }
 
+    /**
+     * Only should be called manually
+     * @param ic
+     * @return
+     */
+    public double[] evaluateExecutions(IChromosome ic, int executions) {
+        RatEvaluator e = RatEvaluator.getInstance();
+        double results[] = new double[executions];
+        double ret = 0;
+        for (int i=0; i<executions; i++){
+            RatEnvironment env = new RatEnvironment(ic);
+            results[i] = env.runEnvironment(false, false);
+        }
+        return results;
+    }
+
 }

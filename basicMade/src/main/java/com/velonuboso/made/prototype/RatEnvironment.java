@@ -73,7 +73,7 @@ public class RatEnvironment implements MadeEnvironmentInterface {
             }
         }
         counter = 0;
-        r = new Random();
+        r = Parameters.getInstance().getRandom();
     }
 
     @Override
