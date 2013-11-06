@@ -17,6 +17,7 @@ package com.velonuboso.made.core;
 
 import com.velonuboso.made.core.interfaces.Environment;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -31,16 +32,16 @@ public class BasicRunner extends Thread {
     private ArrayList<MadeAgent> agents;
     private Date fictional;
     private Date real;
-    private float speedfactor;
+    private int interval;
 
-    public BasicRunner(Environment env, boolean randomize, Date fictional, Date real, float speedFactor) {
+    public BasicRunner(Environment env, boolean randomize, Date fictional, Date real, int interval) {
         this.env = env;
         r = randomize ? new Random() : new Random(0);
         agents = new ArrayList<MadeAgent>();
         
         this.fictional = fictional;
         this.real = real;
-        this.speedfactor = speedFactor;
+        this.interval = interval;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class BasicRunner extends Thread {
             agents.add(a);
         }
         
-        env.initFictionalDate(fictional, real, speedfactor);
+        env.initFictionalDate(fictional, real, interval);
         for (MadeAgent a:agents){
             a.start();
         }

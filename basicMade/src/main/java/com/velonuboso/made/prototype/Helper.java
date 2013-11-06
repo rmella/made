@@ -26,9 +26,6 @@ import org.jgap.IChromosome;
  */
 public final class Helper {
 
-
-
-
     /**
      * no constructor needed.
      */
@@ -122,8 +119,19 @@ public final class Helper {
         return "--- " + msg + " ---";
     }
 
-
-    static String executionsToString(int j, double mean, double var, double error, double relError) {
+    /**
+     * returns the executions line in a pretty format.
+     *
+     * @param j index
+     * @param mean mean
+     * @param var variance
+     * @param error error
+     * @param relError relative error
+     * @return the message in a pretty format
+     */
+    static String executionsToString(final int j, final double mean,
+            final double var, final double error,
+            final double relError) {
         StringBuilder str = new StringBuilder();
         str.append("ex = ");
         str.append(String.format(FIXED_INTEGER_ITERATION_FORMAT, j));
@@ -131,19 +139,31 @@ public final class Helper {
         str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
                 mean));
         str.append(", var = ");
-       str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
+        str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
                 var));
-       str.append(", err = ");
-       str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
-                error ));
-       str.append(", relErr = ");
-       str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
+        str.append(", err = ");
+        str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
+                error));
+        str.append(", relErr = ");
+        str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
                 relError));
         return str.toString();
     }
 
+    /**
+     * calculates the mean of a number array
+     *
+     * @param data the array of data
+     * @param length the searchable length
+     * @return the mean of a number array. 0 on zero length
+     */
     public static double getMean(double[] data, int length) {
-
+        if (length > data.length) {
+            length = data.length;
+        }
+        if (length == 0) {
+            return 0;
+        }
         double sum = 0.0;
         for (int i = 0; i < length; i++) {
             double a = data[i];
@@ -152,7 +172,20 @@ public final class Helper {
         return sum / length;
     }
 
+    /**
+     * calculates the variance of a number array
+     *
+     * @param data the array of data
+     * @param length the searchable length
+     * @return the variance of a number array.
+     */
     public static double getVariance(double[] data, int length) {
+        if (length > data.length) {
+            length = data.length;
+        }
+        if (length == 0) {
+            return 0;
+        }
         double mean = getMean(data, length);
         double temp = 0;
         for (int i = 0; i < length; i++) {
@@ -162,11 +195,31 @@ public final class Helper {
         return temp / length;
     }
 
+    /**
+     * calculates the standard deviation of a number array
+     *
+     * @param data the array of data
+     * @param length the searchable length
+     * @return the standard deviation of a number array. 0 on zero length
+     */
     public static double getStdDev(double[] data, int length) {
         return Math.sqrt(getVariance(data, length));
     }
 
+    /**
+     * calculates the median of a number array
+     *
+     * @param data the array of data
+     * @param length the searchable length
+     * @return the median of a number array. 0 on zero length
+     */
     public static double median(double[] data, int length) {
+        if (length > data.length) {
+            length = data.length;
+        }
+        if (length == 0) {
+            return 0;
+        }
         double[] b = new double[length];
         System.arraycopy(data, 0, b, 0, length);
         Arrays.sort(b);
@@ -178,21 +231,51 @@ public final class Helper {
         }
     }
 
-     static double getMin(double[] data, int length) {
+    /**
+     * returns the minimum value os a given array and size.
+     *
+     * @param data the array of data
+     * @param length the searchable length
+     * @return the minimum value. Double.MAX_VALUE on zero length
+     */
+    static double getMin(double[] data, int length) {
+        if (length > data.length) {
+            length = data.length;
+        }
+        if (length == 0) {
+            return Double.MAX_VALUE;
+        }
         double min = data[0];
         for (int i = 1; i < length; i++) {
             double a = data[i];
-            if (a<min) min = a;
+            if (a < min) {
+                min = a;
+            }
         }
         return min;
-     }
+    }
 
-    static double getMax(double[] data, int length) {
+    /**
+     * returns the maximun value os a given array and size.
+     *
+     * @param data the array of data
+     * @param length the searchable length
+     * @return the maximum value. Double.MIN_VALUE on zero length
+     */
+    static double getMax(final double[] data, int length) {
+        if (length > data.length) {
+            length = data.length;
+        }
+        if (length == 0) {
+            return Double.MIN_VALUE;
+        }
         double max = data[0];
         for (int i = 1; i < length; i++) {
             double a = data[i];
-            if (a>max) max = a;
+            if (a > max) {
+                max = a;
+            }
         }
         return max;
-     }
+    }
 }

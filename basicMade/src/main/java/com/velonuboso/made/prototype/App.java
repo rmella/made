@@ -60,8 +60,8 @@ public final class App {
             boolean debug = false;
             int i = 0;
             while (!debug && i < args.length) {
-                if (args[i].toLowerCase().compareTo("--debug") == 0 ||
-                        args[i].toLowerCase().compareTo("-d") == 0) {
+                if (args[i].toLowerCase().compareTo("--debug") == 0
+                        || args[i].toLowerCase().compareTo("-d") == 0) {
                     debug = true;
                 }
                 i++;
@@ -110,17 +110,17 @@ public final class App {
 
         long t0 = System.currentTimeMillis();
 
-        //RatEvaluator e = RatEvaluator.getInstance();
-
         int maxChromosomes = MAX_CHROMOSOMES;
 
         ArrayList<Double> paramChromosome = null;
         if (Parameters.getInstance().getChromosome() != null) {
             maxChromosomes = 1;
             paramChromosome = new ArrayList<Double>();
-            String[] values = Parameters.getInstance().getChromosome().split(";");
+            String[] values = Parameters.getInstance().getChromosome().
+                    split(";");
             for (int i = 0; i < values.length; i++) {
-                paramChromosome.add(Double.parseDouble(values[i].replace(",", ".")));
+                paramChromosome.add(Double.parseDouble(values[i].
+                        replace(",", ".")));
             }
             System.out.println(Helper.consoleMsg("Using given chromosome"));
         }
@@ -133,7 +133,7 @@ public final class App {
 
 
         RatFitnessFunction rff = new RatFitnessFunction();
-        double minExecutionsToLowerError[] = new double[maxChromosomes];
+        double[] minExecutionsToLowerError = new double[maxChromosomes];
 
         for (int i = 0; i < maxChromosomes; i++) {
 
@@ -144,7 +144,8 @@ public final class App {
                 if (paramChromosome != null) {
                     sampleGenes[k].setAllele(paramChromosome.get(k));
                 } else {
-                    sampleGenes[k].setAllele(Parameters.getInstance().getRandom().nextDouble());
+                    sampleGenes[k].setAllele(Parameters.getInstance().
+                            getRandom().nextDouble());
                 }
             }
             IChromosome chromosome = new Chromosome(conf, sampleGenes);
@@ -152,31 +153,32 @@ public final class App {
             double[] av = rff.evaluateExecutions(chromosome, MAX_EXECUTIONS);
             double[] relErrors = new double[MAX_EXECUTIONS];
             double m = Helper.getMean(av, MAX_EXECUTIONS);
-            for (int j=1; j<MAX_EXECUTIONS; j++){
-               double mean = Helper.getMean(av, j+1);
-               double var = Helper.getVariance(av, j);
-               double error = Math.abs(m-mean);
-               double relError = error/mean;
-               relErrors[j] = relError;
-               System.out.println(Helper.executionsToString(j+1, mean, var, error, relError));
+            for (int j = 1; j < MAX_EXECUTIONS; j++) {
+                double mean = Helper.getMean(av, j + 1);
+                double var = Helper.getVariance(av, j);
+                double error = Math.abs(m - mean);
+                double relError = error / mean;
+                relErrors[j] = relError;
+                System.out.println(Helper.executionsToString(j + 1, mean, var,
+                        error, relError));
             }
-            int j = MAX_EXECUTIONS-2;
-            while (j>0 && relErrors[j]<0.05){
+            int j = MAX_EXECUTIONS - 2;
+            while (j > 0 && relErrors[j] < 0.05) {
                 minExecutionsToLowerError[i] = j;
                 j--;
             }
-            
-            System.out.println(Helper.consoleMsg("At least "+minExecutionsToLowerError[i] + " executions"));
+
+            System.out.println(Helper.consoleMsg("At least " + minExecutionsToLowerError[i] + " executions"));
 
             chromosome.setFitnessValue(av[0]);
-            
+
             System.out.println(Helper.chromosomeAndGenerationToString(i, chromosome));
         }
 
         for (int i = 0; i < maxChromosomes; i++) {
             System.out.println(Helper.consoleMsg("Summary"));
-            System.out.println("Tested on "+maxChromosomes+" chromosomes");
-            System.out.println(MAX_EXECUTIONS+ " executions per chromosome");
+            System.out.println("Tested on " + maxChromosomes + " chromosomes");
+            System.out.println(MAX_EXECUTIONS + " executions per chromosome");
             System.out.println("Best case to lower 0.5 "
                     + "relative error: "
                     + Helper.getMin(minExecutionsToLowerError,
