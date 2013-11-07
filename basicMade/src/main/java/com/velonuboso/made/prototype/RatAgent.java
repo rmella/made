@@ -228,8 +228,13 @@ public class RatAgent implements MadeAgentInterface {
 
                         if (!kindlyDisplaced) {
                             if (this.getBite() > target.getFur()) {
+                                boolean targetWasAlive = target.isAlive() && target.energy>0;
                                 target.nudge(this);
+                                boolean targetIsAlive =  target.isAlive() && target.energy>0;
                                 addline(days, RatState.NUDGE_OK + " " + target.id);
+                                if (targetWasAlive && !targetIsAlive){
+                                    addline(days, RatState.KILL + " " + target.id);
+                                }
                                 addline(days, RatState.EAT + " " + nutrition);
                                 env.moveAgent(this, p);
                                 env.eatFood(p);
@@ -332,9 +337,15 @@ public class RatAgent implements MadeAgentInterface {
             env.moveAgent(this, p);
             this.energy--;
             addline(days, RatState.NUDGED + " " + source.id);
+            if (this.energy == 0){
+                alive = false;
+                addline(days, RatState.KILLED + " " + source.id);
+                addline(days, RatState.DIE.toString());
+            }
         } else {
             alive = false;
-            addline(days, RatState.DIE + " ");
+            addline(days, RatState.KILLED + " " + source.id);
+            addline(days, RatState.DIE.toString());
         }
     }
 
@@ -452,6 +463,12 @@ public class RatAgent implements MadeAgentInterface {
         return nickname;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    
+    
     @Override
     public HashSet<String> getLabels() {
         return labels;

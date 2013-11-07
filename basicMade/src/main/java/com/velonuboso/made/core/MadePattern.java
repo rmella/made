@@ -94,9 +94,11 @@ public class MadePattern {
     public boolean evaluate(String log){
         Matcher m = patt.matcher(log);
         boolean found = false;
+        //System.out.println("last pattern: "+this.regexp);
         while (m.find() && !found){
             found = true;
         }
+        //System.out.println("end..." + found);
         return found;
     }
 

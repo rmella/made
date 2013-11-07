@@ -24,6 +24,8 @@ public enum RatState {
     HUNGRY,
     EAT,
     NUDGE_OK,
+    KILL,
+    KILLED,
     NUDGED,
     NUDGE_FAILED,
     DEFENDED,

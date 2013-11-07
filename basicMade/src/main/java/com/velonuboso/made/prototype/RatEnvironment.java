@@ -159,11 +159,13 @@ public class RatEnvironment implements MadeEnvironmentInterface {
             }
         }
         if (graph) {
+            
+            HashMap<String, Integer> labels = new HashMap<String, Integer>();
+            
             System.out.println("digraph world_dynamics {\n"
-                    + "size=\"50,10\";ratio=fill;");
+                    + "size=\"4,4\";");
 
             for (int i = 0; i < agents.size(); i++) {
-
                 RatAgent r = (RatAgent) agents.get(i);
                 String fillcolor = "";
                 switch (r.getLabels().size()) {
@@ -186,8 +188,13 @@ public class RatEnvironment implements MadeEnvironmentInterface {
                         fillcolor = "black";
                         break;
                 }
-                String sides = r.getGender() == Gender.MALE ? "4" : "3";
-                System.out.println(r.getId()+" [fontsize=14, style=filled, shape=polygon, sides="+sides+", fillcolor="+fillcolor+"];");
+                String sides = r.getGender() == Gender.MALE ? "4" : "4";
+                System.out.println(r.getId()+
+                        " [fontsize=14, style=filled, shape=polygon, "
+                        + "sides="+sides+", fillcolor="+fillcolor+","
+                        + "label=\""+r.getName()+" "+r.getNickname().replace('"', '\'')
+                        +" "+r.getSurname()+"\""
+                        +"];");
             }
             for (int i = 0; i < agents.size(); i++) {
                 String agentLog = agents.get(i).getStringLog();
@@ -203,8 +210,20 @@ public class RatEnvironment implements MadeEnvironmentInterface {
                 while (m2.find()) {
                     System.out.println(agents.get(i).getId() + " -> " + m2.group(1) + ";");
                 }
+                
+                for (String s:agents.get(i).getLabels()){
+                    Integer val = labels.get(s);
+                    if (val == null) val = 0;
+                    labels.put(s, val+1);
+                }
             }
             System.out.println("}");
+            
+            System.out.println("SUMMARY: ");
+            for (String s:labels.keySet()){
+                System.out.println(s+":"+labels.get(s));
+            }
+            
         }
 
         return ret;

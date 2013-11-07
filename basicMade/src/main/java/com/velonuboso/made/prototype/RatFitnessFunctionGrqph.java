@@ -39,7 +39,7 @@ public class RatFitnessFunctionGrqph extends FitnessFunction implements MadeFitn
         double ret = 0;
         for (int i=0; i<e.getProperty(e.AVERAGE); i++){
             RatEnvironment env = new RatEnvironment(ic);
-            ret += env.runEnvironment(false, true);
+            ret += env.runEnvironment(true, true);
         }
         return ret / (double)e.getProperty(e.AVERAGE);
     }
