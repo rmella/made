@@ -63,15 +63,15 @@ public class Parameters {
     @Option(name = "--generations", aliases = {"-eg"}, usage = "number of generations of the experiment")
     private int numberOfGenerations;
     @Option(name = "--population", aliases = {"-ep"}, usage = "if -runExperiment, population of the experiment")
-    private int population;
+    private int population = 10;
     @Option(name = "--numberOfProfiles", aliases = {"-np"}, usage = "number of profiles, default = 1")
     private int numberOfProfiles = 1;
     @Option(name = "--numberOfInitialAgents", aliases = {"-ni"}, usage = "number of initial agents, default = 20")
-    private int numberOfInitialAgents = 20;
+    private int numberOfInitialAgents = 15;
     @Option(name = "--numberOfCells", aliases = {"-nc"}, usage = "dimension of the square map")
-    private int numberOfCells = 20;
+    private int numberOfCells = 10;
     @Option(name = "--numberOfFoodPieces", aliases = {"-nf"}, usage = "number of food pieces each day, default = 20")
-    private int numberOfFoodPieces = 20;
+    private int numberOfFoodPieces = 10;
     @Option(name = "--numberOfDays", aliases = {"-nd"}, usage = "number of days to execute, default = 1000")
     private int numberOfDays = 1000;
     @Option(name = "--numberOfExecutions", aliases = {"-ne"}, usage = "if runExperiment, number of times a world is "
@@ -80,7 +80,7 @@ public class Parameters {
     @Option(name = "--patterns", aliases = {"-p"}, usage = "the pattern file name")
     private File patterns = new File(".");
     @Option(name = "--baseDays", aliases = {"-bd"}, usage = "the pattern file name, default = 200")
-    private int baseDays = 200;
+    private int baseDays = 1000;
     @Option(name = "--baseEnergy", aliases = {"-be"}, usage = "the pattern file name, default = 5")
     private int baseEnergy = 5;
     @Option(name = "--baseSmell", aliases = {"-bs"}, usage = "the pattern file name, default = 3")

@@ -172,7 +172,7 @@ public final class App {
 
             chromosome.setFitnessValue(av[0]);
 
-            System.out.println(Helper.chromosomeAndGenerationToString(i, chromosome));
+            System.out.println(Helper.chromosomeAndGenerationToString(i, chromosome, 0));
         }
 
         for (int i = 0; i < maxChromosomes; i++) {
@@ -230,19 +230,31 @@ public final class App {
 
         IChromosome firstSolution = population.getPopulation().getChromosome(0);
 
-        System.out.println(Helper.chromosomeAndGenerationToString(-1, firstSolution));
+        System.out.println(Helper.chromosomeAndGenerationToString(-1, firstSolution, firstSolution.getFitnessValue()));
 
         // start iterating
         IChromosome bestSolutionSoFar = population.getFittestChromosome();
-        System.out.println(Helper.chromosomeAndGenerationToString(0, bestSolutionSoFar));
+        // calculate the average in the generation
+        double avg = 0;
+        for (IChromosome ic : population.getChromosomes()) {
+            avg += ic.getFitnessValue();
+        }
+        avg = avg / population.getChromosomes().length;
+
+        System.out.println(Helper.chromosomeAndGenerationToString(0, bestSolutionSoFar, avg));
 
         double fitness = bestSolutionSoFar.getFitnessValue();
 
         for (int i = 0; i < Parameters.getInstance().getNumberOfGenerations(); i++) {
             population.evolve();
             bestSolutionSoFar = population.getFittestChromosome();
-
-            System.out.println(Helper.chromosomeAndGenerationToString(0, bestSolutionSoFar));
+            // calculate the average in the generation
+            avg = 0;
+            for (IChromosome ic : population.getChromosomes()) {
+                avg += ic.getFitnessValue();
+            }
+            avg = avg / population.getChromosomes().length;
+            System.out.println(Helper.chromosomeAndGenerationToString(i+1, bestSolutionSoFar,avg));
 
             if (bestSolutionSoFar.getFitnessValue() > fitness) {
                 fitness = bestSolutionSoFar.getFitnessValue();
