@@ -19,6 +19,7 @@ package com.velonuboso.made.prototype;
 import com.velonuboso.made.core.MadeAgentInterface;
 import com.velonuboso.made.core.MadeEvaluatorInterface;
 import com.velonuboso.made.core.MadePattern;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import javassist.CannotCompileException;
  */
 public class RatEvaluator implements MadeEvaluatorInterface {
 
+    /*
     public static String MAX_ALLOWED_EVOLUTIONS="global.MAX_ALLOWED_EVOLUTIONS";
     public static String POPULATION_SIZE="global.POPULATION_SIZE";
 
@@ -60,7 +62,7 @@ public class RatEvaluator implements MadeEvaluatorInterface {
     public static String BASE_AGE_TO_BE_ADULT_MALE = "base.BASE_AGE_TO_BE_ADULT_MALE";
     public static String BASE_PREGNANCY_TIME = "base.BASE_PREGNANCY_TIME";
 
-
+    */
 
 
     private static RatEvaluator instance;
@@ -73,11 +75,15 @@ public class RatEvaluator implements MadeEvaluatorInterface {
     private RatEvaluator() throws CannotCompileException, Exception {
         patterns = new ArrayList<MadePattern>();
 
-        URL url = this.getClass().getClassLoader().getResource("evaluation.properties");
         prop = new Properties();
         try {
-            prop.load(url.openStream());
-
+            if (Parameters.getInstance().getPatterns().getPath().compareTo(".")==0){
+                 URL url = this.getClass().getClassLoader().getResource("patterns_1.properties");
+                prop.load(url.openStream());
+            }else{
+                prop.load(new FileInputStream(Parameters.getInstance().getPatterns()));//url.openStream());
+            }
+            
             HashSet<String> classNames = new HashSet<String>();
 
             Pattern patt = Pattern.compile("(label\\.[^\\.]*)\\.r");
@@ -154,7 +160,7 @@ public class RatEvaluator implements MadeEvaluatorInterface {
             }
         }
 
-        boolean logFitness = RatEvaluator.getInstance().logFitness();
+        //boolean logFitness = Parameters.getInstance().islogFitness();
         String logString = "";
 
 
@@ -163,18 +169,19 @@ public class RatEvaluator implements MadeEvaluatorInterface {
             double d = madePattern.getWeight(p, pm.get(madePattern.getLabel()),
                     a, am.get(madePattern.getLabel()));
 
-            if (logFitness){ logString+=(d + ";");}
+            //if (logFitness){ logString+=(d + ";");}
 
             f += d;
         }
 
-        if (logFitness){
+        /*if (logFitness){
             logString+=(f + ";");
             System.out.println(logString);
-        }
+        }*/
         return f;
     }
 
+    /*
     public int getProperty(String key){
 
         if (key == AVERAGE && average!=null){
@@ -206,6 +213,6 @@ public class RatEvaluator implements MadeEvaluatorInterface {
     public void setAverage(Integer average) {
         this.average = average;
     }
-    
+    */
     
 }

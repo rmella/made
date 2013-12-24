@@ -24,5 +24,5 @@ import java.util.ArrayList;
 public interface MadeEvaluatorInterface {
 
     double getFitness(ArrayList<MadeAgentInterface> agents);
-    public boolean logFitness();
+    
 }

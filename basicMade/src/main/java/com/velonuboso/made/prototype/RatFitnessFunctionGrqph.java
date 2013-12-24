@@ -30,18 +30,18 @@ public class RatFitnessFunctionGrqph extends FitnessFunction implements MadeFitn
 
     static int getGeneNumber() {
         RatEvaluator e = RatEvaluator.getInstance();
-        return e.getProperty(e.NUMBER_OF_PROFILES)*RatAgent.NUMBER_OF_FEATURES;
+        return Parameters.getInstance().getNumberOfProfiles()*RatAgent.NUMBER_OF_FEATURES;
     }
     
     @Override
     public double evaluate(IChromosome ic) {
         RatEvaluator e = RatEvaluator.getInstance();
         double ret = 0;
-        for (int i=0; i<e.getProperty(e.AVERAGE); i++){
+        for (int i=0; i<Parameters.getInstance().getNumberOfExecutions(); i++){
             RatEnvironment env = new RatEnvironment(ic);
             ret += env.runEnvironment(true, true);
         }
-        return ret / (double)e.getProperty(e.AVERAGE);
+        return ret / (double)Parameters.getInstance().getNumberOfExecutions();
     }
 
 }
