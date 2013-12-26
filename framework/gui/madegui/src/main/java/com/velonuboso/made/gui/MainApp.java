@@ -20,8 +20,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
-        
-        
+        this.stage.centerOnScreen();
         madeLogger = MadeLogger.getInstance();
         madeLogger.configure(stage);
         
@@ -65,6 +64,7 @@ public class MainApp extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        System.out.println("AAAAAaaaaa");
         launch(args);
     }
 

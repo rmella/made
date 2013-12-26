@@ -5,13 +5,11 @@
  */
 package com.velonuboso.made.core;
 
-import com.velonuboso.made.gui.MainApp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Properties;
-import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -44,8 +42,12 @@ public class Configurator {
                 prop.load(new FileInputStream(f));
             } else {
                 URL url = this.getClass().getClassLoader().getResource("madegui.conf");
-                prop.load(url.openStream());
-                FileUtils.copyFile(new File(url.getFile()), f);
+                if (url == null){
+                    throw new Exception("Default config file not found");
+                }else{
+                    prop.load(url.openStream());
+                    FileUtils.copyFile(new File(url.getFile()), f);
+                }
             }
 
             HashSet<String> classNames = new HashSet<String>();

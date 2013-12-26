@@ -7,6 +7,7 @@
 package com.velonuboso.made.gui;
 
 import javafx.stage.Stage;
+import org.controlsfx.dialog.Dialog;
 
 /**
  *
@@ -21,6 +22,9 @@ public class MadeLogger {
     }
 
     public static MadeLogger getInstance() {
+        if (instance == null){
+            instance = new MadeLogger();
+        }
         return instance;
     }
     
@@ -29,7 +33,11 @@ public class MadeLogger {
     }
 
     public void error(String message) {
-     System.out.println("ERROR: "+message);
+        stage.centerOnScreen();
+        System.out.println("ERROR: "+message);
+        Dialog d = new Dialog(stage, "Error");
+        d.setContent(message);
+        d.show();
     }
 
     public void warning(String message) {
