@@ -16,9 +16,12 @@
 package com.velonuboso.made.prototype;
 
 import com.velonuboso.made.core.Gender;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -62,8 +65,8 @@ public class RatNameHelper {
         String str = "";
         try {
             str =
-                    FileUtils.readFileToString(new File(url.getFile()));
-        } catch (IOException ex) {
+                    getText(url);
+        } catch (Exception ex) {
             Logger.getLogger(RatNameHelper.class.getName()).log(Level.SEVERE, null,
                     ex);
         }
@@ -96,6 +99,23 @@ public class RatNameHelper {
         int index = r.nextInt(nicknames.size());
         ret = nicknames.get(index);
         return ret;
+    }
+
+    public static String getText(URL url) throws Exception {
+        URLConnection connection = url.openConnection();
+        BufferedReader in = new BufferedReader(
+                                new InputStreamReader(
+                                    connection.getInputStream()));
+
+        StringBuilder response = new StringBuilder();
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null)
+            response.append(inputLine);
+
+        in.close();
+
+        return response.toString();
     }
 
 }

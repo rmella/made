@@ -82,14 +82,17 @@ public final class Helper {
      * @return a pretty formatted string
      */
     public static String chromosomeAndGenerationToString(
-            final int generation, final IChromosome solution) {
+            final int generation, final IChromosome solution, final double average) {
         StringBuilder str = new StringBuilder();
-        str.append("g = ");
+        str.append("gen = ");
         str.append(String.format(FIXED_INTEGER_ITERATION_FORMAT, generation));
-        str.append(",v = ");
+        str.append(",avg = ");
+        str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
+                average));
+        str.append(",best = ");
         str.append(String.format(FIXED_DECIMAL_FITNESS_FORMAT,
                 solution.getFitnessValue()));
-        str.append(",c = {");
+        str.append(",chrom = {");
         str.append(chromosomeToString(solution));
         str.append("}");
         return str.toString();
