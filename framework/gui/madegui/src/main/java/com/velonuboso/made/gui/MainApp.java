@@ -1,6 +1,5 @@
 package com.velonuboso.made.gui;
 
-import com.velonuboso.made.core.Configurator;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -19,8 +18,13 @@ public class MainApp extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+        
+        
+        setUserAgentStylesheet(STYLESHEET_CASPIAN);
+        
         this.stage = stage;
         this.stage.centerOnScreen();
+        
         madeLogger = MadeLogger.getInstance();
         madeLogger.configure(stage);
         
@@ -28,7 +32,7 @@ public class MainApp extends Application {
         try{
             configurator.autoConfigure();
         }catch(Exception ex){
-            madeLogger.error(ex.getMessage());
+            madeLogger.error(ex.getMessage(), ex);
         }
         
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainScene.fxml"));
@@ -43,6 +47,7 @@ public class MainApp extends Application {
         
         MainController mainController = loader.getController();
         mainController.setStage(stage);
+        mainController.setup();
     }
 
     public Stage getStage() {

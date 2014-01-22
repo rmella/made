@@ -1,3 +1,28 @@
 .button {
     -fx-font-weight: bold;
 }
+
+.back{
+    -fx-background-image:url('../img/background.jpg');
+    /*-fx-background-color: #666666;*/
+    -fx-background-size: cover;
+}
+
+.info_panel{
+    -fx-background-color: transparent;
+}
+
+.info_label{
+    -fx-color: white;
+    -fx-padding: 5px;
+    -fx-width:100%;
+}
+
+.tab-pane *.tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.console{
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
