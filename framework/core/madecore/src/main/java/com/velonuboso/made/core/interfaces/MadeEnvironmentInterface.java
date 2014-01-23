@@ -15,6 +15,8 @@
  */
 package com.velonuboso.made.core.interfaces;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Ruben
@@ -27,4 +29,6 @@ public interface MadeEnvironmentInterface {
 
     double runEnvironment(boolean log, boolean graph);
 
+    public ArrayList<MadeAgentInterface> getAgents();
+    
 }

@@ -532,4 +532,10 @@ public class RatEnvironment implements MadeEnvironmentInterface {
         return globalSetup;
     }
 
+    public ArrayList<MadeAgentInterface> getAgents() {
+        return agents;
+    }
+
+    
+    
 }

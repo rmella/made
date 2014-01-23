@@ -112,7 +112,7 @@ public class RatNameHelper {
         String inputLine;
 
         while ((inputLine = in.readLine()) != null)
-            response.append(inputLine);
+            response.append(inputLine+"\n");
 
         in.close();
 

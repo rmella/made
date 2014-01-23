@@ -28,4 +28,6 @@ public interface ExecutionListenerInterface {
 
     public float getProgress();
     
+    public void environmentExecuted (ArrayList<MadeAgentInterface> agents);
+    
 }

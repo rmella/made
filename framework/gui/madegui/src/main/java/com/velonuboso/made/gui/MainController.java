@@ -170,7 +170,7 @@ public class MainController implements Initializable {
             GlobalSetup globalSetup = GlobalSetupFromForm();
             GASetup gaSetup = GASetupFromForm();
             FitnessSetup fitnessSetup = FitnessSetupFromForm();
-            controller.init(baseAgentSetup, globalSetup, gaSetup, fitnessSetup);
+            controller.init(baseAgentSetup, globalSetup, gaSetup, fitnessSetup, mainTabPane);
             Thread thread = new Thread(controller);
             thread.start();
         } catch (IOException ex) {

@@ -7,6 +7,7 @@ package com.velonuboso.made.gui;
 
 import com.velonuboso.made.core.Launcher;
 import com.velonuboso.made.core.interfaces.ExecutionListenerInterface;
+import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.setup.BaseAgentSetup;
 import com.velonuboso.made.core.setup.FitnessSetup;
 import com.velonuboso.made.core.setup.GASetup;
@@ -32,13 +33,17 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -89,6 +94,8 @@ public class GAExecutionController implements Initializable, Runnable, Execution
 
     private float theProgress = 0;
 
+    private TabPane tabPane;
+
     public GAExecutionController() {
 
     }
@@ -102,12 +109,14 @@ public class GAExecutionController implements Initializable, Runnable, Execution
             BaseAgentSetup baseAgentSetup,
             GlobalSetup globalSetup,
             GASetup gASetup,
-            FitnessSetup fitnessSetup
+            FitnessSetup fitnessSetup,
+            TabPane tabPane
     ) {
         this.baseAgentSetup = baseAgentSetup;
         this.gASetup = gASetup;
         this.globalSetup = globalSetup;
         this.fitnessSetup = fitnessSetup;
+        this.tabPane = tabPane;
 
         o = FXCollections.observableArrayList();
 
@@ -126,43 +135,58 @@ public class GAExecutionController implements Initializable, Runnable, Execution
         GATableC4.setCellValueFactory(
                 new Callback<TableColumn.CellDataFeatures<GAExecutionLine, GAExecutionLine>, ObservableValue<GAExecutionLine>>() {
 
-            @Override
-            public ObservableValue<GAExecutionLine> call(TableColumn.CellDataFeatures<GAExecutionLine, GAExecutionLine> features) {
-                return new ReadOnlyObjectWrapper(features.getValue());
-            }
-        });
+                    @Override
+                    public ObservableValue<GAExecutionLine> call(TableColumn.CellDataFeatures<GAExecutionLine, GAExecutionLine> features) {
+                        return new ReadOnlyObjectWrapper(features.getValue());
+                    }
+                });
         GATableC4.setCellFactory(
                 new Callback<TableColumn<GAExecutionLine, GAExecutionLine>, TableCell<GAExecutionLine, GAExecutionLine>>() {
-            
-
-            @Override
-            public TableCell<GAExecutionLine, GAExecutionLine> call(TableColumn<GAExecutionLine, GAExecutionLine> btnCol) {
-                return new TableCell<GAExecutionLine, GAExecutionLine>() {
-                    final Button button = new Button();
-                   
 
                     @Override
-                    public void updateItem(final GAExecutionLine ch, boolean empty) {
-                        super.updateItem(ch, empty);
-                        if (ch != null) {
-                            button.setText("Run");
-                            button.setTooltip(new Tooltip("Press to run an environment with this given solution"));
-                            setGraphic(button);
-                            button.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    for (int i=0; i<ch.getChromosome().size(); i++){
-                                        System.out.println("Hola");
-                                    }
+                    public TableCell<GAExecutionLine, GAExecutionLine> call(TableColumn<GAExecutionLine, GAExecutionLine> btnCol) {
+                        return new TableCell<GAExecutionLine, GAExecutionLine>() {
+                            final Button button = new Button();
+
+                            @Override
+                            public void updateItem(final GAExecutionLine ch, boolean empty) {
+                                super.updateItem(ch, empty);
+                                if (ch != null) {
+                                    button.setText("Run");
+                                    button.setTooltip(new Tooltip("Press to run an environment with this given solution"));
+                                    setGraphic(button);
+                                    button.setOnAction(new EventHandler<ActionEvent>() {
+                                        @Override
+                                        public void handle(ActionEvent event) {
+
+                                            Tab t = new Tab("Execution");
+                                            tabPane.getTabs().add(t);
+                                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Execution.fxml"));
+                                            Parent root;
+                                            try {
+                                                ExecutionController controller = new ExecutionController();
+
+                                                loader.setController(controller);
+                                                root = (Parent) loader.load();
+                                                t.setContent(root);
+                                                t.setClosable(true);
+                                                tabPane.getSelectionModel().select(t);
+                                                controller.init(ch.getChromosome(), baseAgentSetup, globalSetup, fitnessSetup, tabPane);
+                                                Thread thread = new Thread(controller);
+                                                thread.start();
+                                            } catch (IOException ex) {
+                                                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        }
+
+                                    });
+                                } else {
+                                    setGraphic(null);
                                 }
-                            });
-                        } else {
-                            setGraphic(null);
-                        }
+                            }
+                        };
                     }
-                };
-            }
-        });
+                });
 
         GATable.setItems(o);
         GAGraph.getData().add(seriesMax);
@@ -358,7 +382,11 @@ public class GAExecutionController implements Initializable, Runnable, Execution
 
     @FXML
     private void handleCloseTabAction(ActionEvent event) {
+    }
 
+    @Override
+    public void environmentExecuted(ArrayList<MadeAgentInterface> agents) {
+        // nothing to do
     }
 
 }

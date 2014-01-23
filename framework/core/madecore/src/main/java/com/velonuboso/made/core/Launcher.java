@@ -46,14 +46,12 @@ public class Launcher {
         this.baseAgentSetup = baseAgentSetup;
         this.gaSetup = gaSetup;
         this.fitnessSetup = fitnessSetup;
+        this.evaluator = new RatEvaluator(fitnessSetup, globalSetup);
     }
 
     public void launch() throws InvalidConfigurationException {
 
         long t0 = System.currentTimeMillis();
-
-        evaluator = new RatEvaluator(fitnessSetup, globalSetup);
-        
 
         Configuration conf = new DefaultConfiguration();
         RatFitnessFunction myFunc = new RatFitnessFunction(globalSetup, baseAgentSetup, gaSetup, r, listener, evaluator);
@@ -141,4 +139,11 @@ public class Launcher {
          listener.log(environment2.getSummary());
          */
     }
+    
+    public void launch(IChromosome iChromosome){
+        RatEnvironment env = new RatEnvironment(iChromosome, baseAgentSetup, globalSetup, new Random(), listener, evaluator);
+        env.runEnvironment(false, false);
+        listener.environmentExecuted(env.getAgents());
+    }
 }
+
