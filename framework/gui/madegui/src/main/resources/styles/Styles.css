@@ -26,3 +26,21 @@
     -fx-background-color: black;
     -fx-text-fill: white;
 }
+
+.sheet_section{
+    -fx-border-color: black;
+    -fx-border-width: 0 0 1 0;
+}
+.sheet{
+    -fx-background-image:url('../img/Grungy-Paper-Texture-3.jpg');
+    -fx-background-color: #6666FF;
+    -fx-background-size: cover;
+}
+
+.sheet *.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+#splitPane{
+    -fx-border-width: 0 0 0 0;
+}

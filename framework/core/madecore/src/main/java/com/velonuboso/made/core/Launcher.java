@@ -53,7 +53,7 @@ public class Launcher {
 
         long t0 = System.currentTimeMillis();
 
-        Configuration conf = new DefaultConfiguration();
+        Configuration conf = new DefaultConfiguration(Long.toString(System.currentTimeMillis()),"");
         RatFitnessFunction myFunc = new RatFitnessFunction(globalSetup, baseAgentSetup, gaSetup, r, listener, evaluator);
 
         conf.setFitnessFunction(myFunc);

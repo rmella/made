@@ -95,6 +95,7 @@ public class GAExecutionController implements Initializable, Runnable, Execution
     private float theProgress = 0;
 
     private TabPane tabPane;
+    private static char counter = 'A';
 
     public GAExecutionController() {
 
@@ -110,7 +111,8 @@ public class GAExecutionController implements Initializable, Runnable, Execution
             GlobalSetup globalSetup,
             GASetup gASetup,
             FitnessSetup fitnessSetup,
-            TabPane tabPane
+            TabPane tabPane,
+            int gaId
     ) {
         this.baseAgentSetup = baseAgentSetup;
         this.gASetup = gASetup;
@@ -159,7 +161,7 @@ public class GAExecutionController implements Initializable, Runnable, Execution
                                         @Override
                                         public void handle(ActionEvent event) {
 
-                                            Tab t = new Tab("Execution");
+                                            Tab t = new Tab("Env exec (" + gaId + "." + Character.toString(++counter) + ")");
                                             tabPane.getTabs().add(t);
                                             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Execution.fxml"));
                                             Parent root;

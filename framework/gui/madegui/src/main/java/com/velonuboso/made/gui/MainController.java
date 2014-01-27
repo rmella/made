@@ -103,6 +103,8 @@ public class MainController implements Initializable {
 
     @FXML
     private TabPane mainTabPane;
+    
+    private static int counter = 0;
 
     @FXML
     private void handleLoadSetupAction(ActionEvent event) {
@@ -153,7 +155,7 @@ public class MainController implements Initializable {
     @FXML
     private void handleRunExperimentAction(ActionEvent event) {
         Tab t = new Tab();
-        t.setText("Execution");
+        t.setText("GA exec (" + ++counter + ")");
         mainTabPane.getTabs().add(t);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GAExecution.fxml"));
@@ -170,7 +172,7 @@ public class MainController implements Initializable {
             GlobalSetup globalSetup = GlobalSetupFromForm();
             GASetup gaSetup = GASetupFromForm();
             FitnessSetup fitnessSetup = FitnessSetupFromForm();
-            controller.init(baseAgentSetup, globalSetup, gaSetup, fitnessSetup, mainTabPane);
+            controller.init(baseAgentSetup, globalSetup, gaSetup, fitnessSetup, mainTabPane, counter);
             Thread thread = new Thread(controller);
             thread.start();
         } catch (IOException ex) {

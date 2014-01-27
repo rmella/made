@@ -24,6 +24,7 @@ import com.velonuboso.made.core.common.Position;
 import com.velonuboso.made.core.interfaces.ExecutionListenerInterface;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -81,10 +82,9 @@ public class RatAgent implements MadeAgentInterface {
     private boolean child = true;
     private RatAgent inLoveWith;
     private String KINDLY_REQUESTED_FOOD;
-    
+
     private ExecutionListenerInterface logger;
-    
-    
+
     public RatAgent(int id, int date, Gender g, int profile, RatEnvironment env,
             Random rand, boolean logSheet, ExecutionListenerInterface logger) {
         this(id, date, g, profile, "", "", "", env, rand, logSheet, logger);
@@ -113,17 +113,16 @@ public class RatAgent implements MadeAgentInterface {
         this.r = rand;
         alive = true;
 
-
         days = 0;
         // A Rattus rattus Norvegicus can live 12 months (360 days)
 
         int BASE_DAYS = env.getBaseAgentSetup().getBaseLifeInDays();
-        try{
-        maxDays = (int) (BASE_DAYS
-                + (BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
-                + ((BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
-                * (((r.nextDouble() * 2) - 1) * profileVariance)));
-        }catch(Exception e){
+        try {
+            maxDays = (int) (BASE_DAYS
+                    + (BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
+                    + ((BASE_DAYS * env.getVal(profile, FEATURE_LIFE))
+                    * (((r.nextDouble() * 2) - 1) * profileVariance)));
+        } catch (Exception e) {
             logger.log(e.getMessage());
         }
         // About one week without eating
@@ -237,11 +236,11 @@ public class RatAgent implements MadeAgentInterface {
 
                         if (!kindlyDisplaced) {
                             if (this.getBite() > target.getFur()) {
-                                boolean targetWasAlive = target.isAlive() && target.energy>0;
+                                boolean targetWasAlive = target.isAlive() && target.energy > 0;
                                 target.nudge(this);
-                                boolean targetIsAlive =  target.isAlive() && target.energy>0;
+                                boolean targetIsAlive = target.isAlive() && target.energy > 0;
                                 addline(days, RatState.NUDGE_OK + " " + target.id);
-                                if (targetWasAlive && !targetIsAlive){
+                                if (targetWasAlive && !targetIsAlive) {
                                     addline(days, RatState.KILL + " " + target.id);
                                 }
                                 addline(days, RatState.EAT + " " + nutrition);
@@ -253,7 +252,7 @@ public class RatAgent implements MadeAgentInterface {
                                 addline(days, RatState.NUDGE_FAILED + " " + target.id);
                             }
                         }
-                    }else{
+                    } else {
                         Position pos = env.getFreePosition(this, smell);
                         if (pos != null) {
                             env.moveAgent(this, pos);
@@ -346,7 +345,7 @@ public class RatAgent implements MadeAgentInterface {
             env.moveAgent(this, p);
             this.energy--;
             addline(days, RatState.NUDGED + " " + source.id);
-            if (this.energy == 0){
+            if (this.energy == 0) {
                 alive = false;
                 addline(days, RatState.KILLED + " " + source.id);
                 addline(days, RatState.DIE.toString());
@@ -476,8 +475,6 @@ public class RatAgent implements MadeAgentInterface {
         return name;
     }
 
-    
-    
     @Override
     public HashSet<String> getLabels() {
         return labels;
@@ -489,5 +486,23 @@ public class RatAgent implements MadeAgentInterface {
 
     public Gender getGender() {
         return gender;
+    }
+
+    public String getFullName() {
+        return name + nickname  + surname;
+    }
+
+    public String getLabelsAsString() {
+        String ret = "";
+
+        Iterator<String> it = labels.iterator();
+        while (it.hasNext()) {
+            String s = it.next();
+            ret += s;
+            if (it.hasNext()) {
+                ret += ", ";
+            }
+        }
+        return ret;
     }
 }

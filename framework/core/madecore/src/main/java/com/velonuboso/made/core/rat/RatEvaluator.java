@@ -61,7 +61,7 @@ public class RatEvaluator implements MadeEvaluatorInterface {
         double result = 0;
         
         PopulationGrowthArchetype pg = new PopulationGrowthArchetype();
-        result += pg.evaluate(gsetup, agents, 0.5f, 1.5f);
+        result += pg.evaluate(gsetup, agents, 0.5f, 1f);
         
         return result;
     }

@@ -46,5 +46,9 @@ public interface MadeAgentInterface {
     public void addLabel(String label);
 
     public int getId();
+    
+    public String getFullName();
+    
+    public String getLabelsAsString();
 
 }
