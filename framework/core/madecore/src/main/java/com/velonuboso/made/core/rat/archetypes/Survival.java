@@ -6,6 +6,7 @@
 
 package com.velonuboso.made.core.rat.archetypes;
 
+import com.velonuboso.made.core.common.ArchetypeType;
 import com.velonuboso.made.core.interfaces.Archetype;
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.setup.GlobalSetup;
@@ -17,8 +18,8 @@ import org.jgap.IChromosome;
  *
  * @author rhgarcia
  */
-public class PopulationGrowthArchetype extends Archetype{
-
+public class Survival extends Archetype{
+    
     public String getName() {
         return "Population Growth";
     }
@@ -36,4 +37,8 @@ public class PopulationGrowthArchetype extends Archetype{
         return getGaussian(ratio, from, to);
     }
 
+    @Override
+    public ArchetypeType getType() {
+        return ArchetypeType.GLOBAL;
+    }
 }

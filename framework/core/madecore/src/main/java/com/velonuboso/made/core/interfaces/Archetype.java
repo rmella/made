@@ -6,6 +6,7 @@
 
 package com.velonuboso.made.core.interfaces;
 
+import com.velonuboso.made.core.common.ArchetypeType;
 import com.velonuboso.made.core.setup.GlobalSetup;
 import java.util.ArrayList;
 import org.apache.commons.math3.analysis.function.Gaussian;
@@ -15,6 +16,7 @@ import org.apache.commons.math3.analysis.function.Gaussian;
  * @author rhgarcia
  */
 public abstract class Archetype {
+    
     
     public abstract String getName();
     
@@ -37,5 +39,7 @@ public abstract class Archetype {
         float amplitude = to - from;
         return gaussian.value((ratio-target)/amplitude)/0.40;
     }
+    
+    public abstract  ArchetypeType getType();
     
 }

@@ -81,7 +81,6 @@ public class RatAgent implements MadeAgentInterface {
     private int pregnancy = 0; // 0 = not-pregnant; otherwise, the days to have a child
     private boolean child = true;
     private RatAgent inLoveWith;
-    private String KINDLY_REQUESTED_FOOD;
 
     private ExecutionListenerInterface logger;
 
@@ -224,7 +223,7 @@ public class RatAgent implements MadeAgentInterface {
                             Position palt = env.getFreePosition(target, target.smell);
                             if (palt != null) {
                                 target.addline(target.days, RatState.KINDLY_DISPLACED + " " + this.id);
-                                this.addline(days, KINDLY_REQUESTED_FOOD + " " + target.id);
+                                this.addline(days, RatState.KINDLY_REQUESTED_FOOD + " " + target.id);
                                 addline(days, RatState.EAT + " " + nutrition);
                                 env.moveAgent(target, palt);
                                 env.moveAgent(this, p);

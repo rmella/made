@@ -6,10 +6,13 @@
 
 package com.velonuboso.made.core.rat.archetypes;
 
+import com.velonuboso.made.core.common.ArchetypeType;
 import com.velonuboso.made.core.interfaces.Archetype;
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.setup.GlobalSetup;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.math3.analysis.function.Gaussian;
 import org.jgap.IChromosome;
 
@@ -17,23 +20,39 @@ import org.jgap.IChromosome;
  *
  * @author rhgarcia
  */
-public class HeroArchetype extends Archetype{
+public class Avenger extends Archetype{
 
+
+    
+    public Avenger() {
+        super();
+    }
+
+    
     public String getName() {
         return "Population Growth";
     }
 
     public double evaluate(GlobalSetup gs, ArrayList<MadeAgentInterface> agents, Float from, Float to) {
         
-        int aliveAgents = 0;
+        Pattern patt = Pattern.compile("@NUDGED (\\w+)\\s[\\s\\S]*@NUDGE_OK \\1");
+        
+        int avengers = 0;
         for (MadeAgentInterface agent : agents) {
-            if (agent.isAlive()){
-                aliveAgents ++;
+            Matcher m = patt.matcher(agent.getStringLog());
+            if (m.find()){
+                agent.addLabel("Avenger("+m.group(1)+")");
+                avengers ++;
             }
         }
-        float ratio = aliveAgents / gs.getNumberOfInitialAgents();
+        double ratio = (double) avengers / (double) agents.size();
      
-        return getGaussian(ratio, from, to);
+        return ratio*(to-from);//getGaussian(ratio, from, to);
+    }
+
+    @Override
+    public ArchetypeType getType() {
+        return ArchetypeType.LITERARY;
     }
 
 }

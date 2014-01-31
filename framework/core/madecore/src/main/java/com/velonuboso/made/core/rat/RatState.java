@@ -37,5 +37,6 @@ public enum RatState {
     PREGNANT,
     PARENT,
     DIE,
-    FREE_TIME
+    FREE_TIME, 
+    KINDLY_REQUESTED_FOOD
 }

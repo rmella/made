@@ -22,11 +22,13 @@ import com.velonuboso.made.core.interfaces.MadeEvaluatorInterface;
 import com.velonuboso.made.core.interfaces.MadeEvaluatorInterface;
 import com.velonuboso.made.core.common.MadePattern;
 import com.velonuboso.made.core.common.MadePattern;
-import com.velonuboso.made.core.rat.archetypes.PopulationGrowthArchetype;
+import com.velonuboso.made.core.interfaces.Archetype;
+import com.velonuboso.made.core.rat.archetypes.Survival;
 import com.velonuboso.made.core.setup.FitnessSetup;
 import com.velonuboso.made.core.setup.GlobalSetup;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,8 +62,16 @@ public class RatEvaluator implements MadeEvaluatorInterface {
         
         double result = 0;
         
-        PopulationGrowthArchetype pg = new PopulationGrowthArchetype();
-        result += pg.evaluate(gsetup, agents, 0.5f, 1f);
+        for (int i=0; i<fsetup.getSize(); i++){
+            try {
+                Class c = fsetup.getClass(i);
+                Archetype arch = (Archetype) c.getConstructors()[0].newInstance();
+                double d = arch.evaluate(gsetup, agents, fsetup.getParam(i)-0.5f, fsetup.getParam(i)+0.5f);
+                result += (d*fsetup.getFitness(i));
+            } catch (Exception ex) {
+                Logger.getLogger(RatEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         
         return result;
     }

@@ -201,7 +201,7 @@ public class GAExecutionController implements Initializable, Runnable, Execution
     @Override
     public void run() {
 
-        Launcher l = new Launcher(this, globalSetup, baseAgentSetup, gASetup, null);
+        Launcher l = new Launcher(this, globalSetup, baseAgentSetup, gASetup, fitnessSetup);
 
         try {
             l.launch();

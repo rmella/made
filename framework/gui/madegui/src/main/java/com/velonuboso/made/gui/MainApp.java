@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
-    
-
     private Stage stage = null;
     private Configurator configurator = null;
     private MadeLogger madeLogger = null;
