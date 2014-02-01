@@ -11,8 +11,8 @@
     <name>Multi Module Parent Project</name>
 
     <modules>
-        <module>core</module>
-        <module>environment</module>
+        <module>framework/core/madecore</module>
+        <module>framework/gui/madegui</module>
     </modules>
 
     <build>
