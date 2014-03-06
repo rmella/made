@@ -71,9 +71,9 @@
                                       <children>
                                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                           <children>
-                                            <ImageView fx:id="sheetImage" blendMode="MULTIPLY" fitHeight="118.0" fitWidth="118.0" pickOnBounds="true" preserveRatio="true">
+                                            <ImageView fx:id="sheetImageView" blendMode="MULTIPLY" fitHeight="118.0" fitWidth="118.0" pickOnBounds="true" preserveRatio="true">
                                               <image>
-                                                <Image url="@../img/rat_face.gif" />
+                                                <Image fx:id="sheetImage" url="@../img/rat_face.jpg" />
                                               </image>
                                             </ImageView>
                                             <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">

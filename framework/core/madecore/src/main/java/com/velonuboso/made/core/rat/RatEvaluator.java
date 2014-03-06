@@ -67,8 +67,8 @@ public class RatEvaluator implements MadeEvaluatorInterface {
             try {
                 Class c = fsetup.getClass(i);
                 Archetype arch = (Archetype) c.getConstructors()[0].newInstance();
-                double d = arch.evaluate(gsetup, agents, fsetup.getParam(i)-0.5f, fsetup.getParam(i)+0.5f);
-                result += (d*fsetup.getFitness(i));
+                double d = arch.evaluate(gsetup, agents, fsetup.getOccurrence(i));
+                result += (d);
             } catch (Exception ex) {
                 Logger.getLogger(RatEvaluator.class.getName()).log(Level.SEVERE, null, ex);
             }

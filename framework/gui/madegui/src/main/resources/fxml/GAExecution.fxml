@@ -52,7 +52,7 @@
         </SplitPane>
         <ToolBar VBox.vgrow="NEVER">
           <items>
-            <Button mnemonicParsing="false" text="Stop" />
+            <Button mnemonicParsing="false" text="Stop" onAction="#handleStop" />
             <ProgressBar fx:id="progress" prefHeight="21.0" prefWidth="200.0" progress="0.0" />
           </items>
         </ToolBar>

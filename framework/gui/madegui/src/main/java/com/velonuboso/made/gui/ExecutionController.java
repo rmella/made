@@ -50,6 +50,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import org.jgap.Chromosome;
@@ -102,7 +103,10 @@ public class ExecutionController implements Initializable, Runnable, ExecutionLi
     private Label sheetLog;
     
     @FXML
-    private ImageView sheetImage;
+    private ImageView sheetImageView;
+    
+    @FXML
+    private Image sheetImage;
     
     private IChromosome chromosome;
 
@@ -179,7 +183,8 @@ public class ExecutionController implements Initializable, Runnable, ExecutionLi
             columnName.setCellValueFactory(new PropertyValueFactory<MadeAgentInterface, Integer>("fullName"));
             columnAlive.setCellValueFactory(new PropertyValueFactory<MadeAgentInterface, Boolean>("alive"));
             
-            sheetImage.setBlendMode(BlendMode.MULTIPLY);
+            sheetImageView.setBlendMode(BlendMode.MULTIPLY
+            );
             sheetLog.autosize();
             
             LauncherThread thread = new LauncherThread(this, globalSetup, null, fitnessSetup, baseAgentSetup, chromosome);

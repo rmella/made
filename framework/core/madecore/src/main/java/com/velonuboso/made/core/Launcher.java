@@ -29,6 +29,8 @@ import com.velonuboso.made.core.rat.RatEvaluator;
 import com.velonuboso.made.core.rat.RatFitnessFunction;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jgap.Chromosome;
 import org.jgap.Configuration;
 import org.jgap.FitnessFunction;
@@ -43,7 +45,7 @@ import org.jgap.impl.DoubleGene;
  *
  * @author raiben@gmail.com
  */
-public class Launcher {
+public class Launcher extends Thread {
 
     private ExecutionListenerInterface listener;
     private GlobalSetup globalSetup;
@@ -52,6 +54,9 @@ public class Launcher {
     private FitnessSetup fitnessSetup;
     private Random r = new Random();
     private RatEvaluator evaluator = null;
+    
+    private volatile boolean stop = false;
+    private Genotype population = null;
     
     public Launcher(ExecutionListenerInterface listener, GlobalSetup globalSetup, BaseAgentSetup baseAgentSetup, GASetup gaSetup, FitnessSetup fitnessSetup) {
         this.listener = listener;
@@ -62,6 +67,17 @@ public class Launcher {
         this.evaluator = new RatEvaluator(fitnessSetup, globalSetup);
     }
 
+    @Override
+    public void run() {
+        try {
+            launch();
+        } catch (InvalidConfigurationException ex) {
+            Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    
+    
     public void launch() throws InvalidConfigurationException {
 
         long t0 = System.currentTimeMillis();
@@ -70,7 +86,7 @@ public class Launcher {
         RatFitnessFunction myFunc = new RatFitnessFunction(globalSetup, baseAgentSetup, gaSetup, r, listener, evaluator);
 
         conf.setFitnessFunction(myFunc);
-        
+
 
         Gene[] sampleGenes
                 = new Gene[myFunc.getGeneNumber()];
@@ -82,7 +98,7 @@ public class Launcher {
         conf.setSampleChromosome(sampleChromosome);
 
         conf.setPopulationSize(gaSetup.getTxtPopulation());
-        Genotype population = Genotype.randomInitialGenotype(conf);
+        population = Genotype.randomInitialGenotype(conf);
 
         // show a sample of a random solution
         RatEnvironment environment1 = new RatEnvironment(
@@ -101,43 +117,52 @@ public class Launcher {
 
         // start iterating
         IChromosome bestSolutionSoFar = population.getFittestChromosome();
-        // calculate the average in the generation
+        
+        double fitness = 0;
         double avg = 0;
-        for (IChromosome ic : population.getChromosomes()) {
-            avg += ic.getFitnessValue();
-        }
-        avg = avg / population.getChromosomes().length;
-
-        listener.log(Helper.chromosomeAndGenerationToString(0, bestSolutionSoFar, avg));
-        listener.generation(0, (float) bestSolutionSoFar.getFitnessValue(),
-                (float) avg, Helper.chromosomeToArray(bestSolutionSoFar));
-
-        double fitness = bestSolutionSoFar.getFitnessValue();
-
-        for (int i = 0; i < gaSetup.getTxtGenerations(); i++) {
             
-            population.evolve();
-            bestSolutionSoFar = population.getFittestChromosome();
+        if (!stop){
             // calculate the average in the generation
-            avg = 0;
             for (IChromosome ic : population.getChromosomes()) {
                 avg += ic.getFitnessValue();
             }
             avg = avg / population.getChromosomes().length;
 
-            listener.log(Helper.chromosomeAndGenerationToString(i + 1, bestSolutionSoFar, avg));
-            listener.generation(i + 1, (float) bestSolutionSoFar.getFitnessValue(),
+            listener.log(Helper.chromosomeAndGenerationToString(0, bestSolutionSoFar, avg));
+            listener.generation(0, (float) bestSolutionSoFar.getFitnessValue(),
                     (float) avg, Helper.chromosomeToArray(bestSolutionSoFar));
 
-            if (bestSolutionSoFar.getFitnessValue() > fitness) {
-                fitness = bestSolutionSoFar.getFitnessValue();
-            }
-            
-            float p = (float) (i+1)/(float)(gaSetup.getTxtGenerations());
-            listener.progress(p);
+            fitness = bestSolutionSoFar.getFitnessValue();
         }
 
-        
+        int i = 0;
+        while (i < gaSetup.getTxtGenerations() && !stop){
+
+            population.evolve();
+            if (!stop){
+                bestSolutionSoFar = population.getFittestChromosome();
+                // calculate the average in the generation
+                avg = 0;
+                for (IChromosome ic : population.getChromosomes()) {
+                    avg += ic.getFitnessValue();
+                }
+                avg = avg / population.getChromosomes().length;
+
+                listener.log(Helper.chromosomeAndGenerationToString(i + 1, bestSolutionSoFar, avg));
+                listener.generation(i + 1, (float) bestSolutionSoFar.getFitnessValue(),
+                        (float) avg, Helper.chromosomeToArray(bestSolutionSoFar));
+
+                if (bestSolutionSoFar.getFitnessValue() > fitness) {
+                    fitness = bestSolutionSoFar.getFitnessValue();
+                }
+
+                float p = (float) (i+1)/(float)(gaSetup.getTxtGenerations());
+                listener.progress(p);
+            }
+            i++;
+        }
+
+
         long t1 = System.currentTimeMillis();
         listener.log(Helper.executionTime(t0, t1));
 
@@ -151,12 +176,19 @@ public class Launcher {
          listener.log("SUMMARY 2:");
          listener.log(environment2.getSummary());
          */
+        
     }
     
     public void launch(IChromosome iChromosome){
         RatEnvironment env = new RatEnvironment(iChromosome, baseAgentSetup, globalSetup, new Random(), listener, evaluator);
         env.runEnvironment(false, false);
         listener.environmentExecuted(env.getAgents());
+    }
+    
+    
+    public void friendlyStop(){
+        stop = true;
+        this.interrupt();
     }
 }
 

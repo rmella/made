@@ -19,33 +19,32 @@
 package com.velonuboso.made.core.rat.archetypes;
 
 import com.velonuboso.made.core.common.ArchetypeType;
+import com.velonuboso.made.core.common.LabelArchetype;
 import com.velonuboso.made.core.interfaces.Archetype;
+import com.velonuboso.made.core.interfaces.ArchetypeOccurrence;
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.setup.GlobalSetup;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.math3.analysis.function.Gaussian;
-import org.jgap.IChromosome;
 
 /**
- *
+ * an avenger
  * @author raiben@gmail.com
  */
 public class Avenger extends Archetype{
-
-
     
     public Avenger() {
         super();
     }
 
     
-    public String getName() {
-        return "Population Growth";
+    public String getArchetypeName() {
+        return "Avenger";
     }
 
-    public double evaluate(GlobalSetup gs, ArrayList<MadeAgentInterface> agents, Float from, Float to) {
+    public double evaluate(GlobalSetup gs, ArrayList<MadeAgentInterface> agents, 
+            ArchetypeOccurrence o) {
         
         Pattern patt = Pattern.compile("@NUDGED (\\w+)\\s[\\s\\S]*@NUDGE_OK \\1");
         
@@ -53,18 +52,22 @@ public class Avenger extends Archetype{
         for (MadeAgentInterface agent : agents) {
             Matcher m = patt.matcher(agent.getStringLog());
             if (m.find()){
-                agent.addLabel("Avenger("+m.group(1)+")");
+                LabelArchetype la = new LabelArchetype("Avenger("+m.group(1)+")", null, null, "REVENGE TO THE AGENT "+m.group(1));
+                agent.addLabel(la);
                 avengers ++;
             }
         }
-        double ratio = (double) avengers / (double) agents.size();
-     
-        return ratio*(to-from);//getGaussian(ratio, from, to);
+        return o.getValue(agents.size(), avengers);
     }
 
     @Override
     public ArchetypeType getType() {
-        return ArchetypeType.LITERARY;
+        return ArchetypeType.PERSONAL;
+    }
+
+    @Override
+    public String getDescription() {
+        return "An character hurt by other one in the past, that revenge on him/her";
     }
 
 }

@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.gui;
 
 import com.velonuboso.made.core.common.ArchetypeType;
+import com.velonuboso.made.core.common.Helper;
 import com.velonuboso.made.core.interfaces.Archetype;
+import com.velonuboso.made.core.interfaces.ArchetypeOccurrence;
 import com.velonuboso.made.core.rat.archetypes.*;
 import com.velonuboso.made.core.setup.BaseAgentSetup;
 import com.velonuboso.made.core.setup.FitnessSetup;
@@ -30,6 +31,8 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -53,6 +56,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -67,6 +71,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.controlsfx.dialog.Dialog;
 
 public class MainController implements Initializable {
@@ -75,8 +80,32 @@ public class MainController implements Initializable {
 
     static {
         archetypes = new ArrayList<Class>();
+
+        archetypes.add(Hero.class);
         archetypes.add(Avenger.class);
+        archetypes.add(CreatureOfNightmare.class);
+        archetypes.add(DamselInDistress.class);
+        archetypes.add(DevilFigure.class);
+        archetypes.add(EarthMother.class);
+        archetypes.add(EvilFigureWithTheUltimatelyGoodHeart.class);
+        archetypes.add(FriendBeats.class);
+        archetypes.add(HuntingGroupOfCompanions.class);
+        archetypes.add(Initiate.class);
+        archetypes.add(LoyalRetainer.class);
+        archetypes.add(Mentor.class);
+        archetypes.add(Outcast.class);
+        archetypes.add(PlatonicIdeal.class);
+        archetypes.add(RomeoJuliet.class);
+        archetypes.add(Scapegoat.class);
+        archetypes.add(StarCrossedLovers.class);
         archetypes.add(Survival.class);
+        archetypes.add(Temptress.class);
+        archetypes.add(UnfaithfulWife.class);
+        archetypes.add(YoungPersonFromTheProvinces.class);
+        archetypes.add(Villain.class);
+        archetypes.add(Innocent.class);
+        archetypes.add(Sage.class);
+        
     }
 
     private Stage stage;
@@ -153,13 +182,21 @@ public class MainController implements Initializable {
 
     private HashMap<String, CheckBox> archetypesUsage = new HashMap<String, CheckBox>();
     private HashMap<String, Class> archetypesClasses = new HashMap<String, Class>();
-    private HashMap<String, TextField> archetypesParam1 = new HashMap<String, TextField>();
-    private HashMap<String, TextField> archetypesParam2 = new HashMap<String, TextField>();
+    private HashMap<String, Slider> archetypesParam1 = new HashMap<String, Slider>();
+    //private HashMap<String, TextField> archetypesParam2 = new HashMap<String, TextField>();
 
     private static int counter = 0;
 
     @FXML
     private BarChart fitnessGraph;
+
+    public MainController() {
+        try {
+            archetypes = Helper.topologicalOrder(archetypes);
+        } catch (Exception ex) {
+            MadeLogger.getInstance().error("Error in the archetype definitions", ex);
+        }
+    }
 
     @FXML
     private void handleLoadSetupAction(ActionEvent event) {
@@ -271,44 +308,66 @@ public class MainController implements Initializable {
 
                 CheckBox ch = new CheckBox();
                 ch.setId("archetype." + c.getSimpleName() + ".check");
-                TextField p1 = new TextField();
+                Slider p1 = new Slider();
+                p1.setBlockIncrement(1d);
+                p1.setMax(2);
+                p1.setMin(0);
+                p1.setValue(0);
+                p1.setShowTickLabels(true);
+                p1.setShowTickMarks(true);
+                p1.setSnapToTicks(true);
+                p1.setMajorTickUnit(1d);
+                p1.setMinorTickCount(0);
+                p1.setLabelFormatter(new StringConverter<Double>() {
+
+                    @Override
+                    public String toString(Double t) {
+                        int i = t.intValue();
+                        return ArchetypeOccurrence.getArchetype(i).toShortString();
+                    }
+
+                    @Override
+                    public Double fromString(String string) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+                });
+
                 p1.setId("archetype." + c.getSimpleName() + ".param");
-                TextField p2 = new TextField();
-                p2.setId("archetype." + c.getSimpleName() + ".fitness");
 
                 switch (t) {
-                    case GLOBAL:
-                        pane = gridGlobal;
-                        pane.add(ch, 0, iGlobal);
-                        pane.add(new Label(c.getSimpleName() + ":"), 1, iGlobal);
-                        pane.add(new Label("Parameter"), 2, iGlobal);
-                        pane.add(p1, 3, iGlobal);
-                        pane.add(new Label("Contribution to the fitness"), 4, iGlobal);
-                        pane.add(p2, 5, iGlobal++);
-                        break;
-                    case LITERARY:
-                        pane = gridClassical;
-                        pane.add(ch, 0, iClassical);
-                        pane.add(new Label(c.getSimpleName() + ":"), 1, iClassical);
-                        pane.add(new Label("Parameter"), 2, iClassical);
-                        pane.add(p1, 3, iClassical);
-                        pane.add(new Label("Contribution to the fitness"), 4, iClassical);
-                        pane.add(p2, 5, iClassical++);
-                        break;
+
+//                    case GLOBAL:
+//                    
+//                        pane = gridGlobal;
+//                        pane.add(ch, 0, iGlobal);
+//                        pane.add(new Label(c.getSimpleName() + ":"), 1, iGlobal);
+//                        pane.add(new Label("Occurrence"), 2, iGlobal);
+//                        pane.add(p1, 3, iGlobal);
+//                        break;
+//                    case LITERARY:
+//                        pane = gridClassical;
+//                        pane.add(ch, 0, iClassical);
+//                        pane.add(new Label(c.getSimpleName() + ":"), 1, iClassical);
+//                        pane.add(new Label("Parameter"), 2, iClassical);
+//                        pane.add(p1, 3, iClassical);
+//                        pane.add(new Label("Contribution to the fitness"), 4, iClassical);
+//                        pane.add(p2, 5, iClassical++);
+//                        break;
                     default:
                         pane = gridCharacter;
                         pane.add(ch, 0, iCharacter);
-                        pane.add(new Label(c.getSimpleName() + ":"), 1, iCharacter);
-                        pane.add(new Label("Parameter:"), 2, iCharacter);
-                        pane.add(p1, 3, iCharacter);
-                        pane.add(new Label("Contribution to the fitness"), 4, iCharacter);
-                        pane.add(p2, 5, iCharacter++);
+                        Archetype a =(Archetype) c.getConstructors()[0].newInstance();
+                        Label l = new Label(a.getArchetypeName() + ":");
+                        pane.add(l, 1, iCharacter);
+                        //pane.add(new Label("Occurrence"), 2, iCharacter);
+                        pane.add(p1, 2, iCharacter);
                         break;
                 }
                 archetypesUsage.put(c.getSimpleName(), ch);
                 archetypesClasses.put(c.getSimpleName(), c);
                 archetypesParam1.put(c.getSimpleName(), p1);
-                archetypesParam2.put(c.getSimpleName(), p2);
+                //archetypesParam2.put(c.getSimpleName(), p2);
+                iCharacter++;
 
             } catch (Exception ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
@@ -341,9 +400,9 @@ public class MainController implements Initializable {
         for (String key : archetypesUsage.keySet()) {
             archetypesUsage.get(key).focusedProperty().addListener(new FocusPropertyChangeListener(archetypesUsage.get(key)));
             archetypesParam1.get(key).focusedProperty().addListener(new FocusPropertyChangeListener(archetypesParam1.get(key)));
-            archetypesParam2.get(key).focusedProperty().addListener(new FocusPropertyChangeListener(archetypesParam2.get(key)));
+            //archetypesParam2.get(key).focusedProperty().addListener(new FocusPropertyChangeListener(archetypesParam2.get(key)));
         }
-        
+
         refreshFitnessGraph();
     }
 
@@ -372,8 +431,8 @@ public class MainController implements Initializable {
             if (c.get("archetype." + key + ".check") != null) {
                 archetypesUsage.get(key).setSelected(Boolean.parseBoolean(c.get("archetype." + key + ".check")));
             }
-            archetypesParam1.get(key).setText(c.get("archetype." + key + ".param"));
-            archetypesParam2.get(key).setText(c.get("archetype." + key + ".fitness"));
+            archetypesParam1.get(key).setValue(Integer.parseInt(c.get("archetype." + key + ".param")));
+            //archetypesParam2.get(key).setText(c.get("archetype." + key + ".fitness"));
         }
     }
 
@@ -421,10 +480,11 @@ public class MainController implements Initializable {
         FitnessSetup fitnessSetup = new FitnessSetup();
         for (String key : archetypesUsage.keySet()) {
             if (archetypesUsage.get(key).isSelected()) {
+                int val = (int) archetypesParam1.get(key).getValue();
+                ArchetypeOccurrence occ = ArchetypeOccurrence.getArchetype(val);
                 fitnessSetup.add(
                         archetypesClasses.get(key),
-                        Float.parseFloat(archetypesParam1.get(key).getText()),
-                        Float.parseFloat(archetypesParam2.get(key).getText())
+                        occ
                 );
             }
         }
@@ -435,6 +495,7 @@ public class MainController implements Initializable {
 
         private TextField t = null;
         private CheckBox ch = null;
+        private Slider s = null;
 
         FocusPropertyChangeListener(TextField f) {
             t = f;
@@ -443,6 +504,11 @@ public class MainController implements Initializable {
 
         FocusPropertyChangeListener(CheckBox c) {
             ch = c;
+            System.out.println("New FPCL instance");
+        }
+
+        FocusPropertyChangeListener(Slider s) {
+            this.s = s;
             System.out.println("New FPCL instance");
         }
 
@@ -462,7 +528,7 @@ public class MainController implements Initializable {
                             MadeLogger.getInstance().error("Could not store value " + t.getText() + " for property " + key, ex);
                         }
                     }
-                } else {
+                } else if (ch != null) {
                     String key = ch.getId();
                     if (new Boolean(Configurator.getInstance().get(key)).compareTo(ch.isSelected()) != 0) {
                         try {
@@ -472,20 +538,58 @@ public class MainController implements Initializable {
                             MadeLogger.getInstance().error("Could not store value " + ch.isSelected() + " for property " + key, ex);
                         }
                     }
+                } else {
+                    String key = s.getId();
+                    String val = Integer.toString((int) s.getValue());
+                    if (Configurator.getInstance().get(key).compareTo(val) != 0) {
+                        try {
+                            Configurator.getInstance().set(key, val);
+                            refreshFitnessGraph();
+                        } catch (Exception ex) {
+                            MadeLogger.getInstance().error("Could not store value " + ch.isSelected() + " for property " + key, ex);
+                        }
+                    }
                 }
             }
         }
     }
+//
+//    private class FocusPropertyChangeListener2 implements ChangeListener<Number> {
+//
+//        private Slider t = null;
+//
+//        FocusPropertyChangeListener2(Slider f) {
+//            t = f;
+//            System.out.println("New FPCL instance");
+//        }
+//
+//        @Override
+//        public void changed(ObservableValue<? extends Number> ov,
+//                Number oldb, Number newb) {
+//
+//            if (t != null) {
+//                String key = t.getId();
+//                if (Configurator.getInstance().get(key).compareTo(Integer.toString((int)t.getValue())) != 0) {
+//                    try {
+//                        Configurator.getInstance().set(key, Integer.toString((int)t.getValue()));
+//                        refreshFitnessGraph();
+//                    } catch (Exception ex) {
+//                        MadeLogger.getInstance().error("Could not store value " + t.getValue()+ " for property " + key, ex);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private void refreshFitnessGraph() {
         XYChart.Series<String, Number> series1 = new XYChart.Series();
-                series1.setName("fitness");
-        fitnessGraph.getData().clear();        
+        series1.setName("fitness");
+        fitnessGraph.getData().clear();
         for (String key : archetypesUsage.keySet()) {
             if (archetypesUsage.get(key).isSelected()) {
-                series1.getData().add(new XYChart.Data(key + " (" + archetypesParam1.get(key).getText() + ")", 
-                        Float.parseFloat(archetypesParam2.get(key).getText())));
-                
+                series1.getData().add(new XYChart.Data(key + " (" + archetypesParam1.get(key).getValue() + ")",
+                        1));
+
             }
         }
         fitnessGraph.getData().addAll(series1);

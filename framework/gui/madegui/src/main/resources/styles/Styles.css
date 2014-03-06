@@ -32,9 +32,9 @@
     -fx-border-width: 0 0 1 0;
 }
 .sheet{
-    -fx-background-image:url('../img/Grungy-Paper-Texture-3.jpg');
-    -fx-background-color: #6666FF;
-    -fx-background-size: cover;
+    /*-fx-background-image:url('../img/Grungy-Paper-Texture-3.jpg');*/
+/*    -fx-background-color: #6666FF;
+    -fx-background-size: cover;*/
 }
 
 .sheet *.scroll-pane {
@@ -43,4 +43,12 @@
 
 #splitPane{
     -fx-border-width: 0 0 0 0;
+}
+
+#sheetImageView{
+    background-color: transparent;
+}
+
+#sheetImageView{
+    background-color: transparent;
 }

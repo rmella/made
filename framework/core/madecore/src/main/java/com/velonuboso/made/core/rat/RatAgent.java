@@ -22,6 +22,7 @@ import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.common.Position;
 import com.velonuboso.made.core.common.Gender;
 import com.velonuboso.made.core.common.Gender;
+import com.velonuboso.made.core.common.LabelArchetype;
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.common.Position;
 import com.velonuboso.made.core.interfaces.ExecutionListenerInterface;
@@ -77,7 +78,7 @@ public class RatAgent implements MadeAgentInterface {
     private boolean logSheet;
     private boolean logSummary;
     private StringBuffer strb;
-    private HashSet<String> labels;
+    private HashSet<LabelArchetype> labels;
     private int ageToBeAdult;
     // States
     private boolean alive = false;
@@ -182,7 +183,7 @@ public class RatAgent implements MadeAgentInterface {
             addline(days, RatState.BORN + " " + this.gender);
         }
 
-        labels = new HashSet<String>();
+        labels = new HashSet<LabelArchetype>();
     }
 
     @Override
@@ -400,8 +401,8 @@ public class RatAgent implements MadeAgentInterface {
         ret += "Character: " + personality + "\n";
 
         ret += "Labels: " + "{";
-        for (String key : labels) {
-            ret += "key ";
+        for (LabelArchetype la : labels) {
+            ret += la.getArchetypeName();
         }
         ret += "}\n";
 
@@ -456,7 +457,7 @@ public class RatAgent implements MadeAgentInterface {
         return fur;
     }
 
-    public void addLabel(String label) {
+    public void addLabel(LabelArchetype label) {
         labels.add(label);
     }
 
@@ -478,7 +479,7 @@ public class RatAgent implements MadeAgentInterface {
     }
 
     @Override
-    public HashSet<String> getLabels() {
+    public HashSet<LabelArchetype> getLabels() {
         return labels;
     }
 
@@ -497,10 +498,10 @@ public class RatAgent implements MadeAgentInterface {
     public String getLabelsAsString() {
         String ret = "";
 
-        Iterator<String> it = labels.iterator();
+        Iterator<LabelArchetype> it = labels.iterator();
         while (it.hasNext()) {
-            String s = it.next();
-            ret += s;
+            LabelArchetype la = it.next();
+            ret += la.getArchetypeName();
             if (it.hasNext()) {
                 ret += ", ";
             }

@@ -40,5 +40,6 @@ public enum RatState {
     PARENT,
     DIE,
     FREE_TIME, 
-    KINDLY_REQUESTED_FOOD
+    KINDLY_REQUESTED_FOOD, 
+    DESCENDANT
 }

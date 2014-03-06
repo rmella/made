@@ -22,6 +22,7 @@ import com.velonuboso.made.core.interfaces.MadeEnvironmentInterface;
 import com.velonuboso.made.core.common.Position;
 import com.velonuboso.made.core.common.Gender;
 import com.velonuboso.made.core.common.Gender;
+import com.velonuboso.made.core.common.LabelArchetype;
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.interfaces.MadeEnvironmentInterface;
@@ -238,12 +239,12 @@ public class RatEnvironment implements MadeEnvironmentInterface {
                     logger.log(agents.get(i).getId() + " -> " + m2.group(1) + ";");
                 }
 
-                for (String s : agents.get(i).getLabels()) {
-                    Integer val = labels.get(s);
+                for (LabelArchetype s : agents.get(i).getLabels()) {
+                    Integer val = labels.get(s.getArchetypeName());
                     if (val == null) {
                         val = 0;
                     }
-                    labels.put(s, val + 1);
+                    labels.put(s.getArchetypeName(), val + 1);
                 }
             }
             logger.log("}");
@@ -469,6 +470,8 @@ public class RatEnvironment implements MadeEnvironmentInterface {
             mapAgents[pos.x][pos.y] = counter;
             a.setX(pos.x);
             a.setY(pos.y);
+            
+            a.addline(days, RatState.DESCENDANT + " " + aThis.getId()+" "+inLoveWith.getId());
             counter++;
         }
     }
@@ -487,12 +490,12 @@ public class RatEnvironment implements MadeEnvironmentInterface {
 
         for (int i = 0; i < agents.size(); i++) {
             RatAgent ma = ((RatAgent) agents.get(i));
-            HashSet<String> agentLabels = ma.getLabels();
-            for (String label : agentLabels) {
+            HashSet<LabelArchetype> agentLabels = ma.getLabels();
+            for (LabelArchetype label : agentLabels) {
                 if (labels.get(label) == null) {
-                    labels.put(label, new ArrayList<RatAgent>());
+                    labels.put(label.getArchetypeName(), new ArrayList<RatAgent>());
                 }
-                labels.get(label).add(ma);
+                labels.get(label.getArchetypeName()).add(ma);
             }
             total++;
             if (ma.isAlive()) {

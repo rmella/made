@@ -18,6 +18,7 @@
 
 package com.velonuboso.made.core.interfaces;
 
+import com.velonuboso.made.core.common.LabelArchetype;
 import com.velonuboso.made.core.common.Position;
 import java.util.HashSet;
 
@@ -31,7 +32,7 @@ public interface MadeAgentInterface {
 
     public int getDays();
 
-    public HashSet<String> getLabels();
+    public HashSet<LabelArchetype> getLabels();
 
     public Position getPosition();
 
@@ -46,7 +47,7 @@ public interface MadeAgentInterface {
 
     public String getStringLog();
 
-    public void addLabel(String label);
+    public void addLabel(LabelArchetype label);
 
     public int getId();
     

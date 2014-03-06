@@ -18,6 +18,7 @@
 
 package com.velonuboso.made.core.setup;
 
+import com.velonuboso.made.core.interfaces.ArchetypeOccurrence;
 import java.util.ArrayList;
 
 /**
@@ -26,30 +27,24 @@ import java.util.ArrayList;
  */
 public class FitnessSetup {
     private ArrayList<Class> archetypes;
-    private ArrayList<Float> params;
-    private ArrayList<Float> fitnessFunctions;
+    private ArrayList<ArchetypeOccurrence> occurrence;
 
     public FitnessSetup() {
         archetypes = new ArrayList<Class>();
-        params = new ArrayList<Float>();
-        fitnessFunctions = new ArrayList<Float>();
+        occurrence = new ArrayList<ArchetypeOccurrence>();
     }
     
-    public void add(Class c, Float param, Float fitness){
+    public void add(Class c, ArchetypeOccurrence o){
         archetypes.add(c);
-        params.add(param);
-        fitnessFunctions.add(fitness);
+        occurrence.add(o);
     }
     
     public Class getClass(int i){
         return archetypes.get(i);
     }
-    
-    public Float getParam (int i){
-        return params.get(i);
-    }
-    public Float getFitness (int i){
-        return fitnessFunctions.get(i);
+
+    public ArchetypeOccurrence getOccurrence(int i) {
+        return occurrence.get(i);
     }
     
     public int getSize(){

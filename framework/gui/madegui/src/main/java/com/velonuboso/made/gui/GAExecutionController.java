@@ -109,6 +109,8 @@ public class GAExecutionController implements Initializable, Runnable, Execution
     private TabPane tabPane;
     private static char counter = 'A';
 
+    private Launcher l = null;
+    
     public GAExecutionController() {
 
     }
@@ -213,10 +215,10 @@ public class GAExecutionController implements Initializable, Runnable, Execution
     @Override
     public void run() {
 
-        Launcher l = new Launcher(this, globalSetup, baseAgentSetup, gASetup, fitnessSetup);
+        l = new Launcher(this, globalSetup, baseAgentSetup, gASetup, fitnessSetup);
 
         try {
-            l.launch();
+            l.start();
         } catch (Exception e) {
             Platform.runLater(new Runnable() {
                 @Override
@@ -403,4 +405,11 @@ public class GAExecutionController implements Initializable, Runnable, Execution
         // nothing to do
     }
 
+    @FXML
+    private void handleStop(ActionEvent event) {
+        l.friendlyStop();
+        MadeLogger.getInstance().info("Current execution will eventually stop :-)");
+        
+    }
+    
 }

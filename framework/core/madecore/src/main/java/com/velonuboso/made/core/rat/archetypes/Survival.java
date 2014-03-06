@@ -20,6 +20,7 @@ package com.velonuboso.made.core.rat.archetypes;
 
 import com.velonuboso.made.core.common.ArchetypeType;
 import com.velonuboso.made.core.interfaces.Archetype;
+import com.velonuboso.made.core.interfaces.ArchetypeOccurrence;
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
 import com.velonuboso.made.core.setup.GlobalSetup;
 import java.util.ArrayList;
@@ -32,11 +33,12 @@ import org.jgap.IChromosome;
  */
 public class Survival extends Archetype{
     
-    public String getName() {
-        return "Population Growth";
+    public String getArchetypeName() {
+        return "Population stability";
     }
 
-    public double evaluate(GlobalSetup gs, ArrayList<MadeAgentInterface> agents, Float from, Float to) {
+    public double evaluate(GlobalSetup gs, ArrayList<MadeAgentInterface> agents, 
+            ArchetypeOccurrence o) {
         
         int aliveAgents = 0;
         for (MadeAgentInterface agent : agents) {
@@ -44,13 +46,17 @@ public class Survival extends Archetype{
                 aliveAgents ++;
             }
         }
-        float ratio = aliveAgents / gs.getNumberOfInitialAgents();
      
-        return getGaussian(ratio, from, to);
+        return o.getValue(agents.size(), aliveAgents);
     }
 
     @Override
     public ArchetypeType getType() {
         return ArchetypeType.GLOBAL;
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

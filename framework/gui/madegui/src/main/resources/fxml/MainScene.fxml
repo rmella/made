@@ -40,6 +40,80 @@
                               <children>
                                 <Accordion fx:id="accordion1" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                   <panes>
+                                    <TitledPane animated="false" text="Fitness: Character archetypes">
+                                      <content>
+                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                          <children>
+                                            <ScrollPane fitToHeight="false" fitToWidth="true" hbarPolicy="NEVER" pannable="false" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                              <content>
+                                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0">
+                                                  <children>
+                                                    <GridPane fx:id="gridCharacter" hgap="5.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                                      <children>
+                                                        <!--
+                                                <Label text="aaaa" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                <TextField fx:id="txtaaaa" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                -->
+                                                      </children>
+                                                      <columnConstraints>
+                                                        <!--
+                                                  <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="185.0" minWidth="185.0" prefWidth="185.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" />
+                                                -->
+                                                      </columnConstraints>
+                                                      <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      </rowConstraints>
+                                                    </GridPane>
+                                                  </children>
+                                                </AnchorPane>
+                                              </content>
+                                            </ScrollPane>
+                                          </children>
+                                        </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                    <TitledPane animated="false" expanded="false" text="Genetic Algorithm setup">
+                                      <content>
+                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefWidth="200.0">
+                                          <children>
+                                            <ScrollPane fitToHeight="false" fitToWidth="true" hbarPolicy="NEVER" pannable="false" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                              <content>
+                                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0">
+                                                  <children>
+                                                    <GridPane hgap="5.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                                      <children>
+                                                        <Label prefWidth="-1.0" text="Generations" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="txtGenerations" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                                          <tooltip>
+                                                            <Tooltip text="Empty Tooltip" fx:id="tooltipGenerations" />
+                                                          </tooltip>
+                                                        </TextField>
+                                                        <Label text="Population" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="txtPopulation" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                        <Label text="Executions per individual" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                                        <TextField fx:id="txtExecutionsAVG" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      </children>
+                                                      <columnConstraints>
+                                                        <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="185.0" minWidth="185.0" prefWidth="185.0" />
+                                                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" />
+                                                      </columnConstraints>
+                                                      <rowConstraints>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      </rowConstraints>
+                                                    </GridPane>
+                                                  </children>
+                                                </AnchorPane>
+                                              </content>
+                                            </ScrollPane>
+                                          </children>
+                                        </AnchorPane>
+                                      </content>
+                                    </TitledPane>
                                     <TitledPane fx:id="globalSetupPane" animated="false" expanded="false" text="Global setup">
                                       <content>
                                         <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -116,150 +190,6 @@
                                                       </columnConstraints>
                                                       <rowConstraints>
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      </rowConstraints>
-                                                    </GridPane>
-                                                  </children>
-                                                </AnchorPane>
-                                              </content>
-                                            </ScrollPane>
-                                          </children>
-                                        </AnchorPane>
-                                      </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" expanded="false" text="Genetic Algorithm setup">
-                                      <content>
-                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefWidth="200.0">
-                                          <children>
-                                            <ScrollPane fitToHeight="false" fitToWidth="true" hbarPolicy="NEVER" pannable="false" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                              <content>
-                                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0">
-                                                  <children>
-                                                    <GridPane hgap="5.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                                      <children>
-                                                        <Label prefWidth="-1.0" text="Generations" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                        <TextField fx:id="txtGenerations" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                                          <tooltip>
-                                                            <Tooltip text="Empty Tooltip" fx:id="tooltipGenerations" />
-                                                          </tooltip>
-                                                        </TextField>
-                                                        <Label text="Population" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                                        <TextField fx:id="txtPopulation" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                        <Label text="Executions per individual" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                                        <TextField fx:id="txtExecutionsAVG" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                      </children>
-                                                      <columnConstraints>
-                                                        <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="185.0" minWidth="185.0" prefWidth="185.0" />
-                                                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" />
-                                                      </columnConstraints>
-                                                      <rowConstraints>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      </rowConstraints>
-                                                    </GridPane>
-                                                  </children>
-                                                </AnchorPane>
-                                              </content>
-                                            </ScrollPane>
-                                          </children>
-                                        </AnchorPane>
-                                      </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" prefHeight="-1.0" prefWidth="-1.0" text="Fitness: Global behaviour">
-                                      <content>
-                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                          <children>
-                                            <ScrollPane fitToHeight="false" fitToWidth="true" hbarPolicy="NEVER" pannable="false" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                              <content>
-                                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0">
-                                                  <children>
-                                                    <GridPane fx:id="gridGlobal" hgap="5.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                                      <children>
-                                                        <!--
-                                                <Label text="aaaa" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtaaaa" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                -->
-                                                      </children>
-                                                      <columnConstraints>
-                                                        <!--
-                                                  <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="185.0" minWidth="185.0" prefWidth="185.0" />
-                                                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" />
-                                                -->
-                                                      </columnConstraints>
-                                                      <rowConstraints>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      </rowConstraints>
-                                                    </GridPane>
-                                                  </children>
-                                                </AnchorPane>
-                                              </content>
-                                            </ScrollPane>
-                                          </children>
-                                        </AnchorPane>
-                                      </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" text="Fitness: Character archetypes">
-                                      <content>
-                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                          <children>
-                                            <ScrollPane fitToHeight="false" fitToWidth="true" hbarPolicy="NEVER" pannable="false" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                              <content>
-                                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0">
-                                                  <children>
-                                                    <GridPane fx:id="gridCharacter" hgap="5.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                                      <children>
-                                                        <!--
-                                                <Label text="aaaa" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtaaaa" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                -->
-                                                      </children>
-                                                      <columnConstraints>
-                                                        <!--
-                                                  <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="185.0" minWidth="185.0" prefWidth="185.0" />
-                                                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" />
-                                                -->
-                                                      </columnConstraints>
-                                                      <rowConstraints>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      </rowConstraints>
-                                                    </GridPane>
-                                                  </children>
-                                                </AnchorPane>
-                                              </content>
-                                            </ScrollPane>
-                                          </children>
-                                        </AnchorPane>
-                                      </content>
-                                    </TitledPane>
-                                    <TitledPane animated="false" expanded="false" text="Fitness: Classical literary archetypes">
-                                      <content>
-                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                          <children>
-                                            <ScrollPane fitToHeight="false" fitToWidth="true" hbarPolicy="NEVER" pannable="false" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                              <content>
-                                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0">
-                                                  <children>
-                                                    <GridPane fx:id="gridClassical" hgap="5.0" vgap="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                                      <children>
-                                                        <!--
-                                                <Label text="aaaa" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                <TextField fx:id="txtaaaa" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                -->
-                                                      </children>
-                                                      <columnConstraints>
-                                                        <!--
-                                                  <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="185.0" minWidth="185.0" prefWidth="185.0" />
-                                                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" />
-                                                -->
-                                                      </columnConstraints>
-                                                      <rowConstraints>
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
