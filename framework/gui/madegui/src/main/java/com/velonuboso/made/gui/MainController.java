@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,6 +106,7 @@ public class MainController implements Initializable {
         archetypes.add(Villain.class);
         archetypes.add(Innocent.class);
         archetypes.add(Sage.class);
+        archetypes.add(ThresholdGuardian.class);
         
     }
 
@@ -246,32 +248,19 @@ public class MainController implements Initializable {
 
     @FXML
     private void handleRunExperimentAction(ActionEvent event) {
-        Tab t = new Tab();
-        t.setText("GA exec (" + ++counter + ")");
-        mainTabPane.getTabs().add(t);
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GAExecution.fxml"));
-        Parent root;
-        try {
-            GAExecutionController controller = new GAExecutionController();
-
-            loader.setController(controller);
-            root = (Parent) loader.load();
-            t.setContent(root);
-            t.setClosable(true);
-            mainTabPane.getSelectionModel().select(t);
-            BaseAgentSetup baseAgentSetup = BaseAgentSetupFromForm();
-            GlobalSetup globalSetup = GlobalSetupFromForm();
-            GASetup gaSetup = GASetupFromForm();
-            FitnessSetup fitnessSetup = FitnessSetupFromForm();
-            controller.init(baseAgentSetup, globalSetup, gaSetup, fitnessSetup, mainTabPane, counter);
-            Thread thread = new Thread(controller);
-            thread.start();
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        runExperiment(null);
     }
 
+    
+    @FXML
+    private void handleRun30ExperimentsAction(ActionEvent event) {
+        String foldername = getFolderNameUsingCurrentDateTime();
+        
+        for (int i=0; i<30; i++){
+            runExperiment(foldername+File.separator+i);
+        }
+    }
+    
     @FXML
     private void handleExecuteSeedAction(ActionEvent event) {
         Dialog d = new Dialog(stage, "Executing...");
@@ -355,9 +344,17 @@ public class MainController implements Initializable {
 //                        break;
                     default:
                         pane = gridCharacter;
-                        pane.add(ch, 0, iCharacter);
                         Archetype a =(Archetype) c.getConstructors()[0].newInstance();
+                        Tooltip tooltip = new Tooltip(a.getDescription());
+                        tooltip.setMaxWidth(300);
+                        tooltip.setWrapText(true);
+                        tooltip.setAutoHide(false);
+                        tooltip.setAutoHide(true);
+                        
+                        ch.setTooltip(tooltip);
+                        pane.add(ch, 0, iCharacter);
                         Label l = new Label(a.getArchetypeName() + ":");
+                        l.setTooltip(tooltip);
                         pane.add(l, 1, iCharacter);
                         //pane.add(new Label("Occurrence"), 2, iCharacter);
                         pane.add(p1, 2, iCharacter);
@@ -478,7 +475,8 @@ public class MainController implements Initializable {
 
     private FitnessSetup FitnessSetupFromForm() {
         FitnessSetup fitnessSetup = new FitnessSetup();
-        for (String key : archetypesUsage.keySet()) {
+        for (Class c: archetypes) {
+            String key = c.getSimpleName();
             if (archetypesUsage.get(key).isSelected()) {
                 int val = (int) archetypesParam1.get(key).getValue();
                 ArchetypeOccurrence occ = ArchetypeOccurrence.getArchetype(val);
@@ -489,6 +487,44 @@ public class MainController implements Initializable {
             }
         }
         return fitnessSetup;
+    }
+
+    private void runExperiment(String filename) {
+        
+        if (filename == null){
+            filename = getFolderNameUsingCurrentDateTime() + File.separator + 0;
+        }
+        
+        Tab t = new Tab();
+        t.setText("GA exec (" + ++counter + ")");
+        mainTabPane.getTabs().add(t);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GAExecution.fxml"));
+        Parent root;
+        try {
+            GAExecutionController controller = new GAExecutionController();
+
+            loader.setController(controller);
+            root = (Parent) loader.load();
+            t.setContent(root);
+            t.setClosable(true);
+            mainTabPane.getSelectionModel().select(t);
+            BaseAgentSetup baseAgentSetup = BaseAgentSetupFromForm();
+            GlobalSetup globalSetup = GlobalSetupFromForm();
+            GASetup gaSetup = GASetupFromForm();
+            FitnessSetup fitnessSetup = FitnessSetupFromForm();
+            controller.init(baseAgentSetup, globalSetup, gaSetup, fitnessSetup, mainTabPane, counter, filename);
+            Thread thread = new Thread(controller);
+            thread.start();
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private String getFolderNameUsingCurrentDateTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss.SSS");
+        String foldername = System.getProperty("user.dir") + File.separator + "data" + File.separator + sdf.format(new Date());
+        return foldername;
     }
 
     private class FocusPropertyChangeListener implements ChangeListener<Boolean> {

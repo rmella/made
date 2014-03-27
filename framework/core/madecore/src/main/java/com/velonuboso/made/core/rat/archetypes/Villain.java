@@ -6,7 +6,6 @@
 
 package com.velonuboso.made.core.rat.archetypes;
 
-import com.velonuboso.made.core.common.ArchetypeType;
 import com.velonuboso.made.core.common.LabelArchetype;
 import com.velonuboso.made.core.interfaces.Archetype;
 import com.velonuboso.made.core.interfaces.ArchetypeOccurrence;
@@ -46,7 +45,7 @@ public class Villain extends Archetype{
             int counter = 0;
             while (m.find()) counter++;
             if (counter >= 1){
-                LabelArchetype la = new LabelArchetype("Villain", null, null, "");
+                LabelArchetype la = new LabelArchetype(this.getClass().getSimpleName(), null, null, "");
                 agent.addLabel(la);
                 villains ++;
             }

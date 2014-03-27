@@ -60,7 +60,7 @@ public class VillainTest extends TestCase {
         d.addline(0, RatState.KILL + " 0");
         agents.add(d);
         double ret = v.evaluate(null, agents, ArchetypeOccurrence.THE_MORE_THE_BETTER);
-        assertTrue(ret == 0);
+        assertTrue(ret == 1);
     }
     
      public void testEvaluate10() {

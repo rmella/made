@@ -3,7 +3,8 @@
 }
 
 .back{
-    -fx-background-image:url('../img/background.jpg');
+    /*-fx-background-image:url('../img/background.jpg');*/
+    -fx-background-image:url('../img/background2.jpg');
     /*-fx-background-color: #666666;*/
     -fx-background-size: cover;
 }
@@ -23,8 +24,8 @@
 }
 
 .console{
-    -fx-background-color: black;
-    -fx-text-fill: white;
+/*    -fx-background-color: black;
+    -fx-text-fill: white;*/
 }
 
 .sheet_section{

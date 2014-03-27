@@ -37,6 +37,7 @@ public class FitnessSetup {
     public void add(Class c, ArchetypeOccurrence o){
         archetypes.add(c);
         occurrence.add(o);
+        
     }
     
     public Class getClass(int i){

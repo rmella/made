@@ -36,7 +36,7 @@ public class MainApp extends Application {
     public void start(Stage stage) throws Exception {
         
         
-        setUserAgentStylesheet(STYLESHEET_CASPIAN);
+        /*setUserAgentStylesheet(STYLESHEET_CASPIAN);*/
         
         this.stage = stage;
         this.stage.centerOnScreen();

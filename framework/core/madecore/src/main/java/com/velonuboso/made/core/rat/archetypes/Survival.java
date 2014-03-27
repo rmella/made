@@ -57,6 +57,6 @@ public class Survival extends Archetype{
 
     @Override
     public String getDescription() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "Survival";
     }
 }

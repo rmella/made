@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.rat;
 
 import com.velonuboso.made.core.interfaces.MadeAgentInterface;
@@ -50,31 +49,33 @@ public class RatEvaluator implements MadeEvaluatorInterface {
 
     FitnessSetup fsetup;
     GlobalSetup gsetup;
-    
-    
-    public RatEvaluator(FitnessSetup s, GlobalSetup gp){
+
+    public RatEvaluator(FitnessSetup s, GlobalSetup gp) {
         fsetup = s;
         gsetup = gp;
-        
+
     }
 
     @Override
     public double getFitness(ArrayList<MadeAgentInterface> agents) {
-        
+
         double result = 0;
-        
-        for (int i=0; i<fsetup.getSize(); i++){
+
+        for (int i = 0; i < fsetup.getSize(); i++) {
+            Class c = fsetup.getClass(i);
+            double d = 0;
+
             try {
-                Class c = fsetup.getClass(i);
                 Archetype arch = (Archetype) c.getConstructors()[0].newInstance();
-                double d = arch.evaluate(gsetup, agents, fsetup.getOccurrence(i));
-                result += (d);
+                d = arch.evaluate(gsetup, agents, fsetup.getOccurrence(i));
             } catch (Exception ex) {
                 Logger.getLogger(RatEvaluator.class.getName()).log(Level.SEVERE, null, ex);
             }
+            result += (d);
+
         }
-        
+
         return result;
     }
-    
+
 }

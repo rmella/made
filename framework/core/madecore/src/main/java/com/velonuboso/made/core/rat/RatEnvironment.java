@@ -448,6 +448,8 @@ public class RatEnvironment implements MadeEnvironmentInterface {
             String nickname = inLoveWith.getNickname();
 
             int profile = -1;
+            
+            /*
             int val = r.nextInt(3);
             switch (val) {
                 case 0:
@@ -459,7 +461,10 @@ public class RatEnvironment implements MadeEnvironmentInterface {
                 default:
                     profile = r.nextInt(numberOfProfiles);
             }
+            */
 
+            profile = r.nextInt(numberOfProfiles);
+            
             RatAgent a = new RatAgent(counter, currDate, g, profile, name, surname, nickname, this, r, log, logger);
             agents.add(a);
             aliveAgents.add(a);

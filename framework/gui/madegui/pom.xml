@@ -41,6 +41,15 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>2.0</version>
+                <configuration>
+                    <mainClass>com.velonuboso.made.gui.MainApp</mainClass>
+                    <allPermissions>true</allPermissions>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
@@ -92,6 +101,7 @@
                     </compilerArguments>
                 </configuration>
             </plugin>
+            
         </plugins>
     </build>
     <dependencies>

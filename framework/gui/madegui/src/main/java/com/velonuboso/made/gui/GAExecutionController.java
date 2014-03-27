@@ -25,6 +25,8 @@ import com.velonuboso.made.core.setup.FitnessSetup;
 import com.velonuboso.made.core.setup.GASetup;
 import com.velonuboso.made.core.setup.GlobalSetup;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -111,6 +113,8 @@ public class GAExecutionController implements Initializable, Runnable, Execution
 
     private Launcher l = null;
     
+    private String filename = ""; 
+    
     public GAExecutionController() {
 
     }
@@ -126,14 +130,16 @@ public class GAExecutionController implements Initializable, Runnable, Execution
             GASetup gASetup,
             FitnessSetup fitnessSetup,
             TabPane tabPane,
-            int gaId
+            int gaId,
+            String filename
     ) {
         this.baseAgentSetup = baseAgentSetup;
         this.gASetup = gASetup;
         this.globalSetup = globalSetup;
         this.fitnessSetup = fitnessSetup;
         this.tabPane = tabPane;
-
+        this.filename = filename;
+        
         o = FXCollections.observableArrayList();
 
         seriesMax = new XYChart.Series();
@@ -285,6 +291,33 @@ public class GAExecutionController implements Initializable, Runnable, Execution
                 o.add(l);
                 seriesMax.getData().add(new XYChart.Data(id, fitnessMax));
                 seriesAvg.getData().add(new XYChart.Data(id, fitnessAVG));
+                
+                saveLogToFile(l);
+            }
+
+            private void saveLogToFile(GAExecutionLine l) {
+                FileWriter out = null;
+                try {
+                    File f = new File (filename);
+                    File parent = f.getParentFile();
+                    if(!parent.exists() && !parent.mkdirs()){
+                        throw new IllegalStateException("Couldn't create dir: " + parent);
+                    }
+                    String text = l.getId() + ";" + l.getMaxFitness() + ";" + l.getAvgFitness() + "\n";
+                    out = new FileWriter(f,true);
+                    out.append(text);
+                    out.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(GAExecutionController.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    if (out != null) {
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(GAExecutionController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
             }
         });
     }
