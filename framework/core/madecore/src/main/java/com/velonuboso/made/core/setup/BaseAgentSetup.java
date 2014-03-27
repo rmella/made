@@ -18,6 +18,7 @@
 package com.velonuboso.made.core.setup;
 
 import com.sun.org.apache.bcel.internal.generic.GETFIELD;
+import java.util.Properties;
 
 /**
  *
@@ -45,6 +46,18 @@ public class BaseAgentSetup {
         this.baseNutrition = baseNutrition;
         this.baseSmell = baseSmell;
         this.basePregnancyDays = basePregnancyDays;
+    }
+    
+    public BaseAgentSetup(Properties p) {
+        this.baseAgeToBeAdultFemale = Integer.parseInt(p.getProperty("txtBaseAgeToBeAdultFemale"));
+        this.baseAgeToBeAdultMale = Integer.parseInt(p.getProperty("txtBaseAgeToBeAdultMale"));
+        this.baseBite = Integer.parseInt(p.getProperty("txtBaseBite"));
+        this.baseEnergy = Integer.parseInt(p.getProperty("txtBaseEnergy"));
+        this.baseFur = Integer.parseInt(p.getProperty("txtBaseFur"));
+        this.baseLifeInDays = Integer.parseInt(p.getProperty("txtBaseLifeInDays"));
+        this.baseNutrition = Integer.parseInt(p.getProperty("txtBaseNutrition"));
+        this.baseSmell = Integer.parseInt(p.getProperty("txtBaseSmell"));
+        this.basePregnancyDays = Integer.parseInt(p.getProperty("txtbasePregnancyDays"));
     }
 
     public int getBaseAgeToBeAdultFemale() {

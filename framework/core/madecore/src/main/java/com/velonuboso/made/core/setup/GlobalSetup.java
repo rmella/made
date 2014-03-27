@@ -17,6 +17,8 @@
 
 package com.velonuboso.made.core.setup;
 
+import java.util.Properties;
+
 /**
  *
  * @author raiben@gmail.com
@@ -36,6 +38,16 @@ public class GlobalSetup {
         this.numberOfProfiles = numberOfProfiles;
         this.numberOfVirtualDays = numberOfVirtualDays;
     }
+
+    public GlobalSetup(Properties p) {
+        this.foodPerDay = Integer.parseInt(p.getProperty("txtFoodPerDay"));
+        this.mapGridDimension = Integer.parseInt(p.getProperty("txtMapGridDimension"));
+        this.numberOfInitialAgents = Integer.parseInt(p.getProperty("txtNumberOfInitialAgents"));
+        this.numberOfProfiles = Integer.parseInt(p.getProperty("txtNumberOfProfiles"));
+        this.numberOfVirtualDays = Integer.parseInt(p.getProperty("txtNumberOfVirtualDays"));
+    }
+    
+    
 
     public int getFoodPerDay() {
         return foodPerDay;

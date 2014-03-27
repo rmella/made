@@ -17,6 +17,8 @@
 
 package com.velonuboso.made.core.setup;
 
+import java.util.Properties;
+
 /**
  *
  * @author raiben@gmail.com
@@ -33,6 +35,14 @@ public class GASetup {
         this.txtPopulation = txtPopulation;
     }
 
+    public GASetup(Properties p) {
+        this.txtExecutionsAVG = Integer.parseInt(p.getProperty("txtExecutionsAVG"));
+        this.txtGenerations  = Integer.parseInt(p.getProperty("txtGenerations"));
+        this.txtPopulation  = Integer.parseInt(p.getProperty("txtPopulation"));   
+    }
+
+    
+    
     public int getTxtExecutionsAVG() {
         return txtExecutionsAVG;
     }

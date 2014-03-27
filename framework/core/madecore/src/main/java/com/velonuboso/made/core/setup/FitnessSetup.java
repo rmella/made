@@ -20,6 +20,8 @@ package com.velonuboso.made.core.setup;
 
 import com.velonuboso.made.core.interfaces.ArchetypeOccurrence;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  *
@@ -33,6 +35,27 @@ public class FitnessSetup {
         archetypes = new ArrayList<Class>();
         occurrence = new ArrayList<ArchetypeOccurrence>();
     }
+
+    public FitnessSetup(Properties p) throws ClassNotFoundException {
+        this();
+        for (Object o: p.keySet()){
+            String key = (String) o;
+            
+            if (key.startsWith("archetype.")){
+                String[] ts = key.split("\\.");
+                if (ts[2].compareTo("check")==0){
+                    Boolean b = new Boolean(p.getProperty(key));
+                    if (b){
+                        Integer par = Integer.parseInt(p.getProperty("archetype."+ts[1]+".param"));
+                        ArchetypeOccurrence occ = ArchetypeOccurrence.getArchetype(par);
+                        this.add(Class.forName("com.velonuboso.made.core.rat.archetypes."+ts[1]), occ);
+                    }
+                }
+            }
+        }
+    }
+    
+    
     
     public void add(Class c, ArchetypeOccurrence o){
         archetypes.add(c);
