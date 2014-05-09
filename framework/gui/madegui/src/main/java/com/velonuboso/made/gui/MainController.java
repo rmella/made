@@ -236,7 +236,11 @@ public class MainController implements Initializable {
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
+            /*
+            TODO is this feature removed from javafx?
+            
             fileChooser.setInitialFileName("made_setup_" + sdf.format(new Date()) + ".properties");
+            */
             File f = fileChooser.showSaveDialog(stage);
             if (f != null) {
                 Configurator.getInstance().storeProperties(f);

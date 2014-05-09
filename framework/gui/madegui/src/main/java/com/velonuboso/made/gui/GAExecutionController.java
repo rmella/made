@@ -355,10 +355,13 @@ public class GAExecutionController implements Initializable, Runnable, Execution
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
+            /*
+            TODO is this feature removed from javafx?
+            
             fileChooser.setInitialFileName("made_execution_"
                     + globalSetup.getNumberOfProfiles() + "_"
                     + sdf.format(new Date()) + ".csv");
-
+            */
             File f = fileChooser.showSaveDialog(null);
             if (f != null) {
                 String text = "Gen.;Fitness(Best);Fitness(AVG)\n";
@@ -386,10 +389,14 @@ public class GAExecutionController implements Initializable, Runnable, Execution
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
+            /*
+            TODO is this feature removed from javafx?
+            
             fileChooser.setInitialFileName("made_execution_"
                     + globalSetup.getNumberOfProfiles() + "_"
                     + sdf.format(new Date()) + ".log");
-
+            */
+            
             File f = fileChooser.showSaveDialog(null);
             if (f != null) {
                 String text = GAShell.getText();
@@ -413,10 +420,14 @@ public class GAExecutionController implements Initializable, Runnable, Execution
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
+            /*
+            TODO is this feature removed from javafx?
+            
             fileChooser.setInitialFileName("made_execution_"
                     + globalSetup.getNumberOfProfiles() + "_"
                     + sdf.format(new Date()) + ".png");
-
+            */
+            
             File f = fileChooser.showSaveDialog(null);
             if (f != null) {
                 SnapshotParameters params = new SnapshotParameters();
