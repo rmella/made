@@ -190,7 +190,6 @@ public class Launcher extends Thread {
     }
 
     public static void main(String[] args) {
-        System.out.println("AAAA");
         if (args.length < 1) {
             System.err.println("Error:\nusage: java -jar <app.java> <properties_file>");
         } else {
@@ -204,8 +203,6 @@ public class Launcher extends Thread {
 
                     GASetup gASetup = new GASetup(prop);
                     GlobalSetup globalSetup = new GlobalSetup(prop);
-
-                    final String filename = args[1];
 
                     Launcher l = new Launcher(new ExecutionListenerInterface() {
 
