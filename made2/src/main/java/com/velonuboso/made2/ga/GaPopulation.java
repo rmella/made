@@ -16,26 +16,24 @@ import java.util.Random;
 public class GaPopulation {
 
     private GaIndividual bestIndividualEver = null;
+    private ArrayList<GaIndividual> bestIndividualsPerIteration = new ArrayList<GaIndividual>();
     
     private ArrayList<GaIndividual> individuals;
     private Random random;
     private GaIndividual bestIndividual = null;
 
-    public GaPopulation(Random random) {
+    public GaPopulation(Random random, int popSize, int chromSize) {
         this.random = random;
         bestIndividual = null;
         individuals = new ArrayList<GaIndividual>();
-    }
-
-    public GaPopulation(Random random, int size) {
-        this(random);
-        for (int i = 0; i < size; i++) {
-            GaIndividual chrom = GaIndividual.newRandomChromosome(random);
+        
+        for (int i = 0; i < popSize; i++) {
+            GaIndividual chrom = GaIndividual.newRandomChromosome(random, chromSize);
             individuals.add(chrom);
         }
     }
 
-    public void evaluate() {
+    private void evaluate() {
         bestIndividual = null;
         for (int i = 0; i < individuals.size(); i++) {
             GaIndividual c = individuals.get(i);
@@ -49,6 +47,7 @@ public class GaPopulation {
                 }
             }
         }
+        bestIndividualsPerIteration.add(bestIndividual);
         
         if (bestIndividualEver == null){
             bestIndividualEver = bestIndividual;
@@ -62,8 +61,24 @@ public class GaPopulation {
     }
     
     
-    public void evolve() {
+    public void evolve(EvolutionListener listener) {
+        boolean iterate = true;
+        int currentIteration = 0;
         
+        while (iterate){
+            
+            ArrayList<GaIndividual> intermediatePopulation = GaHelper.selection(individuals, random);
+            
+            GaHelper.crossover(intermediatePopulation, random);
+            
+            for (int i=0; i<intermediatePopulation.size(); i++){
+                GaHelper.mutate(intermediatePopulation.get(i), random);
+            }
+            
+            //Helper.log();
+            
+            currentIteration ++;
+        }
     }
     
 }

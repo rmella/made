@@ -6,14 +6,39 @@
 
 package com.velonuboso.made2.ga;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Ruben
  */
-class GaFitness {
+public class GaFitness {
 
+    ArrayList<GaPartialFitness> components = new ArrayList<GaPartialFitness>();
+    double total = 0;
+    
+    public GaFitness() {
+        components = new ArrayList<GaPartialFitness>();
+        total = 0;
+    }
+    
+    
+    public void addPartialFitness (String name, double value){
+        GaPartialFitness pf = new GaPartialFitness(name, value);
+        components.add(pf);
+        total += value;
+    }
+    
     double getTotal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return total;
+    }
+    
+    public String getPartialFitnessName(int index){
+        return components.get(index).getName();
+    }
+    
+    public double getPartialFitnessValue(int index){
+        return components.get(index).getValue();
     }
     
 }
