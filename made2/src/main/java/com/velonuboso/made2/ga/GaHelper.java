@@ -1,11 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2014 Rubén Héctor García <raiben@gmail.com>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *  
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *  
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.velonuboso.made2.ga;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 /**
@@ -14,8 +30,7 @@ import java.util.Random;
  */
 public class GaHelper {
 
-    public static float CROSSOVER_PROBABILITY = 0.5f;
-    public static float MUTATION_PROBABILITY = 1f/12f;
+    
 
     /**
      * returns a new arraylist with the size of the source and the (copy of the)
@@ -27,8 +42,28 @@ public class GaHelper {
      */
     static ArrayList<GaIndividual> selection(ArrayList<GaIndividual> source, Random random) {
         ArrayList<GaIndividual> target = new ArrayList<GaIndividual>();
+        
+        // elitism
+        int el = (int) (source.size()* 0.1f); // 10%
+        Collections.sort(source, new Comparator<GaIndividual>(){
 
-        for (int i = 0; i < source.size(); i++) {
+            @Override
+            public int compare(GaIndividual o1, GaIndividual o2) {
+                if(o1.getFitness().getTotal()==o2.getFitness().getTotal()){
+                    return 0;
+                }else if (o1.getFitness().getTotal()>o2.getFitness().getTotal()){
+                    return 1;
+                }else {
+                    return -1;
+                }
+            }
+        });
+        
+        for (int i = 0; i < el; i++){
+            target.add(new GaIndividual(source.get(i).getCopyOfChromosomes()));
+        }
+        
+        for (int i = el; i < source.size(); i++) {
             GaIndividual ind1 = source.get(random.nextInt(source.size()));
             GaIndividual ind2 = source.get(random.nextInt(source.size()));
             if (ind1.getFitness().getTotal() > ind2.getFitness().getTotal()) {
@@ -42,9 +77,12 @@ public class GaHelper {
 
     }
 
-    static void crossover(ArrayList<GaIndividual> source, Random random) {
+    static void crossover(ArrayList<GaIndividual> source, Random random, float probability) {
         for (int i=0; i<source.size(); i+=2){
-            if (random.nextFloat()<CROSSOVER_PROBABILITY){
+            if (random.nextFloat()<probability){
+                source.get(i).setCrossover();
+                source.get(i+1).setCrossover();
+                
                 float[] g1 = source.get(i).getChromosomes();
                 float[] g2 = source.get(i+1).getChromosomes();
                 
@@ -66,10 +104,10 @@ public class GaHelper {
         }
     }
 
-    static void mutate(GaIndividual individual, Random random) {
+    static void mutate(GaIndividual individual, Random random, float probability) {
         float[] g1 = individual.getChromosomes();
         for (int i=0; i<g1.length; i++){
-            if (random.nextFloat()<MUTATION_PROBABILITY){
+            if (random.nextFloat()<probability){
                 g1[i] = random.nextFloat();
             }
         }
