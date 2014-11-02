@@ -113,22 +113,23 @@ public class Launcher extends Thread {
             Properties prop = new Properties();
 
             if (args.length < 1) {
-                System.out.println("Error: please use java -jar <executable.jar> <iteration>");
+                System.out.println("Error: please use java -jar <executable.jar> <iteration> from<N> to<N>");
                 System.exit(1);
             } else {
                 InputStream in = ClassLoader.getSystemResourceAsStream("base.properties");
                 prop.load(in);
                 in.close();
                 run = args[0];
+                
             }
             try {
 
-                int Es[] = {1, 2, 5};
-                int Ps[] = {1, 2, 4, 8};
-                int Ds[] = {128, 256, 512};
-                int Ws[] = {5, 10, 20};
-                int Fs[] = {2, 4, 8};
-                int Ss[] = {256, 64, 128};
+                int Es[] = {1, 2, 5}; // environment (1, 2, and 5 archetypes)
+                int Ps[] = {1, 2, 4, 8}; // profiles
+                int Ds[] = {128, 256, 512}; // virtual days
+                int Ws[] = {5, 10, 20}; // World map dimension
+                int Fs[] = {2, 4, 8}; // food per day: n_cells/2 , n_cells/4, n_cells/8
+                int Ss[] = {256, 128, 64}; // GA's population
 
                 for (int iE = 0; iE < Fs.length; iE++) {
                     int e = Es[iE];
