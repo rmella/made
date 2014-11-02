@@ -113,7 +113,7 @@ public class Launcher extends Thread {
             Properties prop = new Properties();
 
             if (args.length < 1) {
-                System.out.println("Error: please use java -jar <executable.jar> <iteration> from<N> to<N>");
+                System.out.println("Error: please use java -jar <executable.jar> <iteration>");
                 System.exit(1);
             } else {
                 InputStream in = ClassLoader.getSystemResourceAsStream("base.properties");
