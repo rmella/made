@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -72,8 +73,8 @@ public class Map implements IMap {
             throw new RuntimeException("source cell should have a character");
         }
         if (characterByCell.get(targetCell) != null) {
-            throw new RuntimeException("target cell should have no character. Currently " +
-                    characterByCell.get(targetCell));
+            throw new RuntimeException("target cell should have no character. Currently "
+                    + characterByCell.get(targetCell));
         }
 
         characterByCell.put(targetCell, characterByCell.get(sourceCell));
@@ -82,13 +83,36 @@ public class Map implements IMap {
     }
 
     @Override
-    public List<Integer> getPositionsInRatio(Integer cellId, int cellsFromPosition) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Integer> getCellsToMove(Integer cellId, int maxMovement) {
+        HashSet<Integer> navigatedCells = new HashSet<>();
+        ICharacter author = getCharacter(cellId);
+        recursiveAddCellsToMove(cellId, navigatedCells, maxMovement, author);
+        return new ArrayList<>(navigatedCells);
     }
 
-    @Override
-    public String ToAscii() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void recursiveAddCellsToMove(Integer currentCell, HashSet<Integer> navigatedCells,
+            int maxMovement, ICharacter author) {
+
+        if (maxMovement<0){
+            return;
+        }
+        
+        int sourceX = getXFromId(currentCell);
+        int sourceY = getYFromId(currentCell);
+
+        navigatedCells.add(currentCell);
+
+        for (int offsetX = -1; offsetX < 2; offsetX++) {
+            for (int offsetY = -1; offsetY < 2; offsetY++) {
+                
+                int navigableCell = getCell(sourceX + offsetX, sourceY + offsetY);
+                if (!navigatedCells.contains(navigableCell) 
+                        && (cellCanBeOccupiedByCharacter(navigableCell, author))) {
+                    
+                    recursiveAddCellsToMove(navigableCell, navigatedCells, maxMovement-1, author);
+                }
+            }
+        }
     }
 
     @Override
@@ -103,8 +127,13 @@ public class Map implements IMap {
 
     @Override
     public void putCharacter(ICharacter character, int cell) {
-        if (characterByCell.get(cell)!=null){
-            throw new RuntimeException("Cell "+cell+" already has a character: "+characterByCell.get(cell));
+        if (characterByCell.get(cell) != null) {
+            throw new RuntimeException("Cell " + cell + 
+                    " already has a character: " + characterByCell.get(cell));
+        }
+        if (cellByCharacter.keySet().contains(character)){
+            throw new RuntimeException("Character " + character + 
+                    " is already in the map");
         }
         characterByCell.put(cell, character);
         cellByCharacter.put(character, cell);
@@ -124,7 +153,7 @@ public class Map implements IMap {
     public Integer getPositionX(int cell) {
         return getXFromId(cell);
     }
-    
+
     @Override
     public Integer getPositionY(int cell) {
         return getYFromId(cell);
@@ -163,9 +192,13 @@ public class Map implements IMap {
     @Override
     public void removeCharacter(int cell) {
         ICharacter character = getCharacter(cell);
-        if (character!=null){
+        if (character != null) {
             characterByCell.remove(cell);
             cellByCharacter.remove(character);
         }
+    }
+
+    private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
+        return getCharacter(navigableCell)==author || getCharacter(navigableCell)==null;
     }
 }

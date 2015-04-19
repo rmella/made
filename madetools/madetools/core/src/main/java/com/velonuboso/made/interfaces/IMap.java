@@ -30,9 +30,7 @@ public interface IMap {
 
     public void moveCharacter(int sourceCell, int targetCell);
 
-    public List<Integer> getPositionsInRatio(Integer cellId, int cellsFromPosition);
-
-    public String ToAscii();
+    public List<Integer> getCellsToMove(Integer cellId, int maxMovement);
 
     public void putCharacter(ICharacter character, int cell);
 
