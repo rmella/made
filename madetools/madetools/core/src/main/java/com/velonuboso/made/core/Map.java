@@ -16,7 +16,6 @@
  */
 package com.velonuboso.made.core;
 
-import com.velonuboso.made.interfaces.ICell;
 import com.velonuboso.made.interfaces.ICharacter;
 import com.velonuboso.made.interfaces.IMap;
 import com.velonuboso.made.interfaces.IPosition;
@@ -35,8 +34,9 @@ public class Map implements IMap {
 
     private int sizeX;
     private int sizeY;
-    private ICell cells[][];
-    private HashMap<ICharacter, Integer> cellByAgent = new HashMap<>();
+    private HashMap<ICharacter, Integer> cellByCharacter = new HashMap<>();
+    private HashMap<Integer, ICharacter> characterByCell = new HashMap<>();
+    private HashMap<Integer, Terrain> terrainByCell = new HashMap<>();
 
     public Map() {
     }
@@ -46,12 +46,9 @@ public class Map implements IMap {
         this.sizeX = widthInCells;
         this.sizeY = heighInCells;
 
-        cells = new Cell[sizeX][sizeY];
         for (int iterX = 0; iterX < sizeX; iterX++) {
             for (int iterY = 0; iterY < sizeY; iterY++) {
-                ICell cell = ObjectFactory.createObject(ICell.class);
-                cell.setTerrain(Terrain.LAND);
-                cells[iterX][iterY] = cell;
+                terrainByCell.put(getCell(iterX, iterY), Terrain.LAND);
             }
         }
     }
@@ -62,81 +59,79 @@ public class Map implements IMap {
 
         for (int iterX = 0; iterX < sizeX; iterX++) {
             for (int iterY = 0; iterY < sizeY; iterY++) {
-                allCells.add(getCellId(iterX, iterY));
+                allCells.add(getCell(iterX, iterY));
             }
         }
         return allCells;
     }
 
     @Override
-    public void moveCharacter(int sourceCellId, int targetCellId) {
+    public void moveCharacter(int sourceCell, int targetCell) {
 
-        ICell sourceCell = getCellById(sourceCellId);
-        ICell targetCell = getCellById(targetCellId);
-
-        if (sourceCell.getCharacter() == null) {
+        if (characterByCell.get(sourceCell) == null) {
             throw new RuntimeException("source cell should have a character");
         }
-        if (targetCell.getCharacter() != null) {
-            throw new RuntimeException("target cell should have no character. Currently " + targetCell.getCharacter());
+        if (characterByCell.get(targetCell) != null) {
+            throw new RuntimeException("target cell should have no character. Currently " +
+                    characterByCell.get(targetCell));
         }
 
-        targetCell.setCharacter(sourceCell.getCharacter());
-        sourceCell.setCharacter(null);
+        characterByCell.put(targetCell, characterByCell.get(sourceCell));
+        characterByCell.remove(sourceCell);
+        cellByCharacter.put(characterByCell.get(targetCell), targetCell);
     }
 
     @Override
-    public List<Integer> getPositionsInRatio(IPosition position, int cellsFromPosition) {
+    public List<Integer> getPositionsInRatio(Integer cellId, int cellsFromPosition) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public String getMapAsAscii() {
+    public String ToAscii() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getHeightInCells() {
+    public int getHeight() {
         return sizeX;
     }
 
     @Override
-    public int getWidthInCells() {
+    public int getWidth() {
         return sizeY;
     }
 
     @Override
     public void putCharacter(ICharacter character, int cell) {
-        if (getCellById(cell).getCharacter()!=null){
-            throw new RuntimeException("Cell "+cell+" already has a character: "+getCellById(cell).getCharacter());
+        if (characterByCell.get(cell)!=null){
+            throw new RuntimeException("Cell "+cell+" already has a character: "+characterByCell.get(cell));
         }
-        getCellById(cell).setCharacter(character);
-        
+        characterByCell.put(cell, character);
+        cellByCharacter.put(character, cell);
     }
 
     @Override
-    public ICharacter getCharacter(int cellId) {
-        return getCellById(cellId).getCharacter();
+    public ICharacter getCharacter(int cell) {
+        return characterByCell.get(cell);
     }
 
     @Override
-    public Terrain getTerrain(int cellId) {
-        return getCellById(cellId).getTerrain();
+    public Terrain getTerrain(int cell) {
+        return terrainByCell.get(cell);
     }
 
     @Override
-    public IPosition getPosition(int cellId) {
-        IPosition position = ObjectFactory.createObject(IPosition.class);
-        position.setCoords(getXFromId(cellId), getYFromId(cellId));
-        return position;
+    public Integer getPositionX(int cell) {
+        return getXFromId(cell);
+    }
+    
+    @Override
+    public Integer getPositionY(int cell) {
+        return getYFromId(cell);
     }
 
     @Override
-    public Integer getCellByPosition(IPosition position) {
-        return getCellId(position.getXCoord(), position.getYCoord());
-    }
-
-    private int getCellId(int x, int y) {
+    public Integer getCell(int x, int y) {
         return (((y + sizeY) % sizeY) * sizeY) + ((x + sizeX) % sizeX);
     }
 
@@ -148,17 +143,29 @@ public class Map implements IMap {
         return id / sizeY;
     }
 
-    private ICell getCellById(int cellId) {
-
-        int positionX = getXFromId(cellId);
-        int positionY = getYFromId(cellId);
-
-        return cells[positionX][positionY];
+    @Override
+    public Integer getCell(ICharacter character) {
+        return cellByCharacter.get(character);
     }
 
     @Override
-    public Integer getCellByCharacter(ICharacter position) {
-        return 1;
+    public Integer getCell(IPosition position) {
+        return getCell(position.getXCoord(), position.getYCoord());
     }
 
+    @Override
+    public IPosition getPosition(int cell) {
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(getPositionX(cell), getPositionY(cell));
+        return position;
+    }
+
+    @Override
+    public void removeCharacter(int cell) {
+        ICharacter character = getCharacter(cell);
+        if (character!=null){
+            characterByCell.remove(cell);
+            cellByCharacter.remove(character);
+        }
+    }
 }

@@ -25,29 +25,37 @@ import java.util.List;
 public interface IMap {
 
     public void initialize(int widthInCells, int heighInCells);
-    
-    public int getWidthInCells();
 
-    public int getHeightInCells();
-    
     public List<Integer> getCells();
 
-    public Integer getCellByPosition(IPosition position);
-    
-    public Integer getCellByCharacter(ICharacter position);
+    public void moveCharacter(int sourceCell, int targetCell);
 
-    public void moveCharacter(int sourceCell, int targetCell); 
+    public List<Integer> getPositionsInRatio(Integer cellId, int cellsFromPosition);
 
-    public List<Integer> getPositionsInRatio(IPosition position, int cellsFromPosition);
+    public String ToAscii();
 
-    public String getMapAsAscii();
+    public void putCharacter(ICharacter character, int cell);
 
-    public void putCharacter (ICharacter character, int cell);
-    
-    public ICharacter getCharacter (int cellId);
-    
-    public Terrain getTerrain (int cellId);
-    
-    public IPosition getPosition (int cellId);
-    
+    public void removeCharacter(int cell);
+
+    public ICharacter getCharacter(int cell);
+
+    public Terrain getTerrain(int cell);
+
+    public Integer getPositionX(int cell);
+
+    public Integer getPositionY(int cell);
+
+    public IPosition getPosition(int cell);
+
+    public Integer getCell(int coordX, int coordY);
+
+    public Integer getCell(IPosition position);
+
+    public Integer getCell(ICharacter character);
+
+    public int getWidth();
+
+    public int getHeight();
+
 }

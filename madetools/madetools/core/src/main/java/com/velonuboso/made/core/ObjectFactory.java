@@ -17,7 +17,6 @@
 package com.velonuboso.made.core;
 
 import com.velonuboso.made.interfaces.IAction;
-import com.velonuboso.made.interfaces.ICell;
 import com.velonuboso.made.interfaces.IFact;
 import com.velonuboso.made.interfaces.IMap;
 import com.velonuboso.made.interfaces.IPosition;
@@ -36,7 +35,6 @@ public class ObjectFactory {
     private static void insertMappings() {
         // NEW MAPPINGS SHOULD BE DEFINED HERE
         mappings.put(IMap.class, Map.class);
-        mappings.put(ICell.class, Cell.class);
         mappings.put(IPosition.class, Position.class);
     }
 

@@ -87,11 +87,11 @@ public class MapTest {
 
     @Test
     public void getCell_allCells_mustHaveTheSamePositionThanTheOneUsedToGetThem() {
-        for (int iterX = 0; iterX < map.getWidthInCells(); iterX++) {
-            for (int iterY = 0; iterY < map.getHeightInCells(); iterY++) {
+        for (int iterX = 0; iterX < map.getWidth(); iterX++) {
+            for (int iterY = 0; iterY < map.getHeight(); iterY++) {
                 IPosition position = ObjectFactory.createObject(IPosition.class);
                 position.setCoords(iterX, iterY);
-                Integer retrievedCell = map.getCellByPosition(position);
+                Integer retrievedCell = map.getCell(position);
                 assertEquals("The cell in position " + position
                         + "should have position " + position
                         + ", not " + map.getPosition(retrievedCell),
@@ -101,18 +101,40 @@ public class MapTest {
     }
     
     @Test
+    public void getCellByPosition_cellRetrievedByPositionAndRetrievedByCoords_mustBeTheSame(){
+        final int coordX = 1;
+        final  int coordY = 2;
+        
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(coordX, coordY);
+        assertEquals("getCellByPostion methods should return the same cellId",
+                map.getCell(position), map.getCell(coordX, coordY));
+    }
+    
+    
+    @Test
+    public void getPositionByCell_PositionRetrievedByCellandCoordsRetrievedByCell_mustBeTheSame(){
+        final int cellId = 12;
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(map.getPositionX(cellId), map.getPositionY(cellId));
+        
+        assertEquals("getPositionByCell, getPositionXByCell and getPositionYByCell methods should return the same coods",
+                position, map.getPosition(cellId));
+    }
+    
+    @Test
     public void getCell_PositionOfOutBounds_MustBeModuled(){
         IPosition position = ObjectFactory.createObject(IPosition.class);
         position.setCoords(1,2);
         
-        Integer cellId = map.getCellByPosition(position);
+        Integer cellId = map.getCell(position);
         position.setCoords(21, 22);
         assertEquals("Should've retrieved the same cell using "+position+" and "+map.getPosition(cellId),
-                cellId, map.getCellByPosition(position));
+                cellId, map.getCell(position));
         
         position.setCoords(-19, -18);
         assertEquals("Should've retrieved the same cell using "+position+" and "+map.getPosition(cellId),
-                cellId, map.getCellByPosition(position));
+                cellId, map.getCell(position));
     }
     
     @Test
@@ -121,10 +143,24 @@ public class MapTest {
         
         IPosition positionSource = ObjectFactory.createObject(IPosition.class);
         positionSource.setCoords(1,2);
-        Integer cellSource = map.getCellByPosition(positionSource);
+        Integer cellSource = map.getCell(positionSource);
         map.putCharacter(character, cellSource);
         
         assertNotNull("Character should've been placed in cell", map.getCharacter(cellSource)); 
+    }
+    
+    @Test
+    public void removeCharacter_cellWithCharacter_mustRemoveTheCharacterFromTheMap(){
+        ICharacter character = mock(ICharacter.class);
+        
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(1,2);
+        Integer cell = map.getCell(position);
+        map.putCharacter(character, cell);
+        map.removeCharacter(cell);
+        
+        assertNull("Character should not be in the cell", map.getCharacter(cell)); 
+        assertNull("Character should have no cell", map.getCell(character)); 
     }
     
     @Test
@@ -133,7 +169,7 @@ public class MapTest {
         
         IPosition positionSource = ObjectFactory.createObject(IPosition.class);
         positionSource.setCoords(1,2);
-        Integer cellSource = map.getCellByPosition(positionSource);
+        Integer cellSource = map.getCell(positionSource);
         map.putCharacter(character, cellSource);
         
         try{
@@ -154,10 +190,10 @@ public class MapTest {
         IPosition positionTarget = ObjectFactory.createObject(IPosition.class);
         positionTarget.setCoords(1,5);
         
-        Integer cellSource = map.getCellByPosition(positionSource);
+        Integer cellSource = map.getCell(positionSource);
         map.putCharacter(character, cellSource);
         
-        Integer cellTarget = map.getCellByPosition(positionTarget);
+        Integer cellTarget = map.getCell(positionTarget);
         map.moveCharacter(cellSource, cellTarget);
         
         assertNull("Character should not be in source cell", map.getCharacter(cellSource));
@@ -174,14 +210,14 @@ public class MapTest {
         IPosition positionTarget = ObjectFactory.createObject(IPosition.class);
         positionTarget.setCoords(1,5);
         
-        Integer cellSource = map.getCellByPosition(positionSource);
+        Integer cellSource = map.getCell(positionSource);
         map.putCharacter(character, cellSource);
         
-        Integer cellTarget = map.getCellByPosition(positionTarget);
+        Integer cellTarget = map.getCell(positionTarget);
         map.moveCharacter(cellSource, cellTarget);
         
         assertEquals("Character's cell should be the new one ("+cellTarget+")",
-                map.getCellByCharacter(character));
+                map.getCell(character), cellTarget);
     }
     
     @Test
@@ -195,9 +231,9 @@ public class MapTest {
             IPosition positionTarget = ObjectFactory.createObject(IPosition.class);
             positionTarget.setCoords(1,2);
 
-            Integer cellSource = map.getCellByPosition(positionSource);
+            Integer cellSource = map.getCell(positionSource);
             map.putCharacter(character, cellSource);
-            Integer cellTarget = map.getCellByPosition(positionTarget);
+            Integer cellTarget = map.getCell(positionTarget);
             map.moveCharacter(cellSource, cellTarget);
             assertFalse("Should've thrown exception when trying to move the character to the same position", false);
         }catch(Exception ex){
@@ -217,8 +253,8 @@ public class MapTest {
             IPosition positionTarget = ObjectFactory.createObject(IPosition.class);
             positionTarget.setCoords(1,5);
 
-            Integer cellSource = map.getCellByPosition(positionSource);
-            Integer cellTarget = map.getCellByPosition(positionTarget);
+            Integer cellSource = map.getCell(positionSource);
+            Integer cellTarget = map.getCell(positionTarget);
             
             map.putCharacter(characterInSource, cellSource);
             map.putCharacter(characterInTarget, cellTarget);
@@ -240,8 +276,8 @@ public class MapTest {
             IPosition positionTarget = ObjectFactory.createObject(IPosition.class);
             positionTarget.setCoords(1,5);
 
-            Integer cellSource = map.getCellByPosition(positionSource);
-            Integer cellTarget = map.getCellByPosition(positionTarget);
+            Integer cellSource = map.getCell(positionSource);
+            Integer cellTarget = map.getCell(positionTarget);
             
             map.moveCharacter(cellSource, cellTarget);
             assertFalse("Should've thrown exception when trying to move the character from a non-occupied cell", false);
@@ -251,16 +287,25 @@ public class MapTest {
     }
     
     @Test
-    public void getCellByCharacter_CharacterInMap_mustReturnACell(){
+    public void getCellByCharacter_characterInMap_mustReturnACell(){
         ICharacter newCharacter = mock(ICharacter.class);
         IPosition emptyPosition = ObjectFactory.createObject(IPosition.class);
         emptyPosition.setCoords(1,2);
-        Integer emptyCell = map.getCellByPosition(emptyPosition);
+        Integer emptyCell = map.getCell(emptyPosition);
         map.putCharacter(newCharacter, emptyCell);
             
         assertEquals("Should've retrieved the cell where the character was put ("+emptyCell+")",
-                emptyCell, map.getCellByCharacter(newCharacter));
+                emptyCell, map.getCell(newCharacter));
     }
     
-    
+    @Test
+    public void getCellByCharacter_characterNotInMap_mustReturnNull(){
+        ICharacter newCharacter = mock(ICharacter.class);
+        IPosition emptyPosition = ObjectFactory.createObject(IPosition.class);
+        emptyPosition.setCoords(1,2);
+        Integer emptyCell = map.getCell(emptyPosition);
+            
+        assertNull("Should return null since the character iss not in the map",
+                map.getCell(newCharacter));
+    }
 }
