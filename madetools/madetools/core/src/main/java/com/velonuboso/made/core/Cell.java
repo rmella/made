@@ -28,23 +28,13 @@ import com.velonuboso.made.interfaces.Terrain;
 public class Cell implements ICell {
 
     ICharacter character = null;
-    IPosition position = null;
     Terrain terrain = null;
-
-    public Cell() {
-        position = ObjectFactory.createObject(IPosition.class);
-        position.setCoords(-1, -1);
-    }
 
     @Override
     public ICharacter getCharacter() {
         return character;
     }
 
-    @Override
-    public IPosition getPosition() {
-        return position;
-    }
 
     @Override
     public Terrain getTerrain() {

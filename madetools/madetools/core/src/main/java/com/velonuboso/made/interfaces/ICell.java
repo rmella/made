@@ -24,8 +24,6 @@ public interface ICell {
 
     public ICharacter getCharacter();
 
-    public IPosition getPosition();
-
     public Terrain getTerrain();
 
     public void setCharacter(ICharacter newPosition);

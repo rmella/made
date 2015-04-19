@@ -26,19 +26,28 @@ public interface IMap {
 
     public void initialize(int widthInCells, int heighInCells);
     
-    public List<ICell> getCells();
-
-    public ICell getCell(IPosition position);
-
-    public void moveCharacter(ICell source, ICell target); 
-
-    public List<ICell> getPositionsInRatio(IPosition position, int cellsFromPosition);
-
-    public String getMapAsAscii();
-
     public int getWidthInCells();
 
     public int getHeightInCells();
     
-    public void putCharacter (ICharacter character, ICell cell);
+    public List<Integer> getCells();
+
+    public Integer getCellByPosition(IPosition position);
+    
+    public Integer getCellByCharacter(ICharacter position);
+
+    public void moveCharacter(int sourceCell, int targetCell); 
+
+    public List<Integer> getPositionsInRatio(IPosition position, int cellsFromPosition);
+
+    public String getMapAsAscii();
+
+    public void putCharacter (ICharacter character, int cell);
+    
+    public ICharacter getCharacter (int cellId);
+    
+    public Terrain getTerrain (int cellId);
+    
+    public IPosition getPosition (int cellId);
+    
 }
