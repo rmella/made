@@ -1,0 +1,7 @@
+# kickstart travis.
+language: java
+jdk: oraclejdk8
+os: linux
+before_install:
+  sudo pip install codecov
+after_success: codecov
