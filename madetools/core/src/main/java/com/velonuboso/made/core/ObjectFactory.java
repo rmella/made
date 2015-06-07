@@ -18,6 +18,7 @@ package com.velonuboso.made.core;
 
 import com.velonuboso.made.interfaces.IAction;
 import com.velonuboso.made.interfaces.IFact;
+import com.velonuboso.made.interfaces.IFiniteStateAutomaton;
 import com.velonuboso.made.interfaces.IMap;
 import com.velonuboso.made.interfaces.IPosition;
 import java.util.HashMap;
@@ -36,14 +37,8 @@ public class ObjectFactory {
         // NEW MAPPINGS SHOULD BE DEFINED HERE
         mappings.put(IMap.class, Map.class);
         mappings.put(IPosition.class, Position.class);
-    }
-
-    public void InstallMock(Class targetInterface, Class fakeImplementation) {
-        mocks.put(targetInterface, fakeImplementation);
-    }
-
-    public void RemoveMock(Class targetInterface) {
-        mocks.remove(targetInterface);
+        mappings.put(IFiniteStateAutomaton.class, FiniteStateAutomaton.class);
+        
     }
 
     public static <T> T createObject(Class<T> targetInterface) {
@@ -70,7 +65,7 @@ public class ObjectFactory {
         checkMappingCoherence();
     }
 
-    private static void checkMappingCoherence() throws RuntimeException {
+    private static  void checkMappingCoherence() throws RuntimeException {
         Set<Class> classes = mappings.keySet();
         for (Class targetClass : classes) {
             if (!targetClass.isAssignableFrom(mappings.get(targetClass))) {
@@ -78,5 +73,13 @@ public class ObjectFactory {
                         + " does not implement " + targetClass);
             }
         }
+    }
+
+    public void installMock(Class targetInterface, Class fakeImplementation) {
+        mocks.put(targetInterface, fakeImplementation);
+    }
+
+    public void removeMock(Class targetInterface) {
+        mocks.remove(targetInterface);
     }
 }

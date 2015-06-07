@@ -14,33 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core;
 
 import com.velonuboso.made.interfaces.ICharacter;
 import com.velonuboso.made.interfaces.IFactsWriter;
+import com.velonuboso.made.interfaces.IFiniteStateAutomaton;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class AntMite implements ICharacter{
+public class AntMite implements ICharacter {
 
     private String name;
     private Integer id;
     private IFactsWriter factsWriter;
-    
+    private IFiniteStateAutomaton finiteStateAutomaton;
+
     public AntMite() {
         name = "Kroo";
         id = null;
         factsWriter = null;
+        initializeFiniteStateAutomaton();
     }
-    
+
+    @Override
     public String getName() {
         return name;
     }
 
-    public void setName(String newName) {
+    public void setName(final String newName) {
         name = newName;
     }
 
@@ -50,13 +53,22 @@ public class AntMite implements ICharacter{
     }
 
     @Override
-    public void setId(int newId) {
+    public void setId(final int newId) {
         this.id = newId;
     }
 
     @Override
-    public void setFactsWriter(IFactsWriter newFactsWriter) {
+    public void setFactsWriter(final IFactsWriter newFactsWriter) {
         this.factsWriter = newFactsWriter;
+    }
+
+    private void initializeFiniteStateAutomaton() {
+        finiteStateAutomaton = ObjectFactory.createObject(IFiniteStateAutomaton.class);
+    }
+
+    @Override
+    public IFiniteStateAutomaton getFiniteStateAutomaton() {
+        return finiteStateAutomaton;
     }
 
 }

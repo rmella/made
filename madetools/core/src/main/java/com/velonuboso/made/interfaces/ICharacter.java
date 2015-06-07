@@ -33,4 +33,5 @@ public interface ICharacter {
 
     public void setFactsWriter(IFactsWriter factsWriter);
     
+    public IFiniteStateAutomaton getFiniteStateAutomaton();
 }

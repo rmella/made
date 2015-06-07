@@ -17,6 +17,7 @@
 package made.velonuboso.made.core;
 
 import com.velonuboso.made.core.AntMite;
+import com.velonuboso.made.interfaces.IFiniteStateAutomaton;
 import com.velonuboso.made.interfaces.IWorld;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -68,4 +69,58 @@ public class AntMiteTest {
         character.setName(expectedName);
         assertEquals("Name could not be set to "+expectedName, expectedName, character.getName());
     }
+    
+    @Test
+    public void UT_GetFiniteStateAutomaton_must_return_a_valid_instance(){
+        IFiniteStateAutomaton fsa = character.getFiniteStateAutomaton();
+        assertNotNull("Finite state automaton must ve a valid instance", fsa);
+    }
+    
+    
+    // PRIORITY: 10
+    // an antmite can move around the map, a certain number of cells
+    // an antmite cannot move through obstacles
+    // an antmite can feel other living creatures
+    // an antmite that is hungry, looks for food
+    // an antmite can eat food that is adjacent to it
+    // an antmite can die of starvation
+    // an antmite can feel other things as more or less appetizing
+    // an antmite likes to be around other antmites
+    // an antmite can eat other animals
+    // an antmite can attack other animals to eat
+    // an antmite can attack other animals to defend themselves
+    // an antmite can help other antmites to attack other animals
+    // an antmite can be scared of other animals
+    // an antmite can flee of scaring animals
+    
+    // PRIORITY: 9
+    // an antmite can be older or younger
+    // an antmite can feed its litter
+    
+    // PRIORITY: 8
+    // an antmite can eat animals and vegetables
+    // an antmite can snoop/ nose around
+    // an antmite can look for help
+    
+    // PRIORITY: 7
+    // an antmite can ambush/spy
+    // an antmite can feel agrevisity
+    
+    // PRIORITY: 6
+    // an antmite can attack for fear
+    // an antmite can stay near other animal withput attacking to it
+    
+    // PRIORITY 4
+    // an antmite can have offspring
+    // an antmite can pierce the land
+    
+    // PRIORITY: 3
+    // an antmite can attack other antmite
+    
+    // PRIORITY: 2
+    // an antmite can pair
+    // an antmite can be friend of other antmite
+    // an antmire can be family of other antmites
+    
+    
 }

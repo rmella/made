@@ -6,6 +6,7 @@
         <artifactId>madetools</artifactId>
         <version>1.0</version>
     </parent>
+    <groupId>com.velonuboso.madetools</groupId>
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
     <dependencies>
