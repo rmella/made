@@ -17,7 +17,7 @@
 
 package com.velonuboso.made.interfaces;
 
-import com.velonuboso.made.core.FactsWriter;
+import com.velonuboso.made.core.EventsWriter;
 
 /**
  *
@@ -31,7 +31,7 @@ public interface ICharacter {
     
     public void setId(int id);
 
-    public void setFactsWriter(IFactsWriter factsWriter);
+    public void setEventsWriter(IEventsWriter eventsWriter);
     
     public IFiniteStateAutomaton getFiniteStateAutomaton();
 }

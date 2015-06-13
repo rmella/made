@@ -51,8 +51,8 @@ public class WorldIntegrationTest {
     @Test
     public void AntMite_is_alive(){
         world.run(1);
-        String facts = world.getFactsAsString();
-        assertTrue("Should've written CharacterExists", facts.contains("InhabitantExists (0, \"Kroo\")"));
+        String events = world.getEventsAsString();
+        assertTrue("Should've written CharacterExists", events.contains("InhabitantExists (0, \"Kroo\")"));
     }
     
     

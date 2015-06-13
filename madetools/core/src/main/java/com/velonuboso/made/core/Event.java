@@ -17,18 +17,18 @@
 
 package com.velonuboso.made.core;
 
-import com.velonuboso.made.interfaces.IFact;
+import com.velonuboso.made.interfaces.IEvent;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class Fact implements IFact{
+public class Event implements IEvent{
 
     private String name;
     private Object[] arguments;
-
-    public Fact(String name, Object... arguments) {
+    
+    public Event(String name, Object... arguments) {
         this.name = name;
         this.arguments = arguments;
     }

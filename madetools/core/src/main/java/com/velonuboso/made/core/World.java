@@ -18,7 +18,7 @@ package com.velonuboso.made.core;
 
 import com.velonuboso.made.interfaces.IWorld;
 import com.velonuboso.made.interfaces.ICharacter;
-import com.velonuboso.made.interfaces.IFact;
+import com.velonuboso.made.interfaces.IEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,14 +32,14 @@ public class World implements IWorld {
 
     private final List<ICharacter> inhabitants;
     private int identifiersSequence;
-    private final List<IFact> facts;
+    private final List<IEvent> events;
     private TimeUnit timeUnit;
     private int runTime;
 
     public World() {
         inhabitants = new ArrayList<>();
         identifiersSequence = 0;
-        facts = new ArrayList<>();
+        events = new ArrayList<>();
         timeUnit = TimeUnit.DAYS;
         runTime = 0;
     }
@@ -54,9 +54,9 @@ public class World implements IWorld {
         if (character.getId() == null) {
             character.setId(getNextIdentifier());
         }
-        character.setFactsWriter(new FactsWriter(facts));
+        character.setEventsWriter(new EventsWriter(events));
         inhabitants.add(character);
-        facts.add(FactFactory.inhabitantExists(character));
+        events.add(EventFactory.inhabitantExists(character));
     }
 
     private synchronized int getNextIdentifier() {
@@ -64,8 +64,8 @@ public class World implements IWorld {
     }
 
     @Override
-    public List<IFact> getFacts() {
-        return facts;
+    public List<IEvent> getEvents() {
+        return events;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class World implements IWorld {
 
     @Override
     public void run(int expectedExecutionDays) {
-        facts.add(getConfigurationfact());
+        events.add(getConfigurationEvent());
 
         for (runTime = 0; runTime < expectedExecutionDays; runTime++) {
 
@@ -93,17 +93,17 @@ public class World implements IWorld {
         return runTime;
     }
 
-    private IFact getConfigurationfact() {
-        return FactFactory.worldExists(this);
+    private IEvent getConfigurationEvent() {
+        return EventFactory.worldExists(this);
     }
 
     @Override
-    public String getFactsAsString() {
+    public String getEventsAsString() {
         StringBuilder story = new StringBuilder();
-        for (int factsIterator = 0; factsIterator < facts.size(); factsIterator++) {
-            IFact fact = facts.get(factsIterator);
-            story.append(fact.toLogicalPredicate());
-            if (factsIterator<facts.size()-1){
+        for (int eventIterator = 0; eventIterator < events.size(); eventIterator++) {
+            IEvent event = events.get(eventIterator);
+            story.append(event.toLogicalPredicate());
+            if (eventIterator<events.size()-1){
                 story.append("\n");
             }
         }

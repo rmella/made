@@ -21,8 +21,8 @@ package com.velonuboso.made.interfaces;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface IFactsWriter {
+public interface IEvent {
 
-    void add(IFact fact);
-
+    public String toLogicalPredicate();
+    
 }

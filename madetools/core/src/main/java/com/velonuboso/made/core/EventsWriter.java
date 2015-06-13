@@ -17,25 +17,24 @@
 
 package com.velonuboso.made.core;
 
-import com.velonuboso.made.interfaces.ICharacter;
-import com.velonuboso.made.interfaces.IFact;
-import com.velonuboso.made.interfaces.IWorld;
+import com.velonuboso.made.interfaces.IEventsWriter;
+import com.velonuboso.made.interfaces.IEvent;
+import java.util.List;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class FactFactory {
+public class EventsWriter implements IEventsWriter {
 
-    public static final String WORLD_EXISTS = "WorldExist";
-    public static final String INHABITANT_EXISTS = "InhabitantExists";
-    
-    public static IFact worldExists(IWorld world) {
-        return new Fact(WORLD_EXISTS, world.getTimeUnit());
+    private List<IEvent> events;
+
+    public EventsWriter(List<IEvent> events) {
+        this.events = events;
     }
     
-    public static IFact inhabitantExists(ICharacter inhabitant){
-        return new Fact(INHABITANT_EXISTS, inhabitant.getId(), inhabitant.getName());
+    @Override
+    public void add (IEvent event){
+        events.add(event);
     }
-
 }

@@ -74,7 +74,7 @@ public class EvaluatorTest {
     }
     
     @Test
-    public void Evaluator_uses_a_list_of_facts_as_input(){
+    public void Evaluator_uses_a_list_of_events_as_input(){
         //TODO
     }
     

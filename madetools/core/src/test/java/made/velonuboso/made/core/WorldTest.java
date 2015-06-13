@@ -20,7 +20,7 @@ package made.velonuboso.made.core;
 import com.velonuboso.made.core.AntMite;
 import com.velonuboso.made.core.World;
 import com.velonuboso.made.interfaces.ICharacter;
-import com.velonuboso.made.interfaces.IFact;
+import com.velonuboso.made.interfaces.IEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -139,8 +139,8 @@ public class WorldTest {
     }    
     
     @Test
-    public void UT_World_must_have_facts(){
-        assertNotNull("Facts of a world must not be null", world.getFacts());
+    public void UT_World_must_have_events(){
+        assertNotNull("Events of a world must not be null", world.getEvents());
     }
     
     @Test
@@ -167,14 +167,14 @@ public class WorldTest {
     }
     
     @Test
-    public void UT_World_must_have_empty_facts_when_never_run(){
-        assertTrue("Facts of a world never run must be empty", world.getFacts().isEmpty());
+    public void UT_World_must_have_empty_events_when_never_run(){
+        assertTrue("Events of a world never run must be empty", world.getEvents().isEmpty());
     }
     
     @Test
-    public void UT_World_must_have_non_empty_facts_after_running(){
+    public void UT_World_must_have_non_empty_events_after_running(){
         world.run(10);
-        assertFalse("Facts of the world afetr running must not be empty", world.getFacts().isEmpty());
+        assertFalse("Events of the world afetr running must not be empty", world.getEvents().isEmpty());
     }
     
     @Test
@@ -184,14 +184,14 @@ public class WorldTest {
     }
     
     @Test
-    public void IT_AddInhabitant_must_insert_a_fact_when_called(){
-        List<IFact> oldFacts = new ArrayList<>();
-        Collections.copy(oldFacts, world.getFacts());
+    public void IT_AddInhabitant_must_insert_an_event_when_called(){
+        List<IEvent> oldEvents = new ArrayList<>();
+        Collections.copy(oldEvents, world.getEvents());
         
         AntMite character = new AntMite();
         world.addInhabitant(character);
         
-        assertTrue("The number of facts should be higher after a character addition",
-                world.getFacts().size()>oldFacts.size());
+        assertTrue("The number of events should be higher after a character addition",
+                world.getEvents().size()>oldEvents.size());
     }
 }
