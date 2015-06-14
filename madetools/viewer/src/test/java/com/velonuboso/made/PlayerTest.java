@@ -107,6 +107,19 @@ public class PlayerTest {
         }
     }
     
+    /*
+    @Test
+    public void UT_Sample() {
+        try{
+            String fileName = ClassLoader.getSystemClassLoader().getResource("sample.json").getFile();
+            String[] args = new String[]{fileName};
+            Player.main(args);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    */
+    
     private boolean CheckExceptionIsCalled(String[] args) {
         try{
             Player.main(args);
