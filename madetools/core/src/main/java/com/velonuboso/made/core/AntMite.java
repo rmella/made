@@ -17,7 +17,7 @@
 package com.velonuboso.made.core;
 
 import com.velonuboso.made.interfaces.ICharacter;
-import com.velonuboso.made.interfaces.IFactsWriter;
+import com.velonuboso.made.interfaces.IEventsWriter;
 import com.velonuboso.made.interfaces.IFiniteStateAutomaton;
 
 /**
@@ -28,13 +28,13 @@ public class AntMite implements ICharacter {
 
     private String name;
     private Integer id;
-    private IFactsWriter factsWriter;
+    private IEventsWriter eventsWriter;
     private IFiniteStateAutomaton finiteStateAutomaton;
 
     public AntMite() {
         name = "Kroo";
         id = null;
-        factsWriter = null;
+        eventsWriter = null;
         initializeFiniteStateAutomaton();
     }
 
@@ -58,8 +58,8 @@ public class AntMite implements ICharacter {
     }
 
     @Override
-    public void setFactsWriter(final IFactsWriter newFactsWriter) {
-        this.factsWriter = newFactsWriter;
+    public void setEventsWriter(final IEventsWriter newEventsWriter) {
+        this.eventsWriter = newEventsWriter;
     }
 
     private void initializeFiniteStateAutomaton() {

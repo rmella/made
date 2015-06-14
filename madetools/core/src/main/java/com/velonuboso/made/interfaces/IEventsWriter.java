@@ -15,26 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.velonuboso.made.core;
-
-import com.velonuboso.made.interfaces.IFactsWriter;
-import com.velonuboso.made.interfaces.IFact;
-import java.util.List;
+package com.velonuboso.made.interfaces;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class FactsWriter implements IFactsWriter {
+public interface IEventsWriter {
 
-    private List<IFact> facts;
+    void add(IEvent event);
 
-    public FactsWriter(List<IFact> facts) {
-        this.facts = facts;
-    }
-    
-    @Override
-    public void add (IFact fact){
-        facts.add(fact);
-    }
 }

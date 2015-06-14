@@ -17,7 +17,7 @@
 package com.velonuboso.made.core;
 
 import com.velonuboso.made.interfaces.IAction;
-import com.velonuboso.made.interfaces.IFact;
+import com.velonuboso.made.interfaces.IEvent;
 import com.velonuboso.made.interfaces.IFiniteStateAutomaton;
 import com.velonuboso.made.interfaces.IMap;
 import com.velonuboso.made.interfaces.IPosition;

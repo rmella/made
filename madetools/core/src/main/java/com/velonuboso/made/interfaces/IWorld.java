@@ -18,7 +18,7 @@
 package com.velonuboso.made.interfaces;
 
 import com.velonuboso.made.interfaces.ICharacter;
-import com.velonuboso.made.interfaces.IFact;
+import com.velonuboso.made.interfaces.IEvent;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -30,9 +30,9 @@ public interface IWorld {
 
     public void addInhabitant(ICharacter character);
 
-    public List<IFact> getFacts();
+    public List<IEvent> getEvents();
     
-    public String getFactsAsString();
+    public String getEventsAsString();
 
     public List<ICharacter> getInhabitants();
 
