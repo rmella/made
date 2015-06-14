@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import javafx.scene.paint.Color;
 import junit.framework.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 
@@ -104,6 +105,7 @@ public class EventsLogTest {
     }
     
     @Test
+    @Ignore
     public void UT_fromJson_must_return_null_when_Json_is_invalid() throws IOException, URISyntaxException {
 
         String sampleJsonFileName = "samplejson.json";
