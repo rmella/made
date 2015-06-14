@@ -108,7 +108,7 @@ public class EventsLogTest {
 
         String sampleJsonFileName = "samplejson.json";
         String toBeReplaced[] = new String[] {"\r", "gridSize"};
-        String replacement[] = new String[] { ",", "("};
+        String replacement[] = new String[] { ":", ""};
         
         URI sampleJsonURI = ClassLoader.getSystemResource(sampleJsonFileName).toURI();
         String sampleJson = new String(Files.readAllBytes(Paths.get(sampleJsonURI)));
