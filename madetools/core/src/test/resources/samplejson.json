@@ -1,0 +1,77 @@
+{
+  "board": {
+    "gridSize": 10,
+    "obstacles": [
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 2,
+        "y": 5
+      }
+    ]
+  },
+  "characters": [
+    {
+      "characterId": 0,
+      "name": "Zhen Suwah",
+      "color": {
+        "red": 0.0,
+        "green": 1.0,
+        "blue": 1.0,
+        "opacity": 1.0
+      }
+    },
+    {
+      "characterId": 1,
+      "name": "Quddah Oofi",
+      "color": {
+        "red": 0.64705884,
+        "green": 0.16470589,
+        "blue": 0.16470589,
+        "opacity": 1.0
+      }
+    }
+  ],
+  "dayLogs": [
+    {
+      "day": 0,
+      "events": [
+        {
+          "eventId": 0,
+          "actors": [
+            0
+          ],
+          "predicate": "IsBorn (0, 0, 3)"
+        },
+        {
+          "eventId": 1,
+          "actors": [
+            1
+          ],
+          "predicate": "IsBorn (0, 1, 50)"
+        }
+      ]
+    },
+    {
+      "day": 1,
+      "events": [
+        {
+          "eventId": 2,
+          "actors": [
+            0
+          ],
+          "predicate": "Move (1, 0, 19)"
+        },
+        {
+          "eventId": 3,
+          "actors": [
+            1
+          ],
+          "predicate": "Move (1, 1, 65)"
+        }
+      ]
+    }
+  ]
+}

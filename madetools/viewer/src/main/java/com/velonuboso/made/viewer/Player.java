@@ -23,7 +23,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import static com.velonuboso.made.viewer.Player.BOARD_MARGIN;
-import com.velonuboso.made.entity.EventsLog;
+import com.velonuboso.made.core.entity.EventsLog;
 import com.google.gson.Gson;
 import java.io.File;
 import java.nio.file.Files;
