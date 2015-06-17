@@ -16,22 +16,64 @@
  */
 package com.velonuboso.made.prettytestrunner;
 
+import com.google.common.reflect.ClassPath;
 import com.velonuboso.made.core.unittest.AntMiteTest;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class PrettyTestRunner {
-    
-    public static void main(String args[]) {
-    Result result = JUnitCore.runClasses(AntMiteTest.class);
-      for (Failure failure : result.getFailures()) {
-         System.out.println("fail "+failure.toString());
-      }
-      System.out.println("passed:"+result.wasSuccessful());
+
+    public static void main(String args[]) throws IOException {
+        PrettyTestRunner runner = new PrettyTestRunner();
+        runner.runTestsClasses();
     }
+
+    private List<Class> testClasses;
+
+    public PrettyTestRunner() throws IOException {
+        loadTestClasses();
+    }
+
+    public void loadTestClasses() {
+        try {
+            testClasses = new ArrayList<>();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+            ClassPath classpath = ClassPath.from(loader);
+            for (ClassPath.ClassInfo classInfo : classpath.getTopLevelClassesRecursive("com.velonuboso.made")) {
+                if (classInfo.getName().toLowerCase().endsWith("test")) {
+                    testClasses.add(loader.loadClass(classInfo.getName()));
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(PrettyTestRunner.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void runTestsClasses() {
+        for (Class testClass : testClasses) {
+            runSingleTestClass(testClass);
+        }
+    }
+
+    private void runSingleTestClass(Class testClass) {
+        Result result = JUnitCore.runClasses(testClass);
+        System.out.println(testClass.getName());
+        for (Failure failure : result.getFailures()) {
+            System.out.println("fail " + failure.toString());
+        }
+        System.out.println("passed:" + result.wasSuccessful());
+    }
+
 }
