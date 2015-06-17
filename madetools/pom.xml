@@ -8,6 +8,7 @@
     <modules>
         <module>core</module>
         <module>viewer</module>
+        <module>prettytestrunner</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
