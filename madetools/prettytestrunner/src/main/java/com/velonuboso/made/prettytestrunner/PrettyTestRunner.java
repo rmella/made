@@ -17,16 +17,13 @@
 package com.velonuboso.made.prettytestrunner;
 
 import com.google.common.reflect.ClassPath;
-import com.velonuboso.made.core.unittest.AntMiteTest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.InitializationError;
 
 /**
  *
@@ -34,46 +31,60 @@ import org.junit.runner.notification.RunListener;
  */
 public class PrettyTestRunner {
 
-    public static void main(String args[]) throws IOException {
-        PrettyTestRunner runner = new PrettyTestRunner();
-        runner.runTestsClasses();
-    }
-
     private List<Class> testClasses;
 
-    public PrettyTestRunner() throws IOException {
-        loadTestClasses();
+    public static void main(String args[]) throws IOException {
+        PrettyTestRunner runner = new PrettyTestRunner();
+        runner.run();
     }
 
-    public void loadTestClasses() {
-        try {
-            testClasses = new ArrayList<>();
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    private void initializeArrayOfTestClasses() {
+        testClasses = new ArrayList<>();
+    }
 
+    private static ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    private void includeTestClassesFromClassPath() {
+        final String PACKAGE_NAME = "com.velonuboso.made";
+        final String CLASS_TEST_ENDING = "test";
+        
+        try {
+            ClassLoader loader = getClassLoader();
             ClassPath classpath = ClassPath.from(loader);
-            for (ClassPath.ClassInfo classInfo : classpath.getTopLevelClassesRecursive("com.velonuboso.made")) {
-                if (classInfo.getName().toLowerCase().endsWith("test")) {
+            for (ClassPath.ClassInfo classInfo : classpath.getTopLevelClassesRecursive(PACKAGE_NAME)) {
+                if (classInfo.getName().toLowerCase().endsWith(CLASS_TEST_ENDING)) {
                     testClasses.add(loader.loadClass(classInfo.getName()));
                 }
             }
-        } catch (Exception ex) {
-            Logger.getLogger(PrettyTestRunner.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException exception) {
+            logException(exception);
         }
     }
 
-    private void runTestsClasses() {
+    private void run() {
+        initializeArrayOfTestClasses();
+        includeTestClassesFromClassPath();
+        runTestClasses();
+    }
+
+    private void runTestClasses() {
         for (Class testClass : testClasses) {
             runSingleTestClass(testClass);
         }
     }
 
     private void runSingleTestClass(Class testClass) {
-        Result result = JUnitCore.runClasses(testClass);
-        System.out.println(testClass.getName());
-        for (Failure failure : result.getFailures()) {
-            System.out.println("fail " + failure.toString());
+        try {
+            BlockJUnit4ClassRunner runner = new BlockJUnit4ClassRunner(testClass);
+            runner.run(new PrettyNotifier());
+        } catch (InitializationError ex) {
+            logException(ex);
         }
-        System.out.println("passed:" + result.wasSuccessful());
     }
 
+    private void logException(Exception ex) {
+        Logger.getLogger(PrettyTestRunner.class.getName()).log(Level.SEVERE, null, ex);
+    }
 }

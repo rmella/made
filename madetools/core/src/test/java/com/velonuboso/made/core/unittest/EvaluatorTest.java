@@ -60,7 +60,7 @@ public class EvaluatorTest {
         try {
             Prolog engine = new Prolog();
             SolveInfo info = engine.solve("append([1],[2,3],X).");
-            System.out.println(info.getSolution());
+            //System.out.println(info.getSolution());
         } catch (Exception ex) {
             Logger.getLogger(EvaluatorTest.class.getName()).log(Level.SEVERE, null, ex);
         }

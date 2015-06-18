@@ -60,24 +60,24 @@ public class MapTest {
     }
 
     @Test
-    public void newMap20x20_mustContain400Cells() {
+    public void newMap__20x20_must_contain_400_cells() {
         assertEquals("Should've created 400 cells", 400, map.getCells().size());
     }
 
     @Test
-    public void newMap_allCells_mustBeEmpty() {
+    public void newMap__allCells_must_be_empty() {
         boolean allCellsAreEmpty = map.getCells().stream().allMatch(cellId -> map.getCharacter(cellId) == null);
         assertTrue("Should've set all the cells as empty", allCellsAreEmpty);
     }
 
     @Test
-    public void newMap_allCells_mustBeLand() {
+    public void newMap__allCells_must_be_land() {
         boolean allCellsAreLands = map.getCells().stream().allMatch(cellId -> map.getTerrain(cellId) == Terrain.LAND);
         assertTrue("Should've set all the cells as land", allCellsAreLands);
     }
 
     @Test
-    public void newMap_allCells_mustHaveDifferentPosition() {
+    public void newMap__allCells_must_have_different_position() {
         HashSet<IPosition> differentPositions = new HashSet<>();
         map.getCells().stream().forEach(cellId -> differentPositions.add(map.getPosition(cellId)));
 
@@ -86,7 +86,7 @@ public class MapTest {
     }
 
     @Test
-    public void getCell_allCells_mustHaveTheSamePositionThanTheOneUsedToGetThem() {
+    public void getCell__allCells_must_have_the_same_position_than_the_one_used_to_get_them() {
         for (int iterX = 0; iterX < map.getWidth(); iterX++) {
             for (int iterY = 0; iterY < map.getHeight(); iterY++) {
                 IPosition position = ObjectFactory.createObject(IPosition.class);
@@ -101,7 +101,7 @@ public class MapTest {
     }
 
     @Test
-    public void getCellByPosition_cellRetrievedByPositionAndRetrievedByCoords_mustBeTheSame() {
+    public void getCellByPosition__cell_retrieved_by_position_and_retrieved_by_coords_must_be_the_same() {
         final int coordX = 1;
         final int coordY = 2;
 
@@ -112,7 +112,7 @@ public class MapTest {
     }
 
     @Test
-    public void getPositionByCell_PositionRetrievedByCellandCoordsRetrievedByCell_mustBeTheSame() {
+    public void getPositionByCell__position_retrieved_by_cell_and_coords_retrieved_by_cell_must_be_the_same() {
         final int cellId = 12;
         IPosition position = ObjectFactory.createObject(IPosition.class);
         position.setCoords(map.getPositionX(cellId), map.getPositionY(cellId));
@@ -122,7 +122,7 @@ public class MapTest {
     }
 
     @Test
-    public void getCell_PositionOfOutBounds_MustBeModuled() {
+    public void getCell__position_out_of_bounds_must_be_moduled() {
         IPosition position = ObjectFactory.createObject(IPosition.class);
         position.setCoords(1, 2);
 
@@ -137,7 +137,7 @@ public class MapTest {
     }
 
     @Test
-    public void putCharacter_inEmptyCell_mustPutTheCharacter() {
+    public void putCharacter__in_empty_cell_must_put_the_character() {
         ICharacter character = mock(ICharacter.class);
 
         IPosition positionSource = ObjectFactory.createObject(IPosition.class);
@@ -149,7 +149,7 @@ public class MapTest {
     }
 
     @Test
-    public void removeCharacter_cellWithCharacter_mustRemoveTheCharacterFromTheMap() {
+    public void removeCharacter__cell_with_character_must_remove_the_character_from_the_map() {
         ICharacter character = mock(ICharacter.class);
 
         IPosition position = ObjectFactory.createObject(IPosition.class);
@@ -163,7 +163,7 @@ public class MapTest {
     }
 
     @Test
-    public void putCharacter_inNonEmptyCell_mustThrowException(){
+    public void putCharacter__in_non_empty_cell_must_throw_exception(){
         ICharacter character = mock(ICharacter.class);
 
         IPosition positionSource = ObjectFactory.createObject(IPosition.class);
@@ -180,7 +180,7 @@ public class MapTest {
     }
 
     @Test
-    public void putCharacter_puttingTheSameCharacterInToCells_MustThrowException() {
+    public void putCharacter__putting_the_same_character_in_two_cells_must_throw_exception() {
         ICharacter character = mock(ICharacter.class);
 
         IPosition positionSource = ObjectFactory.createObject(IPosition.class);
@@ -202,7 +202,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveCharacter_SourceWithCharacterAndTargetEmpty_mustMoveCharacterToTarget() {
+    public void moveCharacter__source_with_character_and_target_empty_must_move_character_to_target() {
         ICharacter character = mock(ICharacter.class);
 
         IPosition positionSource = ObjectFactory.createObject(IPosition.class);
@@ -222,7 +222,7 @@ public class MapTest {
     }
 
     @Test
-    public void getCellByCharacter_moveCharacterToTarget_returnedCellMustBeTarget() {
+    public void getCellByCharacter__when_character_is_moved_to_target_the_returned_cell_must_be_the_target() {
         ICharacter character = mock(ICharacter.class);
 
         IPosition positionSource = ObjectFactory.createObject(IPosition.class);
@@ -242,7 +242,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveCharacter_MovingToTheSameLocation_mustThrowException() {
+    public void moveCharacter__moving_to_the_same_location_must_throw_exception() {
         ICharacter character = mock(ICharacter.class);
 
         try {
@@ -263,7 +263,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveCharacter_movingToANonEmptyLocation_mustThrowException() {
+    public void moveCharacter_moving_to_a_non_empty_location_must_throw_exception() {
         ICharacter characterInSource = mock(ICharacter.class);
         ICharacter characterInTarget = mock(ICharacter.class);
 
@@ -288,7 +288,7 @@ public class MapTest {
     }
 
     @Test
-    public void moveCharacter_movingFromAnEmptyLocation_mustThrowException() {
+    public void moveCharacter_moving_from_an_empty_location_must_throw_exception() {
 
         try {
             IPosition positionSource = ObjectFactory.createObject(IPosition.class);
@@ -308,7 +308,7 @@ public class MapTest {
     }
 
     @Test
-    public void getCellByCharacter_characterInMap_mustReturnACell() {
+    public void getCellByCharacter__character_in_map_must_return_a_cell() {
         ICharacter newCharacter = mock(ICharacter.class);
         IPosition emptyPosition = ObjectFactory.createObject(IPosition.class);
         emptyPosition.setCoords(1, 2);
@@ -320,7 +320,7 @@ public class MapTest {
     }
 
     @Test
-    public void getCellByCharacter_characterNotInMap_mustReturnNull() {
+    public void getCellByCharacter_character_not_in_map_must_return_null() {
         ICharacter newCharacter = mock(ICharacter.class);
         IPosition emptyPosition = ObjectFactory.createObject(IPosition.class);
         emptyPosition.setCoords(1, 2);
@@ -331,7 +331,7 @@ public class MapTest {
     }
 
     @Test
-    public void getPositionsToMove_From0x0yAndMovement1_Position2x2yMustNotBeIncluded() {
+    public void getPositionsToMove__When_movement_is_1_and_from_0x_0y_then_position_2x_2y_must_not_be_included() {
         final int movement = 1;
         final int newX = 2;
         final int newY = 2;
@@ -342,7 +342,7 @@ public class MapTest {
     }
 
     @Test
-    public void getPositionsToMove_From0x0yAndMovement2_Position2x2yMustBeIncluded() {
+    public void getPositionsToMove__When_movement_is_2_and_from_0x_0y_then_position_2x_2y_must_be_included() {
         final int movement = 2;
         final int newX = 2;
         final int newY = 2;
@@ -353,18 +353,18 @@ public class MapTest {
     }
 
     @Test
-    public void getPositionsToMove_From0x0yAndMovement2_Position18x18yMustBeIncluded() {
+    public void getPositionsToMove__When_movement_is_2_and_from_0x_0y_then_position_18x_18y_must_be_included() {
         final int movement = 2;
         final int newX = 18;
         final int newY = 18;
         Integer sourceCell = map.getCell(0, 0);
         Integer targetCell = map.getCell(newX, newY);
-        assertTrue("Should've contain cell " + targetCell + " (" + newX + "," + newY + ")",
+        assertTrue("Should've contained cell " + targetCell + " (" + newX + "," + newY + ")",
                 map.getCellsToMove(sourceCell, movement).contains(targetCell));
     }
 
     @Test
-    public void getPositionsToMove_From0x0yAndMovement2_Position18x2yMustBeIncluded() {
+    public void getPositionsToMove__When_movement_is_2_and_from_0x_0y_then_position_18x_2y_must_be_included() {
         final int movement = 2;
         final int newX = 18;
         final int newY = 2;
@@ -375,7 +375,7 @@ public class MapTest {
     }
 
     @Test
-    public void getPositionsToMove_From0x0yAndMovement2_Position2x18yMustBeIncluded() {
+    public void getPositionsToMove__When_movement_is_2_and_from_0x_0y_then_position_2x_18y_must_be_included(){
         final int movement = 2;
         final int newX = 2;
         final int newY = 18;
@@ -386,7 +386,7 @@ public class MapTest {
     }
 
     @Test
-    public void getPositionsToMove_From0x0yMovement2AndObstacles_MustNotIncludeUnreachable() {
+    public void getPositionsToMove_When_movement_is_2_from_0x_0y_and_obstacles_then_must_not_include_unreachable_cells() {
         final int movement = 2;
         final int obstacleX = 1;
         final int obstacleY = 1;

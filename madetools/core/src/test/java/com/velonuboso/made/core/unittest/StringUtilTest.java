@@ -17,10 +17,6 @@
 package com.velonuboso.made.core.unittest;
 
 import com.velonuboso.made.core.implementation.StringUtil;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -34,7 +30,7 @@ public class StringUtilTest {
     }
     
     @Test
-    public void doubleTicksToQuote_must_convert_ecah_double_tic_to_quote(){
+    public void doubleTicksToQuote_must_convert_each_double_tic_to_quote(){
         String originalString = "''safe'' and ''sound''";
         String expectedString = "\"safe\" and \"sound\"";
         String resultString = StringUtil.doubleTicksToQuote(originalString);
