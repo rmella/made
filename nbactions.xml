@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-site:site</actionName>
+            <displayName>site:site</displayName>
+            <goals>
+                <goal>site:site</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-site:deploy</actionName>
+            <displayName>site:deploy</displayName>
+            <goals>
+                <goal>site:deploy</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-graph:dependencies -Dgraph.conflicts=SHOW</actionName>
+            <displayName>graph:dependencies -Dgraph.conflicts=SHOW</displayName>
+            <goals>
+                <goal>graph:dependencies</goal>
+                <goal>-Dgraph.conflicts=SHOW</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-surefire-report:report</actionName>
+            <displayName>surefire-report:report</displayName>
+            <goals>
+                <goal>surefire-report:report</goal>
+            </goals>
+        </action>
+    </actions>
