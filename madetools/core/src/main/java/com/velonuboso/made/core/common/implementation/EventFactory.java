@@ -32,12 +32,12 @@ public class EventFactory implements IEventFactory {
     public static final String INHABITANT_EXISTS = "InhabitantExists";
     
     @Override
-    public IEvent worldExists(IWorld world) {
+    public IEvent worldExists(final IWorld world) {
         return new Event(WORLD_EXISTS, world.getTimeUnit());
     }
     
     @Override
-    public IEvent inhabitantExists(ICharacter inhabitant){
+    public IEvent inhabitantExists(final ICharacter inhabitant){
         return new Event(INHABITANT_EXISTS, inhabitant.getId(), inhabitant.getName());
     }
 

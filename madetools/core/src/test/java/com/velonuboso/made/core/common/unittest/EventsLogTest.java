@@ -16,26 +16,18 @@
  */
 package com.velonuboso.made.core.common.unittest;
 
-import com.google.common.base.Defaults;
 import com.velonuboso.made.core.common.entity.EventsLog;
 import com.velonuboso.made.core.common.entity.EventsLogConverter;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import javafx.scene.paint.Color;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -127,81 +119,31 @@ public class EventsLogTest {
 
     @Test
     public void UT_EventsLog_getters_must_return_set_values() throws Exception {
-        testPojo(EventsLog.class);
+        PojoTester.testPojo(EventsLog.class);
     }
     
     @Test
     public void UT_PositionEntity_getters_must_return_set_values() throws Exception {
-        testPojo(EventsLog.PositionEntity.class);
+        PojoTester.testPojo(EventsLog.PositionEntity.class);
     }
     
     @Test
     public void UT_BoardEntity_getters_must_return_set_values() throws Exception {
-        testPojo(EventsLog.BoardEntity.class);
+        PojoTester.testPojo(EventsLog.BoardEntity.class);
     }
     
     @Test
     public void UT_CharacterEntity_getters_must_return_set_values() throws Exception {
-        testPojo(EventsLog.CharacterEntity.class);
+        PojoTester.testPojo(EventsLog.CharacterEntity.class);
     }
     
     @Test
     public void UT_DayLog_getters_must_return_set_values() throws Exception {
-        testPojo(EventsLog.DayLog.class);
+        PojoTester.testPojo(EventsLog.DayLog.class);
     }
     
     @Test
     public void UT_EventEntity_getters_must_return_set_values() throws Exception {
-        testPojo(EventsLog.EventEntity.class);
-    }
-    public void testPojo(Class targetClass) throws Exception {
-        try {
-            Method[] methods = targetClass.getDeclaredMethods();
-            for (Method getter : methods) {
-                if (getter.getName().startsWith("get")) {
-                    String parameterName = getter.getName().substring(3);
-
-                    Object fakeObject = null;
-                    Class returnType = getter.getReturnType();
-                    
-                    if (returnType.isArray()){
-                        fakeObject = Array.newInstance(returnType.getComponentType(), 0);
-                    }else if (returnType.isPrimitive() || returnType.equals(String.class)){
-                        fakeObject = Defaults.defaultValue(getter.getReturnType());
-                    }else if (returnType.equals(Color.class)){
-                        fakeObject = new Color(0.5, 0.8, 0.2, 1);
-                    }else{
-                        fakeObject = mock(returnType);
-                    }
-                    
-                    List<Method> setters = Arrays.stream(methods).filter(
-                            setter -> setter.getName().equals("set"+parameterName)
-                    ).collect(Collectors.toList());
-                    
-                    Assert.assertTrue(
-                            "parameter " + parameterName + " should have a setter",
-                            setters.size() > 0
-                    );
-                    Assert.assertTrue(
-                            "parameter " + parameterName + " should only have one setter",
-                            setters.size() == 1
-                    );
-                    Method setter = setters.get(0);
-
-                    Constructor constructor = targetClass.getDeclaredConstructor();
-
-                    Object newInstance = constructor.newInstance();
-                    setter.invoke(newInstance, fakeObject);
-                    Object valueFromGetter = getter.invoke(newInstance);
-                    Assert.assertEquals(getter.getName()
-                            + " should've retrieved the value used in " + setter.getName(),
-                            fakeObject, valueFromGetter
-                    );
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            throw exception;
-        }
+        PojoTester.testPojo(EventsLog.EventEntity.class);
     }
 }

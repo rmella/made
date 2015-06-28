@@ -14,43 +14,57 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.common.implementation;
 
 import com.velonuboso.made.core.common.api.IEvent;
+import java.util.Arrays;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class Event implements IEvent{
+public class Event implements IEvent {
 
-    private String name;
-    private Object[] arguments;
-    
-    public Event(String name, Object... arguments) {
+    private static final String ARGUMENT_BEGIN = " (";
+    private static final String ARGUMENT_SEPARATOR = ", ";
+    private static final String ARGUMENT_END = ")";
+    private static final String ARGUMENT_QUOTE = "\"";
+
+    private final String name;
+    private final Object[] arguments;
+
+    public Event(final String name, final Object... arguments) {
         this.name = name;
         this.arguments = arguments;
     }
 
     @Override
     public String toLogicalPredicate() {
-        StringBuilder logicalPredicate = new StringBuilder();
-        logicalPredicate.append(name +" (");
-        for (int i = 0; i < arguments.length; i++) {
-            
-            if (arguments[i] instanceof Integer){
-                logicalPredicate.append(arguments[i]);
-            }else{
-                logicalPredicate.append("\""+arguments[i]+"\"");
-            }
-            
-            if (i<arguments.length-1){
-                logicalPredicate.append(", ");
-            }
-        }
-        logicalPredicate.append(")");
+        final StringBuilder logicalPredicate = new StringBuilder();
+        
+        logicalPredicate.append(name);
+        logicalPredicate.append(ARGUMENT_BEGIN);
+        logicalPredicate.append(getCommaSeparatedArguments());
+        logicalPredicate.append(ARGUMENT_END);
+        
         return logicalPredicate.toString();
     }
+
+    private String getCommaSeparatedArguments() {
+        String[] argumentsArray = Arrays.stream(arguments).map(argument -> argumentAsString(argument)).toArray(String[]::new);
+        String commaSeparatedArguments = String.join(ARGUMENT_SEPARATOR, argumentsArray);
+        return commaSeparatedArguments;
+    }
+
+    private String decorateStringWithQuotes(Object argument) {
+        return ARGUMENT_QUOTE + argument.toString() + ARGUMENT_QUOTE;
+    }
     
+    private boolean isANumber(Object argument) {
+        return argument instanceof Integer;
+    }
+
+    private String argumentAsString(Object argument) {
+        return isANumber(argument)? argument.toString(): decorateStringWithQuotes(argument);
+    }
 }

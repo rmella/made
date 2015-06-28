@@ -15,12 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.velonuboso.made.core.common.api;
+package com.velonuboso.made.core.narration.api;
+
+import com.velonuboso.made.core.common.entity.EventsLog;
+import com.velonuboso.made.core.customization.api.ICustomization;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface IEvent {
-    String toLogicalPredicate();
+public interface INarrator {
+    
+    ICustomization getCustomization();
+    void setCustomization(ICustomization customization);
+    void setEventsLog(EventsLog eventsLog);
+    String getNarration();
 }

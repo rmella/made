@@ -15,12 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.velonuboso.made.core.common.api;
+package com.velonuboso.made.core.customization.api;
+
+import com.velonuboso.made.core.customization.entity.NarrationRuleEntity;
+import java.util.List;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface IEvent {
-    String toLogicalPredicate();
+public interface ICustomization {
+
+    List<NarrationRuleEntity> getNarrationRules();
+    
 }
