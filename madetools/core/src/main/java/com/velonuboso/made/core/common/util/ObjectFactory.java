@@ -16,8 +16,6 @@
  */
 package com.velonuboso.made.core.common.util;
 
-import com.velonuboso.made.core.abm.api.IAction;
-import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.abm.api.IFiniteStateAutomaton;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
@@ -35,28 +33,32 @@ import java.util.Set;
  */
 public class ObjectFactory {
 
-    private static HashMap<Class, Class> mappings = null;
-    private static HashMap<Class, Class> mocks = new HashMap<>();
+    private static HashMap<Class, Class> mappingClasses;
+    private static final HashMap<Class, Class> mappingMockingClasses = new HashMap<>();
+    private static final HashMap<Class, Object> mappingMockingInstances = new HashMap<>();
 
     private static void insertMappings() {
         // NEW MAPPINGS SHOULD BE DEFINED HERE
-        mappings.put(IMap.class, Map.class);
-        mappings.put(IPosition.class, Position.class);
-        mappings.put(IFiniteStateAutomaton.class, FiniteStateAutomaton.class);
-        mappings.put(IEventFactory.class, EventFactory.class);
+        mappingClasses.put(IMap.class, Map.class);
+        mappingClasses.put(IPosition.class, Position.class);
+        mappingClasses.put(IFiniteStateAutomaton.class, FiniteStateAutomaton.class);
+        mappingClasses.put(IEventFactory.class, EventFactory.class);
     }
 
     public static <T> T createObject(Class<T> targetInterface) {
-        if (mappings == null) {
+        if (mappingClasses == null) {
             createMappingsSingleton();
         }
         T newObject = null;
         try {
-            if (mocks.containsKey(targetInterface)) {
-                newObject = (T) mocks.get(targetInterface).newInstance();
+            if (mappingMockingInstances.containsKey(targetInterface)) {
+                return (T) mappingMockingInstances.get(targetInterface);
             }
-            if (mappings.containsKey(targetInterface)) {
-                newObject = (T) mappings.get(targetInterface).newInstance();
+            if (mappingMockingClasses.containsKey(targetInterface)) {
+                return (T) mappingMockingClasses.get(targetInterface).newInstance();
+            }
+            if (mappingClasses.containsKey(targetInterface)) {
+               return (T) mappingClasses.get(targetInterface).newInstance();
             }
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Could not instantiate " + targetInterface.getCanonicalName(), e);
@@ -65,26 +67,33 @@ public class ObjectFactory {
     }
 
     private static void createMappingsSingleton() {
-        mappings = new HashMap<>();
+        mappingClasses = new HashMap<>();
         insertMappings ();
         checkMappingCoherence();
     }
 
     private static  void checkMappingCoherence() throws RuntimeException {
-        Set<Class> classes = mappings.keySet();
+        Set<Class> classes = mappingClasses.keySet();
         for (Class targetClass : classes) {
-            if (!targetClass.isAssignableFrom(mappings.get(targetClass))) {
-                throw new RuntimeException("Objectfactory: " + mappings.get(targetClass)
+            if (!targetClass.isAssignableFrom(mappingClasses.get(targetClass))) {
+                throw new RuntimeException("Objectfactory: " + mappingClasses.get(targetClass)
                         + " does not implement " + targetClass);
             }
         }
     }
 
-    public void installMock(Class targetInterface, Class fakeImplementation) {
-        mocks.put(targetInterface, fakeImplementation);
+    public static void installMock(Class targetInterface, Class fakeImplementation) {
+        removeMock(targetInterface);
+        mappingMockingClasses.put(targetInterface, fakeImplementation);
+    }
+    
+    public static void installMock(Class targetInterface, Object fakeInstance) {
+        removeMock(targetInterface);
+        mappingMockingInstances.put(targetInterface, fakeInstance);
     }
 
-    public void removeMock(Class targetInterface) {
-        mocks.remove(targetInterface);
+    public static void removeMock(Class targetInterface) {
+        mappingMockingInstances.remove(targetInterface);
+        mappingMockingClasses.remove(targetInterface);
     }
 }
