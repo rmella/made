@@ -17,33 +17,9 @@
 package com.velonuboso.made.core.narration.unittest;
 
 import com.velonuboso.made.core.common.unittest.*;
-import com.google.common.base.Defaults;
-import com.velonuboso.made.core.common.entity.EventsLog;
-import com.velonuboso.made.core.common.entity.EventsLogConverter;
 import com.velonuboso.made.core.customization.entity.NarrationRuleEntity;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import javafx.scene.paint.Color;
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -53,7 +29,6 @@ public class NarrationRuleEntityTest {
 
     private NarrationRuleEntity narrationRuleEntity;
     
-
     @Test
     public void UT_NarrationRuleEntity_getters_must_return_values_from_constructor() throws Exception {
         
