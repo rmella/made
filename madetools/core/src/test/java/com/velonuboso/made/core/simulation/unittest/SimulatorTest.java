@@ -17,10 +17,7 @@
 package com.velonuboso.made.core.simulation.unittest;
 
 import com.velonuboso.made.core.simulation.implementation.Simulator;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -34,6 +31,5 @@ public class SimulatorTest {
     public SimulatorTest() {
         
     }
-    
     
 }

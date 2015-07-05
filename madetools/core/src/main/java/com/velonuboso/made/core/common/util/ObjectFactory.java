@@ -41,15 +41,6 @@ public class ObjectFactory {
     private static final HashMap<Class, Class> mappingMockingClasses = new HashMap<>();
     private static final HashMap<Class, Object> mappingMockingInstances = new HashMap<>();
 
-    private static void insertMappings() {
-        
-        Set<Class<?>> allImplementedBy = findAllImplementedBy();
-        for(Class theInterface:allImplementedBy){
-            ImplementedBy annotation = (ImplementedBy) theInterface.getDeclaredAnnotation(ImplementedBy.class);
-            mappingClasses.put(theInterface, annotation.targetClass());
-        }
-    }
-
     public static <T> T createObject(Class<T> targetInterface) {
         if (mappingClasses == null) {
             createMappingsSingleton();
@@ -72,8 +63,18 @@ public class ObjectFactory {
 
     private static void createMappingsSingleton() {
         mappingClasses = new HashMap<>();
-        insertMappings();
+        insertInterfacesIntoMappingsFromPackage();
         checkMappingCoherence();
+    }
+
+    private static void insertInterfacesIntoMappingsFromPackage() {
+        Set<Class<?>> allImplementedBy = findAllImplementedBy();
+        allImplementedBy.stream().forEach((theInterface) -> insertInterfaceIntoMapping(theInterface));
+    }
+
+    private static void insertInterfaceIntoMapping(Class<?> theInterface) {
+        ImplementedBy annotation = (ImplementedBy) theInterface.getDeclaredAnnotation(ImplementedBy.class);
+        mappingClasses.put(theInterface, annotation.targetClass());
     }
 
     private static void checkMappingCoherence() throws RuntimeException {
@@ -102,14 +103,7 @@ public class ObjectFactory {
     }
 
     private static Set<Class<?>> findAllImplementedBy() {
-        try {
-            final Reflections reflections = new Reflections("com.velonuboso", new TypeAnnotationsScanner());
-            Set<Class<?>> allImplementedBy = reflections.getTypesAnnotatedWith(ImplementedBy.class);
-            return allImplementedBy;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;//System.exit(1);
-        }
-
+        final Reflections reflections = new Reflections("com.velonuboso", new TypeAnnotationsScanner());
+        return reflections.getTypesAnnotatedWith(ImplementedBy.class);
     }
 }

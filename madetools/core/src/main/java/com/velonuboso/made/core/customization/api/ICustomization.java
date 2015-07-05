@@ -18,8 +18,10 @@
 package com.velonuboso.made.core.customization.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.common.util.InitializationException;
 import com.velonuboso.made.core.customization.entity.NarrationRuleEntity;
 import com.velonuboso.made.core.customization.implementation.Customization;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -29,7 +31,6 @@ import java.util.List;
 
 @ImplementedBy(targetClass = Customization.class)
 public interface ICustomization {
-
+    void loadFromFile(final File file) throws InitializationException;
     List<NarrationRuleEntity> getNarrationRules();
-    
 }

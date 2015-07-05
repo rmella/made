@@ -45,6 +45,7 @@ public class Customization implements ICustomization {
         narrationRules = new ArrayList<NarrationRuleEntity>();
     }
 
+    @Override
     public void loadFromFile(final File file) throws InitializationException {
         try {
             final Gson gson = new Gson();
