@@ -23,7 +23,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import static com.velonuboso.made.viewer.Player.BOARD_MARGIN;
-import com.velonuboso.made.core.common.entity.EventsLog;
+import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.google.gson.Gson;
 import java.io.File;
 import java.nio.file.Files;
@@ -60,7 +60,7 @@ public class Player extends Application {
     private Scene scene;
     private Stage primaryStage;
     private Canvas canvas;
-    private EventsLog eventsLog;
+    private EventsLogEntity eventsLog;
     private Cell cellMatrix[][];
     private Random random = new Random();
 
@@ -89,7 +89,7 @@ public class Player extends Application {
         try {
             final Gson gson = new Gson();
             final String json = new String(Files.readAllBytes(Paths.get(new File(fileName).toURI())));
-            eventsLog = gson.fromJson(json, EventsLog.class);
+            eventsLog = gson.fromJson(json, EventsLogEntity.class);
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             Platform.exit();
@@ -160,11 +160,11 @@ public class Player extends Application {
         Arrays.stream(eventsLog.getDayLogs()).forEach(day -> EjecuteDay(day));
     }
 
-    private void EjecuteDay(EventsLog.DayLog day) {
+    private void EjecuteDay(EventsLogEntity.DayLog day) {
         Arrays.stream(day.getEvents()).forEach(event -> ExecuteEvent(event));
     }
 
-    private void ExecuteEvent(EventsLog.EventEntity event) {
+    private void ExecuteEvent(EventsLogEntity.EventEntity event) {
         String PATTERN_NUMBER = "([0-9]+)";
         String PATTERN_PARAMETER_SEPARATOR = ",";
         String PATTERN_PARENTHESIS_START = "\\(";
@@ -193,7 +193,7 @@ public class Player extends Application {
     private void InitializeCharacterArray(Pane boardPane, Random random) {
         characters = new Token[eventsLog.getCharacters().length];
         for (int it = 0; it< eventsLog.getCharacters().length; it++){
-            EventsLog.CharacterEntity character = eventsLog.getCharacters()[it];
+            EventsLogEntity.CharacterEntity character = eventsLog.getCharacters()[it];
             characters[it] = new Token(character.getName(), boardPane, random);
         }
     }
