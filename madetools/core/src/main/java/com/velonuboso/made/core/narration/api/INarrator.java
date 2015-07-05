@@ -18,12 +18,15 @@
 package com.velonuboso.made.core.narration.api;
 
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.customization.api.ICustomization;
+import com.velonuboso.made.core.narration.implementation.Narrator;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = Narrator.class)
 public interface INarrator {
     void setCustomization(ICustomization customization);
     void setEventsLog(EventsLogEntity eventsLog);

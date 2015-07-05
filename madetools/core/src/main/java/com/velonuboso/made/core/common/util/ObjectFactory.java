@@ -25,7 +25,11 @@ import com.velonuboso.made.core.abm.implementation.Position;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.reflections.Reflections;
+import org.reflections.scanners.TypeAnnotationsScanner;
 
 /**
  *
@@ -38,18 +42,18 @@ public class ObjectFactory {
     private static final HashMap<Class, Object> mappingMockingInstances = new HashMap<>();
 
     private static void insertMappings() {
-        // NEW MAPPINGS SHOULD BE DEFINED HERE
-        mappingClasses.put(IMap.class, Map.class);
-        mappingClasses.put(IPosition.class, Position.class);
-        mappingClasses.put(IFiniteStateAutomaton.class, FiniteStateAutomaton.class);
-        mappingClasses.put(IEventFactory.class, EventFactory.class);
+        
+        Set<Class<?>> allImplementedBy = findAllImplementedBy();
+        for(Class theInterface:allImplementedBy){
+            ImplementedBy annotation = (ImplementedBy) theInterface.getDeclaredAnnotation(ImplementedBy.class);
+            mappingClasses.put(theInterface, annotation.targetClass());
+        }
     }
 
     public static <T> T createObject(Class<T> targetInterface) {
         if (mappingClasses == null) {
             createMappingsSingleton();
         }
-        T newObject = null;
         try {
             if (mappingMockingInstances.containsKey(targetInterface)) {
                 return (T) mappingMockingInstances.get(targetInterface);
@@ -58,21 +62,21 @@ public class ObjectFactory {
                 return (T) mappingMockingClasses.get(targetInterface).newInstance();
             }
             if (mappingClasses.containsKey(targetInterface)) {
-               return (T) mappingClasses.get(targetInterface).newInstance();
+                return (T) mappingClasses.get(targetInterface).newInstance();
             }
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Could not instantiate " + targetInterface.getCanonicalName(), e);
         }
-        return newObject;
+        throw new RuntimeException("No target implementation for " + targetInterface.getSimpleName());
     }
 
     private static void createMappingsSingleton() {
         mappingClasses = new HashMap<>();
-        insertMappings ();
+        insertMappings();
         checkMappingCoherence();
     }
 
-    private static  void checkMappingCoherence() throws RuntimeException {
+    private static void checkMappingCoherence() throws RuntimeException {
         Set<Class> classes = mappingClasses.keySet();
         for (Class targetClass : classes) {
             if (!targetClass.isAssignableFrom(mappingClasses.get(targetClass))) {
@@ -86,7 +90,7 @@ public class ObjectFactory {
         removeMock(targetInterface);
         mappingMockingClasses.put(targetInterface, fakeImplementation);
     }
-    
+
     public static void installMock(Class targetInterface, Object fakeInstance) {
         removeMock(targetInterface);
         mappingMockingInstances.put(targetInterface, fakeInstance);
@@ -95,5 +99,17 @@ public class ObjectFactory {
     public static void removeMock(Class targetInterface) {
         mappingMockingInstances.remove(targetInterface);
         mappingMockingClasses.remove(targetInterface);
+    }
+
+    private static Set<Class<?>> findAllImplementedBy() {
+        try {
+            final Reflections reflections = new Reflections("com.velonuboso", new TypeAnnotationsScanner());
+            Set<Class<?>> allImplementedBy = reflections.getTypesAnnotatedWith(ImplementedBy.class);
+            return allImplementedBy;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;//System.exit(1);
+        }
+
     }
 }

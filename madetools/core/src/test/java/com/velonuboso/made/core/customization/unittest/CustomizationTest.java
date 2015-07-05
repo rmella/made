@@ -55,7 +55,7 @@ public class CustomizationTest {
     @Test(expected = InitializationException.class)
     public void UT_Customization_loadFromFile_must_throw_exception_when_file_format_is_invalid()
             throws InitializationException{
-        String fileName = ClassLoader.getSystemClassLoader().getResource("invalid_narration_rules.json").getFile();
+        String fileName = ClassLoader.getSystemClassLoader().getResource("invalid_narration_rules.txt").getFile();
         customization.loadFromFile(new File(fileName));
         fail("Should've thrown InitializationException since the file "+ fileName+" has invalid format");
     }

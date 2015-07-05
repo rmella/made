@@ -17,13 +17,17 @@
 
 package com.velonuboso.made.core.abm.api;
 
+import com.velonuboso.made.core.abm.implementation.FiniteStateAutomaton;
 import com.velonuboso.made.core.abm.implementation.Transition;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import java.util.List;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+
+@ImplementedBy(targetClass = FiniteStateAutomaton.class)
 public interface IFiniteStateAutomaton {
 
     public boolean isOk();    

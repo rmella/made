@@ -17,13 +17,17 @@
 
 package com.velonuboso.made.core.customization.api;
 
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.customization.entity.NarrationRuleEntity;
+import com.velonuboso.made.core.customization.implementation.Customization;
 import java.util.List;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+
+@ImplementedBy(targetClass = Customization.class)
 public interface ICustomization {
 
     List<NarrationRuleEntity> getNarrationRules();

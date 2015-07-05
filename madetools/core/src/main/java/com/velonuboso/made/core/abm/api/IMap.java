@@ -17,12 +17,15 @@
 package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.entity.TerrainType;
+import com.velonuboso.made.core.abm.implementation.Map;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import java.util.List;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = Map.class)
 public interface IMap {
 
     public void initialize(int widthInCells, int heighInCells);

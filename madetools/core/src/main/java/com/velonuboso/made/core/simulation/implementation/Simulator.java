@@ -40,14 +40,13 @@ public class Simulator implements ISimulator{
     public Simulator() {
     
         customization = ObjectFactory.createObject(ICustomization.class);
-        
+
         narrator = ObjectFactory.createObject(INarrator.class);
         narrator.setCustomization(customization);
-        
+
         abm = ObjectFactory.createObject(IAbm.class);
         abm.setCustomization(customization);
         abm.setInferences(getDefaultInferences());
-        
     }
 
     @Override

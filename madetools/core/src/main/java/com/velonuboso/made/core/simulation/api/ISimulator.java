@@ -19,13 +19,16 @@ package com.velonuboso.made.core.simulation.api;
 
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.narration.api.INarrator;
+import com.velonuboso.made.core.simulation.implementation.Simulator;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = Simulator.class)
 public interface ISimulator {
     String simulate (AbmConfigurationEntity configuration);
 }

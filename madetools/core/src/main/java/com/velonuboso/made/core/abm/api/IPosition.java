@@ -16,10 +16,15 @@
  */
 package com.velonuboso.made.core.abm.api;
 
+import com.velonuboso.made.core.abm.implementation.Position;
+import com.velonuboso.made.core.common.util.ImplementedBy;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+
+@ImplementedBy(targetClass = Position.class)
 public interface IPosition {
 
     public void setCoords(int xCoord, int yCoord);

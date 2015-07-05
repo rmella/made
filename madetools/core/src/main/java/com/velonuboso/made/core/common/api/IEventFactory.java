@@ -20,11 +20,15 @@ package com.velonuboso.made.core.common.api;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IWorld;
 import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.implementation.EventFactory;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+
+@ImplementedBy(targetClass = EventFactory.class)
 public interface IEventFactory {
 
     IEvent inhabitantExists(ICharacter inhabitant);

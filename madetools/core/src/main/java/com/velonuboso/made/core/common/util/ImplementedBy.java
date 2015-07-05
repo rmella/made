@@ -15,24 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.velonuboso.made.core.abm.api;
+package com.velonuboso.made.core.common.util;
 
-import com.velonuboso.made.core.abm.implementation.Abm;
-import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
-import com.velonuboso.made.core.common.entity.EventsLogEntity;
-import com.velonuboso.made.core.common.entity.InferencesEntity;
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.customization.api.ICustomization;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Abm.class)
-public interface IAbm {
-    public void setCustomization(ICustomization customization);
-    public void setInferences(InferencesEntity defaultInferences);
-    public EventsLogEntity getEventsLog();
-    public void reset();
-    public void run(AbmConfigurationEntity abmConfiguration);
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ImplementedBy {
+    Class targetClass();
 }

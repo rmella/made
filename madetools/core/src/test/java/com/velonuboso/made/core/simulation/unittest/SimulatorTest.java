@@ -14,25 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.velonuboso.made.core.simulation.unittest;
 
-package com.velonuboso.made.core.abm.api;
-
-import com.velonuboso.made.core.abm.implementation.Abm;
-import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
-import com.velonuboso.made.core.common.entity.EventsLogEntity;
-import com.velonuboso.made.core.common.entity.InferencesEntity;
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.customization.api.ICustomization;
+import com.velonuboso.made.core.simulation.implementation.Simulator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Abm.class)
-public interface IAbm {
-    public void setCustomization(ICustomization customization);
-    public void setInferences(InferencesEntity defaultInferences);
-    public EventsLogEntity getEventsLog();
-    public void reset();
-    public void run(AbmConfigurationEntity abmConfiguration);
+public class SimulatorTest {
+    
+    private Simulator simulator;
+    
+    
+    public SimulatorTest() {
+        
+    }
+    
+    
 }
