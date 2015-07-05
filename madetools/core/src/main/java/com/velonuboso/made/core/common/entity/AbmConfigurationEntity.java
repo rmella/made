@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Ruben
+ * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,30 +16,24 @@
  */
 package com.velonuboso.made.core.common.entity;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 /**
  *
- * @author Ruben
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class EventsLogConverter {
-    
-    public static String toJson (EventsLog log){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            return gson.toJson(log);
-        } catch (Exception e) {
-            return null;
-        }
-    } 
-    
-    public static EventsLog fromJson (String log){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            return gson.fromJson(log, EventsLog.class);
-        } catch (Exception e) {
-            return null;
-        }
+public class AbmConfigurationEntity {
+
+    private float Chromosome[];
+
+    public AbmConfigurationEntity(float[] Chromosome) {
+        this.Chromosome = Chromosome;
     }
+    
+    public float[] getChromosome() {
+        return Chromosome;
+    }
+
+    public void setChromosome(float[] Chromosome) {
+        this.Chromosome = Chromosome;
+    }
+    
 }

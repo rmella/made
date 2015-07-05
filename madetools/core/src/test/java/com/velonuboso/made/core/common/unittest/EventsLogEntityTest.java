@@ -16,8 +16,8 @@
  */
 package com.velonuboso.made.core.common.unittest;
 
-import com.velonuboso.made.core.common.entity.EventsLog;
-import com.velonuboso.made.core.common.entity.EventsLogConverter;
+import com.velonuboso.made.core.common.entity.EventsLogEntity;
+import com.velonuboso.made.core.common.util.EventsLogConverter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,32 +33,32 @@ import org.junit.Test;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class EventsLogTest {
+public class EventsLogEntityTest {
 
-    private EventsLog log;
+    private EventsLogEntity log;
 
     @Before
     public void before() {
-        log = new EventsLog(
-                new EventsLog.BoardEntity(
+        log = new EventsLogEntity(
+                new EventsLogEntity.BoardEntity(
                         10,
-                        new EventsLog.PositionEntity[]{
-                            new EventsLog.PositionEntity(1, 4),
-                            new EventsLog.PositionEntity(2, 5)
+                        new EventsLogEntity.PositionEntity[]{
+                            new EventsLogEntity.PositionEntity(1, 4),
+                            new EventsLogEntity.PositionEntity(2, 5)
                         }
                 ),
-                new EventsLog.CharacterEntity[]{
-                    new EventsLog.CharacterEntity(0, "Zhen Suwah", Color.AQUA),
-                    new EventsLog.CharacterEntity(1, "Quddah Oofi", Color.BROWN)
+                new EventsLogEntity.CharacterEntity[]{
+                    new EventsLogEntity.CharacterEntity(0, "Zhen Suwah", Color.AQUA),
+                    new EventsLogEntity.CharacterEntity(1, "Quddah Oofi", Color.BROWN)
                 },
-                new EventsLog.DayLog[]{
-                    new EventsLog.DayLog(0, new EventsLog.EventEntity[]{
-                        new EventsLog.EventEntity(0, new Integer[]{0}, "IsBorn (0, 0, 3)"),
-                        new EventsLog.EventEntity(1, new Integer[]{1}, "IsBorn (0, 1, 50)")
+                new EventsLogEntity.DayLog[]{
+                    new EventsLogEntity.DayLog(0, new EventsLogEntity.EventEntity[]{
+                        new EventsLogEntity.EventEntity(0, new Integer[]{0}, "IsBorn (0, 0, 3)"),
+                        new EventsLogEntity.EventEntity(1, new Integer[]{1}, "IsBorn (0, 1, 50)")
                     }),
-                    new EventsLog.DayLog(1, new EventsLog.EventEntity[]{
-                        new EventsLog.EventEntity(2, new Integer[]{0}, "Move (1, 0, 19)"),
-                        new EventsLog.EventEntity(3, new Integer[]{1}, "Move (1, 1, 65)")
+                    new EventsLogEntity.DayLog(1, new EventsLogEntity.EventEntity[]{
+                        new EventsLogEntity.EventEntity(2, new Integer[]{0}, "Move (1, 0, 19)"),
+                        new EventsLogEntity.EventEntity(3, new Integer[]{1}, "Move (1, 1, 65)")
                     })
                 }
         );
@@ -91,7 +91,7 @@ public class EventsLogTest {
         String sampleJson = new String(Files.readAllBytes(Paths.get(sampleJsonURI)));
         sampleJson = sampleJson.replace(toBeReplaced, replacement);
 
-        EventsLog sampleAsEventsLog = EventsLogConverter.fromJson(sampleJson);
+        EventsLogEntity sampleAsEventsLog = EventsLogConverter.fromJson(sampleJson);
 
         Assert.assertNotNull("Should've converted the json to a EventsLog object correctly", sampleAsEventsLog);
     }
@@ -111,7 +111,7 @@ public class EventsLogTest {
             sampleJson = sampleJson.replace(toBeReplaced[iterator], replacement[iterator]);
         }
         
-        EventsLog sampleAsEventsLog = EventsLogConverter.fromJson(sampleJson);
+        EventsLogEntity sampleAsEventsLog = EventsLogConverter.fromJson(sampleJson);
 
         Assert.assertNull("Should've returned null when json is incorrect",
                 sampleAsEventsLog);
@@ -119,31 +119,31 @@ public class EventsLogTest {
 
     @Test
     public void UT_EventsLog_getters_must_return_set_values() throws Exception {
-        PojoTester.testPojo(EventsLog.class);
+        PojoTester.testPojo(EventsLogEntity.class);
     }
     
     @Test
     public void UT_PositionEntity_getters_must_return_set_values() throws Exception {
-        PojoTester.testPojo(EventsLog.PositionEntity.class);
+        PojoTester.testPojo(EventsLogEntity.PositionEntity.class);
     }
     
     @Test
     public void UT_BoardEntity_getters_must_return_set_values() throws Exception {
-        PojoTester.testPojo(EventsLog.BoardEntity.class);
+        PojoTester.testPojo(EventsLogEntity.BoardEntity.class);
     }
     
     @Test
     public void UT_CharacterEntity_getters_must_return_set_values() throws Exception {
-        PojoTester.testPojo(EventsLog.CharacterEntity.class);
+        PojoTester.testPojo(EventsLogEntity.CharacterEntity.class);
     }
     
     @Test
     public void UT_DayLog_getters_must_return_set_values() throws Exception {
-        PojoTester.testPojo(EventsLog.DayLog.class);
+        PojoTester.testPojo(EventsLogEntity.DayLog.class);
     }
     
     @Test
     public void UT_EventEntity_getters_must_return_set_values() throws Exception {
-        PojoTester.testPojo(EventsLog.EventEntity.class);
+        PojoTester.testPojo(EventsLogEntity.EventEntity.class);
     }
 }

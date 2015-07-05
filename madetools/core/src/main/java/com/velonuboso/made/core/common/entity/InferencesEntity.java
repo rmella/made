@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
+ * Copyright (C) 2015 rhgarcia
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.velonuboso.made.core.narration.api;
-
-import com.velonuboso.made.core.common.entity.EventsLogEntity;
-import com.velonuboso.made.core.customization.api.ICustomization;
+package com.velonuboso.made.core.common.entity;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface INarrator {
-    void setCustomization(ICustomization customization);
-    void setEventsLog(EventsLogEntity eventsLog);
-    void narrate();
-    String getNarration();
+public class InferencesEntity {
+    //TODO this is just a stub
 }

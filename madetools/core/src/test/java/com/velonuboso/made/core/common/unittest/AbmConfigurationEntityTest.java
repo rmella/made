@@ -14,19 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.velonuboso.made.core.common.unittest;
 
-package com.velonuboso.made.core.narration.api;
-
-import com.velonuboso.made.core.common.entity.EventsLogEntity;
-import com.velonuboso.made.core.customization.api.ICustomization;
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import java.util.Objects;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface INarrator {
-    void setCustomization(ICustomization customization);
-    void setEventsLog(EventsLogEntity eventsLog);
-    void narrate();
-    String getNarration();
+public class AbmConfigurationEntityTest {
+    
+    @Test
+    public void UT_Solution_getter_must_return_set_values() throws Exception {
+        float expectedValue[] = new float[]{2f, 134f, 2f};
+        AbmConfigurationEntity solution = new AbmConfigurationEntity(expectedValue);
+        assertTrue("Should've get the set value",
+                Objects.deepEquals(expectedValue, solution.getChromosome()));
+    }
+    
 }

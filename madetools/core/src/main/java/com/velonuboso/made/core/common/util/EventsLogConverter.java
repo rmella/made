@@ -14,19 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.velonuboso.made.core.common.util;
 
-package com.velonuboso.made.core.narration.api;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
-import com.velonuboso.made.core.customization.api.ICustomization;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface INarrator {
-    void setCustomization(ICustomization customization);
-    void setEventsLog(EventsLogEntity eventsLog);
-    void narrate();
-    String getNarration();
+public class EventsLogConverter {
+    
+    public static String toJson (EventsLogEntity log){
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try {
+            return gson.toJson(log);
+        } catch (Exception e) {
+            return null;
+        }
+    } 
+    
+    public static EventsLogEntity fromJson (String log){
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try {
+            return gson.fromJson(log, EventsLogEntity.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

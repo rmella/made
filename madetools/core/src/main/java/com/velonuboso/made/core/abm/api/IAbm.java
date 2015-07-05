@@ -15,18 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.velonuboso.made.core.narration.api;
+package com.velonuboso.made.core.abm.api;
 
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
+import com.velonuboso.made.core.common.entity.InferencesEntity;
 import com.velonuboso.made.core.customization.api.ICustomization;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface INarrator {
-    void setCustomization(ICustomization customization);
-    void setEventsLog(EventsLogEntity eventsLog);
-    void narrate();
-    String getNarration();
+public interface IAbm {
+    public void setCustomization(ICustomization customization);
+    public void setInferences(InferencesEntity defaultInferences);
+    public EventsLogEntity getEventsLog();
+    public void reset();
+    public void run(AbmConfigurationEntity abmConfiguration);
 }

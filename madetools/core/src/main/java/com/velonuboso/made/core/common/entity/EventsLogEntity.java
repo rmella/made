@@ -24,16 +24,16 @@ import javafx.scene.paint.Color;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class EventsLog implements Serializable {
+public class EventsLogEntity implements Serializable {
 
     private BoardEntity board;
     private CharacterEntity[] characters;
     private DayLog[] dayLogs;
 
-    public EventsLog() {
+    public EventsLogEntity() {
     }
 
-    public EventsLog(BoardEntity board, CharacterEntity[] characters, DayLog[] dayLogs) {
+    public EventsLogEntity(BoardEntity board, CharacterEntity[] characters, DayLog[] dayLogs) {
         this.board = board;
         this.characters = characters;
         this.dayLogs = dayLogs;

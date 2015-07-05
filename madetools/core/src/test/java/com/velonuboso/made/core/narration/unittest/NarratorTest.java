@@ -16,7 +16,7 @@
  */
 package com.velonuboso.made.core.narration.unittest;
 
-import com.velonuboso.made.core.common.entity.EventsLog;
+import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.customization.api.ICustomization;
 import com.velonuboso.made.core.customization.entity.NarrationRuleEntity;
 import com.velonuboso.made.core.narration.implementation.Narrator;
@@ -213,37 +213,38 @@ public class NarratorTest {
     }
     
     private String getNarrationFromPredicateAndRule(final String predicate, final NarrationRuleEntity chihiroSpeechRule) {
-        EventsLog worldsStories = buildSimpleWorldStories(predicate);
+        EventsLogEntity worldsStories = buildSimpleWorldStories(predicate);
         ICustomization fakeCustomization = buildFakeCustomization(chihiroSpeechRule);
         return getNarrationFromCustomizationAndWorldStories(fakeCustomization, worldsStories);
     }
     
     private String getNarrationFromPredicatesAndRules(final String predicates[], final NarrationRuleEntity chihiroSpeechRules[]) {
-        EventsLog worldsStories = buildSimpleWorldStories(predicates);
+        EventsLogEntity worldsStories = buildSimpleWorldStories(predicates);
         ICustomization fakeCustomization = buildFakeCustomization(chihiroSpeechRules);
         return getNarrationFromCustomizationAndWorldStories(fakeCustomization, worldsStories);
     }
 
-    private String getNarrationFromCustomizationAndWorldStories(ICustomization fakeCustomization, EventsLog worldsStories) {
+    private String getNarrationFromCustomizationAndWorldStories(ICustomization fakeCustomization, EventsLogEntity worldsStories) {
         narrator = new Narrator();
         narrator.setCustomization(fakeCustomization);
         narrator.setEventsLog(worldsStories);
+        narrator.narrate();
         String currentNarration = narrator.getNarration();
         return currentNarration;
     }
 
-    private EventsLog buildSimpleWorldStories(final String ... predicates) {
+    private EventsLogEntity buildSimpleWorldStories(final String ... predicates) {
         
-        EventsLog.EventEntity entities[] = new EventsLog.EventEntity[predicates.length];
+        EventsLogEntity.EventEntity entities[] = new EventsLogEntity.EventEntity[predicates.length];
         for(int iterator = 0; iterator<entities.length; iterator++){
-            entities[iterator] = new EventsLog.EventEntity(0, null, predicates[iterator]);
+            entities[iterator] = new EventsLogEntity.EventEntity(0, null, predicates[iterator]);
         }
         
-        EventsLog worldsStories = new EventsLog(
+        EventsLogEntity worldsStories = new EventsLogEntity(
                 null,
                 null,
-                new EventsLog.DayLog[]{
-                    new EventsLog.DayLog(0, entities)
+                new EventsLogEntity.DayLog[]{
+                    new EventsLogEntity.DayLog(0, entities)
                 });
         
         

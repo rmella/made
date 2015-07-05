@@ -16,7 +16,7 @@
  */
 package com.velonuboso.made.core.narration.implementation;
 
-import com.velonuboso.made.core.common.entity.EventsLog;
+import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.common.util.StringUtil;
 import com.velonuboso.made.core.customization.api.ICustomization;
 import com.velonuboso.made.core.narration.api.INarrator;
@@ -38,7 +38,7 @@ public class Narrator implements INarrator {
 
     private ICustomization customization;
     private StringBuilder narration;
-    private EventsLog eventsLog;
+    private EventsLogEntity eventsLog;
 
     public Narrator() {
         this.customization = null;
@@ -47,26 +47,22 @@ public class Narrator implements INarrator {
     }
 
     @Override
-    public ICustomization getCustomization() {
-        return customization;
-    }
-
-    @Override
     public void setCustomization(ICustomization customization) {
         this.customization = customization;
-        if (canProcessNarration()) {
-            processNarration();
-        }
     }
 
     @Override
-    public void setEventsLog(EventsLog eventsLog) {
+    public void setEventsLog(EventsLogEntity eventsLog) {
         this.eventsLog = eventsLog;
+    }
+
+    @Override
+    public void narrate() {
         if (canProcessNarration()) {
             processNarration();
         }
     }
-
+    
     @Override
     public String getNarration() {
         return narration.toString();
@@ -78,18 +74,18 @@ public class Narrator implements INarrator {
 
     private void processNarration() {
         narration = new StringBuilder();
-        for (EventsLog.DayLog dayLog : eventsLog.getDayLogs()) {
+        for (EventsLogEntity.DayLog dayLog : eventsLog.getDayLogs()) {
             processDayLog(dayLog);
         }
     }
 
-    private void processDayLog(EventsLog.DayLog dayLog) {
-        for (EventsLog.EventEntity eventEntity : dayLog.getEvents()) {
+    private void processDayLog(EventsLogEntity.DayLog dayLog) {
+        for (EventsLogEntity.EventEntity eventEntity : dayLog.getEvents()) {
             processEventEntity(eventEntity);
         }
     }
 
-    private void processEventEntity(EventsLog.EventEntity eventEntity) {
+    private void processEventEntity(EventsLogEntity.EventEntity eventEntity) {
         String predicate = eventEntity.getPredicate();
 
         String predicateName = extractPredicateName(predicate);
@@ -127,4 +123,5 @@ public class Narrator implements INarrator {
             return new ArrayList<>();
         }
     }
+
 }
