@@ -1,0 +1,11 @@
+[
+    {
+        "predicateName": "MyPredicate",
+        "numberOfArguments": 2,
+        "naturalLanguageTemplate": "Something happened."
+    }, {
+        "predicateName": "MyPredicate2",
+        "numberOfArguments": 1,
+        "naturalLanguageTemplate": "Something happened too."
+    }
+]

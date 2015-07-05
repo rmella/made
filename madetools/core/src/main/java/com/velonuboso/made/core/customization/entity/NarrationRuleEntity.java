@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.customization.entity;
+
+import java.util.Objects;
 
 /**
  *
@@ -29,7 +30,7 @@ public class NarrationRuleEntity {
 
     public NarrationRuleEntity() {
     }
-    
+
     public NarrationRuleEntity(String predicateName, Integer numberOfArguments, String naturalLanguageTemplate) {
         this.predicateName = predicateName;
         this.numberOfArguments = numberOfArguments;
@@ -58,5 +59,18 @@ public class NarrationRuleEntity {
 
     public void setNaturalLanguageTemplate(String naturalLanguageTemplate) {
         this.naturalLanguageTemplate = naturalLanguageTemplate;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        
+        if (!(obj instanceof NarrationRuleEntity)) {
+            return false;
+        }
+        
+        NarrationRuleEntity target = (NarrationRuleEntity) obj;
+        return Objects.equals(this.naturalLanguageTemplate, target.naturalLanguageTemplate)
+                && this.numberOfArguments == target.numberOfArguments
+                && Objects.equals(this.predicateName, target.predicateName);
     }
 }
