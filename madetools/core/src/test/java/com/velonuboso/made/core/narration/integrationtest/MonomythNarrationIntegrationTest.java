@@ -74,8 +74,8 @@ public class MonomythNarrationIntegrationTest {
     @Test
     public void IT_Narrator_tells_a_story_when_conflict_is_present(){
         final String expectedNarration = "The day 0, there was a conflict "
-                + "between Iñigo Montoya (the victorious) and the "
-                + "\"six-fingered man\" (the looser) because of the death of "
+                + "between Iñigo Montoya and the "
+                + "\"six-fingered man\" because of the death of "
                 + "Iñigo's father.";
         
         event.setPredicate("Conflict (0, 0, 'Iñigo Montoya', 1, 'the \"six-fingered man\"', '4', 'the death of Iñigo's father')");
@@ -100,8 +100,8 @@ public class MonomythNarrationIntegrationTest {
     @Test
     public void IT_Narrator_tells_a_story_when_conflict_and_help_is_present(){
         final String expectedNarration = "The day 0, there was a conflict "
-                + "between Iñigo Montoya (the victorious) and the "
-                + "\"six-fingered man\" (the looser) because of the death of "
+                + "between Iñigo Montoya and the "
+                + "\"six-fingered man\" because of the death of "
                 + "Iñigo's father. The day 1, Iñigo Montoya helped Westley "
                 + "with his plan to enter into the castle.";
         
