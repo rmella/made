@@ -3,7 +3,7 @@
         "predicateName": "Conflict",
         "_help": "day, id_0, name_0, id_1, name_1, source_of_conflict_id, source_of_conflict_name",
         "numberOfArguments": 7,
-        "naturalLanguageTemplate": "The day {0}, there was a conflict between {2} (the victorious) and {4} (the looser) because of the {6}"
+        "naturalLanguageTemplate": "The day {0}, there was a conflict between {2} (the victorious) and {4} (the looser) because of {6}"
     }, {
         "predicateName": "Helps",
         "_help": "day, day, id_0, name_0, id_1, name_1, source_of_help_id, source_of_help_name",

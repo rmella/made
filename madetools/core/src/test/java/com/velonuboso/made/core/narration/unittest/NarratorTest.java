@@ -77,7 +77,7 @@ public class NarratorTest {
         final String predicate = "SpiritedAway (Haku)";
         final String expectedNarration = "Listen, Haku. I don't remember it.";
         final NarrationRuleEntity chihiroSpeechRule = new NarrationRuleEntity(
-                "SpiritedAway", 1, "Listen, %s. I don't remember it"
+                "SpiritedAway", 1, "Listen, {0}. I don't remember it"
         );
 
         String currentNarration = getNarrationFromPredicateAndRule(predicate, chihiroSpeechRule);
@@ -93,8 +93,8 @@ public class NarratorTest {
         final String expectedNarration = "Listen, Haku. I don't remember it, "
                 + "but my mom told me.";
         final NarrationRuleEntity chihiroSpeechRule = new NarrationRuleEntity(
-                "SpiritedAway", 2, "Listen, %s. I don't remember it, "
-                + "but %s told me"
+                "SpiritedAway", 2, "Listen, {0}. I don't remember it, "
+                + "but {1} told me"
         );
 
         String currentNarration = getNarrationFromPredicateAndRule(predicate, chihiroSpeechRule);
@@ -110,8 +110,8 @@ public class NarratorTest {
         final String expectedNarration = "Listen, Haku. I don't remember it, "
                 + "but my mom told me...";
         final NarrationRuleEntity chihiroSpeechRule = new NarrationRuleEntity(
-                "SpiritedAway", 2, "Listen, %s. I don't remember it, "
-                + "but %s told me..."
+                "SpiritedAway", 2, "Listen, {0}. I don't remember it, "
+                + "but {1} told me..."
         );
 
         String currentNarration = getNarrationFromPredicateAndRule(predicate, chihiroSpeechRule);
@@ -126,7 +126,7 @@ public class NarratorTest {
         final String predicate = "SpiritedAway (Haku    )";
         final String expectedNarration = "Listen, Haku. I don't remember it.";
         final NarrationRuleEntity chihiroSpeechRule = new NarrationRuleEntity(
-                "SpiritedAway", 1, "Listen, %s. I don't remember it"
+                "SpiritedAway", 1, "Listen, {0}. I don't remember it"
         );
 
         String currentNarration = getNarrationFromPredicateAndRule(predicate, chihiroSpeechRule);
@@ -138,10 +138,10 @@ public class NarratorTest {
     
     @Test
     public void UT_Sample_predicate_with_one_argument_with_quotes_and_extra_blanks_is_transformed_to_valid_narration() {
-        final String predicate = "SpiritedAway ( \"Haku\"    )";
+        final String predicate = "SpiritedAway ( 'Haku'    )";
         final String expectedNarration = "Listen, Haku. I don't remember it.";
         final NarrationRuleEntity chihiroSpeechRule = new NarrationRuleEntity(
-                "SpiritedAway", 1, "Listen, %s. I don't remember it"
+                "SpiritedAway", 1, "Listen, {0}. I don't remember it"
         );
 
         String currentNarration = getNarrationFromPredicateAndRule(predicate, chihiroSpeechRule);
@@ -153,10 +153,10 @@ public class NarratorTest {
     
     @Test
     public void UT_Sample_predicate_with_one_argument_with_quotes_and_extra_blanks_inside_is_transformed_to_valid_narration() {
-        final String predicate = "SpiritedAway ( \"   Haku\"    )";
+        final String predicate = "SpiritedAway ( '   Haku'    )";
         final String expectedNarration = "Listen,    Haku. I don't remember it.";
         final NarrationRuleEntity chihiroSpeechRule = new NarrationRuleEntity(
-                "SpiritedAway", 1, "Listen, %s. I don't remember it"
+                "SpiritedAway", 1, "Listen, {0}. I don't remember it"
         );
 
         String currentNarration = getNarrationFromPredicateAndRule(predicate, chihiroSpeechRule);
@@ -168,12 +168,12 @@ public class NarratorTest {
 
     @Test
     public void UT_Sample_predicate_with_multiple_arguments_is_transformed_to_narration() {
-        final String predicate = "SpiritedAway (Haku, \"my mom\", river)";
+        final String predicate = "SpiritedAway (Haku, 'my mom', river)";
         final NarrationRuleEntity chihiroSpeechRule = new NarrationRuleEntity(
                 "SpiritedAway", 3,
-                "Listen, %s. I don't remember it, "
-                + "but %s told me... Once, when I was little, I fell into "
-                + "a %s"
+                "Listen, {0}. I don't remember it, "
+                + "but {1} told me... Once, when I was little, I fell into "
+                + "a {2}"
         );
         final String expectedNarration = "Listen, Haku. I don't remember it, "
                 + "but my mom told me... Once, when I was little, I fell into "
@@ -189,14 +189,14 @@ public class NarratorTest {
     @Test
     public void UT__predicates_are_transformed_to_multi_sentence_narration() {
         final String predicates[] = new String[]{
-            "SpiritedAway (Haku, \"my mom\", river)",
+            "SpiritedAway (Haku, 'my mom', river)",
             "SpiritedAway2 ()"
         };
         final NarrationRuleEntity chihiroSpeechRules[] = new NarrationRuleEntity[]{
             new NarrationRuleEntity("SpiritedAway", 3,
-                "Listen, %s. I don't remember it, "
-                + "but %s told me... Once, when I was little, I fell into "
-                + "a %s"),
+                "Listen, {0}. I don't remember it, "
+                + "but {1} told me... Once, when I was little, I fell into "
+                + "a {2}"),
             new NarrationRuleEntity("SpiritedAway2", 0,
                 "She said they'd drained it and built things on top")
         };
@@ -246,7 +246,6 @@ public class NarratorTest {
                 new EventsLogEntity.DayLog[]{
                     new EventsLogEntity.DayLog(0, entities)
                 });
-        
         
         return worldsStories;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 rhgarcia
+ * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@ import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.common.util.InitializationException;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
-import com.velonuboso.made.core.customization.implementation.Customization;
 import com.velonuboso.made.core.narration.api.INarrator;
 import java.io.File;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.Before;
 
 /**
  *
- * @author rhgarcia
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class MonomythNarrationIntegrationTest {
     
@@ -44,10 +42,10 @@ public class MonomythNarrationIntegrationTest {
     
     @Before
     public void setUp() throws InitializationException {
-        final String LOCAL_RESOURCE_MONOMYTH = "monomyth_narration_rules_en";
+        final String LOCAL_RESOURCE_MONOMYTH = "monomyth_narration_rules_en.json";
         
         String LocalResourceCustomizationMonomyth = ClassLoader.getSystemResource(LOCAL_RESOURCE_MONOMYTH).getFile();
-        customization = new Customization();
+        customization = ObjectFactory.createObject(ICustomization.class);
         customization.loadFromFile(new File(LocalResourceCustomizationMonomyth));
         
         narrator = ObjectFactory.createObject(INarrator.class);
@@ -62,13 +60,68 @@ public class MonomythNarrationIntegrationTest {
         });
     }
     
-    @Ignore
     @Test
-    public void IT_Narrator_tells_a_story_when_conflict_is_present(){
-        event.setPredicate("Conflict (0, 'Actor1', 1, 'Actor2', '4', 'thinghy thing')");
+    public void IT_Narrator_tells_no_story_when_predicate_signature_does_not_match(){
+        final String expectedNarration = "";
+        
+        event.setPredicate("Conflict (0, 'Iñigo Montoya', 1, '\"six-fingered man\"', '4', 'the death of Iñigo's father')");
         narrator.setEventsLog(eventsLog);
         narrator.narrate();
-        System.out.println(narrator.getNarration());
+        
+        assertEquals("Should've retrieved no narration", expectedNarration, narrator.getNarration());
     }
     
+    @Test
+    public void IT_Narrator_tells_a_story_when_conflict_is_present(){
+        final String expectedNarration = "The day 0, there was a conflict "
+                + "between Iñigo Montoya (the victorious) and the "
+                + "\"six-fingered man\" (the looser) because of the death of "
+                + "Iñigo's father.";
+        
+        event.setPredicate("Conflict (0, 0, 'Iñigo Montoya', 1, 'the \"six-fingered man\"', '4', 'the death of Iñigo's father')");
+        narrator.setEventsLog(eventsLog);
+        narrator.narrate();
+        
+        assertEquals("Should've retrieved no narration", expectedNarration, narrator.getNarration());
+    }
+    
+    @Test
+    public void IT_Narrator_tells_a_story_when_help_is_present(){
+        final String expectedNarration = "The day 0, Iñigo Montoya helped "
+                + "Westley with his plan to enter into the castle.";
+        
+        event.setPredicate("Helps (0, 0, 'Iñigo Montoya', 1, 'Westley', '4', 'his plan to enter into the castle.')");
+        narrator.setEventsLog(eventsLog);
+        narrator.narrate();
+        
+        assertEquals("Should've retrieved no narration", expectedNarration, narrator.getNarration());
+    }
+    
+    @Test
+    public void IT_Narrator_tells_a_story_when_conflict_and_help_is_present(){
+        final String expectedNarration = "The day 0, there was a conflict "
+                + "between Iñigo Montoya (the victorious) and the "
+                + "\"six-fingered man\" (the looser) because of the death of "
+                + "Iñigo's father. The day 1, Iñigo Montoya helped Westley "
+                + "with his plan to enter into the castle.";
+        
+        
+        EventsLogEntity.EventEntity firstEvent = new EventsLogEntity.EventEntity(0, null, 
+                "Conflict (0, 0, 'Iñigo Montoya', 1, 'the \"six-fingered man\"', '4', 'the death of Iñigo's father')"
+        );
+        EventsLogEntity.EventEntity secondEvent = new EventsLogEntity.EventEntity(0, null, 
+                "Helps (1, 0, 'Iñigo Montoya', 2, 'Westley', '20', 'his plan to enter into the castle.')"
+        );
+        
+        eventsLog = new EventsLogEntity(null, null, new EventsLogEntity.DayLog[]{
+           new EventsLogEntity.DayLog(0, new EventsLogEntity.EventEntity[]{
+               firstEvent, secondEvent
+           })
+        });
+        
+        narrator.setEventsLog(eventsLog);
+        narrator.narrate();
+        
+        assertEquals("Should've retrieved expected narration", expectedNarration, narrator.getNarration());
+    }
 }
