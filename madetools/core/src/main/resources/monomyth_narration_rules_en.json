@@ -23,5 +23,85 @@
         "numberOfArguments": 7,
         "naturalLanguageTemplate": "The day {0}, {2} encouraged {4} for the adventure",
         "includeInNarration": true
+    },
+    
+    {
+        "predicateName": "IsMoreEvilThan",
+        "_help": "day, id_0, name_0, id_1, name_1",
+        "numberOfArguments": 5,
+        "naturalLanguageTemplate": "The day {0}, {2} was more evil than {4}",
+        "includeInNarration": false
+    }, {
+        "predicateName": "IsWiserThan",
+        "_help": "day, id_0, name_0, id_1, name_1",
+        "numberOfArguments": 5,
+        "naturalLanguageTemplate": "The day {0}, {2} was wiser than {4}",
+        "includeInNarration": false
+    }, {
+        "predicateName": "IsTrickierThan",
+        "_help": "day, id_0, name_0, id_1, name_1",
+        "numberOfArguments": 5,
+        "naturalLanguageTemplate": "The day {0}, {2} was trickier than {4}",
+        "includeInNarration": false
+    },
+    
+    
+    {
+        "predicateName": "ProvokesProblem",
+        "_help": "day, id_0, name_0, id_1, name_1, id_3, name_3",
+        "numberOfArguments": 7,
+        "naturalLanguageTemplate": "The day {0}, {2} provoked a conflict between {4} and {6}",
+        "includeInNarration": false
+    },
+    
+    
+    {
+        "predicateName": "Hero",
+        "_help": "id_0, name_0",
+        "numberOfArguments": 2,
+        "naturalLanguageTemplate": "{1} was a hero",
+        "includeInNarration": true
+    }, {
+        "predicateName": "Shadow",
+        "_help": "id_0, name_0, id_1, name_1",
+        "numberOfArguments": 4,
+        "naturalLanguageTemplate": "{1} was the shadow of {3}",
+        "includeInNarration": true
+    }, {
+        "predicateName": "Mentor",
+        "_help": "id_0, name_0, id_1, name_1",
+        "numberOfArguments": 4,
+        "naturalLanguageTemplate": "{1} was the shadow of {3}",
+        "includeInNarration": true
+    }, {
+        "predicateName": "Herald",
+        "_help": "id_0, name_0, id_1, name_1, id_2, name_2",
+        "numberOfArguments": 4,
+        "naturalLanguageTemplate": "{1} encoraged {3} in his/her journey against {5}",
+        "includeInNarration": true
+    }, {
+        "predicateName": "Guardian",
+        "_help": "id_0, name_0, id_1, name_1",
+        "numberOfArguments": 4,
+        "naturalLanguageTemplate": "{1} was an obstacle for {3}",
+        "includeInNarration": true
+    }, {
+        "predicateName": "Allied",
+        "_help": "id_0, name_0, id_1, name_1",
+        "numberOfArguments": 4,
+        "naturalLanguageTemplate": "{1} was an allied of {3}",
+        "includeInNarration": true
+    }, {
+        "predicateName": "Trickster",
+        "_help": "id_0, name_0",
+        "numberOfArguments": 2,
+        "naturalLanguageTemplate": "{1} was a trickster",
+        "includeInNarration": true
+    }, {
+        "predicateName": "Shapeshifter",
+        "_help": "id_0, name_0",
+        "numberOfArguments": 2,
+        "naturalLanguageTemplate": "{1} was a shapeshifter",
+        "includeInNarration": true
     }
 ]
