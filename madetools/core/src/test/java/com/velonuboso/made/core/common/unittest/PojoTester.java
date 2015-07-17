@@ -52,6 +52,8 @@ public class PojoTester {
                         fakeObject = new Color(0.5, 0.8, 0.2, 1);
                     }else if (returnType.equals(Integer.class)){
                         fakeObject = new Integer(1);
+                    }else if (returnType.equals(Boolean.class)){
+                        fakeObject = Boolean.TRUE;
                     }else{
                         fakeObject = mock(returnType);
                     }

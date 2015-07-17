@@ -2,10 +2,12 @@
     {
         "predicateName": "MyPredicate",
         "numberOfArguments": 2,
-        "naturalLanguageTemplate": "Something happened."
+        "naturalLanguageTemplate": "Something happened.",
+        "includeInNarration": true
     }, {
         "predicateName": "MyPredicate2",
         "numberOfArguments": 1,
-        "naturalLanguageTemplate": "Something happened too."
+        "naturalLanguageTemplate": "Something happened too.",
+        "includeInNarration": true
     }
 ]

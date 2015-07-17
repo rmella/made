@@ -3,21 +3,25 @@
         "predicateName": "Conflict",
         "_help": "day, id_0, name_0, id_1, name_1, source_of_conflict_id, source_of_conflict_name",
         "numberOfArguments": 7,
-        "naturalLanguageTemplate": "The day {0}, there was a conflict between {2} and {4} because of {6}"
+        "naturalLanguageTemplate": "The day {0}, there was a conflict between {2} and {4} because of {6}",
+        "includeInNarration": true
     }, {
         "predicateName": "Helps",
         "_help": "day, day, id_0, name_0, id_1, name_1, source_of_help_id, source_of_help_name",
         "numberOfArguments": 7,
-        "naturalLanguageTemplate": "The day {0}, {2} helped {4} with {6}"
+        "naturalLanguageTemplate": "The day {0}, {2} helped {4} with {6}",
+        "includeInNarration": true
     }, {
         "predicateName": "Encourages",
         "_help": "day, id_0, name_0, id_1, name_1, source_of_help_id, source_of_help_name",
         "numberOfArguments": 7,
-        "naturalLanguageTemplate": "The day {0}, {2} encouraged {4} for the adventure"
+        "naturalLanguageTemplate": "The day {0}, {2} encouraged {4} for the adventure",
+        "includeInNarration": true
     }, {
         "predicateName": "StaysClose",
         "_help": "day, id_0, name_0, id_1, name_1, source_of_help_id, source_of_help_name",
         "numberOfArguments": 7,
-        "naturalLanguageTemplate": "The day {0}, {2} encouraged {4} for the adventure"
+        "naturalLanguageTemplate": "The day {0}, {2} encouraged {4} for the adventure",
+        "includeInNarration": true
     }
 ]

@@ -35,9 +35,11 @@ public class NarrationRuleEntityTest {
         final String SAMPLE_PREDICATE_NATURAL_LANGUAGE_TEMPLATE = "arg";
         final int SAMPLE_PREDICATE_NUMBER_OF_ARGUMENTS = 1;
         final String SAMPLE_PREDICATE_NAME = "sample";
+        final Boolean SAMPLE_PREDICATE_INCLUDE_IN_NARRATION = true;
 
         narrationRuleEntity = new NarrationRuleEntity(SAMPLE_PREDICATE_NAME, 
-                SAMPLE_PREDICATE_NUMBER_OF_ARGUMENTS, SAMPLE_PREDICATE_NATURAL_LANGUAGE_TEMPLATE);
+                SAMPLE_PREDICATE_NUMBER_OF_ARGUMENTS, SAMPLE_PREDICATE_NATURAL_LANGUAGE_TEMPLATE,
+                SAMPLE_PREDICATE_INCLUDE_IN_NARRATION);
         
         assertEquals("Predicate name should've been the one provided in the constructor",
                 SAMPLE_PREDICATE_NAME, narrationRuleEntity.getPredicateName());

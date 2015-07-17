@@ -24,17 +24,25 @@ import java.util.Objects;
  */
 public class NarrationRuleEntity {
 
+    public static Boolean DEFAULT_INCLUDE_VALUE = true;
+    
     private String predicateName;
     private Integer numberOfArguments;
     private String naturalLanguageTemplate;
+    private Boolean includeInNarration;
 
     public NarrationRuleEntity() {
     }
-
+    
     public NarrationRuleEntity(String predicateName, Integer numberOfArguments, String naturalLanguageTemplate) {
+        this(predicateName, numberOfArguments, naturalLanguageTemplate, DEFAULT_INCLUDE_VALUE);
+    }
+
+    public NarrationRuleEntity(String predicateName, Integer numberOfArguments, String naturalLanguageTemplate, Boolean includeInNarration) {
         this.predicateName = predicateName;
         this.numberOfArguments = numberOfArguments;
         this.naturalLanguageTemplate = naturalLanguageTemplate;
+        this.includeInNarration = includeInNarration;
     }
 
     public String getPredicateName() {
@@ -61,6 +69,15 @@ public class NarrationRuleEntity {
         this.naturalLanguageTemplate = naturalLanguageTemplate;
     }
 
+    public Boolean getIncludeInNarration() {
+        return includeInNarration;
+    }
+
+    public void setIncludeInNarration(Boolean includeInNarration) {
+        this.includeInNarration = includeInNarration;
+    }
+
+    
     @Override
     public boolean equals(Object obj) {
         
@@ -71,6 +88,7 @@ public class NarrationRuleEntity {
         NarrationRuleEntity target = (NarrationRuleEntity) obj;
         return Objects.equals(this.naturalLanguageTemplate, target.naturalLanguageTemplate)
                 && this.numberOfArguments == target.numberOfArguments
-                && Objects.equals(this.predicateName, target.predicateName);
+                && Objects.equals(this.predicateName, target.predicateName)
+                && Objects.equals(this.includeInNarration, target.includeInNarration);
     }
 }
