@@ -28,8 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.reflections.Configuration;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ConfigurationBuilder;
 
 /**
  *
@@ -69,7 +72,8 @@ public class ObjectFactory {
 
     private static void insertInterfacesIntoMappingsFromPackage() {
         Set<Class<?>> allImplementedBy = findAllImplementedBy();
-        allImplementedBy.stream().forEach((theInterface) -> insertInterfaceIntoMapping(theInterface));
+        allImplementedBy.stream().filter(theClass -> theClass.isInterface()).
+                forEach((theInterface) -> insertInterfaceIntoMapping(theInterface));
     }
 
     private static void insertInterfaceIntoMapping(Class<?> theInterface) {
@@ -103,7 +107,7 @@ public class ObjectFactory {
     }
 
     private static Set<Class<?>> findAllImplementedBy() {
-        final Reflections reflections = new Reflections("com.velonuboso", new TypeAnnotationsScanner());
+        final Reflections reflections = new Reflections("com.velonuboso");
         return reflections.getTypesAnnotatedWith(ImplementedBy.class);
     }
 }
