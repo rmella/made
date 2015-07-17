@@ -38,7 +38,6 @@ public class SimulatorIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void IT_ISimulator_can_be_constructed_using_objectFactory() {
         try {
             ISimulator simulator = ObjectFactory.createObject(ISimulator.class);

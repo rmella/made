@@ -28,11 +28,7 @@ public class EventsLogConverter {
     
     public static String toJson (EventsLogEntity log){
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            return gson.toJson(log);
-        } catch (Exception e) {
-            return null;
-        }
+        return gson.toJson(log);
     } 
     
     public static EventsLogEntity fromJson (String log){

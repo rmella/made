@@ -88,4 +88,11 @@ public class ObjectFactoryTest {
         assertFalse("Should've returned the original mapping when the mock is uninstalled",
                 object == fakeMap);
     }
+    
+    @Test(expected = RuntimeException.class)
+    public void UT_ObjectFactory_must_return_Exception_when_interface_is_not_registered(){
+        Object object = ObjectFactory.createObject(List.class);
+        fail("Should've thrown an exception since the List interface does not have a default"
+                + "implementation in MADE's ObjectFactory");
+    }
 }
