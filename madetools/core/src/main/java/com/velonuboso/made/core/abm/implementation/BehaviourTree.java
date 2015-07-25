@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 rhgarcia
+ * Copyright (C) 2015 Ruben
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.velonuboso.made.core.abm.implementation;
 
-package com.velonuboso.made.core.abm.api;
+import com.velonuboso.made.core.abm.api.IBehaviourTree;
 
 /**
  *
- * @author Rubén Héctor García (raiben@gmail.com)
+ * @author Ruben
  */
-public interface ICondition {
-    public boolean check (final ICharacter protagonist, final IWorld world, final String state);
+public class BehaviourTree implements IBehaviourTree{
+    
 }

@@ -16,7 +16,7 @@
  */
 package com.velonuboso.made.core.abm.integrationtest;
 
-import com.velonuboso.made.core.abm.implementation.AntMite;
+import com.velonuboso.made.core.abm.implementation.Piece;
 import com.velonuboso.made.core.abm.implementation.World;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -34,12 +34,12 @@ public class WorldIntegrationTest {
     public WorldIntegrationTest() {
     }
     
-    private AntMite antmite;
+    private Piece antmite;
     private World world;
     
     @Before
     public void setUp() {
-        antmite = new AntMite();
+        antmite = new Piece();
         world = new World();
         world.addInhabitant(antmite);
     }

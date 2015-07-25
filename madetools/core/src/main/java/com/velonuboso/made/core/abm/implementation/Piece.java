@@ -16,27 +16,27 @@
  */
 package com.velonuboso.made.core.abm.implementation;
 
+import com.velonuboso.made.core.abm.api.IBehaviourTree;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
-import com.velonuboso.made.core.abm.api.IFiniteStateAutomaton;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class AntMite implements ICharacter {
+public class Piece implements ICharacter {
 
     private String name;
     private Integer id;
     private IEventsWriter eventsWriter;
-    private IFiniteStateAutomaton finiteStateAutomaton;
+    private IBehaviourTree behaviourTree;
 
-    public AntMite() {
+    public Piece() {
         name = "Kroo";
         id = null;
         eventsWriter = null;
-        initializeFiniteStateAutomaton();
+        InitializeBehaviourTree();
     }
 
     @Override
@@ -63,13 +63,12 @@ public class AntMite implements ICharacter {
         this.eventsWriter = newEventsWriter;
     }
 
-    private void initializeFiniteStateAutomaton() {
-        finiteStateAutomaton = ObjectFactory.createObject(IFiniteStateAutomaton.class);
+    private void InitializeBehaviourTree() {
+        behaviourTree = ObjectFactory.createObject(IBehaviourTree.class);
     }
 
     @Override
-    public IFiniteStateAutomaton getFiniteStateAutomaton() {
-        return finiteStateAutomaton;
+    public IBehaviourTree getBehaviourTree() {
+        return behaviourTree;
     }
-
 }

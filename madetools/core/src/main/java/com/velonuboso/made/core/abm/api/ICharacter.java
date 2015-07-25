@@ -33,5 +33,5 @@ public interface ICharacter {
 
     public void setEventsWriter(IEventsWriter eventsWriter);
     
-    public IFiniteStateAutomaton getFiniteStateAutomaton();
+    public IBehaviourTree getBehaviourTree();
 }

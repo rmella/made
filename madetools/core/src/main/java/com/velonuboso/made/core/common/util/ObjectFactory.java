@@ -16,11 +16,8 @@
  */
 package com.velonuboso.made.core.common.util;
 
-import com.velonuboso.made.core.abm.api.IFiniteStateAutomaton;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
-import com.velonuboso.made.core.abm.implementation.FiniteStateAutomaton;
-import com.velonuboso.made.core.abm.implementation.Map;
 import com.velonuboso.made.core.abm.implementation.Position;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.implementation.EventFactory;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 rhgarcia
+ * Copyright (C) 2015 Ruben
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,27 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.abm.api;
 
-import com.velonuboso.made.core.abm.implementation.Transition;
+import com.velonuboso.made.core.abm.implementation.BehaviourTree;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
  *
- * @author Rubén Héctor García (raiben@gmail.com)
+ * @author Ruben
  */
-public interface ITransition extends Comparable<Transition> {
-
-    int compareTo(Transition o);
-
-    IAction getActionBeforeMovingToTargetState();
-
-    ICondition getConditionToGoToTarget();
-
-    float getProbabilityToGoToTargetStateWhenConditionAccomplishes();
-
-    String getSourceState();
-
-    String getTargetState();
-
+@ImplementedBy(targetClass = BehaviourTree.class)
+public interface IBehaviourTree {
+    
 }

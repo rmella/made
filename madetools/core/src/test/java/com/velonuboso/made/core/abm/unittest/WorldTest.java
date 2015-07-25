@@ -17,7 +17,7 @@ package com.velonuboso.made.core.abm.unittest;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.velonuboso.made.core.abm.implementation.AntMite;
+import com.velonuboso.made.core.abm.implementation.Piece;
 import com.velonuboso.made.core.abm.implementation.World;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.common.api.IEvent;
@@ -188,7 +188,7 @@ public class WorldTest {
         List<IEvent> oldEvents = new ArrayList<>();
         Collections.copy(oldEvents, world.getEvents());
         
-        AntMite character = new AntMite();
+        Piece character = new Piece();
         world.addInhabitant(character);
         
         assertTrue("The number of events should be higher after a character addition",
