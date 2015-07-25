@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Ruben
+ * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.api;
+package com.velonuboso.made.core.abm.implementation;
 
-import com.velonuboso.made.core.abm.implementation.PieceBehaviourTree;
-import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.abm.api.IBehaviourTree;
 
 /**
  *
- * @author Ruben
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = PieceBehaviourTree.class)
-public interface IBehaviourTree {
+public class PieceBehaviourTree implements IBehaviourTree{
+
+    public PieceBehaviourTree() {
+    }
+    
+    public void initialize(){
+        
+    }
     
 }
