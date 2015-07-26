@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.implementation;
+package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTree;
+import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
 
 /**
  *
@@ -24,11 +26,16 @@ import com.velonuboso.made.core.abm.api.IBehaviourTree;
  */
 public class PieceBehaviourTree implements IBehaviourTree{
 
-    public PieceBehaviourTree() {
-    }
+    private IEventsWriter eventsWriter;
+    private IBehaviourTreeNode rootNode;
     
-    public void initialize(){
+    public PieceBehaviourTree() {
         
     }
+    
+    public void setEventsWriter(IEventsWriter eventsWriter) {
+        this.eventsWriter = eventsWriter;
+    }
+    
     
 }

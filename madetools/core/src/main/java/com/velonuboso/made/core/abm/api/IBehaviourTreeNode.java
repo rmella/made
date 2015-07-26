@@ -17,13 +17,21 @@
 package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.entity.BehaviourTreeNodeStatus;
+import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = BehaviourTreeNode.class)
 public interface IBehaviourTreeNode {
-    public void setParent(IBehaviourTreeNode parent);
-    public void setFunction(Runnable function);
-    public BehaviourTreeNodeStatus run(IBehaviourTreeBlackboard blackboard, Object ... args);
+    void setMap (IMap map);
+    void setCharacter (ICharacter character);
+    void setActionWhenRun(Consumer<IBehaviourTreeNode> action);
+    void addChildrenNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 
+            float probabilityToRunChildren, IBehaviourTree nodeToRun);
+    BehaviourTreeNodeStatus run(Object ... args);
 }

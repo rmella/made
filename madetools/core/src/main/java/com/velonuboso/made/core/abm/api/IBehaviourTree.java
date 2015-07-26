@@ -16,7 +16,7 @@
  */
 package com.velonuboso.made.core.abm.api;
 
-import com.velonuboso.made.core.abm.implementation.PieceBehaviourTree;
+import com.velonuboso.made.core.abm.implementation.piece.PieceBehaviourTree;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
@@ -25,5 +25,7 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
  */
 @ImplementedBy(targetClass = PieceBehaviourTree.class)
 public interface IBehaviourTree {
+
+    void setEventsWriter(IEventsWriter eventsWriter);
     
 }

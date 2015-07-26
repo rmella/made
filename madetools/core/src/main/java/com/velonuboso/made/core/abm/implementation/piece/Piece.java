@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.implementation;
+package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTree;
 import com.velonuboso.made.core.common.util.ObjectFactory;
@@ -65,6 +65,7 @@ public class Piece implements ICharacter {
 
     private void InitializeBehaviourTree() {
         behaviourTree = ObjectFactory.createObject(IBehaviourTree.class);
+        behaviourTree.setEventsWriter(eventsWriter);
     }
 
     @Override

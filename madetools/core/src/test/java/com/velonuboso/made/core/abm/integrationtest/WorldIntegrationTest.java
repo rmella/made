@@ -16,7 +16,7 @@
  */
 package com.velonuboso.made.core.abm.integrationtest;
 
-import com.velonuboso.made.core.abm.implementation.Piece;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.World;
 import org.junit.After;
 import org.junit.AfterClass;

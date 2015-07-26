@@ -17,7 +17,7 @@
 package com.velonuboso.made.core.abm.unittest;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTree;
-import com.velonuboso.made.core.abm.implementation.PieceBehaviourTree;
+import com.velonuboso.made.core.abm.implementation.piece.PieceBehaviourTree;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import org.junit.After;
 import org.junit.AfterClass;
