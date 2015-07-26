@@ -16,15 +16,13 @@
  */
 package com.velonuboso.made.core.abm.unittest;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTree;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.entity.BehaviourTreeNodeStatus;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
-import com.velonuboso.made.core.abm.implementation.piece.PieceBehaviourTree;
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.implementation.ProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import edu.umd.cs.findbugs.annotations.ExpectWarning;
 import java.util.function.Consumer;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,7 +42,10 @@ public class BehaviourTreeNodeTest {
     private Consumer<IBehaviourTreeNode> fakeConsumer;
     private ICharacter fakeCharacter;
     private IMap fakeMap;
+    private IBehaviourTreeNode fakeNode;
+    private IProbabilityHelper fakeProbabilityHelper;
     
+    private float defaultFakeProbability = 1;
     
     @BeforeClass
     public static void setUpClass() {
@@ -59,15 +60,21 @@ public class BehaviourTreeNodeTest {
         fakeConsumer = mock(Consumer.class);
         fakeCharacter = mock(ICharacter.class);
         fakeMap = mock(IMap.class);
+        fakeNode = mock(IBehaviourTreeNode.class);
         
-        node = new BehaviourTreeNode();
-        node.setCharacter(fakeCharacter);
-        node.setMap(fakeMap);
+        defaultFakeProbability = 0;
+        fakeProbabilityHelper = mock(IProbabilityHelper.class);
+        stub(fakeProbabilityHelper.getNextProbability(any())).toReturn(defaultFakeProbability);
+        
+        ObjectFactory.installMock(IProbabilityHelper.class, fakeProbabilityHelper);
+        InitializeNode();
     }
-
+    
     @After
     public void tearDown() {
+        ObjectFactory.removeMock(IProbabilityHelper.class);
     }
+
 
     @Test
     public void UT_BehaviourTreeNode_must_be_created_correctly_with_ObjectFactory() {
@@ -95,7 +102,7 @@ public class BehaviourTreeNodeTest {
     @Test(expected = Exception.class)
     public void UT_BehaviourTreeNode_run_must_throw_exception_when_the_node_character_is_not_set() {
         node.setCharacter(null);
-        node.run(fakeCharacter);
+        node.run();
         fail("Should've thrown exception when action is set to null");
     }
     
@@ -110,7 +117,45 @@ public class BehaviourTreeNodeTest {
         }
     }
     
-    public void UT_BehaviourTreeNode_run_must_run_children_when_condition_when_the_node_character_is_not_set() {
-        //TODO
+    @Test
+    public void UT_run_must_not_run_children_when_condition_is_false() {
+        node.addChildNodeInOrder(x-> false, 1, fakeNode);
+        node.run();
+        
+        try{
+            verify(fakeNode, times(0)).run();
+        }catch(Exception e){
+            fail("Shouldn't have called the run method in the child node when condition is false");
+        }
+    }
+    
+    @Test
+    public void UT_run_must_not_run_children_when_condition_is_true_and_probability_is_0() {
+        node.addChildNodeInOrder(x-> true, 0, fakeNode);
+        node.run();
+        
+        try{
+            verify(fakeNode, times(0)).run();
+        }catch(Exception e){
+            fail("Shouldn't have called the run method in the child node when probability is 0");
+        }
+    }
+    
+    @Test
+    public void UT_run_must_run_children_when_condition_is_true_and_probability_is_1() {
+        node.addChildNodeInOrder(x-> true, 1, fakeNode);
+        node.run();
+        
+        try{
+            verify(fakeNode).run();
+        }catch(Exception e){
+            fail("Should've called the run method in the child node");
+        }
+    }
+    
+    private void InitializeNode() {
+        node = new BehaviourTreeNode();
+        node.setCharacter(fakeCharacter);
+        node.setMap(fakeMap);
     }
 }

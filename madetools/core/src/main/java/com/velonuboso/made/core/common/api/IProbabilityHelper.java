@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
+ * Copyright (C) 2015 rhgarcia
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.entity;
+
+package com.velonuboso.made.core.common.api;
+
+import com.velonuboso.made.core.common.implementation.ProbabilityHelper;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public enum BehaviourTreeNodeStatus {
-    SUCCESS,
-    FAILURE,
-    RUNNING
+@ImplementedBy(targetClass = ProbabilityHelper.class)
+public interface IProbabilityHelper {
+    float getNextProbability(Class userClass);
 }

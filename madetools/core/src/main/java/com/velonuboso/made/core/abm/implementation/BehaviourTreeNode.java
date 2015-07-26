@@ -21,7 +21,9 @@ import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.entity.BehaviourTreeNodeStatus;
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.implementation.ProbabilityHelper;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -35,13 +37,15 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     private ICharacter character;
     private IMap map;
     private Consumer<IBehaviourTreeNode> action;
-    private ArrayList<ChildrenCondition> ChildrenConditions;
+    private ArrayList<ChildCondition> childrenConditions;
+    private IProbabilityHelper probabilityHelper;
 
     public BehaviourTreeNode() {
         action = new NullAction();
-        ChildrenConditions = new ArrayList<>();
+        childrenConditions = new ArrayList<>();
         map = null;
         character = null;
+        probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
     }
 
     @Override
@@ -60,15 +64,43 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
-    public void addChildrenNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, float probabilityToRunChildren, IBehaviourTree nodeToRun) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void addChildNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 
+            float probabilityToRunChildren, IBehaviourTreeNode nodeToRun) {
+        
+        ChildCondition child = new ChildCondition();
+        child.conditionToRunChildren = conditionToRunChildren;
+        child.nodeToRun = nodeToRun;
+        child.probabilityToRunChildren = probabilityToRunChildren;
+        
+        childrenConditions.add(child);
     }
 
     @Override
-    public BehaviourTreeNodeStatus run(Object... args) {
+    public boolean run() {
         checkCorrectInitialization();
         action.accept(this);
-        return BehaviourTreeNodeStatus.SUCCESS;
+        
+        boolean success = false;
+        int childIndex = 0;
+        
+        while (!success && childIndex<childrenConditions.size()){
+            ChildCondition child = childrenConditions.get(childIndex);
+            
+            if (isInProbability(child) && conditionValidates(child)){
+                 success |= child.nodeToRun.run();
+            }
+            childIndex++;
+        }
+        
+        return success;
+    }
+
+    private boolean conditionValidates(ChildCondition child) {
+        return child.conditionToRunChildren.test(this);
+    }
+
+    private boolean isInProbability(ChildCondition child) {
+        return probabilityHelper.getNextProbability(this.getClass())<child.probabilityToRunChildren;
     }
 
     private void checkCorrectInitialization() throws RuntimeException {
@@ -95,11 +127,11 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         }
     }
 
-    private class ChildrenCondition {
+    private class ChildCondition {
 
         Predicate<IBehaviourTreeNode> conditionToRunChildren = null;
         float probabilityToRunChildren = 0f;
-        IBehaviourTree nodeToRun = null;
+        IBehaviourTreeNode nodeToRun = null;
     }
 
     private class NullAction implements Consumer<IBehaviourTreeNode> {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
+ * Copyright (C) 2015 rhgarcia
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,23 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.api;
 
-import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+package com.velonuboso.made.core.common.implementation;
+
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import java.util.HashMap;
+import java.util.Random;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = BehaviourTreeNode.class)
-public interface IBehaviourTreeNode {
-    void setMap (IMap map);
-    void setCharacter (ICharacter character);
-    void setActionWhenRun(Consumer<IBehaviourTreeNode> action);
-    void addChildNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 
-            float probabilityToRunChildren, IBehaviourTreeNode nodeToRun);
-    boolean run();
+public class ProbabilityHelper implements IProbabilityHelper{
+
+    private HashMap<Class, Random> mapOfRandoms;
+
+    public ProbabilityHelper() {
+        mapOfRandoms = new HashMap<>();
+    }
+    
+    @Override
+    public float getNextProbability(Class userClass) {
+        if (!mapOfRandoms.containsKey(userClass)){
+            mapOfRandoms.put(userClass, new Random());
+        }
+        return mapOfRandoms.get(userClass).nextFloat();
+    }
 }
