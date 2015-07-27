@@ -27,17 +27,19 @@ import java.util.Random;
  */
 public class ProbabilityHelper implements IProbabilityHelper{
 
-    private HashMap<Class, Random> mapOfRandoms;
+    private Random randomGenerator;
 
     public ProbabilityHelper() {
-        mapOfRandoms = new HashMap<>();
+        randomGenerator = new Random(System.currentTimeMillis());
     }
     
     @Override
     public float getNextProbability(Class userClass) {
-        if (!mapOfRandoms.containsKey(userClass)){
-            mapOfRandoms.put(userClass, new Random());
-        }
-        return mapOfRandoms.get(userClass).nextFloat();
+        return randomGenerator.nextFloat();
+    }
+
+    @Override
+    public void setSeed(long seed) {
+        randomGenerator = new Random(seed);
     }
 }

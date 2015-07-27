@@ -16,13 +16,10 @@
  */
 package com.velonuboso.made.core.abm.implementation;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTree;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
-import com.velonuboso.made.core.common.implementation.ProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
 import java.util.function.Consumer;

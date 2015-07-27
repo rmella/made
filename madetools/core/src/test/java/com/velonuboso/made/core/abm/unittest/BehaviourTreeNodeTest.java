@@ -21,7 +21,6 @@ import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
-import com.velonuboso.made.core.common.implementation.ProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.function.Consumer;
 import org.junit.After;
@@ -42,7 +41,8 @@ public class BehaviourTreeNodeTest {
     private Consumer<IBehaviourTreeNode> fakeConsumer;
     private ICharacter fakeCharacter;
     private IMap fakeMap;
-    private IBehaviourTreeNode fakeNode;
+    private IBehaviourTreeNode fakeNodeFirstChild;
+    private IBehaviourTreeNode fakeNodeSecondChild;
     private IProbabilityHelper fakeProbabilityHelper;
     
     private float defaultFakeProbability = 1;
@@ -60,7 +60,8 @@ public class BehaviourTreeNodeTest {
         fakeConsumer = mock(Consumer.class);
         fakeCharacter = mock(ICharacter.class);
         fakeMap = mock(IMap.class);
-        fakeNode = mock(IBehaviourTreeNode.class);
+        fakeNodeFirstChild = mock(IBehaviourTreeNode.class);
+        fakeNodeSecondChild = mock(IBehaviourTreeNode.class);
         
         defaultFakeProbability = 0;
         fakeProbabilityHelper = mock(IProbabilityHelper.class);
@@ -110,47 +111,42 @@ public class BehaviourTreeNodeTest {
     public void UT_BehaviourTreeNode_must_execute_consumer_when_run() {
         node.setActionWhenRun(fakeConsumer);
         node.run();
-        try{
-            verify(fakeConsumer).accept(node);
-        }catch(Exception e){
-            fail("Should've called the action set for the tree node");
-        }
+        verify(fakeConsumer).accept(node);
     }
     
     @Test
     public void UT_run_must_not_run_children_when_condition_is_false() {
-        node.addChildNodeInOrder(x-> false, 1, fakeNode);
+        node.addChildNodeInOrder(x-> false, 1, fakeNodeFirstChild);
         node.run();
         
-        try{
-            verify(fakeNode, times(0)).run();
-        }catch(Exception e){
-            fail("Shouldn't have called the run method in the child node when condition is false");
-        }
+        verify(fakeNodeFirstChild, times(0)).run();
     }
     
     @Test
     public void UT_run_must_not_run_children_when_condition_is_true_and_probability_is_0() {
-        node.addChildNodeInOrder(x-> true, 0, fakeNode);
+        node.addChildNodeInOrder(x-> true, 0, fakeNodeFirstChild);
         node.run();
         
-        try{
-            verify(fakeNode, times(0)).run();
-        }catch(Exception e){
-            fail("Shouldn't have called the run method in the child node when probability is 0");
-        }
+        verify(fakeNodeFirstChild, times(0)).run();
     }
     
     @Test
     public void UT_run_must_run_children_when_condition_is_true_and_probability_is_1() {
-        node.addChildNodeInOrder(x-> true, 1, fakeNode);
+        node.addChildNodeInOrder(x-> true, 1, fakeNodeFirstChild);
         node.run();
         
-        try{
-            verify(fakeNode).run();
-        }catch(Exception e){
-            fail("Should've called the run method in the child node");
-        }
+        verify(fakeNodeFirstChild).run();
+    }
+    
+    @Test
+    public void UT_run_must_run_second_child_when_first_child_condition_is_false(){
+        node.addChildNodeInOrder(x-> false, 1, fakeNodeFirstChild);
+        node.addChildNodeInOrder(x-> true, 1, fakeNodeSecondChild);
+        
+        node.run();
+        
+        verify(fakeNodeFirstChild, times(0)).run();
+        verify(fakeNodeSecondChild, times(1)).run();
     }
     
     private void InitializeNode() {
