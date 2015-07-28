@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.abm.unittest;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
@@ -44,6 +45,7 @@ public class BehaviourTreeNodeTest {
     private IBehaviourTreeNode fakeNodeFirstChild;
     private IBehaviourTreeNode fakeNodeSecondChild;
     private IProbabilityHelper fakeProbabilityHelper;
+    private IBlackBoard fakeBlackBoard;
     
     private float defaultFakeProbability = 1;
     
@@ -62,6 +64,7 @@ public class BehaviourTreeNodeTest {
         fakeMap = mock(IMap.class);
         fakeNodeFirstChild = mock(IBehaviourTreeNode.class);
         fakeNodeSecondChild = mock(IBehaviourTreeNode.class);
+        fakeBlackBoard = mock(IBlackBoard.class);
         
         defaultFakeProbability = 0;
         fakeProbabilityHelper = mock(IProbabilityHelper.class);
@@ -89,53 +92,53 @@ public class BehaviourTreeNodeTest {
     @Test(expected = Exception.class)
     public void UT_BehaviourTreeNode_run_must_throw_exception_when_the_node_action_is_set_to_null() {
         node.setActionWhenRun(null);
-        node.run();
+        node.run(fakeBlackBoard);
         fail("Should've thrown exception when action is set to null");
     }
     
     @Test(expected = Exception.class)
     public void UT_BehaviourTreeNode_run_must_throw_exception_when_the_node_map_is_not_set() {
         node.setMap(null);
-        node.run();
+        node.run(fakeBlackBoard);
         fail("Should've thrown exception when action is set to null");
     }
     
     @Test(expected = Exception.class)
     public void UT_BehaviourTreeNode_run_must_throw_exception_when_the_node_character_is_not_set() {
         node.setCharacter(null);
-        node.run();
+        node.run(fakeBlackBoard);
         fail("Should've thrown exception when action is set to null");
     }
     
     @Test
     public void UT_BehaviourTreeNode_must_execute_consumer_when_run() {
         node.setActionWhenRun(fakeConsumer);
-        node.run();
+        node.run(fakeBlackBoard);
         verify(fakeConsumer).accept(node);
     }
     
     @Test
     public void UT_run_must_not_run_children_when_condition_is_false() {
         node.addChildNodeInOrder(x-> false, 1, fakeNodeFirstChild);
-        node.run();
+        node.run(fakeBlackBoard);
         
-        verify(fakeNodeFirstChild, times(0)).run();
+        verify(fakeNodeFirstChild, times(0)).run(fakeBlackBoard);
     }
     
     @Test
     public void UT_run_must_not_run_children_when_condition_is_true_and_probability_is_0() {
         node.addChildNodeInOrder(x-> true, 0, fakeNodeFirstChild);
-        node.run();
+        node.run(fakeBlackBoard);
         
-        verify(fakeNodeFirstChild, times(0)).run();
+        verify(fakeNodeFirstChild, times(0)).run(fakeBlackBoard);
     }
     
     @Test
     public void UT_run_must_run_children_when_condition_is_true_and_probability_is_1() {
         node.addChildNodeInOrder(x-> true, 1, fakeNodeFirstChild);
-        node.run();
+        node.run(fakeBlackBoard);
         
-        verify(fakeNodeFirstChild).run();
+        verify(fakeNodeFirstChild).run(fakeBlackBoard);
     }
     
     @Test
@@ -143,10 +146,10 @@ public class BehaviourTreeNodeTest {
         node.addChildNodeInOrder(x-> false, 1, fakeNodeFirstChild);
         node.addChildNodeInOrder(x-> true, 1, fakeNodeSecondChild);
         
-        node.run();
+        node.run(fakeBlackBoard);
         
-        verify(fakeNodeFirstChild, times(0)).run();
-        verify(fakeNodeSecondChild, times(1)).run();
+        verify(fakeNodeFirstChild, times(0)).run(fakeBlackBoard);
+        verify(fakeNodeSecondChild, times(1)).run(fakeBlackBoard);
     }
     
     private void InitializeNode() {

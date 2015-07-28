@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.abm.implementation;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
@@ -73,7 +74,7 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
-    public boolean run() {
+    public boolean run(IBlackBoard blackBoard) {
         checkCorrectInitialization();
         action.accept(this);
         
@@ -84,7 +85,7 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
             ChildCondition child = childrenConditions.get(childIndex);
             
             if (isInProbability(child) && conditionValidates(child)){
-                 success |= child.nodeToRun.run();
+                 success |= child.nodeToRun.run(blackBoard);
             }
             childIndex++;
         }

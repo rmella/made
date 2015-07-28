@@ -32,5 +32,5 @@ public interface IBehaviourTreeNode {
     void setActionWhenRun(Consumer<IBehaviourTreeNode> action);
     void addChildNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 
             float probabilityToRunChildren, IBehaviourTreeNode nodeToRun);
-    boolean run();
+    boolean run(IBlackBoard blackBoard);
 }
