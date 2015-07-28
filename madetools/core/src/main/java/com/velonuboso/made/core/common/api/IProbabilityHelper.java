@@ -19,6 +19,7 @@ package com.velonuboso.made.core.common.api;
 
 import com.velonuboso.made.core.common.implementation.ProbabilityHelper;
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -28,4 +29,5 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
 public interface IProbabilityHelper {
     void setSeed(long seed);
     float getNextProbability(Class userClass);
+    public Color getRandomColor();
 }

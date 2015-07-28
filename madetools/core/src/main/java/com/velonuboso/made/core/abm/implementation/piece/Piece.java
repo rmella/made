@@ -16,10 +16,12 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTree;
+import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
+import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import javafx.scene.paint.Color;
 
 /**
@@ -28,28 +30,29 @@ import javafx.scene.paint.Color;
  */
 public class Piece implements ICharacter {
 
-    private String name;
     private Integer id;
     private IEventsWriter eventsWriter;
-    private IBehaviourTree behaviourTree;
+    private IBehaviourTreeNode rootNode;
+    private IMap map;
     
     private Color foregroundColor;
     private Color backgroundColor;
     
+    IProbabilityHelper probabilityHelper;
+    
     public Piece() {
-        name = "Kroo";
+        probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;
         eventsWriter = null;
         InitializeBehaviourTree();
+        
+        foregroundColor = probabilityHelper.getRandomColor();
+        backgroundColor = probabilityHelper.getRandomColor();
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String newName) {
-        name = newName;
+    public void setMap(IMap map) {
+        this.map = map;
     }
 
     @Override
@@ -67,13 +70,58 @@ public class Piece implements ICharacter {
         this.eventsWriter = newEventsWriter;
     }
 
-    private void InitializeBehaviourTree() {
-        behaviourTree = ObjectFactory.createObject(IBehaviourTree.class);
-        behaviourTree.setEventsWriter(eventsWriter);
+    @Override
+    public IBehaviourTreeNode getBehaviourTree() {
+        return rootNode;
     }
 
     @Override
-    public IBehaviourTree getBehaviourTree() {
-        return behaviourTree;
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    @Override
+    public Color getForegroundColor() {
+        return foregroundColor;
+    }
+
+    @Override
+    public void setForegroundColor(Color foregroundColor) {
+        this.foregroundColor = foregroundColor;
+    }
+
+    @Override
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+    
+    private void InitializeBehaviourTree() {
+        rootNode = buildSimpleNodeForCharacter();
+        addChildForSurpriseBehaviour(rootNode);
+        addChildForFearBehaviour(rootNode);
+        addChildForAnticipationBehaviour(rootNode);
+        addChildForSadnessBehaviour(rootNode);
+        addChildForFallbackBehaviour(rootNode);
+    }
+
+    private IBehaviourTreeNode buildSimpleNodeForCharacter() {
+        IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
+        node.setCharacter(this);
+        return node;
+    }
+
+    private void addChildForSurpriseBehaviour(IBehaviourTreeNode parentNode) {
+    }
+
+    private void addChildForFearBehaviour(IBehaviourTreeNode parentNode) {
+    }
+
+    private void addChildForAnticipationBehaviour(IBehaviourTreeNode parentNode) {
+    }
+
+    private void addChildForSadnessBehaviour(IBehaviourTreeNode parentNode) {
+    }
+
+    private void addChildForFallbackBehaviour(IBehaviourTreeNode parentNode) {
     }
 }

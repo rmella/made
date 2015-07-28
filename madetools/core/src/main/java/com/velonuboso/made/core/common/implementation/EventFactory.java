@@ -38,7 +38,7 @@ public class EventFactory implements IEventFactory {
     
     @Override
     public IEvent inhabitantExists(final ICharacter inhabitant){
-        return new Event(INHABITANT_EXISTS, inhabitant.getId(), inhabitant.getName());
+        return new Event(INHABITANT_EXISTS, inhabitant.getId());
     }
 
 }

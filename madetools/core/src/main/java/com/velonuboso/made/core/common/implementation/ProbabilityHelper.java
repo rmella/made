@@ -18,8 +18,8 @@
 package com.velonuboso.made.core.common.implementation;
 
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
-import java.util.HashMap;
 import java.util.Random;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -41,5 +41,16 @@ public class ProbabilityHelper implements IProbabilityHelper{
     @Override
     public void setSeed(long seed) {
         randomGenerator = new Random(seed);
+    }
+
+    @Override
+    public Color getRandomColor() {
+        final float DEFAULT_OPACITY = 1f;
+        
+        float red = getNextProbability(this.getClass());
+        float green = getNextProbability(this.getClass());
+        float blue = getNextProbability(this.getClass());
+        
+        return new Color(red, green, blue, DEFAULT_OPACITY);
     }
 }

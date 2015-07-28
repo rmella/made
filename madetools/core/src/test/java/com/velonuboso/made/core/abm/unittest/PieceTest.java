@@ -16,7 +16,7 @@
  */
 package com.velonuboso.made.core.abm.unittest;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTree;
+import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -54,21 +54,8 @@ public class PieceTest {
     }
 
     @Test
-    public void UT_GetName_must_return_the_default_name_when_not_set(){
-        assertEquals("Default name for an antroach must be Kroo", "Kroo", character.getName());
-    }
-    
-    @Test
-    public void UT_GetName_must_return_the_name_of_the_agent_when_set(){
-        String expectedName = "Aaaa";
-        
-        character.setName(expectedName);
-        assertEquals("Name could not be set to "+expectedName, expectedName, character.getName());
-    }
-    
-    @Test
     public void UT_GetBehaviourTree_must_return_a_valid_instance(){
-        IBehaviourTree bt = character.getBehaviourTree();
+        IBehaviourTreeNode bt = character.getBehaviourTree();
         assertNotNull("BehaviourTree must have a valid instance", bt);
     }
 }

@@ -18,6 +18,7 @@
 package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.implementation.EventsWriter;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -26,12 +27,13 @@ import com.velonuboso.made.core.abm.implementation.EventsWriter;
 public interface ICharacter {
 
     public Integer getId();
-    
-    public String getName();
-    
     public void setId(int id);
-
     public void setEventsWriter(IEventsWriter eventsWriter);
+    public void setMap(IMap map);
     
-    public IBehaviourTree getBehaviourTree();
+    public IBehaviourTreeNode getBehaviourTree();
+    public Color getBackgroundColor();
+    public Color getForegroundColor();
+    public void setForegroundColor(Color foregroundColor);
+    public void setBackgroundColor(Color backgroundColor);
 }
