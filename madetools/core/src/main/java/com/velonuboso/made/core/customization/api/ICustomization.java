@@ -29,7 +29,7 @@ import java.util.List;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 
-@ImplementedBy(targetClass = Customization.class)
+@ImplementedBy(targetClass = Customization.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface ICustomization {
     void loadFromFile(final File file) throws InitializationException;
     List<NarrationRuleEntity> getNarrationRules();

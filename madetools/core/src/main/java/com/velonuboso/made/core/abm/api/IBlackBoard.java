@@ -23,7 +23,7 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = BlackBoard.class)
+@ImplementedBy(targetClass = BlackBoard.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IBlackBoard {
     
     int getInt(String key);

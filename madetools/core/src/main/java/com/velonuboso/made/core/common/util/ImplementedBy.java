@@ -31,4 +31,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ImplementedBy {
     Class targetClass();
+    Mode targetMode();
+    
+    public enum Mode{
+        NORMAL,
+        SINGLETON
+    }
 }

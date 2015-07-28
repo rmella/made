@@ -23,7 +23,7 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
  *
  * @author Ruben
  */
-@ImplementedBy(targetClass = PieceBehaviourTree.class)
+@ImplementedBy(targetClass = PieceBehaviourTree.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IBehaviourTree {
 
     void setEventsWriter(IEventsWriter eventsWriter);

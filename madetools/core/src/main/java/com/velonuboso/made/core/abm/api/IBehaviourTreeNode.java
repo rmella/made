@@ -25,7 +25,7 @@ import java.util.function.Predicate;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = BehaviourTreeNode.class)
+@ImplementedBy(targetClass = BehaviourTreeNode.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IBehaviourTreeNode {
     void setMap (IMap map);
     void setCharacter (ICharacter character);

@@ -26,7 +26,7 @@ import com.velonuboso.made.core.narration.implementation.Narrator;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Narrator.class)
+@ImplementedBy(targetClass = Narrator.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface INarrator {
     void setCustomization(ICustomization customization);
     void setEventsLog(EventsLogEntity eventsLog);

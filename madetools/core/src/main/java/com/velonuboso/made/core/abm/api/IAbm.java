@@ -28,7 +28,7 @@ import com.velonuboso.made.core.customization.api.ICustomization;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Abm.class)
+@ImplementedBy(targetClass = Abm.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IAbm {
     public void setCustomization(ICustomization customization);
     public void setInferences(InferencesEntity defaultInferences);

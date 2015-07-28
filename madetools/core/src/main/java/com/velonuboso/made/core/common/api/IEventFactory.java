@@ -28,7 +28,7 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 
-@ImplementedBy(targetClass = EventFactory.class)
+@ImplementedBy(targetClass = EventFactory.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IEventFactory {
 
     IEvent inhabitantExists(ICharacter inhabitant);

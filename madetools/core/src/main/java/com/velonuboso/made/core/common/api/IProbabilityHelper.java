@@ -24,7 +24,7 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = ProbabilityHelper.class)
+@ImplementedBy(targetClass = ProbabilityHelper.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IProbabilityHelper {
     void setSeed(long seed);
     float getNextProbability(Class userClass);

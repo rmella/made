@@ -24,6 +24,8 @@ import com.velonuboso.made.core.common.implementation.EventFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.reflections.Configuration;
 import org.reflections.Reflections;
@@ -37,13 +39,14 @@ import org.reflections.util.ConfigurationBuilder;
  */
 public class ObjectFactory {
 
+    private static HashMap<Class, Object> mappingSingleton;
     private static HashMap<Class, Class> mappingClasses;
     private static final HashMap<Class, Class> mappingMockingClasses = new HashMap<>();
     private static final HashMap<Class, Object> mappingMockingInstances = new HashMap<>();
 
     public static <T> T createObject(Class<T> targetInterface) {
         if (mappingClasses == null) {
-            createMappingsSingleton();
+            createMappings();
         }
         try {
             if (mappingMockingInstances.containsKey(targetInterface)) {
@@ -55,13 +58,16 @@ public class ObjectFactory {
             if (mappingClasses.containsKey(targetInterface)) {
                 return (T) mappingClasses.get(targetInterface).newInstance();
             }
+            if (mappingSingleton.containsKey(targetInterface)) {
+                return (T) mappingSingleton.get(targetInterface);
+            }
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Could not instantiate " + targetInterface.getCanonicalName(), e);
         }
         throw new RuntimeException("No target implementation for " + targetInterface.getSimpleName());
     }
 
-    private static void createMappingsSingleton() {
+    private static void createMappings() {
         mappingClasses = new HashMap<>();
         insertInterfacesIntoMappingsFromPackage();
         checkMappingCoherence();
@@ -75,7 +81,21 @@ public class ObjectFactory {
 
     private static void insertInterfaceIntoMapping(Class<?> theInterface) {
         ImplementedBy annotation = (ImplementedBy) theInterface.getDeclaredAnnotation(ImplementedBy.class);
-        mappingClasses.put(theInterface, annotation.targetClass());
+        switch (annotation.targetMode()) {
+            case NORMAL:
+                mappingClasses.put(theInterface, annotation.targetClass());
+                break;
+            case SINGLETON: {
+                try {
+                    Object instance = mappingClasses.get(theInterface).newInstance();
+                    mappingSingleton.put(theInterface, instance);
+                } catch (Exception ex) {
+                    throw new RuntimeException("Could not instantiate " + theInterface.getCanonicalName(), ex);
+                }
+            }
+            mappingClasses.put(theInterface, annotation.targetClass());
+            break;
+        }
     }
 
     private static void checkMappingCoherence() throws RuntimeException {

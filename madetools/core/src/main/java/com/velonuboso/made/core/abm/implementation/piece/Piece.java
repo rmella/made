@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.api.IBehaviourTree;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -31,7 +32,10 @@ public class Piece implements ICharacter {
     private Integer id;
     private IEventsWriter eventsWriter;
     private IBehaviourTree behaviourTree;
-
+    
+    private Color foregroundColor;
+    private Color backgroundColor;
+    
     public Piece() {
         name = "Kroo";
         id = null;

@@ -28,7 +28,7 @@ import com.velonuboso.made.core.simulation.implementation.Simulator;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Simulator.class)
+@ImplementedBy(targetClass = Simulator.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface ISimulator {
     String simulate (AbmConfigurationEntity configuration);
 }
