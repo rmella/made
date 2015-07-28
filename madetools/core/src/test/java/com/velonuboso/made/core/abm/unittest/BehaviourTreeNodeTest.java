@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 rhgarcia
+ * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 
 /**
  *
- * @author rhgarcia
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class BehaviourTreeNodeTest {
 
