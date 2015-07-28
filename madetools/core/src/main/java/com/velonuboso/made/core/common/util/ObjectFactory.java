@@ -69,6 +69,7 @@ public class ObjectFactory {
 
     private static void createMappings() {
         mappingClasses = new HashMap<>();
+        mappingSingleton = new HashMap<>();
         insertInterfacesIntoMappingsFromPackage();
         checkMappingCoherence();
     }
@@ -85,16 +86,15 @@ public class ObjectFactory {
             case NORMAL:
                 mappingClasses.put(theInterface, annotation.targetClass());
                 break;
-            case SINGLETON: {
+            default: {
                 try {
-                    Object instance = mappingClasses.get(theInterface).newInstance();
+                    Object instance = annotation.targetClass().newInstance();
                     mappingSingleton.put(theInterface, instance);
                 } catch (Exception ex) {
                     throw new RuntimeException("Could not instantiate " + theInterface.getCanonicalName(), ex);
                 }
+                break;
             }
-            mappingClasses.put(theInterface, annotation.targetClass());
-            break;
         }
     }
 

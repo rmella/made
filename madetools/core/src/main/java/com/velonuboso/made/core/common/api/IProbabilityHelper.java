@@ -25,7 +25,7 @@ import javafx.scene.paint.Color;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = ProbabilityHelper.class, targetMode = ImplementedBy.Mode.NORMAL)
+@ImplementedBy(targetClass = ProbabilityHelper.class, targetMode = ImplementedBy.Mode.SINGLETON)
 public interface IProbabilityHelper {
     void setSeed(long seed);
     float getNextProbability(Class userClass);

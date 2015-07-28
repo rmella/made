@@ -18,9 +18,8 @@ package com.velonuboso.made.core.common.unittest;
 
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.api.IPosition;
-import com.velonuboso.made.core.abm.entity.TerrainType;
 import com.velonuboso.made.core.abm.implementation.Map;
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.List;
 import org.junit.Test;
@@ -94,5 +93,21 @@ public class ObjectFactoryTest {
         Object object = ObjectFactory.createObject(List.class);
         fail("Should've thrown an exception since the List interface does not have a default"
                 + "implementation in MADE's ObjectFactory");
+    }
+    
+    @Test
+    public void UT_ObjectFactory_createObject_must_return_same_instance_when_called_twice_on_singleton(){
+        Object firstOccurrence = ObjectFactory.createObject(IProbabilityHelper.class);
+        Object secondOccurrence = ObjectFactory.createObject(IProbabilityHelper.class);
+        assertSame("Should've created the same instance when Interface is defined as singleton",
+                firstOccurrence, secondOccurrence);
+    }
+    
+    @Test
+    public void UT_ObjectFactory_createObject_must_return_different_instances_when_called_twice_on_non_singleton(){
+        Object firstOccurrence = ObjectFactory.createObject(IMap.class);
+        Object secondOccurrence = ObjectFactory.createObject(IMap.class);
+        assertNotSame("Should've created the same instance when Interface is defined as singleton",
+                firstOccurrence, secondOccurrence);
     }
 }
