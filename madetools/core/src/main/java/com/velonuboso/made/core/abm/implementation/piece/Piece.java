@@ -22,6 +22,7 @@ import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.function.Consumer;
 import javafx.scene.paint.Color;
 
 /**
@@ -106,6 +107,7 @@ public class Piece implements ICharacter {
 
     private void InitializeBehaviourTree() {
         rootNode = buildSimpleNodeForCharacter();
+        addBlackBoardInitializerToNode(rootNode);
         addChildForSurpriseBehaviour(rootNode);
         addChildForFearBehaviour(rootNode);
         addChildForAnticipationBehaviour(rootNode);
@@ -113,10 +115,13 @@ public class Piece implements ICharacter {
         addChildForFallbackBehaviour(rootNode);
     }
 
-    private IBehaviourTreeNode buildSimpleNodeForCharacter() {
-        IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
-        node.setCharacter(this);
-        return node;
+    private void addBlackBoardInitializerToNode(IBehaviourTreeNode node) {
+        node.setActionWhenRun(new Consumer<IBehaviourTreeNode>() {
+            @Override
+            public void accept(IBehaviourTreeNode node) {
+                initializeBlackboard();
+            }
+        });
     }
 
     private void addChildForSurpriseBehaviour(IBehaviourTreeNode parentNode) {
@@ -133,4 +138,24 @@ public class Piece implements ICharacter {
 
     private void addChildForFallbackBehaviour(IBehaviourTreeNode parentNode) {
     }
+    
+    private void initializeBlackboard() {
+        resetAffinityMatrix();
+        resetJoy();
+    }
+    
+    private IBehaviourTreeNode buildSimpleNodeForCharacter() {
+        IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
+        node.setCharacter(this);
+        return node;
+    }
+
+    private void resetAffinityMatrix() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void resetJoy() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }
