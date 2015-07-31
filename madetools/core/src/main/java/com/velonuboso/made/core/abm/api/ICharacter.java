@@ -34,6 +34,7 @@ public interface ICharacter {
     public IBehaviourTreeNode getBehaviourTree();
     public Color getBackgroundColor();
     public Color getForegroundColor();
+    public float getColorDifference ();
     public void setForegroundColor(Color foregroundColor);
     public void setBackgroundColor(Color backgroundColor);
 }

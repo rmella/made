@@ -17,11 +17,11 @@
 package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
-import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import javafx.scene.paint.Color;
 
 /**
@@ -34,18 +34,18 @@ public class Piece implements ICharacter {
     private IEventsWriter eventsWriter;
     private IBehaviourTreeNode rootNode;
     private IMap map;
-    
+
     private Color foregroundColor;
     private Color backgroundColor;
-    
+
     IProbabilityHelper probabilityHelper;
-    
+
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;
         eventsWriter = null;
         InitializeBehaviourTree();
-        
+
         foregroundColor = probabilityHelper.getRandomColor();
         backgroundColor = probabilityHelper.getRandomColor();
     }
@@ -91,10 +91,19 @@ public class Piece implements ICharacter {
     }
 
     @Override
+    public float getColorDifference() {
+        double diffRed = Math.abs(foregroundColor.getRed() - backgroundColor.getRed());
+        double diffBlue = Math.abs(foregroundColor.getBlue() - backgroundColor.getBlue());
+        double diffGreen = Math.abs(foregroundColor.getGreen() - backgroundColor.getGreen());
+
+        return (float) (diffBlue + diffGreen + diffRed) / 3f;
+    }
+
+    @Override
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
-    
+
     private void InitializeBehaviourTree() {
         rootNode = buildSimpleNodeForCharacter();
         addChildForSurpriseBehaviour(rootNode);
