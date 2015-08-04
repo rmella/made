@@ -19,11 +19,13 @@ package com.velonuboso.made.core.abm.implementation.piece;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.ICharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.BlackBoard;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,16 +44,18 @@ public class Piece implements ICharacter {
     private IEventsWriter eventsWriter;
     private IBehaviourTreeNode rootNode;
     private IMap map;
-    
+
     private Color foregroundColor;
     private Color backgroundColor;
     private ArrayList<ICharacter> allCharacters;
     private IBlackBoard blackBoard;
-    
+    private ICharacterShape shape;
+
     private IProbabilityHelper probabilityHelper;
+    private PieceAbmConfigurationHelper abmConfigurationHelper;
 
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
-    
+
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;
@@ -73,7 +77,7 @@ public class Piece implements ICharacter {
     public IMap getMap() {
         return map;
     }
-    
+
     @Override
     public Integer getId() {
         return id;
@@ -111,11 +115,7 @@ public class Piece implements ICharacter {
 
     @Override
     public float getColorDifference() {
-        double diffRed = Math.abs(foregroundColor.getRed() - backgroundColor.getRed());
-        double diffBlue = Math.abs(foregroundColor.getBlue() - backgroundColor.getBlue());
-        double diffGreen = Math.abs(foregroundColor.getGreen() - backgroundColor.getGreen());
-
-        return (float) (diffBlue + diffGreen + diffRed) / 3f;
+        return getColorDifference(foregroundColor, backgroundColor);
     }
 
     @Override
@@ -124,10 +124,25 @@ public class Piece implements ICharacter {
     }
 
     @Override
+    public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
+        this.abmConfigurationHelper = new PieceAbmConfigurationHelper(abmConfiguration);
+    }
+
+    @Override
+    public ICharacterShape getShape() {
+        return shape;
+    }
+
+    @Override
+    public void setShape(ICharacterShape shape) {
+        this.shape = shape;
+    }
+
+    @Override
     public void run() {
         rootNode.run(blackBoard);
     }
-    
+
     private void InitializeBehaviourTree() {
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
@@ -175,9 +190,9 @@ public class Piece implements ICharacter {
 
     private void resetAffinityMatrix() {
         HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
-        
-        getAllCharacters().stream().filter(character-> character!=this).forEach(character ->
-                affinityMatrix.put(character, getAffinityWithCharacter(character)));
+
+        getAllCharacters().stream().filter(character -> character != this).forEach(character
+                -> affinityMatrix.put(character, getAffinityWithCharacter(character)));
         blackBoard.setObject(BLACKBOARD_AFFINITY_MATRIX, affinityMatrix);
     }
 
@@ -192,10 +207,10 @@ public class Piece implements ICharacter {
     }
 
     private void retrieveCharactersFromMap() {
-        int numberOfCells = map.getWidth()*map.getHeight();
-        
+        int numberOfCells = map.getWidth() * map.getHeight();
+
         allCharacters = new ArrayList<>();
-        for (int positionIterator = 0; positionIterator < numberOfCells ; positionIterator++) {
+        for (int positionIterator = 0; positionIterator < numberOfCells; positionIterator++) {
             retrieveCharacterFromCell(positionIterator);
         }
         orderAllCharactersById();
@@ -203,7 +218,7 @@ public class Piece implements ICharacter {
 
     private void retrieveCharacterFromCell(int positionIterator) {
         ICharacter character = map.getCharacter(positionIterator);
-        if (character != null){
+        if (character != null) {
             allCharacters.add(character);
         }
     }
@@ -212,7 +227,26 @@ public class Piece implements ICharacter {
         allCharacters.sort((firstElement, secondElement) -> firstElement.getId().compareTo(secondElement.getId()));
     }
 
-    private Float getAffinityWithCharacter(ICharacter character) {
-        return 0.5f;
+    private Float getAffinityWithCharacter(ICharacter target) {
+        float shapeSimilarity = this.getShape() == target.getShape() ? 1 : 0;
+        float shapeSimilarityWeight = abmConfigurationHelper.getShapeSimilarityWeight();
+
+        float foregroundColorSimilarity = getColorDifference(this.getForegroundColor(), target.getForegroundColor());
+        float foregroundColorSimilarityWeight = abmConfigurationHelper.getForegroundColorSimilarityWeight();
+
+        float backgroundColorSimilarity = getColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
+        float backgroundColorSimilarityWeight = abmConfigurationHelper.getBackgroundColorSimilarityWeight();
+
+        return (shapeSimilarity * shapeSimilarityWeight)
+                + (foregroundColorSimilarity * foregroundColorSimilarityWeight)
+                + (backgroundColorSimilarity * backgroundColorSimilarityWeight);
+    }
+
+    private static float getColorDifference(Color source, Color target) {
+        double diffRed = Math.abs(source.getRed() - target.getRed());
+        double diffBlue = Math.abs(source.getBlue() - target.getBlue());
+        double diffGreen = Math.abs(source.getGreen() - target.getGreen());
+
+        return (float) (diffBlue + diffGreen + diffRed) / 3f;
     }
 }

@@ -19,10 +19,12 @@ package com.velonuboso.made.core.abm.unittest;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.ICharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.Position;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.HashMap;
 import javafx.scene.paint.Color;
@@ -140,10 +142,18 @@ public class PieceTest {
     private void initializeCharacter() {
         ObjectFactory.installMock(IBlackBoard.class, fakeBlackBoard);
         character = new Piece();
+        
         character.setEventsWriter(fakeEventsWriter);
         character.setId(0);
         character.setBackgroundColor(Color.RED);
         character.setForegroundColor(Color.BLUE);
+        character.setShape(ICharacterShape.CIRCLE);
+        
+        AbmConfigurationEntity abmConfiguration = new AbmConfigurationEntity(
+            new float[]{0.5f, 0.5f, 0.5f}
+        );
+        character.setAbmConfiguration(abmConfiguration);
+        
         ObjectFactory.removeMock(IBlackBoard.class);
     }
 
@@ -168,6 +178,7 @@ public class PieceTest {
         fakeSquareNeighbor = mock(ICharacter.class);
         stub(fakeSquareNeighbor.getBackgroundColor()).toReturn(Color.BLUE);
         stub(fakeSquareNeighbor.getForegroundColor()).toReturn(Color.BLACK);
+        stub(fakeSquareNeighbor.getShape()).toReturn(ICharacterShape.TRIANGLE);
         stub(fakeSquareNeighbor.getId()).toReturn(1);
     }
 
@@ -175,6 +186,7 @@ public class PieceTest {
         fakeCircleNeighbor = mock(ICharacter.class);
         stub(fakeCircleNeighbor.getBackgroundColor()).toReturn(Color.BLUE);
         stub(fakeCircleNeighbor.getForegroundColor()).toReturn(Color.ALICEBLUE);
+        stub(fakeCircleNeighbor.getShape()).toReturn(ICharacterShape.SQUARE);
         stub(fakeCircleNeighbor.getId()).toReturn(2);
     }
 }

@@ -19,6 +19,7 @@ package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.implementation.EventsWriter;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 import javafx.scene.paint.Color;
 
@@ -29,13 +30,17 @@ import javafx.scene.paint.Color;
 @ImplementedBy(targetClass = Piece.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface ICharacter {
 
-    public Integer getId();
     public void setId(int id);
     public void setEventsWriter(IEventsWriter eventsWriter);
     public void setMap(IMap map);
-    public IMap getMap();
+    public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration);
+    public void setShape (ICharacterShape shape);
     
+    public Integer getId();
     public IBehaviourTreeNode getBehaviourTree();
+    public IMap getMap();
+    public ICharacterShape getShape();
+    
     public Color getBackgroundColor();
     public Color getForegroundColor();
     public float getColorDifference ();
