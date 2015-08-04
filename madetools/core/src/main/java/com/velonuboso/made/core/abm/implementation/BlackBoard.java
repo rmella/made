@@ -23,7 +23,7 @@ import java.util.HashMap;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class BlackBoard implements IBlackBoard{
+public class BlackBoard implements IBlackBoard {
 
     private HashMap<String, Object> mapKeyValues;
     public static final int DEFAULT_INT_VALUE = 0;
@@ -33,10 +33,10 @@ public class BlackBoard implements IBlackBoard{
     public BlackBoard() {
         mapKeyValues = new HashMap<>();
     }
-    
+
     @Override
     public int getInt(String key) {
-        if (!containedAndValidType(key, Integer.class)){
+        if (!containedAndValidType(key, Integer.class)) {
             return DEFAULT_INT_VALUE;
         }
         return (int) mapKeyValues.get(key);
@@ -49,7 +49,7 @@ public class BlackBoard implements IBlackBoard{
 
     @Override
     public float getFloat(String key) {
-        if (!containedAndValidType(key, Float.class)){
+        if (!containedAndValidType(key, Float.class)) {
             return DEFAULT_FLOAT_VALUE;
         }
         return (float) mapKeyValues.get(key);
@@ -62,7 +62,7 @@ public class BlackBoard implements IBlackBoard{
 
     @Override
     public String getString(String key) {
-        if (!containedAndValidType(key, String.class)){
+        if (!containedAndValidType(key, String.class)) {
             return DEFAULT_STRING_VALUE;
         }
         return (String) mapKeyValues.get(key);
@@ -72,8 +72,18 @@ public class BlackBoard implements IBlackBoard{
     public void setString(String key, String value) {
         mapKeyValues.put(key, value);
     }
-    
+
+    @Override
+    public Object getObject(String key) {
+        return mapKeyValues.get(key);
+    }
+
+    @Override
+    public void setObject(String key, Object value) {
+        mapKeyValues.put(key, value);
+    }
+
     private boolean containedAndValidType(String key, Class targetClass) {
-        return mapKeyValues.containsKey(key) && (mapKeyValues.get(key)).getClass()==targetClass;
+        return mapKeyValues.containsKey(key) && (mapKeyValues.get(key)).getClass() == targetClass;
     }
 }

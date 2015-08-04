@@ -33,7 +33,6 @@ import java.util.function.Predicate;
 public class BehaviourTreeNode implements IBehaviourTreeNode {
 
     private ICharacter character;
-    private IMap map;
     private Consumer<IBehaviourTreeNode> action;
     private ArrayList<ChildCondition> childrenConditions;
     private IProbabilityHelper probabilityHelper;
@@ -41,14 +40,8 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     public BehaviourTreeNode() {
         action = new NullAction();
         childrenConditions = new ArrayList<>();
-        map = null;
         character = null;
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
-    }
-
-    @Override
-    public void setMap(IMap map) {
-        this.map = map;
     }
 
     @Override
@@ -104,13 +97,6 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     private void checkCorrectInitialization() throws RuntimeException {
         checkActionInitialized();
         checkCharacterInitialized();
-        checkMapInitialized();
-    }
-
-    private void checkMapInitialized() throws RuntimeException {
-        if (map == null) {
-            throw new RuntimeException("node map is null");
-        }
     }
 
     private void checkCharacterInitialized() throws RuntimeException {

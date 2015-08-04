@@ -17,11 +17,18 @@
 package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
+import com.velonuboso.made.core.abm.implementation.BlackBoard;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.function.Consumer;
 import javafx.scene.paint.Color;
 
@@ -35,12 +42,16 @@ public class Piece implements ICharacter {
     private IEventsWriter eventsWriter;
     private IBehaviourTreeNode rootNode;
     private IMap map;
-
+    
     private Color foregroundColor;
     private Color backgroundColor;
+    private ArrayList<ICharacter> allCharacters;
+    private IBlackBoard blackBoard;
+    
+    private IProbabilityHelper probabilityHelper;
 
-    IProbabilityHelper probabilityHelper;
-
+    public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
+    
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;
@@ -49,6 +60,9 @@ public class Piece implements ICharacter {
 
         foregroundColor = probabilityHelper.getRandomColor();
         backgroundColor = probabilityHelper.getRandomColor();
+
+        allCharacters = null;
+        blackBoard = ObjectFactory.createObject(IBlackBoard.class);
     }
 
     @Override
@@ -56,6 +70,10 @@ public class Piece implements ICharacter {
         this.map = map;
     }
 
+    public IMap getMap() {
+        return map;
+    }
+    
     @Override
     public Integer getId() {
         return id;
@@ -105,6 +123,11 @@ public class Piece implements ICharacter {
         this.backgroundColor = backgroundColor;
     }
 
+    @Override
+    public void run() {
+        rootNode.run(blackBoard);
+    }
+    
     private void InitializeBehaviourTree() {
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
@@ -138,12 +161,12 @@ public class Piece implements ICharacter {
 
     private void addChildForFallbackBehaviour(IBehaviourTreeNode parentNode) {
     }
-    
+
     private void initializeBlackboard() {
         resetAffinityMatrix();
         resetJoy();
     }
-    
+
     private IBehaviourTreeNode buildSimpleNodeForCharacter() {
         IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
         node.setCharacter(this);
@@ -151,11 +174,45 @@ public class Piece implements ICharacter {
     }
 
     private void resetAffinityMatrix() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
+        
+        getAllCharacters().stream().filter(character-> character!=this).forEach(character ->
+                affinityMatrix.put(character, getAffinityWithCharacter(character)));
+        blackBoard.setObject(BLACKBOARD_AFFINITY_MATRIX, affinityMatrix);
     }
 
     private void resetJoy() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    private ArrayList<ICharacter> getAllCharacters() {
+        if (allCharacters == null) {
+            retrieveCharactersFromMap();
+        }
+        return allCharacters;
+    }
+
+    private void retrieveCharactersFromMap() {
+        int numberOfCells = map.getWidth()*map.getHeight();
+        
+        allCharacters = new ArrayList<>();
+        for (int positionIterator = 0; positionIterator < numberOfCells ; positionIterator++) {
+            retrieveCharacterFromCell(positionIterator);
+        }
+        orderAllCharactersById();
+    }
+
+    private void retrieveCharacterFromCell(int positionIterator) {
+        ICharacter character = map.getCharacter(positionIterator);
+        if (character != null){
+            allCharacters.add(character);
+        }
+    }
+
+    private void orderAllCharactersById() {
+        allCharacters.sort((firstElement, secondElement) -> firstElement.getId().compareTo(secondElement.getId()));
+    }
+
+    private Float getAffinityWithCharacter(ICharacter character) {
+        return 0.5f;
+    }
 }

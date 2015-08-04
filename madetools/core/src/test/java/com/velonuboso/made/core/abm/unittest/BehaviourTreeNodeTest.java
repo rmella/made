@@ -97,13 +97,6 @@ public class BehaviourTreeNodeTest {
     }
     
     @Test(expected = Exception.class)
-    public void UT_BehaviourTreeNode_run_must_throw_exception_when_the_node_map_is_not_set() {
-        node.setMap(null);
-        node.run(fakeBlackBoard);
-        fail("Should've thrown exception when action is set to null");
-    }
-    
-    @Test(expected = Exception.class)
     public void UT_BehaviourTreeNode_run_must_throw_exception_when_the_node_character_is_not_set() {
         node.setCharacter(null);
         node.run(fakeBlackBoard);
@@ -155,6 +148,5 @@ public class BehaviourTreeNodeTest {
     private void InitializeNode() {
         node = new BehaviourTreeNode();
         node.setCharacter(fakeCharacter);
-        node.setMap(fakeMap);
     }
 }

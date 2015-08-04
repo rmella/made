@@ -34,4 +34,7 @@ public interface IBlackBoard {
     
     String getString (String key);
     void setString (String key, String value);
+    
+    Object getObject (String key);
+    void setObject (String key, Object value);
 }

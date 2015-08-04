@@ -17,14 +17,27 @@
 package com.velonuboso.made.core.abm.unittest;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
+import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.implementation.Position;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.HashMap;
 import javafx.scene.paint.Color;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.ArgumentMatcher;
+import static org.mockito.Mockito.*;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  *
@@ -33,6 +46,12 @@ import static org.junit.Assert.*;
 public class PieceTest {
 
     private Piece character;
+    private ICharacter fakeSquareNeighbor;
+    private ICharacter fakeCircleNeighbor;
+
+    IBlackBoard fakeBlackBoard;
+    IMap fakeMap;
+    IEventsWriter fakeEventsWriter;
 
     public PieceTest() {
     }
@@ -47,7 +66,13 @@ public class PieceTest {
 
     @Before
     public void setUp() {
-        character = new Piece();
+        initializeFakeSquareNeighbor();
+        initializeFakeCircleNeighbor();
+        buildFakeBlackboard();
+        buildFakeEventsWriter();
+        initializeCharacter();
+        buildFakeMap();
+        character.setMap(fakeMap);
     }
 
     @After
@@ -91,5 +116,65 @@ public class PieceTest {
 
         assertEquals("Difference should be " + EXPECTED_DIFFERENCE + " when background is red and foreground is blue",
                 EXPECTED_DIFFERENCE, character.getColorDifference(), 0f);
+    }
+
+    @Test
+    public void UT_execute_in_a_map_with_3_characters_must_write_an_affinity_matrix_with_two_elements_in_blacboard() {
+        final int EXPECTED_AGENTS_IN_AFFINITY_MATRIX = 2;
+        character.run();
+        verify(fakeBlackBoard).setObject(eq(Piece.BLACKBOARD_AFFINITY_MATRIX),
+                argThat(new BaseMatcher<Object>() {
+                    @Override
+                    public boolean matches(Object argument) {
+                        HashMap<ICharacter, Float> affinityMatrix = (HashMap<ICharacter, Float>) argument;
+                        return affinityMatrix.size() == EXPECTED_AGENTS_IN_AFFINITY_MATRIX;
+                    }
+
+                    @Override
+                    public void describeTo(Description description) {
+                        description.appendText("Hasmap with "+EXPECTED_AGENTS_IN_AFFINITY_MATRIX+" elements");
+                    }
+                }));
+    }
+
+    private void initializeCharacter() {
+        ObjectFactory.installMock(IBlackBoard.class, fakeBlackBoard);
+        character = new Piece();
+        character.setEventsWriter(fakeEventsWriter);
+        character.setId(0);
+        character.setBackgroundColor(Color.RED);
+        character.setForegroundColor(Color.BLUE);
+        ObjectFactory.removeMock(IBlackBoard.class);
+    }
+
+    private void buildFakeEventsWriter() {
+        fakeEventsWriter = mock(IEventsWriter.class);
+    }
+
+    private void buildFakeMap() {
+        fakeMap = mock(IMap.class);
+        stub(fakeMap.getWidth()).toReturn(10);
+        stub(fakeMap.getHeight()).toReturn(10);
+        stub(fakeMap.getCharacter(eq(0))).toReturn(fakeSquareNeighbor);
+        stub(fakeMap.getCharacter(eq(1))).toReturn(character);
+        stub(fakeMap.getCharacter(eq(99))).toReturn(fakeCircleNeighbor);
+    }
+
+    private void buildFakeBlackboard() {
+        fakeBlackBoard = mock(IBlackBoard.class);
+    }
+
+    private void initializeFakeSquareNeighbor() {
+        fakeSquareNeighbor = mock(ICharacter.class);
+        stub(fakeSquareNeighbor.getBackgroundColor()).toReturn(Color.BLUE);
+        stub(fakeSquareNeighbor.getForegroundColor()).toReturn(Color.BLACK);
+        stub(fakeSquareNeighbor.getId()).toReturn(1);
+    }
+
+    private void initializeFakeCircleNeighbor() {
+        fakeCircleNeighbor = mock(ICharacter.class);
+        stub(fakeCircleNeighbor.getBackgroundColor()).toReturn(Color.BLUE);
+        stub(fakeCircleNeighbor.getForegroundColor()).toReturn(Color.ALICEBLUE);
+        stub(fakeCircleNeighbor.getId()).toReturn(2);
     }
 }

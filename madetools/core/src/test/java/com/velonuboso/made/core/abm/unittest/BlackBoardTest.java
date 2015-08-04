@@ -16,22 +16,15 @@
  */
 package com.velonuboso.made.core.abm.unittest;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.BlackBoard;
-import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import java.util.function.Consumer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -114,6 +107,22 @@ public class BlackBoardTest {
     public void UT_BlackBoard_must_get_the_valid_string_when_previously_set() {
         blackBoard.setString(SAMPLE_KEY, SAMPLE_STRING);
         String retrievedValue = blackBoard.getString(SAMPLE_KEY);
+        assertEquals("Inserted value should be equal to retrieved value", 
+                retrievedValue, SAMPLE_STRING);
+    }
+    
+    
+    @Test
+    public void UT_BlackBoard_must_get_the_default_object_when_not_previously_set() {
+        Object retrievedValue = blackBoard.getObject(SAMPLE_KEY);
+        assertEquals("Inserted value should be equal to default", 
+                retrievedValue, null);
+    }
+    
+    @Test
+    public void UT_BlackBoard_must_get_the_valid_object_when_previously_set() {
+        blackBoard.setObject(SAMPLE_KEY, SAMPLE_STRING);
+        Object retrievedValue = blackBoard.getObject(SAMPLE_KEY);
         assertEquals("Inserted value should be equal to retrieved value", 
                 retrievedValue, SAMPLE_STRING);
     }

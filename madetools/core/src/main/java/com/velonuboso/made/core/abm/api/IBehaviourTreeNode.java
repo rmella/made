@@ -27,7 +27,6 @@ import java.util.function.Predicate;
  */
 @ImplementedBy(targetClass = BehaviourTreeNode.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IBehaviourTreeNode {
-    void setMap (IMap map);
     void setCharacter (ICharacter character);
     void setActionWhenRun(Consumer<IBehaviourTreeNode> action);
     void addChildNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 

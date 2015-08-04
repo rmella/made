@@ -18,18 +18,22 @@
 package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.implementation.EventsWriter;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import javafx.scene.paint.Color;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = Piece.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface ICharacter {
 
     public Integer getId();
     public void setId(int id);
     public void setEventsWriter(IEventsWriter eventsWriter);
     public void setMap(IMap map);
+    public IMap getMap();
     
     public IBehaviourTreeNode getBehaviourTree();
     public Color getBackgroundColor();
@@ -37,4 +41,6 @@ public interface ICharacter {
     public float getColorDifference ();
     public void setForegroundColor(Color foregroundColor);
     public void setBackgroundColor(Color backgroundColor);
+    
+    public void run();
 }
