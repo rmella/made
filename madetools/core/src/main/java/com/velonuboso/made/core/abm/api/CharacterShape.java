@@ -14,15 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.abm.api;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public enum ICharacterShape {
+public enum CharacterShape {
+
     CIRCLE,
     TRIANGLE,
-    SQUARE
+    SQUARE;
+
+    public static boolean wins(final CharacterShape source, final CharacterShape target) {
+        return (source == CIRCLE && target == TRIANGLE)
+                || (source == TRIANGLE && target == SQUARE)
+                || (source == SQUARE && target == CIRCLE);
+    }
 }

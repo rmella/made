@@ -19,7 +19,7 @@ package com.velonuboso.made.core.abm.implementation.piece;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.ICharacterShape;
+import com.velonuboso.made.core.abm.api.CharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
@@ -49,7 +49,7 @@ public class Piece implements ICharacter {
     private Color backgroundColor;
     private ArrayList<ICharacter> allCharacters;
     private IBlackBoard blackBoard;
-    private ICharacterShape shape;
+    private CharacterShape shape;
 
     private IProbabilityHelper probabilityHelper;
     private PieceAbmConfigurationHelper abmConfigurationHelper;
@@ -129,12 +129,12 @@ public class Piece implements ICharacter {
     }
 
     @Override
-    public ICharacterShape getShape() {
+    public CharacterShape getShape() {
         return shape;
     }
 
     @Override
-    public void setShape(ICharacterShape shape) {
+    public void setShape(CharacterShape shape) {
         this.shape = shape;
     }
 
@@ -228,18 +228,21 @@ public class Piece implements ICharacter {
     }
 
     private Float getAffinityWithCharacter(ICharacter target) {
-        float shapeSimilarity = this.getShape() == target.getShape() ? 1 : 0;
+        float shapeSimilarity = this.getShape() == target.getShape() ? 1 : -1;
         float shapeSimilarityWeight = abmConfigurationHelper.getShapeSimilarityWeight();
 
-        float foregroundColorSimilarity = getColorDifference(this.getForegroundColor(), target.getForegroundColor());
+        float foregroundColorSimilarity = 1f - getColorDifference(this.getForegroundColor(), target.getForegroundColor());
+        foregroundColorSimilarity = normalize(foregroundColorSimilarity, 0f, 1f, -1, 1);
         float foregroundColorSimilarityWeight = abmConfigurationHelper.getForegroundColorSimilarityWeight();
 
-        float backgroundColorSimilarity = getColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
+        float backgroundColorSimilarity = 1f - getColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
+        backgroundColorSimilarity = normalize(backgroundColorSimilarity, 0f, 1f, -1, 1);
         float backgroundColorSimilarityWeight = abmConfigurationHelper.getBackgroundColorSimilarityWeight();
 
-        return (shapeSimilarity * shapeSimilarityWeight)
+        return ((shapeSimilarity * shapeSimilarityWeight)
                 + (foregroundColorSimilarity * foregroundColorSimilarityWeight)
-                + (backgroundColorSimilarity * backgroundColorSimilarityWeight);
+                + (backgroundColorSimilarity * backgroundColorSimilarityWeight)
+                )/3f;
     }
 
     private static float getColorDifference(Color source, Color target) {
@@ -247,6 +250,11 @@ public class Piece implements ICharacter {
         double diffBlue = Math.abs(source.getBlue() - target.getBlue());
         double diffGreen = Math.abs(source.getGreen() - target.getGreen());
 
-        return (float) (diffBlue + diffGreen + diffRed) / 3f;
+        return (float) ((diffBlue + diffGreen + diffRed) / 3f);
+    }
+    
+    private static float normalize (float value, float sourceMinimum,
+            float sourceMaximum, float targetMinimum, float targetMaximum){
+        return ((targetMaximum - targetMinimum) * (value - sourceMinimum))/(sourceMaximum - sourceMinimum) + targetMinimum;
     }
 }

@@ -19,7 +19,7 @@ package com.velonuboso.made.core.abm.unittest;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.ICharacterShape;
+import com.velonuboso.made.core.abm.api.CharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.Position;
@@ -27,6 +27,7 @@ import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.HashMap;
+import javafx.scene.AmbientLight;
 import javafx.scene.paint.Color;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -134,26 +135,126 @@ public class PieceTest {
 
                     @Override
                     public void describeTo(Description description) {
-                        description.appendText("Hasmap with "+EXPECTED_AGENTS_IN_AFFINITY_MATRIX+" elements");
+                        description.appendText("Hasmap with " + EXPECTED_AGENTS_IN_AFFINITY_MATRIX + " elements");
                     }
                 }));
     }
 
+    @Test
+    public void UT_execute_must_define_affinity_matrix_with_proper_values() {
+        final float EXPECTED_AFFINITY_WITH_FAKE_CIRCLE = -0.2681f;
+        final float EXPECTED_AFFINITY_WITH_FAKE_SQUARE = -0.1666f;
+        final HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
+
+        doAnswer((Answer) (InvocationOnMock invocation) -> {
+            HashMap<ICharacter, Float> inserttedAffinityMatrix = (HashMap<ICharacter, Float>) invocation.getArguments()[1];
+            affinityMatrix.putAll(inserttedAffinityMatrix);
+            return null;
+        }).when(fakeBlackBoard).setObject(eq(Piece.BLACKBOARD_AFFINITY_MATRIX), anyObject());
+
+        character.run();
+
+        assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY_WITH_FAKE_CIRCLE  + " with the circle",
+                EXPECTED_AFFINITY_WITH_FAKE_CIRCLE, affinityMatrix.get(fakeCircleNeighbor), 0.0001f);
+        assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY_WITH_FAKE_SQUARE  + " with the square",
+                EXPECTED_AFFINITY_WITH_FAKE_SQUARE, affinityMatrix.get(fakeSquareNeighbor), 0.0001f);
+    }
+
+    @Test
+    public void UT_execute_affinity_must_be_minus1_when_enemy_shape_is_different_and_colors_opposite() {
+        final float EXPECTED_AFFINITY = -1;
+        
+        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f}, Color.RED.invert(), 
+                Color.BLUE.invert(), CharacterShape.SQUARE);
+        
+        assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the enemy since"
+                + " the colours are inverted and the shape differs",
+                EXPECTED_AFFINITY, affinity, 0.0001f);
+    }
+    
+    @Test
+    public void UT_execute_affinity_must_be_1_when_enemy_shape__and_colors_are_the_same() {
+        final float EXPECTED_AFFINITY = 1;
+        
+        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f}, Color.RED, 
+                Color.BLUE, CharacterShape.TRIANGLE);
+        
+        assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the friend since"
+                + " the shape and colors are the same",
+                EXPECTED_AFFINITY, affinity, 0.0001f);
+    }
+    
+    @Test
+    public void UT_execute_affinity_must_be_0_when_configuration_is_all_0() {
+        final float EXPECTED_AFFINITY = 0;
+        
+        float affinity = getAffinityForCharacter(new float[]{0f,0f,0f}, Color.RED, 
+                Color.BLUE, CharacterShape.TRIANGLE);
+        
+        assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the friend since"
+                + " the shape and colors are the same but the configuration is 0 for all the genes",
+                EXPECTED_AFFINITY, affinity, 0.0001f);
+    }
+    
+    @Test
+    public void UT_execute_affinity_must_be_minus_1_divided_by_3_when_only_foreground_color_is_the_same() {
+        final float EXPECTED_AFFINITY = -1f/3f;
+        
+        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f}, Color.RED.invert(), 
+                Color.BLUE, CharacterShape.CIRCLE);
+        
+        assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the character since"
+                + " only foreground is the same",
+                EXPECTED_AFFINITY, affinity, 0.0001f);
+    }
+    
+    private float getAffinityForCharacter (float []configurationValues, 
+            Color background, Color foreground, CharacterShape shape){
+        
+        final int FAKE_CHARACTER_ID = 2;
+        final int FAKE_CHARACTER_CELL = 22;
+        final AbmConfigurationEntity configuration = new AbmConfigurationEntity(configurationValues);
+        final HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
+
+        character.setAbmConfiguration(configuration);
+        
+        ICharacter fakeCharacter = mock(ICharacter.class);
+        stub(fakeCharacter.getBackgroundColor()).toReturn(background);
+        stub(fakeCharacter.getForegroundColor()).toReturn(foreground);
+        stub(fakeCharacter.getShape()).toReturn(shape);
+        stub(fakeCharacter.getId()).toReturn(FAKE_CHARACTER_ID);
+        
+        stub(fakeMap.getCharacter(eq(FAKE_CHARACTER_CELL))).toReturn(fakeCharacter);
+        stub(fakeMap.getCharacter(eq(0))).toReturn(null);
+        stub(fakeMap.getCharacter(eq(1))).toReturn(character);
+        stub(fakeMap.getCharacter(eq(99))).toReturn(null);
+
+        doAnswer((Answer) (InvocationOnMock invocation) -> {
+            HashMap<ICharacter, Float> inserttedAffinityMatrix = (HashMap<ICharacter, Float>) invocation.getArguments()[1];
+            affinityMatrix.putAll(inserttedAffinityMatrix);
+            return null;
+        }).when(fakeBlackBoard).setObject(eq(Piece.BLACKBOARD_AFFINITY_MATRIX), anyObject());
+
+        character.run();
+        return affinityMatrix.get(fakeCharacter);
+    }
+    
+    
     private void initializeCharacter() {
         ObjectFactory.installMock(IBlackBoard.class, fakeBlackBoard);
         character = new Piece();
-        
+
         character.setEventsWriter(fakeEventsWriter);
         character.setId(0);
         character.setBackgroundColor(Color.RED);
         character.setForegroundColor(Color.BLUE);
-        character.setShape(ICharacterShape.CIRCLE);
+        character.setShape(CharacterShape.TRIANGLE);
         
         AbmConfigurationEntity abmConfiguration = new AbmConfigurationEntity(
-            new float[]{0.5f, 0.5f, 0.5f}
+                new float[]{0.5f, 0.5f, 0.5f}
         );
         character.setAbmConfiguration(abmConfiguration);
-        
+
         ObjectFactory.removeMock(IBlackBoard.class);
     }
 
@@ -178,7 +279,7 @@ public class PieceTest {
         fakeSquareNeighbor = mock(ICharacter.class);
         stub(fakeSquareNeighbor.getBackgroundColor()).toReturn(Color.BLUE);
         stub(fakeSquareNeighbor.getForegroundColor()).toReturn(Color.BLACK);
-        stub(fakeSquareNeighbor.getShape()).toReturn(ICharacterShape.TRIANGLE);
+        stub(fakeSquareNeighbor.getShape()).toReturn(CharacterShape.SQUARE);
         stub(fakeSquareNeighbor.getId()).toReturn(1);
     }
 
@@ -186,7 +287,7 @@ public class PieceTest {
         fakeCircleNeighbor = mock(ICharacter.class);
         stub(fakeCircleNeighbor.getBackgroundColor()).toReturn(Color.BLUE);
         stub(fakeCircleNeighbor.getForegroundColor()).toReturn(Color.ALICEBLUE);
-        stub(fakeCircleNeighbor.getShape()).toReturn(ICharacterShape.SQUARE);
+        stub(fakeCircleNeighbor.getShape()).toReturn(CharacterShape.CIRCLE);
         stub(fakeCircleNeighbor.getId()).toReturn(2);
     }
 }

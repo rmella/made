@@ -25,10 +25,6 @@ import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
  */
 public class PieceAbmConfigurationHelper {
    
-    public static final int SHAPE_SIMILARITY_WEIGHT = 0;
-    public static final int FOREGROUND_COLOR_SIMILARITY_WEIGHT = 1;
-    public static final int BACKGROUND_COLOR_SIMILARITY_WEIGHT = 2;
-    
     private AbmConfigurationEntity abmConfiguration;
 
     public PieceAbmConfigurationHelper(AbmConfigurationEntity abmConfiguration) {
@@ -36,18 +32,24 @@ public class PieceAbmConfigurationHelper {
     }
 
     float getShapeSimilarityWeight() {
-        return getGene(SHAPE_SIMILARITY_WEIGHT);
+        return getGene(Gene.SHAPE_SIMILARITY_WEIGHT);
     }
 
     float getForegroundColorSimilarityWeight() {
-        return getGene(FOREGROUND_COLOR_SIMILARITY_WEIGHT);
+        return getGene(Gene.FOREGROUND_COLOR_SIMILARITY_WEIGHT);
     }
 
     float getBackgroundColorSimilarityWeight() {
-        return getGene(BACKGROUND_COLOR_SIMILARITY_WEIGHT);
+        return getGene(Gene.BACKGROUND_COLOR_SIMILARITY_WEIGHT);
     } 
 
-    private float getGene(int position) {
-        return abmConfiguration.getChromosome()[position];
+    private float getGene(Gene gene) {
+        return abmConfiguration.getChromosome()[gene.ordinal()];
+    }
+    
+    private enum Gene {
+        SHAPE_SIMILARITY_WEIGHT,
+        FOREGROUND_COLOR_SIMILARITY_WEIGHT,
+        BACKGROUND_COLOR_SIMILARITY_WEIGHT
     }
 }

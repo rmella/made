@@ -34,12 +34,12 @@ public interface ICharacter {
     public void setEventsWriter(IEventsWriter eventsWriter);
     public void setMap(IMap map);
     public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration);
-    public void setShape (ICharacterShape shape);
+    public void setShape (CharacterShape shape);
     
     public Integer getId();
     public IBehaviourTreeNode getBehaviourTree();
     public IMap getMap();
-    public ICharacterShape getShape();
+    public CharacterShape getShape();
     
     public Color getBackgroundColor();
     public Color getForegroundColor();
