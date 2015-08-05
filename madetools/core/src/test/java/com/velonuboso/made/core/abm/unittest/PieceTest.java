@@ -26,6 +26,7 @@ import com.velonuboso.made.core.abm.implementation.Position;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.scene.AmbientLight;
 import javafx.scene.paint.Color;
@@ -51,7 +52,8 @@ public class PieceTest {
     private Piece character;
     private ICharacter fakeSquareNeighbor;
     private ICharacter fakeCircleNeighbor;
-
+    private HashMap<ICharacter, Float> fakeAffinityMatrix = new HashMap<>();
+    
     IBlackBoard fakeBlackBoard;
     IMap fakeMap;
     IEventsWriter fakeEventsWriter;
@@ -122,7 +124,7 @@ public class PieceTest {
     }
 
     @Test
-    public void UT_execute_in_a_map_with_3_characters_must_write_an_affinity_matrix_with_two_elements_in_blacboard() {
+    public void UT_run_in_a_map_with_3_characters_must_write_an_affinity_matrix_with_two_elements_in_blacboard() {
         final int EXPECTED_AGENTS_IN_AFFINITY_MATRIX = 2;
         character.run();
         verify(fakeBlackBoard).setObject(eq(Piece.BLACKBOARD_AFFINITY_MATRIX),
@@ -141,7 +143,7 @@ public class PieceTest {
     }
 
     @Test
-    public void UT_execute_must_define_affinity_matrix_with_proper_values() {
+    public void UT_run_must_define_affinity_matrix_with_proper_values() {
         final float EXPECTED_AFFINITY_WITH_FAKE_CIRCLE = -0.5363f;
         final float EXPECTED_AFFINITY_WITH_FAKE_SQUARE = -0.3333f;
         final HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
@@ -161,10 +163,10 @@ public class PieceTest {
     }
 
     @Test
-    public void UT_execute_affinity_must_be_minus1_when_enemy_shape_is_different_and_colors_opposite() {
+    public void UT_run_affinity_must_be_minus1_when_enemy_shape_is_different_and_colors_opposite() {
         final float EXPECTED_AFFINITY = -1;
         
-        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f}, Color.RED.invert(), 
+        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f,0.5f}, Color.RED.invert(), 
                 Color.BLUE.invert(), CharacterShape.SQUARE);
         
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the enemy since"
@@ -173,10 +175,10 @@ public class PieceTest {
     }
     
     @Test
-    public void UT_execute_affinity_must_be_1_when_enemy_shape__and_colors_are_the_same() {
+    public void UT_run_affinity_must_be_1_when_enemy_shape__and_colors_are_the_same() {
         final float EXPECTED_AFFINITY = 1;
         
-        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f}, Color.RED, 
+        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f,0.5f}, Color.RED, 
                 Color.BLUE, CharacterShape.TRIANGLE);
         
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the friend since"
@@ -185,10 +187,10 @@ public class PieceTest {
     }
     
     @Test
-    public void UT_execute_affinity_must_be_0_when_configuration_is_all_0() {
+    public void UT_run_affinity_must_be_0_when_configuration_is_all_0() {
         final float EXPECTED_AFFINITY = 0;
         
-        float affinity = getAffinityForCharacter(new float[]{0f,0f,0f}, Color.RED, 
+        float affinity = getAffinityForCharacter(new float[]{0f,0f,0f,0.5f}, Color.RED, 
                 Color.BLUE, CharacterShape.TRIANGLE);
         
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the friend since"
@@ -197,15 +199,37 @@ public class PieceTest {
     }
     
     @Test
-    public void UT_execute_affinity_must_be_minus_1_divided_by_3_when_only_foreground_color_is_the_same() {
+    public void UT_run_affinity_must_be_minus_1_divided_by_3_when_only_foreground_color_is_the_same() {
         final float EXPECTED_AFFINITY = -1f/3f;
         
-        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f}, Color.RED.invert(), 
+        float affinity = getAffinityForCharacter(new float[]{1f,1f,1f,0.5f}, Color.RED.invert(), 
                 Color.BLUE, CharacterShape.CIRCLE);
         
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY  + " with the character since"
                 + " only foreground is the same",
                 EXPECTED_AFFINITY, affinity, 0.0001f);
+    }
+    
+    @Test
+    public void UT_run_joy_must_be_the_self_similarity_when_neighbour_affinity_weight_is_0() {
+        float expectedJoy = 1 - character.getColorDifference();
+        
+        character.setAbmConfiguration(new AbmConfigurationEntity(
+                new float[]{1f,1f,1f,0f}
+        ));
+        
+        final ArrayList<Float> currentJoy = new ArrayList<>();
+        doAnswer((Answer) (InvocationOnMock invocation) -> {
+            currentJoy.add((Float) invocation.getArguments()[1]);
+            return null;
+        }).when(fakeBlackBoard).setFloat(eq(Piece.BLACKBOARD_JOY), anyFloat());
+        
+        
+        character.run();
+        
+        assertEquals("Should've set the joy to "+currentJoy+" in the blackboard,"
+                + " since neighbour affinity weight is 0",
+                expectedJoy, currentJoy.get(0), 0f);
     }
     
     private float getAffinityForCharacter (float []configurationValues, 
@@ -239,7 +263,6 @@ public class PieceTest {
         return affinityMatrix.get(fakeCharacter);
     }
     
-    
     private void initializeCharacter() {
         ObjectFactory.installMock(IBlackBoard.class, fakeBlackBoard);
         character = new Piece();
@@ -251,7 +274,7 @@ public class PieceTest {
         character.setShape(CharacterShape.TRIANGLE);
         
         AbmConfigurationEntity abmConfiguration = new AbmConfigurationEntity(
-                new float[]{0.5f, 0.5f, 0.5f}
+                new float[]{0.5f, 0.5f, 0.5f, 0.5f}
         );
         character.setAbmConfiguration(abmConfiguration);
 
@@ -273,6 +296,10 @@ public class PieceTest {
 
     private void buildFakeBlackboard() {
         fakeBlackBoard = mock(IBlackBoard.class);
+        
+        stub(fakeBlackBoard.getObject(eq(Piece.BLACKBOARD_AFFINITY_MATRIX))).toReturn(
+            fakeAffinityMatrix
+        );
     }
 
     private void initializeFakeSquareNeighbor() {

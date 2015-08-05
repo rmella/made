@@ -55,6 +55,7 @@ public class Piece implements ICharacter {
     private PieceAbmConfigurationHelper abmConfigurationHelper;
 
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
+    public static final String BLACKBOARD_JOY = "BLACKBOARD_JOY";
 
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
@@ -115,7 +116,7 @@ public class Piece implements ICharacter {
 
     @Override
     public float getColorDifference() {
-        return getColorDifference(foregroundColor, backgroundColor);
+        return calculateColorDifference(foregroundColor, backgroundColor);
     }
 
     @Override
@@ -192,11 +193,14 @@ public class Piece implements ICharacter {
         HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
 
         getAllCharacters().stream().filter(character -> character != this).forEach(character
-                -> affinityMatrix.put(character, getAffinityWithCharacter(character)));
+                -> affinityMatrix.put(character, calculateAffinityWithCharacter(character)));
+
         blackBoard.setObject(BLACKBOARD_AFFINITY_MATRIX, affinityMatrix);
     }
 
     private void resetJoy() {
+        float joy = calculateJoy();
+        blackBoard.setFloat(BLACKBOARD_JOY, joy);
     }
 
     private ArrayList<ICharacter> getAllCharacters() {
@@ -227,42 +231,59 @@ public class Piece implements ICharacter {
         allCharacters.sort((firstElement, secondElement) -> firstElement.getId().compareTo(secondElement.getId()));
     }
 
-    private Float getAffinityWithCharacter(ICharacter target) {
+    private Float calculateAffinityWithCharacter(ICharacter target) {
         float shapeSimilarity = this.getShape() == target.getShape() ? 1 : 0;
         float shapeSimilarityWeight = abmConfigurationHelper.getShapeSimilarityWeight();
         float shapeSimilarityComponent = shapeSimilarity * shapeSimilarityWeight;
-        
-        float foregroundColorSimilarity = 1f - getColorDifference(this.getForegroundColor(), target.getForegroundColor());
-        //foregroundColorSimilarity = normalize(foregroundColorSimilarity, 0f, 1f, -1, 1);
+
+        float foregroundColorSimilarity = 1f - calculateColorDifference(this.getForegroundColor(), target.getForegroundColor());
         float foregroundColorSimilarityWeight = abmConfigurationHelper.getForegroundColorSimilarityWeight();
         float foregroundColorSimilarityComponent = foregroundColorSimilarity * foregroundColorSimilarityWeight;
 
-        float backgroundColorSimilarity = 1f - getColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
-        //backgroundColorSimilarity = normalize(backgroundColorSimilarity, 0f, 1f, -1, 1);
+        float backgroundColorSimilarity = 1f - calculateColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
         float backgroundColorSimilarityWeight = abmConfigurationHelper.getBackgroundColorSimilarityWeight();
         float backgroundColorSimilarityComponent = backgroundColorSimilarity * backgroundColorSimilarityWeight;
 
         float maximumTheorical = shapeSimilarityWeight + foregroundColorSimilarityWeight + backgroundColorSimilarityWeight;
-        
-        float sumComponentes = shapeSimilarityComponent + foregroundColorSimilarityComponent  + backgroundColorSimilarityComponent;
+
+        float sumComponentes = shapeSimilarityComponent + foregroundColorSimilarityComponent + backgroundColorSimilarityComponent;
         return normalize(sumComponentes, 0, maximumTheorical, -1, 1);
     }
 
-    private static float getColorDifference(Color source, Color target) {
+    private static float calculateColorDifference(Color source, Color target) {
         double diffRed = Math.abs(source.getRed() - target.getRed());
         double diffBlue = Math.abs(source.getBlue() - target.getBlue());
         double diffGreen = Math.abs(source.getGreen() - target.getGreen());
 
         return (float) ((diffBlue + diffGreen + diffRed) / 3f);
     }
-    
-    private static float normalize (float value, float sourceMinimum,
-            float sourceMaximum, float targetMinimum, float targetMaximum){
-        if (sourceMaximum - sourceMinimum == 0){
+
+    private static float normalize(float value, float sourceMinimum,
+            float sourceMaximum, float targetMinimum, float targetMaximum) {
+
+        if (sourceMaximum - sourceMinimum == 0) {
             return 0;
         }
-        return ((targetMaximum - targetMinimum) * (value - sourceMinimum))/
-                (sourceMaximum - sourceMinimum) 
+        return ((targetMaximum - targetMinimum) * (value - sourceMinimum))
+                / (sourceMaximum - sourceMinimum)
                 + targetMinimum;
+    }
+
+    private float calculateJoy() {
+        float selfSimilarityForJoyWeight = abmConfigurationHelper.getSelfSimilarityForJoyWeight();
+        float selfSimilarity = selfSimilarityForJoyWeight == 0 ? 0f : 1f - getColorDifference();
+
+        float neighbourSimilarityForJoyWeight = abmConfigurationHelper.getNeighbourSimilarityForJoyWeight();
+        float neighbourSimilarity = neighbourSimilarityForJoyWeight == 0 ? 0f : getNeighbourSimilarityPonderatedByAffinity();
+
+        return (selfSimilarity * selfSimilarityForJoyWeight) + (neighbourSimilarity * neighbourSimilarityForJoyWeight);
+    }
+
+    private float getNeighbourSimilarityPonderatedByAffinity() {
+        HashMap<ICharacter, Float> affinityMatrix = (HashMap<ICharacter, Float>) blackBoard.getObject(BLACKBOARD_AFFINITY_MATRIX);
+        return (float) affinityMatrix.keySet().stream()
+                .mapToDouble(character -> (1f - character.getColorDifference()) * affinityMatrix.get(character))
+                .average()
+                .orElse(0f);
     }
 }

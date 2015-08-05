@@ -43,6 +43,14 @@ public class PieceAbmConfigurationHelper {
         return getGene(Gene.BACKGROUND_COLOR_SIMILARITY_WEIGHT);
     } 
 
+    float getNeighbourSimilarityForJoyWeight() {
+        return getGene(Gene.NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT);
+    }
+    
+    float getSelfSimilarityForJoyWeight() {
+        return 1f - getNeighbourSimilarityForJoyWeight();
+    }
+    
     private float getGene(Gene gene) {
         return abmConfiguration.getChromosome()[gene.ordinal()];
     }
@@ -50,6 +58,7 @@ public class PieceAbmConfigurationHelper {
     private enum Gene {
         SHAPE_SIMILARITY_WEIGHT,
         FOREGROUND_COLOR_SIMILARITY_WEIGHT,
-        BACKGROUND_COLOR_SIMILARITY_WEIGHT
+        BACKGROUND_COLOR_SIMILARITY_WEIGHT,
+        NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT
     }
 }
