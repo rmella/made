@@ -17,6 +17,7 @@
 
 package com.velonuboso.made.core.abm.api;
 
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.EventsWriter;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;

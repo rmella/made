@@ -19,7 +19,7 @@ package com.velonuboso.made.core.abm.unittest;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.CharacterShape;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.Position;
@@ -142,8 +142,8 @@ public class PieceTest {
 
     @Test
     public void UT_execute_must_define_affinity_matrix_with_proper_values() {
-        final float EXPECTED_AFFINITY_WITH_FAKE_CIRCLE = -0.2681f;
-        final float EXPECTED_AFFINITY_WITH_FAKE_SQUARE = -0.1666f;
+        final float EXPECTED_AFFINITY_WITH_FAKE_CIRCLE = -0.5363f;
+        final float EXPECTED_AFFINITY_WITH_FAKE_SQUARE = -0.3333f;
         final HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
 
         doAnswer((Answer) (InvocationOnMock invocation) -> {

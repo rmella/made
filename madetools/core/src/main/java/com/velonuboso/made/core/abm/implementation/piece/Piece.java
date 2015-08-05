@@ -19,7 +19,7 @@ package com.velonuboso.made.core.abm.implementation.piece;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.CharacterShape;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
@@ -228,21 +228,24 @@ public class Piece implements ICharacter {
     }
 
     private Float getAffinityWithCharacter(ICharacter target) {
-        float shapeSimilarity = this.getShape() == target.getShape() ? 1 : -1;
+        float shapeSimilarity = this.getShape() == target.getShape() ? 1 : 0;
         float shapeSimilarityWeight = abmConfigurationHelper.getShapeSimilarityWeight();
-
+        float shapeSimilarityComponent = shapeSimilarity * shapeSimilarityWeight;
+        
         float foregroundColorSimilarity = 1f - getColorDifference(this.getForegroundColor(), target.getForegroundColor());
-        foregroundColorSimilarity = normalize(foregroundColorSimilarity, 0f, 1f, -1, 1);
+        //foregroundColorSimilarity = normalize(foregroundColorSimilarity, 0f, 1f, -1, 1);
         float foregroundColorSimilarityWeight = abmConfigurationHelper.getForegroundColorSimilarityWeight();
+        float foregroundColorSimilarityComponent = foregroundColorSimilarity * foregroundColorSimilarityWeight;
 
         float backgroundColorSimilarity = 1f - getColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
-        backgroundColorSimilarity = normalize(backgroundColorSimilarity, 0f, 1f, -1, 1);
+        //backgroundColorSimilarity = normalize(backgroundColorSimilarity, 0f, 1f, -1, 1);
         float backgroundColorSimilarityWeight = abmConfigurationHelper.getBackgroundColorSimilarityWeight();
+        float backgroundColorSimilarityComponent = backgroundColorSimilarity * backgroundColorSimilarityWeight;
 
-        return ((shapeSimilarity * shapeSimilarityWeight)
-                + (foregroundColorSimilarity * foregroundColorSimilarityWeight)
-                + (backgroundColorSimilarity * backgroundColorSimilarityWeight)
-                )/3f;
+        float maximumTheorical = shapeSimilarityWeight + foregroundColorSimilarityWeight + backgroundColorSimilarityWeight;
+        
+        float sumComponentes = shapeSimilarityComponent + foregroundColorSimilarityComponent  + backgroundColorSimilarityComponent;
+        return normalize(sumComponentes, 0, maximumTheorical, -1, 1);
     }
 
     private static float getColorDifference(Color source, Color target) {
@@ -255,6 +258,11 @@ public class Piece implements ICharacter {
     
     private static float normalize (float value, float sourceMinimum,
             float sourceMaximum, float targetMinimum, float targetMaximum){
-        return ((targetMaximum - targetMinimum) * (value - sourceMinimum))/(sourceMaximum - sourceMinimum) + targetMinimum;
+        if (sourceMaximum - sourceMinimum == 0){
+            return 0;
+        }
+        return ((targetMaximum - targetMinimum) * (value - sourceMinimum))/
+                (sourceMaximum - sourceMinimum) 
+                + targetMinimum;
     }
 }
