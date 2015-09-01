@@ -135,12 +135,10 @@ public class Piece implements ICharacter {
 
     @Override
     public void run() {
-        IBlackBoard blackBoard = ObjectFactory.createObject(IBlackBoard.class);
-        rootNode.run(blackBoard);
+        rootNode.run(newEmptyBlackBoard());
     }
 
     // <editor-fold defaultstate="collapsed" desc="Private methods">
-    
     private void InitializeBehaviourTree() {
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
@@ -226,34 +224,34 @@ public class Piece implements ICharacter {
     }
 
     private Float calculateAffinityWithCharacter(ICharacter target) {
-        float sumComponentes = getWeightedShapeSimilarityWithCharacter(target) + 
-                 getWeightedForegroundColorSimilarityWithCharacter(target)+ 
-                getWeightedBackgroundColorSimilarityWithCharacter(target);
+        float sumComponentes = getWeightedShapeSimilarityWithCharacter(target)
+                + getWeightedForegroundColorSimilarityWithCharacter(target)
+                + getWeightedBackgroundColorSimilarityWithCharacter(target);
         return PieceUtilities.normalize(sumComponentes, 0, getMaximumWeightSum(), -1, 1);
     }
 
-    private float getWeightedShapeSimilarityWithCharacter(ICharacter target){
+    private float getWeightedShapeSimilarityWithCharacter(ICharacter target) {
         float shapeSimilarity = this.getShape() == target.getShape() ? 1 : 0;
         float shapeSimilarityWeight = abmConfigurationHelper.getShapeSimilarityWeight();
         return shapeSimilarity * shapeSimilarityWeight;
     }
-    
-    private float getWeightedForegroundColorSimilarityWithCharacter(ICharacter target){
+
+    private float getWeightedForegroundColorSimilarityWithCharacter(ICharacter target) {
         float foregroundColorSimilarity = 1f - PieceUtilities.calculateColorDifference(this.getForegroundColor(), target.getForegroundColor());
         float foregroundColorSimilarityWeight = abmConfigurationHelper.getForegroundColorSimilarityWeight();
         return foregroundColorSimilarity * foregroundColorSimilarityWeight;
     }
-    
-    private float getWeightedBackgroundColorSimilarityWithCharacter(ICharacter target){
+
+    private float getWeightedBackgroundColorSimilarityWithCharacter(ICharacter target) {
         float backgroundColorSimilarity = 1f - PieceUtilities.calculateColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
         float backgroundColorSimilarityWeight = abmConfigurationHelper.getBackgroundColorSimilarityWeight();
         return backgroundColorSimilarity * backgroundColorSimilarityWeight;
     }
-    
-    private float getMaximumWeightSum(){        
-        return abmConfigurationHelper.getShapeSimilarityWeight() + 
-                abmConfigurationHelper.getForegroundColorSimilarityWeight() +
-                abmConfigurationHelper.getBackgroundColorSimilarityWeight();
+
+    private float getMaximumWeightSum() {
+        return abmConfigurationHelper.getShapeSimilarityWeight()
+                + abmConfigurationHelper.getForegroundColorSimilarityWeight()
+                + abmConfigurationHelper.getBackgroundColorSimilarityWeight();
     }
 
     private float calculateJoy(IBlackBoard blackBoard) {
@@ -272,6 +270,10 @@ public class Piece implements ICharacter {
                 .mapToDouble(character -> (1f - character.getColorDifference()) * affinityMatrix.get(character))
                 .average()
                 .orElse(0f);
+    }
+    
+    private IBlackBoard newEmptyBlackBoard() {
+        return ObjectFactory.createObject(IBlackBoard.class);
     }
     // </editor-fold>
 }
