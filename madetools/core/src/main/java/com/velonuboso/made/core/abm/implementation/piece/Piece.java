@@ -22,14 +22,10 @@ import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
-import com.velonuboso.made.core.abm.implementation.BlackBoard;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import javafx.scene.paint.Color;
@@ -116,7 +112,7 @@ public class Piece implements ICharacter {
 
     @Override
     public float getColorDifference() {
-        return calculateColorDifference(foregroundColor, backgroundColor);
+        return PieceHelper.calculateColorDifference(foregroundColor, backgroundColor);
     }
 
     @Override
@@ -232,41 +228,34 @@ public class Piece implements ICharacter {
     }
 
     private Float calculateAffinityWithCharacter(ICharacter target) {
+        float sumComponentes = getWeightedShapeSimilarityWithCharacter(target) + 
+                 getWeightedForegroundColorSimilarityWithCharacter(target)+ 
+                getWeightedBackgroundColorSimilarityWithCharacter(target);
+        return PieceHelper.normalize(sumComponentes, 0, getMaximumWeightSum(), -1, 1);
+    }
+
+    private float getWeightedShapeSimilarityWithCharacter(ICharacter target){
         float shapeSimilarity = this.getShape() == target.getShape() ? 1 : 0;
         float shapeSimilarityWeight = abmConfigurationHelper.getShapeSimilarityWeight();
-        float shapeSimilarityComponent = shapeSimilarity * shapeSimilarityWeight;
-
-        float foregroundColorSimilarity = 1f - calculateColorDifference(this.getForegroundColor(), target.getForegroundColor());
+        return shapeSimilarity * shapeSimilarityWeight;
+    }
+    
+    private float getWeightedForegroundColorSimilarityWithCharacter(ICharacter target){
+        float foregroundColorSimilarity = 1f - PieceHelper.calculateColorDifference(this.getForegroundColor(), target.getForegroundColor());
         float foregroundColorSimilarityWeight = abmConfigurationHelper.getForegroundColorSimilarityWeight();
-        float foregroundColorSimilarityComponent = foregroundColorSimilarity * foregroundColorSimilarityWeight;
-
-        float backgroundColorSimilarity = 1f - calculateColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
+        return foregroundColorSimilarity * foregroundColorSimilarityWeight;
+    }
+    
+    private float getWeightedBackgroundColorSimilarityWithCharacter(ICharacter target){
+        float backgroundColorSimilarity = 1f - PieceHelper.calculateColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
         float backgroundColorSimilarityWeight = abmConfigurationHelper.getBackgroundColorSimilarityWeight();
-        float backgroundColorSimilarityComponent = backgroundColorSimilarity * backgroundColorSimilarityWeight;
-
-        float maximumTheorical = shapeSimilarityWeight + foregroundColorSimilarityWeight + backgroundColorSimilarityWeight;
-
-        float sumComponentes = shapeSimilarityComponent + foregroundColorSimilarityComponent + backgroundColorSimilarityComponent;
-        return normalize(sumComponentes, 0, maximumTheorical, -1, 1);
+        return backgroundColorSimilarity * backgroundColorSimilarityWeight;
     }
-
-    private static float calculateColorDifference(Color source, Color target) {
-        double diffRed = Math.abs(source.getRed() - target.getRed());
-        double diffBlue = Math.abs(source.getBlue() - target.getBlue());
-        double diffGreen = Math.abs(source.getGreen() - target.getGreen());
-
-        return (float) ((diffBlue + diffGreen + diffRed) / 3f);
-    }
-
-    private static float normalize(float value, float sourceMinimum,
-            float sourceMaximum, float targetMinimum, float targetMaximum) {
-
-        if (sourceMaximum - sourceMinimum == 0) {
-            return 0;
-        }
-        return ((targetMaximum - targetMinimum) * (value - sourceMinimum))
-                / (sourceMaximum - sourceMinimum)
-                + targetMinimum;
+    
+    private float getMaximumWeightSum(){        
+        return abmConfigurationHelper.getShapeSimilarityWeight() + 
+                abmConfigurationHelper.getForegroundColorSimilarityWeight() +
+                abmConfigurationHelper.getBackgroundColorSimilarityWeight();
     }
 
     private float calculateJoy() {
