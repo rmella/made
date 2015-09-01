@@ -22,7 +22,7 @@ import javafx.scene.paint.Color;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class PieceHelper {
+public class PieceUtilities {
     
     public static float calculateColorDifference(Color source, Color target) {
         double diffRed = Math.abs(source.getRed() - target.getRed());

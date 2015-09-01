@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 public class BehaviourTreeNodeTest {
 
     private BehaviourTreeNode node;
-    private Consumer<IBehaviourTreeNode> fakeConsumer;
+    private Consumer<IBlackBoard> fakeConsumer;
     private ICharacter fakeCharacter;
     private IMap fakeMap;
     private IBehaviourTreeNode fakeNodeFirstChild;
@@ -107,7 +107,7 @@ public class BehaviourTreeNodeTest {
     public void UT_BehaviourTreeNode_must_execute_consumer_when_run() {
         node.setActionWhenRun(fakeConsumer);
         node.run(fakeBlackBoard);
-        verify(fakeConsumer).accept(node);
+        verify(fakeConsumer).accept(fakeBlackBoard);
     }
     
     @Test

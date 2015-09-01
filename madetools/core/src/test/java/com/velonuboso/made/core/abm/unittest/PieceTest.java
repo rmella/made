@@ -77,11 +77,14 @@ public class PieceTest {
         buildFakeEventsWriter();
         initializeCharacter();
         buildFakeMap();
+        
+        ObjectFactory.installMock(IBlackBoard.class, fakeBlackBoard);
         character.setMap(fakeMap);
     }
 
     @After
     public void tearDown() {
+        ObjectFactory.removeMock(IBlackBoard.class);
     }
 
     @Test

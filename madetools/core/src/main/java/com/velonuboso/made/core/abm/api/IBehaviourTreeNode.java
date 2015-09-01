@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 @ImplementedBy(targetClass = BehaviourTreeNode.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IBehaviourTreeNode {
     void setCharacter (ICharacter character);
-    void setActionWhenRun(Consumer<IBehaviourTreeNode> action);
+    void setActionWhenRun(Consumer<IBlackBoard> action);
     void addChildNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 
             float probabilityToRunChildren, IBehaviourTreeNode nodeToRun);
     boolean run(IBlackBoard blackBoard);

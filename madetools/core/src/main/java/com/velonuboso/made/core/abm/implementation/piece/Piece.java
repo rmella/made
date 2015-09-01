@@ -44,7 +44,6 @@ public class Piece implements ICharacter {
     private Color foregroundColor;
     private Color backgroundColor;
     private ArrayList<ICharacter> allCharacters;
-    private IBlackBoard blackBoard;
     private CharacterShape shape;
 
     private IProbabilityHelper probabilityHelper;
@@ -63,7 +62,6 @@ public class Piece implements ICharacter {
         backgroundColor = probabilityHelper.getRandomColor();
 
         allCharacters = null;
-        blackBoard = ObjectFactory.createObject(IBlackBoard.class);
     }
 
     @Override
@@ -112,7 +110,7 @@ public class Piece implements ICharacter {
 
     @Override
     public float getColorDifference() {
-        return PieceHelper.calculateColorDifference(foregroundColor, backgroundColor);
+        return PieceUtilities.calculateColorDifference(foregroundColor, backgroundColor);
     }
 
     @Override
@@ -137,9 +135,12 @@ public class Piece implements ICharacter {
 
     @Override
     public void run() {
+        IBlackBoard blackBoard = ObjectFactory.createObject(IBlackBoard.class);
         rootNode.run(blackBoard);
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Private methods">
+    
     private void InitializeBehaviourTree() {
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
@@ -151,11 +152,8 @@ public class Piece implements ICharacter {
     }
 
     private void addBlackBoardInitializerToNode(IBehaviourTreeNode node) {
-        node.setActionWhenRun(new Consumer<IBehaviourTreeNode>() {
-            @Override
-            public void accept(IBehaviourTreeNode node) {
-                initializeBlackboard();
-            }
+        node.setActionWhenRun((IBlackBoard blackboard) -> {
+            initializeBlackboard(blackboard);
         });
     }
 
@@ -174,9 +172,9 @@ public class Piece implements ICharacter {
     private void addChildForFallbackBehaviour(IBehaviourTreeNode parentNode) {
     }
 
-    private void initializeBlackboard() {
-        resetAffinityMatrix();
-        resetJoy();
+    private void initializeBlackboard(IBlackBoard blackBoard) {
+        resetAffinityMatrix(blackBoard);
+        resetJoy(blackBoard);
     }
 
     private IBehaviourTreeNode buildSimpleNodeForCharacter() {
@@ -185,7 +183,7 @@ public class Piece implements ICharacter {
         return node;
     }
 
-    private void resetAffinityMatrix() {
+    private void resetAffinityMatrix(IBlackBoard blackBoard) {
         HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
 
         getAllCharacters().stream().filter(character -> character != this).forEach(character
@@ -194,8 +192,8 @@ public class Piece implements ICharacter {
         blackBoard.setObject(BLACKBOARD_AFFINITY_MATRIX, affinityMatrix);
     }
 
-    private void resetJoy() {
-        float joy = calculateJoy();
+    private void resetJoy(IBlackBoard blackBoard) {
+        float joy = calculateJoy(blackBoard);
         blackBoard.setFloat(BLACKBOARD_JOY, joy);
     }
 
@@ -231,7 +229,7 @@ public class Piece implements ICharacter {
         float sumComponentes = getWeightedShapeSimilarityWithCharacter(target) + 
                  getWeightedForegroundColorSimilarityWithCharacter(target)+ 
                 getWeightedBackgroundColorSimilarityWithCharacter(target);
-        return PieceHelper.normalize(sumComponentes, 0, getMaximumWeightSum(), -1, 1);
+        return PieceUtilities.normalize(sumComponentes, 0, getMaximumWeightSum(), -1, 1);
     }
 
     private float getWeightedShapeSimilarityWithCharacter(ICharacter target){
@@ -241,13 +239,13 @@ public class Piece implements ICharacter {
     }
     
     private float getWeightedForegroundColorSimilarityWithCharacter(ICharacter target){
-        float foregroundColorSimilarity = 1f - PieceHelper.calculateColorDifference(this.getForegroundColor(), target.getForegroundColor());
+        float foregroundColorSimilarity = 1f - PieceUtilities.calculateColorDifference(this.getForegroundColor(), target.getForegroundColor());
         float foregroundColorSimilarityWeight = abmConfigurationHelper.getForegroundColorSimilarityWeight();
         return foregroundColorSimilarity * foregroundColorSimilarityWeight;
     }
     
     private float getWeightedBackgroundColorSimilarityWithCharacter(ICharacter target){
-        float backgroundColorSimilarity = 1f - PieceHelper.calculateColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
+        float backgroundColorSimilarity = 1f - PieceUtilities.calculateColorDifference(this.getBackgroundColor(), target.getBackgroundColor());
         float backgroundColorSimilarityWeight = abmConfigurationHelper.getBackgroundColorSimilarityWeight();
         return backgroundColorSimilarity * backgroundColorSimilarityWeight;
     }
@@ -258,21 +256,22 @@ public class Piece implements ICharacter {
                 abmConfigurationHelper.getBackgroundColorSimilarityWeight();
     }
 
-    private float calculateJoy() {
+    private float calculateJoy(IBlackBoard blackBoard) {
         float selfSimilarityForJoyWeight = abmConfigurationHelper.getSelfSimilarityForJoyWeight();
         float selfSimilarity = selfSimilarityForJoyWeight == 0 ? 0f : 1f - getColorDifference();
 
         float neighbourSimilarityForJoyWeight = abmConfigurationHelper.getNeighbourSimilarityForJoyWeight();
-        float neighbourSimilarity = neighbourSimilarityForJoyWeight == 0 ? 0f : getNeighbourSimilarityPonderatedByAffinity();
+        float neighbourSimilarity = neighbourSimilarityForJoyWeight == 0 ? 0f : getNeighbourSimilarityPonderatedByAffinity(blackBoard);
 
         return (selfSimilarity * selfSimilarityForJoyWeight) + (neighbourSimilarity * neighbourSimilarityForJoyWeight);
     }
 
-    private float getNeighbourSimilarityPonderatedByAffinity() {
+    private float getNeighbourSimilarityPonderatedByAffinity(IBlackBoard blackBoard) {
         HashMap<ICharacter, Float> affinityMatrix = (HashMap<ICharacter, Float>) blackBoard.getObject(BLACKBOARD_AFFINITY_MATRIX);
         return (float) affinityMatrix.keySet().stream()
                 .mapToDouble(character -> (1f - character.getColorDifference()) * affinityMatrix.get(character))
                 .average()
                 .orElse(0f);
     }
+    // </editor-fold>
 }

@@ -33,7 +33,7 @@ import java.util.function.Predicate;
 public class BehaviourTreeNode implements IBehaviourTreeNode {
 
     private ICharacter character;
-    private Consumer<IBehaviourTreeNode> action;
+    private Consumer<IBlackBoard> action;
     private ArrayList<ChildCondition> childrenConditions;
     private IProbabilityHelper probabilityHelper;
 
@@ -50,7 +50,7 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
-    public void setActionWhenRun(Consumer<IBehaviourTreeNode> action) {
+    public void setActionWhenRun(Consumer<IBlackBoard> action) {
         this.action = action;
     }
 
@@ -69,7 +69,7 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     @Override
     public boolean run(IBlackBoard blackBoard) {
         checkCorrectInitialization();
-        action.accept(this);
+        action.accept(blackBoard);
         
         boolean success = false;
         int childIndex = 0;
@@ -118,9 +118,9 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         IBehaviourTreeNode nodeToRun = null;
     }
 
-    private class NullAction implements Consumer<IBehaviourTreeNode> {
+    private class NullAction implements Consumer<IBlackBoard> {
         @Override
-        public void accept(IBehaviourTreeNode t) {
+        public void accept(IBlackBoard t) {
         }
     };
 }
