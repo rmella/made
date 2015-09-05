@@ -26,6 +26,10 @@ public enum CharacterShape {
     TRIANGLE,
     SQUARE;
 
+    public boolean wins (final CharacterShape target){
+        return wins(this, target);
+    }
+    
     public static boolean wins(final CharacterShape source, final CharacterShape target) {
         return (source == CIRCLE && target == TRIANGLE)
                 || (source == TRIANGLE && target == SQUARE)

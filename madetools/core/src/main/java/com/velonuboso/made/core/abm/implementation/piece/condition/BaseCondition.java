@@ -14,15 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.api.condition;
 
-import com.velonuboso.made.core.abm.implementation.piece.condition.ConditionCanDeteriorateEnemySimilarity;
-import com.velonuboso.made.core.common.util.ImplementedBy;
+package com.velonuboso.made.core.abm.implementation.piece.condition;
+
+import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.api.condition.ICondition;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = ConditionCanDeteriorateEnemySimilarity.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IConditionCanDeteriorateEnemySimilarity extends ICondition{
+public abstract class BaseCondition implements ICondition{
+
+    ICharacter character;
+    
+    @Override
+    public void setCharacter(ICharacter character) {
+        this.character = character;
+    }
+
+    IMap getMap(){
+        return character.getMap();
+    }
+    
+    @Override
+    public abstract boolean test(IBlackBoard blackboard);
+
 }

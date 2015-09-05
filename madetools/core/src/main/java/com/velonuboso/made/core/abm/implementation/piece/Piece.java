@@ -19,15 +19,14 @@ package com.velonuboso.made.core.abm.implementation.piece;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Consumer;
 import javafx.scene.paint.Color;
 
 /**
@@ -138,6 +137,12 @@ public class Piece implements ICharacter {
         rootNode.run(newEmptyBlackBoard());
     }
 
+    public void setBehaviourTree (IBehaviourTreeNode node){
+        rootNode = buildSimpleNodeForCharacter();
+        addBlackBoardInitializerToNode(rootNode);
+        rootNode.addChildNodeInOrder(blackboard->true, 1, node);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     private void InitializeBehaviourTree() {
         rootNode = buildSimpleNodeForCharacter();

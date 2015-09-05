@@ -29,7 +29,7 @@ import java.util.function.Predicate;
 public interface IBehaviourTreeNode {
     void setCharacter (ICharacter character);
     void setActionWhenRun(Consumer<IBlackBoard> action);
-    void addChildNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 
+    void addChildNodeInOrder(Predicate<IBlackBoard> conditionToRunChildren, 
             float probabilityToRunChildren, IBehaviourTreeNode nodeToRun);
     boolean run(IBlackBoard blackBoard);
 }

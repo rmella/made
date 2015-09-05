@@ -16,16 +16,16 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveFriendSimilarity;
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionCanImproveFriendSimilarity implements IConditionCanImproveFriendSimilarity{
+public class ConditionCanImproveFriendSimilarity extends BaseCondition implements IConditionCanImproveFriendSimilarity{
 
     @Override
-    public boolean test(IBehaviourTreeNode t) {
+    public boolean test(IBlackBoard t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

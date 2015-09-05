@@ -22,6 +22,7 @@ import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.TerrainType;
 import java.util.HashSet;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -403,5 +404,30 @@ public class MapTest {
         assertFalse("Shouldn't contain cell " + targetCell + " (" + newX + "," + newY + ") "
                 + "since an obstacle is present in (" + obstacleX + "," + obstacleY + ")",
                 map.getCellsToMove(sourceCell, movement).contains(targetCell));
+    }
+    
+    @Test
+    public void getCellsAround__When_distance_is_1_should_return_adjacent_cells() {
+        final int EXPECTED_NUMBER_OF_ELEMENTS = 8;
+        final int MAX_MOVEMENT = 1;
+        
+        int currentCell = map.getCell(5, 5);
+        List<Integer> cellsAround = map.getCellsAround(currentCell, MAX_MOVEMENT);
+        
+        assertEquals("Should've returned "+EXPECTED_NUMBER_OF_ELEMENTS+ " elements",
+                EXPECTED_NUMBER_OF_ELEMENTS, cellsAround.size());
+    }
+    
+    
+    @Test
+    public void getCellsAround__When_distance_is_0_should_return_no_cells() {
+        final int EXPECTED_NUMBER_OF_ELEMENTS = 0;
+        final int MAX_MOVEMENT = 0;
+        
+        int currentCell = map.getCell(5, 5);
+        List<Integer> cellsAround = map.getCellsAround(currentCell, MAX_MOVEMENT);
+        
+        assertEquals("Should've returned "+EXPECTED_NUMBER_OF_ELEMENTS+ " elements",
+                EXPECTED_NUMBER_OF_ELEMENTS, cellsAround.size());
     }
 }

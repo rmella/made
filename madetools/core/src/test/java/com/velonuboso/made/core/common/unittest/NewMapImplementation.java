@@ -110,5 +110,10 @@ public class NewMapImplementation implements IMap{
         public int getHeight() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
+
+    @Override
+    public List<Integer> getCellsAround(Integer currentCellId, int maxMovement) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
         
     }

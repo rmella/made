@@ -16,12 +16,17 @@
  */
 package com.velonuboso.made.core.abm.api.condition;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import java.util.function.Predicate;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface ICondition extends Predicate<IBehaviourTreeNode>{
+public interface ICondition extends Predicate<IBlackBoard>{
+
+    public void setCharacter(ICharacter character);
+    
 }

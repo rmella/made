@@ -36,6 +36,8 @@ public interface IMap {
 
     public List<Integer> getCellsToMove(Integer cellId, int maxMovement);
 
+    public List<Integer> getCellsAround(Integer currentCellId, int maxMovement);
+    
     public void putCharacter(ICharacter character, int cell);
 
     public void removeCharacter(int cell);

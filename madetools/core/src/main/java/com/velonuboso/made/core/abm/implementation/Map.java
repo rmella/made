@@ -21,12 +21,14 @@ import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.TerrainType;
+import java.awt.font.NumericShaper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -94,10 +96,10 @@ public class Map implements IMap {
     private void recursiveAddCellsToMove(Integer currentCell, HashSet<Integer> navigatedCells,
             int maxMovement, ICharacter author) {
 
-        if (maxMovement<0){
+        if (maxMovement < 0) {
             return;
         }
-        
+
         int sourceX = getXFromId(currentCell);
         int sourceY = getYFromId(currentCell);
 
@@ -105,15 +107,42 @@ public class Map implements IMap {
 
         for (int offsetX = -1; offsetX < 2; offsetX++) {
             for (int offsetY = -1; offsetY < 2; offsetY++) {
-                
+
                 int navigableCell = getCell(sourceX + offsetX, sourceY + offsetY);
-                if (!navigatedCells.contains(navigableCell) 
+                if (!navigatedCells.contains(navigableCell)
                         && (cellCanBeOccupiedByCharacter(navigableCell, author))) {
-                    
-                    recursiveAddCellsToMove(navigableCell, navigatedCells, maxMovement-1, author);
+
+                    recursiveAddCellsToMove(navigableCell, navigatedCells, maxMovement - 1, author);
                 }
             }
         }
+    }
+
+    @Override
+    public List<Integer> getCellsAround(Integer currentCellId, int maxMovement) {
+
+        int cellX = getPositionX(currentCellId);
+        int cellY = getPositionY(currentCellId);
+
+        int fromX = cellX - maxMovement;
+        int toX = cellX + maxMovement + 1;
+        int fromY = cellY - maxMovement;
+        int toY = cellY + maxMovement + 1;
+
+        ArrayList<Integer> cells = new ArrayList<>();
+
+        IntStream.range(fromX, toX).forEach(
+                x -> IntStream.range(fromY, toY).forEach(
+                        y -> {
+                            int cellAround = getCell(x, y);
+                            if (cellAround != currentCellId) {
+                                cells.add(getCell(x, y));
+                            }
+                        }
+                )
+        );
+
+        return cells;
     }
 
     @Override
@@ -129,15 +158,16 @@ public class Map implements IMap {
     @Override
     public void putCharacter(ICharacter character, int cell) {
         if (characterByCell.get(cell) != null) {
-            throw new RuntimeException("Cell " + cell + 
-                    " already has a character: " + characterByCell.get(cell));
+            throw new RuntimeException("Cell " + cell
+                    + " already has a character: " + characterByCell.get(cell));
         }
-        if (cellByCharacter.keySet().contains(character)){
-            throw new RuntimeException("Character " + character + 
-                    " is already in the map");
+        if (cellByCharacter.keySet().contains(character)) {
+            throw new RuntimeException("Character " + character
+                    + " is already in the map");
         }
         characterByCell.put(cell, character);
         cellByCharacter.put(character, cell);
+        character.setMap(this);
     }
 
     @Override
@@ -200,6 +230,6 @@ public class Map implements IMap {
     }
 
     private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
-        return getCharacter(navigableCell)==author || getCharacter(navigableCell)==null;
+        return getCharacter(navigableCell) == author || getCharacter(navigableCell) == null;
     }
 }

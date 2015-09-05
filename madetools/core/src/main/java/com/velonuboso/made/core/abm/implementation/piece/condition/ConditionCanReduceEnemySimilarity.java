@@ -17,13 +17,13 @@
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
+import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimilarity;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionSadness extends BaseCondition implements IConditionSadness{
+public class ConditionCanReduceEnemySimilarity extends BaseCondition implements IConditionCanReduceEnemySimilarity{
 
     @Override
     public boolean test(IBlackBoard t) {

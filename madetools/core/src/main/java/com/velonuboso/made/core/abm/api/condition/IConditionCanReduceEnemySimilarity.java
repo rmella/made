@@ -14,19 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.implementation.piece.condition;
+package com.velonuboso.made.core.abm.api.condition;
 
-import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
-import com.velonuboso.made.core.abm.api.condition.IConditionCanDeteriorateEnemySimilarity;
+import com.velonuboso.made.core.abm.implementation.piece.condition.ConditionCanReduceEnemySimilarity;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionCanDeteriorateEnemySimilarity implements IConditionCanDeteriorateEnemySimilarity{
-
-    @Override
-    public boolean test(IBehaviourTreeNode t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+@ImplementedBy(targetClass = ConditionCanReduceEnemySimilarity.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IConditionCanReduceEnemySimilarity extends ICondition{
 }

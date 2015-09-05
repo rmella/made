@@ -55,7 +55,7 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
-    public void addChildNodeInOrder(Predicate<IBehaviourTreeNode> conditionToRunChildren, 
+    public void addChildNodeInOrder(Predicate<IBlackBoard> conditionToRunChildren, 
             float probabilityToRunChildren, IBehaviourTreeNode nodeToRun) {
         
         ChildCondition child = new ChildCondition();
@@ -77,7 +77,7 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         while (!success && childIndex<childrenConditions.size()){
             ChildCondition child = childrenConditions.get(childIndex);
             
-            if (isInProbability(child) && conditionValidates(child)){
+            if (isInProbability(child) && conditionValidates(child, blackBoard)){
                  success |= child.nodeToRun.run(blackBoard);
             }
             childIndex++;
@@ -86,8 +86,8 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         return success;
     }
 
-    private boolean conditionValidates(ChildCondition child) {
-        return child.conditionToRunChildren.test(this);
+    private boolean conditionValidates(ChildCondition child, IBlackBoard blackBoard) {
+        return child.conditionToRunChildren.test(blackBoard);
     }
 
     private boolean isInProbability(ChildCondition child) {
@@ -112,8 +112,7 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     private class ChildCondition {
-
-        Predicate<IBehaviourTreeNode> conditionToRunChildren = null;
+        Predicate<IBlackBoard> conditionToRunChildren = null;
         float probabilityToRunChildren = 0f;
         IBehaviourTreeNode nodeToRun = null;
     }
