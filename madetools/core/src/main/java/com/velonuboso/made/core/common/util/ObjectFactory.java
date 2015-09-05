@@ -127,4 +127,9 @@ public class ObjectFactory {
         final Reflections reflections = new Reflections("com.velonuboso");
         return reflections.getTypesAnnotatedWith(ImplementedBy.class);
     }
+
+    public static void cleanAllMocks() {
+        mappingMockingClasses.clear();
+        mappingMockingInstances.clear();
+    }
 }

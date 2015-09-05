@@ -62,6 +62,7 @@ public class ConditionsTest {
                 conditionSatisfied = true;
             }
         );
+        ObjectFactory.cleanAllMocks();
     }
     
     @Test
@@ -92,6 +93,19 @@ public class ConditionsTest {
         SetBehaviourConditionFearAndRun(mainPiece);
         
         assertTrue("Should've called the defaultActionNode since the adjacent square piece can move it", conditionSatisfied);
+    }
+    
+    @Test
+    public void UT_ConditionFear__when_piece_has_has_fear_it_stores_the_source_of_fear_in_the_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
+        
+        IBlackBoard fakeBlackboard = mock(IBlackBoard.class);
+        ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
+        SetBehaviourConditionFearAndRun(mainPiece);
+        ObjectFactory.removeMock(IBlackBoard.class);
+        
+        //TODO assert
     }
     
     private void SetBehaviourConditionFearAndRun(Piece mainPiece) {
