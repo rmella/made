@@ -17,6 +17,8 @@
 
 package com.velonuboso.made.core.abm.unittest;
 
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import com.sun.org.apache.xpath.internal.Arg;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
@@ -26,15 +28,22 @@ import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.BlackBoard;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.condition.ConditionFear;
+import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import javafx.scene.paint.Color;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.ArgumentMatcher;
 import static org.mockito.Mockito.*;
 
 
@@ -105,7 +114,20 @@ public class ConditionsTest {
         SetBehaviourConditionFearAndRun(mainPiece);
         ObjectFactory.removeMock(IBlackBoard.class);
         
-        //TODO assert
+        verify(fakeBlackboard).setInt(eq(Piece.BLACKBOARD_SCARIEST_ENEMY_CELL), anyInt());
+    }
+    
+    @Test
+    public void UT_ConditionFear__when_piece_has_has_fear_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
+        SetBehaviourConditionFearAndRun(mainPiece);
+        verify(fakeEventsWriter).add(argThat(new ArgumentMatcher<IEvent>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((IEvent)item).toLogicalPredicate().startsWith(EventFactory.HAS_FEAR);
+            }
+        }));
     }
     
     private void SetBehaviourConditionFearAndRun(Piece mainPiece) {

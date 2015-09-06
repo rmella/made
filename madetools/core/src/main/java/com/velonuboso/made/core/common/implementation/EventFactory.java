@@ -30,6 +30,7 @@ public class EventFactory implements IEventFactory {
 
     public static final String WORLD_EXISTS = "WorldExist";
     public static final String INHABITANT_EXISTS = "InhabitantExists";
+    public static final String HAS_FEAR = "HasFear";
     
     @Override
     public IEvent worldExists(final IWorld world) {
@@ -41,4 +42,8 @@ public class EventFactory implements IEventFactory {
         return new Event(INHABITANT_EXISTS, inhabitant.getId());
     }
 
+    @Override
+    public IEvent hasFear(final ICharacter subject, final ICharacter enemy){
+        return new Event(HAS_FEAR, subject.getId(), enemy.getId());
+    }
 }

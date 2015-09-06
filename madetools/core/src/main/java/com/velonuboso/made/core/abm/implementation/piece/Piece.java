@@ -50,6 +50,7 @@ public class Piece implements ICharacter {
 
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
     public static final String BLACKBOARD_JOY = "BLACKBOARD_JOY";
+    public static final String BLACKBOARD_SCARIEST_ENEMY_CELL = "BLACKBOARD_SCARY_ENEMY";
 
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
@@ -82,6 +83,11 @@ public class Piece implements ICharacter {
         this.id = newId;
     }
 
+    @Override
+    public IEventsWriter getEventsWriter() {
+        return eventsWriter;
+    }
+    
     @Override
     public void setEventsWriter(final IEventsWriter newEventsWriter) {
         this.eventsWriter = newEventsWriter;

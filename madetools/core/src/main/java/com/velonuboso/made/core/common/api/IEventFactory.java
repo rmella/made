@@ -30,9 +30,7 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
 
 @ImplementedBy(targetClass = EventFactory.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IEventFactory {
-
     IEvent inhabitantExists(ICharacter inhabitant);
-
     IEvent worldExists(IWorld world);
-
+    IEvent hasFear(final ICharacter subject, final ICharacter enemy);
 }

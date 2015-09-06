@@ -42,6 +42,7 @@ public interface ICharacter {
     public IMap getMap();
     public CharacterShape getShape();
     
+    public IEventsWriter getEventsWriter();
     public Color getBackgroundColor();
     public Color getForegroundColor();
     public float getColorDifference ();
