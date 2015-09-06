@@ -17,16 +17,72 @@
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.condition.IConditionAnticipation;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.List;
+import javafx.scene.paint.Color;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionAnticipation extends BaseCondition implements IConditionAnticipation{
+public class ConditionAnticipation extends BaseCondition implements IConditionAnticipation {
 
     @Override
-    public boolean test(IBlackBoard t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean test(IBlackBoard blackBoard) {
+        IColorSpot spot = getAdjacentColorSpot(blackBoard);
+        if (spot != null) {
+            storeSpotCellIntoBlackboard(spot, blackBoard);
+            writeEvent(spot);
+        }
+        return spot != null;
+    }
+
+    private IColorSpot getAdjacentColorSpot(IBlackBoard blackBoard) {
+        int currentCharacterPosition = getMap().getCell(character);
+        List<Integer> cellsToLookAt = getMap().getCellsAround(currentCharacterPosition, 1);
+
+        IColorSpot spot = cellsToLookAt.stream()
+                .map(cell -> getMap().getColorSpot(cell))
+                .filter(spotIncell -> spotIncell != null 
+                        && betterColorThanCharacterBackground(spotIncell)
+                        && notOccupiedByOtherCharacter(spotIncell))
+                .max((IColorSpot firstSpot, IColorSpot secondSpot) -> {
+                    float firstDifference = getSimilarityWithForeground(firstSpot.getColor());
+                    float SecondDifference = getSimilarityWithForeground(secondSpot.getColor());
+                    return Float.compare(firstDifference, SecondDifference);
+                })
+                .orElse(null);
+        return spot;
+    }
+
+    private boolean betterColorThanCharacterBackground(IColorSpot spotIncell) {
+        float similarityOfSpot = getSimilarityWithForeground(spotIncell.getColor());
+        float similarityOfCurrentBackground = getSimilarityWithForeground(character.getBackgroundColor());
+        return similarityOfSpot > similarityOfCurrentBackground;
+    }
+    
+    private float getSimilarityWithForeground(Color color) {
+        return 1f - PieceUtilities.calculateColorDifference(color, character.getForegroundColor());
+    }
+
+    private boolean notOccupiedByOtherCharacter(IColorSpot spotIncell) {
+        int cellOfSpot = getMap().getCell(spotIncell);
+        return getMap().getCharacter(cellOfSpot) == null;
+    }
+    
+    private void storeSpotCellIntoBlackboard(IColorSpot spot, IBlackBoard blackBoard) {
+        blackBoard.setInt(Piece.BLACKBOARD_TARGET_SPOT, getMap().getCell(spot));
+    }
+
+    private void writeEvent(IColorSpot spot) {
+        IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent anticipationEvent = eventFactory.hasAnticipation(character, spot);
+        character.getEventsWriter().add(anticipationEvent);
     }
 }

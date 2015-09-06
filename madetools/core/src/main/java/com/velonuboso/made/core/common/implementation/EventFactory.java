@@ -19,6 +19,7 @@ package com.velonuboso.made.core.common.implementation;
 
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.abm.api.IWorld;
 
@@ -31,6 +32,7 @@ public class EventFactory implements IEventFactory {
     public static final String WORLD_EXISTS = "WorldExist";
     public static final String INHABITANT_EXISTS = "InhabitantExists";
     public static final String HAS_FEAR = "HasFear";
+    public static final String HAS_ANTICIPATION = "HasAnticipation";
     
     @Override
     public IEvent worldExists(final IWorld world) {
@@ -45,5 +47,10 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent hasFear(final ICharacter subject, final ICharacter enemy){
         return new Event(HAS_FEAR, subject.getId(), enemy.getId());
+    }
+    
+    @Override
+    public IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot){
+        return new Event(HAS_ANTICIPATION, subject.getId(), spot.getId());
     }
 }

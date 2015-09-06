@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.abm.unittest;
 
 import com.sun.org.apache.bcel.internal.generic.AALOAD;
@@ -22,10 +21,13 @@ import com.sun.org.apache.xpath.internal.Arg;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.api.condition.ICondition;
+import com.velonuboso.made.core.abm.api.condition.IConditionAnticipation;
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.BlackBoard;
+import com.velonuboso.made.core.abm.implementation.ColorSpot;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.condition.ConditionFear;
 import com.velonuboso.made.core.common.api.IEvent;
@@ -46,41 +48,41 @@ import static org.junit.Assert.*;
 import org.mockito.ArgumentMatcher;
 import static org.mockito.Mockito.*;
 
-
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class ConditionsTest {
-    
+
     private AbmConfigurationEntity abmConfigurationEntity;
     private IEventsWriter fakeEventsWriter;
     private IMap map;
     private BehaviourTreeNode defaultActionNode;
     private boolean conditionSatisfied;
-    
+
     @Before
     public void setUp() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{0,0,0,0,0,0,0,0,0,0,0,0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
         defaultActionNode = new BehaviourTreeNode();
         conditionSatisfied = false;
         defaultActionNode.setActionWhenRun(blackboard -> {
-                conditionSatisfied = true;
-            }
+            conditionSatisfied = true;
+        }
         );
         ObjectFactory.cleanAllMocks();
     }
-    
+
+    // <editor-fold desc="ConditionFear tests" defaultstate="collapsed">
     @Test
     public void UT_ConditionFear__when_piece_has_no_adjacent_pieces_the_piece_has_no_fear() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 5, 5);
-        
-        SetBehaviourConditionFearAndRun(mainPiece);
-        
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionFear.class));
+
         assertFalse("Shouldn't have called the defaultActionNode since the adjacent circular piece cannot move it", conditionSatisfied);
     }
 
@@ -88,63 +90,139 @@ public class ConditionsTest {
     public void UT_ConditionFear__when_piece_has_adjacent_pieces_that_cannot_win_it_has_no_fear() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 1, 0);
-        
-        SetBehaviourConditionFearAndRun(mainPiece);
-        
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionFear.class));
+
         assertFalse("Shouldn't have called the defaultActionNode since the adjacent circular piece cannot move it", conditionSatisfied);
     }
-    
+
     @Test
     public void UT_ConditionFear__when_piece_has_adjacent_pieces_that_can_win_it_has_fear() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
-        
-        SetBehaviourConditionFearAndRun(mainPiece);
-        
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionFear.class));
+
         assertTrue("Should've called the defaultActionNode since the adjacent square piece can move it", conditionSatisfied);
     }
-    
+
     @Test
-    public void UT_ConditionFear__when_piece_has_has_fear_it_stores_the_source_of_fear_in_the_blackboard() {
+    public void UT_ConditionFear__when_piece_has_fear_it_stores_the_source_of_fear_in_the_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
-        
+
         IBlackBoard fakeBlackboard = mock(IBlackBoard.class);
         ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
-        SetBehaviourConditionFearAndRun(mainPiece);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionFear.class));
+
         ObjectFactory.removeMock(IBlackBoard.class);
-        
+
         verify(fakeBlackboard).setInt(eq(Piece.BLACKBOARD_SCARIEST_ENEMY_CELL), anyInt());
     }
-    
+
     @Test
-    public void UT_ConditionFear__when_piece_has_has_fear_it_writes_to_the_log() {
+    public void UT_ConditionFear__when_piece_has_fear_it_writes_to_the_log() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
-        SetBehaviourConditionFearAndRun(mainPiece);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionFear.class));
+
         verify(fakeEventsWriter).add(argThat(new ArgumentMatcher<IEvent>() {
             @Override
             public boolean matches(Object item) {
-                return ((IEvent)item).toLogicalPredicate().startsWith(EventFactory.HAS_FEAR);
+                return ((IEvent) item).toLogicalPredicate().startsWith(EventFactory.HAS_FEAR);
+            }
+        }));
+    }
+
+    // </editor-fold>
+    // <editor-fold desc="ConditionAnticipation tests" defaultstate="collapsed">
+    @Test
+    public void UT_ConditionAnticipation__when_piece_has_no_adjacent_spot_it_has_no_anticipation() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
+        buildSpot(1, Color.GREEN, 3, 3);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
+
+        assertFalse("Shouldn't have called the defaultActionNode since there's no adjacent spot", conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionAnticipation__when_piece_has_adjacent_spot_but_cannot_improve_self_similarity_it_has_no_anticipation() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
+        buildSpot(1, Color.BLACK, 1, 1);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
+
+        assertFalse("Shouldn't have called the defaultActionNode since the adjacent spot will not improve similarity",
+                conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionAnticipation__when_piece_has_adjacent_spot_and_can_improve_self_similarity_but_it_is_occupied_it_has_anticipation() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 1, 1);
+        buildSpot(2, Color.GREEN, 1, 1);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
+
+        assertFalse("Shouldn't have called the defaultActionNode since the adjacent spot has currently a piece above",
+                conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionAnticipation__when_piece_has_adjacent_spot_and_can_improve_self_similarity_it_has_anticipation() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
+        buildSpot(2, Color.GREEN, 1, 1);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
+
+        assertTrue("Should've called the defaultActionNode since the adjacent spot will improve similarity",
+                conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionAnticipation__when_piece_has_anticipation_it_stores_the_target_spot_in_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.GREEN, 1, 1);
+
+        IBlackBoard fakeBlackboard = mock(IBlackBoard.class);
+        ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
+
+        ObjectFactory.removeMock(IBlackBoard.class);
+
+        verify(fakeBlackboard).setInt(eq(Piece.BLACKBOARD_TARGET_SPOT), anyInt());
+    }
+
+    @Test
+    public void UT_ConditionAnticipation__when_piece_has_anticipation_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.GREEN, 1, 1);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
+
+        verify(fakeEventsWriter).add(argThat(new ArgumentMatcher<IEvent>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((IEvent) item).toLogicalPredicate().startsWith(EventFactory.HAS_ANTICIPATION);
             }
         }));
     }
     
-    private void SetBehaviourConditionFearAndRun(Piece mainPiece) {
-        final IConditionFear conditionFear = ObjectFactory.createObject(IConditionFear.class);
-        conditionFear.setCharacter(mainPiece);
-        
+    private void SetConditionAndRun(Piece mainPiece, ICondition condition) {
+        condition.setCharacter(mainPiece);
         BehaviourTreeNode rootNode = new BehaviourTreeNode();
         rootNode.setCharacter(mainPiece);
         defaultActionNode.setCharacter(mainPiece);
-        rootNode.addChildNodeInOrder(conditionFear, 1, defaultActionNode);
-        
+        rootNode.addChildNodeInOrder(condition, 1, defaultActionNode);
         mainPiece.setBehaviourTree(rootNode);
-        
         mainPiece.run();
     }
 
-    private Piece buildPiece(int id, CharacterShape shape, Color foreground, Color background, int posX, int posY){
+    private Piece buildPiece(int id, CharacterShape shape, Color foreground, Color background, int posX, int posY) {
         Piece piece = new Piece();
         piece.setId(id);
         piece.setAbmConfiguration(abmConfigurationEntity);
@@ -154,5 +232,12 @@ public class ConditionsTest {
         piece.setForegroundColor(foreground);
         map.putCharacter(piece, map.getCell(posX, posY));
         return piece;
+    }
+
+    private void buildSpot(int id, Color color, int posX, int posY) {
+        ColorSpot spot = new ColorSpot();
+        spot.setId(id);
+        spot.setColor(color);
+        map.putColorSpot(spot, map.getCell(posX, posY));
     }
 }

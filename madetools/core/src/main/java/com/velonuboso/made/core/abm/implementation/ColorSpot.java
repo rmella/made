@@ -15,24 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.velonuboso.made.core.common.api;
+package com.velonuboso.made.core.abm.implementation;
 
-import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
-import com.velonuboso.made.core.abm.api.IWorld;
-import com.velonuboso.made.core.common.api.IEvent;
-import com.velonuboso.made.core.common.implementation.EventFactory;
-import com.velonuboso.made.core.common.util.ImplementedBy;
+import javafx.scene.paint.Color;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+public class ColorSpot implements IColorSpot {
+    int id;
+    Color color;
 
-@ImplementedBy(targetClass = EventFactory.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IEventFactory {
-    IEvent inhabitantExists(ICharacter inhabitant);
-    IEvent worldExists(IWorld world);
-    IEvent hasFear(final ICharacter subject, final ICharacter enemy);
-    IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot);
+    public Color getColor() {
+        return color;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

@@ -51,7 +51,8 @@ public class Piece implements ICharacter {
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
     public static final String BLACKBOARD_JOY = "BLACKBOARD_JOY";
     public static final String BLACKBOARD_SCARIEST_ENEMY_CELL = "BLACKBOARD_SCARY_ENEMY";
-
+    public static final String BLACKBOARD_TARGET_SPOT = "BLACKBOARD_TARGET_SPOT";
+    
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;

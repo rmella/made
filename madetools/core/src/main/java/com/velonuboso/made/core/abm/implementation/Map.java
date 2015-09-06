@@ -18,6 +18,7 @@ package com.velonuboso.made.core.abm.implementation;
 
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.TerrainType;
@@ -41,7 +42,9 @@ public class Map implements IMap {
     private HashMap<ICharacter, Integer> cellByCharacter = new HashMap<>();
     private HashMap<Integer, ICharacter> characterByCell = new HashMap<>();
     private HashMap<Integer, TerrainType> terrainByCell = new HashMap<>();
-
+    private HashMap<IColorSpot, Integer> cellByColorSpot = new HashMap<>();
+    private HashMap<Integer, IColorSpot> ColorSpotByCell = new HashMap<>();
+    
     public Map() {
     }
 
@@ -231,5 +234,31 @@ public class Map implements IMap {
 
     private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
         return getCharacter(navigableCell) == author || getCharacter(navigableCell) == null;
+    }
+
+    
+    @Override
+    public void putColorSpot(IColorSpot spot, int cell) {
+        ColorSpotByCell.put(cell, spot);
+        cellByColorSpot.put(spot, cell);
+    }
+
+    @Override
+    public void removeSpot(int cell) {
+        IColorSpot spot = getColorSpot(cell);
+        if (spot != null) {
+            ColorSpotByCell.remove(cell);
+            cellByColorSpot.remove(spot);
+        }
+    }
+
+    @Override
+    public IColorSpot getColorSpot(int cell) {
+        return ColorSpotByCell.get(cell);
+    }
+
+    @Override
+    public Integer getCell(IColorSpot spot) {
+        return cellByColorSpot.get(spot);
     }
 }

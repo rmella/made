@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.entity.TerrainType;
+import com.velonuboso.made.core.abm.implementation.ColorSpot;
 import com.velonuboso.made.core.abm.implementation.Map;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 import java.util.List;
@@ -40,10 +41,16 @@ public interface IMap {
     
     public void putCharacter(ICharacter character, int cell);
 
+    public void putColorSpot(IColorSpot spot, int cell);
+    
     public void removeCharacter(int cell);
+    
+    public void removeSpot(int cell);
 
     public ICharacter getCharacter(int cell);
-
+    
+    public IColorSpot getColorSpot(int cell);
+    
     public TerrainType getTerrain(int cell);
 
     public Integer getPositionX(int cell);
@@ -58,6 +65,8 @@ public interface IMap {
 
     public Integer getCell(ICharacter character);
 
+    public Integer getCell(IColorSpot character);
+    
     public int getWidth();
 
     public int getHeight();
