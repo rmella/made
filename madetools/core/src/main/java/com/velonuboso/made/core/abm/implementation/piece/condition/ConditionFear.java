@@ -65,7 +65,7 @@ public class ConditionFear extends BaseCondition implements IConditionFear {
     }
 
     private void storeEnemyCellIntoBlackboard(ICharacter enemy, IBlackBoard blackBoard) {
-        blackBoard.setInt(Piece.BLACKBOARD_SCARIEST_ENEMY_CELL, getMap().getCell(enemy));
+        blackBoard.setInt(Piece.BLACKBOARD_CHARACTER_CELL, getMap().getCell(enemy));
     }
     
     private void writeEvent(ICharacter enemy) {

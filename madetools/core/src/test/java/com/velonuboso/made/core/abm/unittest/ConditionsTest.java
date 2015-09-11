@@ -23,7 +23,12 @@ import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.condition.ICondition;
 import com.velonuboso.made.core.abm.api.condition.IConditionAnticipation;
+import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveFriendSimilarity;
+import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveSelfSimilarity;
+import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimilarity;
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
+import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
+import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.BlackBoard;
@@ -75,7 +80,6 @@ public class ConditionsTest {
         ObjectFactory.cleanAllMocks();
     }
 
-    // <editor-fold desc="ConditionFear tests" defaultstate="collapsed">
     @Test
     public void UT_ConditionFear__when_piece_has_no_adjacent_pieces_the_piece_has_no_fear() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
@@ -106,38 +110,6 @@ public class ConditionsTest {
         assertTrue("Should've called the defaultActionNode since the adjacent square piece can move it", conditionSatisfied);
     }
 
-    @Test
-    public void UT_ConditionFear__when_piece_has_fear_it_stores_the_source_of_fear_in_the_blackboard() {
-        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
-        buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
-
-        IBlackBoard fakeBlackboard = mock(IBlackBoard.class);
-        ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
-
-        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionFear.class));
-
-        ObjectFactory.removeMock(IBlackBoard.class);
-
-        verify(fakeBlackboard).setInt(eq(Piece.BLACKBOARD_SCARIEST_ENEMY_CELL), anyInt());
-    }
-
-    @Test
-    public void UT_ConditionFear__when_piece_has_fear_it_writes_to_the_log() {
-        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
-        buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
-
-        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionFear.class));
-
-        verify(fakeEventsWriter).add(argThat(new ArgumentMatcher<IEvent>() {
-            @Override
-            public boolean matches(Object item) {
-                return ((IEvent) item).toLogicalPredicate().startsWith(EventFactory.HAS_FEAR);
-            }
-        }));
-    }
-
-    // </editor-fold>
-    // <editor-fold desc="ConditionAnticipation tests" defaultstate="collapsed">
     @Test
     public void UT_ConditionAnticipation__when_piece_has_no_adjacent_spot_it_has_no_anticipation() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
@@ -182,32 +154,145 @@ public class ConditionsTest {
                 conditionSatisfied);
     }
 
+    // <editor-fold desc="Storage into blackboard" defaultstate="collapsed">
+    
+    @Test
+    public void UT_ConditionFear__when_piece_has_fear_it_stores_the_source_of_fear_in_the_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionFear.class, Piece.BLACKBOARD_CHARACTER_CELL);
+    }
+
     @Test
     public void UT_ConditionAnticipation__when_piece_has_anticipation_it_stores_the_target_spot_in_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.GREEN, 1, 1);
-
-        IBlackBoard fakeBlackboard = mock(IBlackBoard.class);
-        ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
-
-        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
-
-        ObjectFactory.removeMock(IBlackBoard.class);
-
-        verify(fakeBlackboard).setInt(eq(Piece.BLACKBOARD_TARGET_SPOT), anyInt());
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionAnticipation.class, Piece.BLACKBOARD_SPOT_CELL);
+    }
+    
+    
+    @Test
+    public void ConditionCanImproveFriendSimilarity__when_piece_can_improve_friend_similarity_it_stores_the_target_friend_in_the_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.BLACK, Color.WHITE, 5, 5);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanImproveFriendSimilarity.class, Piece.BLACKBOARD_CHARACTER_CELL);
+    }
+    
+    @Test
+    public void UT_ConditionCanImproveSelfSimilarity__when_piece_can_improve_self_similarity_it_stores_the_target_spot_in_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanImproveSelfSimilarity.class, Piece.BLACKBOARD_SPOT_CELL);
     }
 
+    
+    @Test
+    public void UT_ConditionCanReduceEnemySimilarity__when_piece_can_reduce_enemy_similarity_it_stores_the_enemy_in_the_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.TRIANGLE, Color.BLACK, Color.WHITE, 5, 5);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanReduceEnemySimilarity.class, Piece.BLACKBOARD_CHARACTER_CELL);
+    }
+    
+    @Test
+    public void UT_ConditionSadness__when_piece_is_sad_it_stores_the_most_attractive_spot_in_the_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionSadness.class, Piece.BLACKBOARD_SPOT_CELL);
+    }
+    
+    @Test
+    public void UT_ConditionSadness__when_piece_is_sad_but_no_spot_can_improve_its_joy_it_stores_nothing_in_the_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionSadness.class, Piece.BLACKBOARD_SPOT_CELL, 0);
+    }
+    
+    @Test
+    public void UT_ConditionSurprise__when_piece_is_surprised_it_stores_the_source_of_surprise_in_the_blackboard() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionSurprise.class, Piece.BLACKBOARD_CHARACTER_CELL);
+    }
+    
+    //</editor-fold>
+
+    // <editor-fold desc="Log writing" defaultstate="collapsed">
+    
+    @Test
+    public void UT_ConditionFear__when_piece_has_fear_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
+        checkLogWhenConditionIsRun(mainPiece, IConditionFear.class, EventFactory.HAS_FEAR);
+    }
+    
     @Test
     public void UT_ConditionAnticipation__when_piece_has_anticipation_it_writes_to_the_log() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.GREEN, 1, 1);
+        checkLogWhenConditionIsRun(mainPiece, IConditionAnticipation.class, EventFactory.HAS_ANTICIPATION);
+    }
+    
+    @Test
+    public void UT_ConditionCanImproveFriendSimilarity__when_piece_can_improve_friend_similarity_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.BLACK, Color.WHITE, 5, 5);
+        checkLogWhenConditionIsRun(mainPiece, IConditionCanImproveFriendSimilarity.class, EventFactory.CAN_IMPROVE_FRIEND_SIMILARITY);
+    }
+    
+    @Test
+    public void UT_ConditionCanImproveSelfSimilarity__when_piece_can_improve_self_similarity_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        checkLogWhenConditionIsRun(mainPiece, IConditionCanImproveSelfSimilarity.class, EventFactory.CAN_IMPROVE_SELF_SIMILARITY);
+    }
+    
+    
+    @Test
+    public void UT_ConditionCanReduceEnemySimilarity__when_piece_can_reduce_enemy_similarity_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.TRIANGLE, Color.BLACK, Color.WHITE, 5, 5);
+        checkLogWhenConditionIsRun(mainPiece, IConditionCanReduceEnemySimilarity.class, EventFactory.CAN_REDUCE_SELF_SIMILARITY);
+    }
+    
+    @Test
+    public void UT_ConditionSadness__when_piece_is_sad_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        checkLogWhenConditionIsRun(mainPiece, IConditionSadness.class, EventFactory.IS_SAD);
+    }
+    
+    @Test
+    public void UT_ConditionSurprise__when_piece_is_surprised_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        checkLogWhenConditionIsRun(mainPiece, IConditionSurprise.class, EventFactory.IS_SURPRISED);
+    }
+    
+    // </editor-fold>
+    
+    
+    private void checkBlackboardWhenConditionIsRun(Piece targetPiece, Class conditionType, String propertyName){
+        checkBlackboardWhenConditionIsRun(targetPiece, conditionType, propertyName, 1);
+    }
+    
+    private void checkBlackboardWhenConditionIsRun(Piece targetPiece, Class conditionType, String propertyName,
+            int expectedNumberOfInvocations) {
+        IBlackBoard fakeBlackboard = mock(IBlackBoard.class);
+        ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
+        SetConditionAndRun(targetPiece, (ICondition) ObjectFactory.createObject(conditionType));
+        ObjectFactory.removeMock(IBlackBoard.class);
 
-        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionAnticipation.class));
-
+        verify(fakeBlackboard,times(expectedNumberOfInvocations)).setInt(eq(propertyName), anyInt());
+    }
+    
+    
+    private void checkLogWhenConditionIsRun(Piece targetPiece, Class conditionType, String predicateBeginsWith) {
+        SetConditionAndRun(targetPiece, (ICondition) ObjectFactory.createObject(conditionType));
+        
         verify(fakeEventsWriter).add(argThat(new ArgumentMatcher<IEvent>() {
             @Override
             public boolean matches(Object item) {
-                return ((IEvent) item).toLogicalPredicate().startsWith(EventFactory.HAS_ANTICIPATION);
+                return ((IEvent) item).toLogicalPredicate().startsWith(predicateBeginsWith);
             }
         }));
     }

@@ -77,7 +77,7 @@ public class ConditionAnticipation extends BaseCondition implements IConditionAn
     }
     
     private void storeSpotCellIntoBlackboard(IColorSpot spot, IBlackBoard blackBoard) {
-        blackBoard.setInt(Piece.BLACKBOARD_TARGET_SPOT, getMap().getCell(spot));
+        blackBoard.setInt(Piece.BLACKBOARD_SPOT_CELL, getMap().getCell(spot));
     }
 
     private void writeEvent(IColorSpot spot) {

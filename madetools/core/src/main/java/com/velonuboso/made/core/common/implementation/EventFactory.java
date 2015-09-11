@@ -33,6 +33,11 @@ public class EventFactory implements IEventFactory {
     public static final String INHABITANT_EXISTS = "InhabitantExists";
     public static final String HAS_FEAR = "HasFear";
     public static final String HAS_ANTICIPATION = "HasAnticipation";
+    public static final String CAN_IMPROVE_FRIEND_SIMILARITY = "CanImproveFriendSimilarity";
+    public static final String CAN_IMPROVE_SELF_SIMILARITY = "CanImproveSelfSimilarity";
+    public static final String CAN_REDUCE_SELF_SIMILARITY = "CanReduceSelfSimilarity";
+    public static final String IS_SAD = "IsSad";
+    public static final String IS_SURPRISED = "IsSurprised";
     
     @Override
     public IEvent worldExists(final IWorld world) {
@@ -52,5 +57,10 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot){
         return new Event(HAS_ANTICIPATION, subject.getId(), spot.getId());
+    }
+
+    @Override
+    public IEvent CanImproveFriendSimilarity(ICharacter subject, ICharacter targetCharacter) {
+        return new Event(CAN_IMPROVE_FRIEND_SIMILARITY, subject.getId(), targetCharacter.getId());
     }
 }

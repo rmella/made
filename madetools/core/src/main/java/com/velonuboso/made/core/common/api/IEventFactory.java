@@ -35,4 +35,5 @@ public interface IEventFactory {
     IEvent worldExists(IWorld world);
     IEvent hasFear(final ICharacter subject, final ICharacter enemy);
     IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot);
+    IEvent CanImproveFriendSimilarity(ICharacter character, ICharacter targetCharacter);
 }
