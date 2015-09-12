@@ -46,6 +46,7 @@ public class Piece implements ICharacter {
     private CharacterShape shape;
 
     private IProbabilityHelper probabilityHelper;
+    private AbmConfigurationEntity abmConfigurationEntity;
     private PieceAbmConfigurationHelper abmConfigurationHelper;
 
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
@@ -126,6 +127,7 @@ public class Piece implements ICharacter {
 
     @Override
     public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
+        this.abmConfigurationEntity = abmConfiguration;
         this.abmConfigurationHelper = new PieceAbmConfigurationHelper(abmConfiguration);
     }
 
@@ -148,6 +150,11 @@ public class Piece implements ICharacter {
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
         rootNode.addChildNodeInOrder(blackboard->true, 1, node);
+    }
+
+    @Override
+    public AbmConfigurationEntity getAbmConfiguration() {
+        return abmConfigurationEntity;
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">

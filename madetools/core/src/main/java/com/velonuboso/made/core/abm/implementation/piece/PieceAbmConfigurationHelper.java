@@ -31,34 +31,39 @@ public class PieceAbmConfigurationHelper {
         this.abmConfiguration = abmConfiguration;
     }
 
-    float getShapeSimilarityWeight() {
+    public float getShapeSimilarityWeight() {
         return getGene(Gene.SHAPE_SIMILARITY_WEIGHT);
     }
 
-    float getForegroundColorSimilarityWeight() {
+    public float getForegroundColorSimilarityWeight() {
         return getGene(Gene.FOREGROUND_COLOR_SIMILARITY_WEIGHT);
     }
 
-    float getBackgroundColorSimilarityWeight() {
+    public float getBackgroundColorSimilarityWeight() {
         return getGene(Gene.BACKGROUND_COLOR_SIMILARITY_WEIGHT);
     } 
 
-    float getNeighbourSimilarityForJoyWeight() {
+    public float getNeighbourSimilarityForJoyWeight() {
         return getGene(Gene.NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT);
     }
     
-    float getSelfSimilarityForJoyWeight() {
+    public float getSelfSimilarityForJoyWeight() {
         return 1f - getNeighbourSimilarityForJoyWeight();
+    }
+
+    public float getJoyThreshold() {
+        return getGene(Gene.JOY_THRESHOLD);
     }
     
     private float getGene(Gene gene) {
         return abmConfiguration.getChromosome()[gene.ordinal()];
     }
-    
+
     private enum Gene {
         SHAPE_SIMILARITY_WEIGHT,
         FOREGROUND_COLOR_SIMILARITY_WEIGHT,
         BACKGROUND_COLOR_SIMILARITY_WEIGHT,
-        NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT
+        NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT,
+        JOY_THRESHOLD
     }
 }

@@ -35,7 +35,7 @@ public class EventFactory implements IEventFactory {
     public static final String HAS_ANTICIPATION = "HasAnticipation";
     public static final String CAN_IMPROVE_FRIEND_SIMILARITY = "CanImproveFriendSimilarity";
     public static final String CAN_IMPROVE_SELF_SIMILARITY = "CanImproveSelfSimilarity";
-    public static final String CAN_REDUCE_SELF_SIMILARITY = "CanReduceSelfSimilarity";
+    public static final String CAN_REDUCE_ENEMY_SIMILARITY = "CanReduceEnemySimilarity";
     public static final String IS_SAD = "IsSad";
     public static final String IS_SURPRISED = "IsSurprised";
     
@@ -60,12 +60,22 @@ public class EventFactory implements IEventFactory {
     }
 
     @Override
-    public IEvent CanImproveFriendSimilarity(ICharacter subject, ICharacter targetCharacter) {
-        return new Event(CAN_IMPROVE_FRIEND_SIMILARITY, subject.getId(), targetCharacter.getId());
+    public IEvent canImproveFriendSimilarity(ICharacter subject, ICharacter friend) {
+        return new Event(CAN_IMPROVE_FRIEND_SIMILARITY, subject.getId(), friend.getId());
     }
 
     @Override
-    public IEvent CanImproveSelfSimilarity(ICharacter subject, IColorSpot spot) {
+    public IEvent canImproveSelfSimilarity(ICharacter subject, IColorSpot spot) {
         return new Event(CAN_IMPROVE_SELF_SIMILARITY, subject.getId(), spot.getId());
+    }
+
+    @Override
+    public IEvent canReduceEnemySimilarity(ICharacter subject, ICharacter enemy) {
+        return new Event(CAN_REDUCE_ENEMY_SIMILARITY, subject.getId(), enemy.getId());
+    }
+
+    @Override
+    public IEvent isSad(ICharacter subject) {
+        return new Event(IS_SAD, subject.getId());
     }
 }

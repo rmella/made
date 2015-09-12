@@ -17,7 +17,14 @@
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimilarity;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.HashMap;
 
 /**
  *
@@ -25,8 +32,38 @@ import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimila
  */
 public class ConditionCanReduceEnemySimilarity extends BaseCondition implements IConditionCanReduceEnemySimilarity{
 
+    
     @Override
-    public boolean test(IBlackBoard t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean test(IBlackBoard blackboard) {
+        ICharacter candidateToPush = getBestCandidateToPush(blackboard);
+
+        if (candidateToPush != null) {
+            storeCandidateToPushIntoBlackboard(candidateToPush, blackboard);
+            writeEvent(candidateToPush);
+        }
+        return candidateToPush != null;
+    }
+
+    private ICharacter getBestCandidateToPush(IBlackBoard blackboard) {
+        HashMap<ICharacter, Float> affinityMatrix
+                = (HashMap<ICharacter, Float>) blackboard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
+        
+        ICharacter candidateToPush = affinityMatrix.keySet().stream()
+                .filter(targetCharacter -> this.character.getShape().wins(targetCharacter.getShape()))
+                .min((ICharacter firstCharacter, ICharacter secondCharacter) -> {
+                    return Float.compare(firstCharacter.getColorDifference(), secondCharacter.getColorDifference());
+                })
+                .orElse(null);
+        return candidateToPush;
+    }
+
+    private void storeCandidateToPushIntoBlackboard(ICharacter candidate, IBlackBoard blackBoard) {
+        blackBoard.setInt(Piece.BLACKBOARD_CHARACTER_CELL, getMap().getCell(candidate));
+    }
+
+    private void writeEvent(ICharacter targetCharacter) {
+        IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent canReduceEnemySimilarityevent = eventFactory.canReduceEnemySimilarity(character, targetCharacter);
+        character.getEventsWriter().add(canReduceEnemySimilarityevent);
     }
 }

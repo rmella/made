@@ -82,7 +82,7 @@ public class ConditionCanImproveSelfSimilarity extends BaseCondition implements 
 
     private void writeEvent(IColorSpot spot) {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent anticipationEvent = eventFactory.CanImproveSelfSimilarity(character, spot);
+        IEvent anticipationEvent = eventFactory.canImproveSelfSimilarity(character, spot);
         character.getEventsWriter().add(anticipationEvent);
     }
 

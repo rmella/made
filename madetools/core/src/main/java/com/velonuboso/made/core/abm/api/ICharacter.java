@@ -46,6 +46,8 @@ public interface ICharacter {
     public Color getBackgroundColor();
     public Color getForegroundColor();
     public float getColorDifference ();
+    public AbmConfigurationEntity getAbmConfiguration();
+    
     public void setForegroundColor(Color foregroundColor);
     public void setBackgroundColor(Color backgroundColor);
     

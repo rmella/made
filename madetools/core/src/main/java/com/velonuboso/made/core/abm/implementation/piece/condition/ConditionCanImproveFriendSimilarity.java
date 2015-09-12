@@ -87,7 +87,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseCondition implement
 
     private void writeEvent(ICharacter targetCharacter) {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent anticipationEvent = eventFactory.CanImproveFriendSimilarity(character, targetCharacter);
+        IEvent anticipationEvent = eventFactory.canImproveFriendSimilarity(character, targetCharacter);
         character.getEventsWriter().add(anticipationEvent);
     }
 }
