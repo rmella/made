@@ -36,11 +36,11 @@ import javafx.scene.paint.Color;
 public class ConditionCanImproveFriendSimilarity extends BaseCondition implements IConditionCanImproveFriendSimilarity {
 
     @Override
-    public boolean test(IBlackBoard blackboard) {
-        ICharacter candidateToExchangeColors = getBestCandidateToExchangeColor(blackboard);
+    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        ICharacter candidateToExchangeColors = getBestCandidateToExchangeColor(currentBlackBoard);
 
         if (candidateToExchangeColors != null) {
-            storeCandidateToExchangeColorsIntoBlackboard(candidateToExchangeColors, blackboard);
+            storeCandidateToExchangeColorsIntoBlackboard(candidateToExchangeColors, currentBlackBoard);
             writeEvent(candidateToExchangeColors);
         }
         return candidateToExchangeColors != null;

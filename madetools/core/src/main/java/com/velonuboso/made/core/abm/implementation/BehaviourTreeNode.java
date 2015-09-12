@@ -23,6 +23,8 @@ import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -33,7 +35,7 @@ import java.util.function.Predicate;
 public class BehaviourTreeNode implements IBehaviourTreeNode {
 
     private ICharacter character;
-    private Consumer<IBlackBoard> action;
+    private BiConsumer<IBlackBoard, IBlackBoard> action;
     private ArrayList<ChildCondition> childrenConditions;
     private IProbabilityHelper probabilityHelper;
 
@@ -50,12 +52,12 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
-    public void setActionWhenRun(Consumer<IBlackBoard> action) {
+    public void setActionWhenRun(BiConsumer<IBlackBoard, IBlackBoard> action) {
         this.action = action;
     }
 
     @Override
-    public void addChildNodeInOrder(Predicate<IBlackBoard> conditionToRunChildren, 
+    public void addChildNodeInOrder(BiPredicate<IBlackBoard, IBlackBoard> conditionToRunChildren, 
             float probabilityToRunChildren, IBehaviourTreeNode nodeToRun) {
         
         ChildCondition child = new ChildCondition();
@@ -67,9 +69,9 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
-    public boolean run(IBlackBoard blackBoard) {
+    public boolean run(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
         checkCorrectInitialization();
-        action.accept(blackBoard);
+        action.accept(currentBlackBoard, oldBlackBoard);
         
         boolean success = false;
         int childIndex = 0;
@@ -77,8 +79,8 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         while (!success && childIndex<childrenConditions.size()){
             ChildCondition child = childrenConditions.get(childIndex);
             
-            if (isInProbability(child) && conditionValidates(child, blackBoard)){
-                 success |= child.nodeToRun.run(blackBoard);
+            if (isInProbability(child) && conditionValidates(child, currentBlackBoard, oldBlackBoard)){
+                 success |= child.nodeToRun.run(currentBlackBoard, oldBlackBoard);
             }
             childIndex++;
         }
@@ -86,8 +88,8 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         return success;
     }
 
-    private boolean conditionValidates(ChildCondition child, IBlackBoard blackBoard) {
-        return child.conditionToRunChildren.test(blackBoard);
+    private boolean conditionValidates(ChildCondition child, IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        return child.conditionToRunChildren.test(currentBlackBoard, oldBlackBoard);
     }
 
     private boolean isInProbability(ChildCondition child) {
@@ -112,14 +114,14 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     private class ChildCondition {
-        Predicate<IBlackBoard> conditionToRunChildren = null;
+        BiPredicate<IBlackBoard,IBlackBoard> conditionToRunChildren = null;
         float probabilityToRunChildren = 0f;
         IBehaviourTreeNode nodeToRun = null;
     }
 
-    private class NullAction implements Consumer<IBlackBoard> {
+    private class NullAction implements BiConsumer<IBlackBoard,IBlackBoard> {
         @Override
-        public void accept(IBlackBoard t) {
+        public void accept(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
         }
     };
 }

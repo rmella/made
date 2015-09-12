@@ -40,6 +40,6 @@ public abstract class BaseCondition implements ICondition{
     }
     
     @Override
-    public abstract boolean test(IBlackBoard blackboard);
+    public abstract boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard);
 
 }

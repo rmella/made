@@ -19,13 +19,13 @@ package com.velonuboso.made.core.abm.api.condition;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface ICondition extends Predicate<IBlackBoard>{
+public interface ICondition extends BiPredicate<IBlackBoard, IBlackBoard>{
 
     public void setCharacter(ICharacter character);
     

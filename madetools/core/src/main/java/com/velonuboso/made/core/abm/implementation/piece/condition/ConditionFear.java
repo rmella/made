@@ -37,10 +37,10 @@ import java.util.Optional;
 public class ConditionFear extends BaseCondition implements IConditionFear {
 
     @Override
-    public boolean test(IBlackBoard blackBoard) {
-        ICharacter enemy = getAdjacentEnemy(blackBoard);
+    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        ICharacter enemy = getAdjacentEnemy(currentBlackBoard);
         if (enemy != null){
-            storeEnemyCellIntoBlackboard(enemy, blackBoard);
+            storeEnemyCellIntoBlackboard(enemy, currentBlackBoard);
             writeEvent(enemy);
         }
         return enemy != null;

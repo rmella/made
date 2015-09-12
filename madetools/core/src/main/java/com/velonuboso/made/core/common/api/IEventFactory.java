@@ -39,4 +39,5 @@ public interface IEventFactory {
     IEvent canImproveSelfSimilarity(ICharacter subject, IColorSpot spot);
     IEvent canReduceEnemySimilarity(ICharacter subject, ICharacter enemy);
     IEvent isSad(ICharacter subject);
+    IEvent isSurprised(ICharacter subject);
 }

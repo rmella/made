@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class BlackBoard implements IBlackBoard {
 
     private HashMap<String, Object> mapKeyValues;
-    public static final int DEFAULT_INT_VALUE = 0;
+    public static final int DEFAULT_INT_VALUE = -1;
     public static final float DEFAULT_FLOAT_VALUE = 0f;
     public static final String DEFAULT_STRING_VALUE = "";
 

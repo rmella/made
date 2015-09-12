@@ -36,11 +36,11 @@ import javafx.scene.paint.Color;
 public class ConditionCanImproveSelfSimilarity extends BaseCondition implements IConditionCanImproveSelfSimilarity {
 
     @Override
-    public boolean test(IBlackBoard blackBoard) {
+    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
 
-        IColorSpot spot = getBestColorSpot(blackBoard);
+        IColorSpot spot = getBestColorSpot(currentBlackBoard);
         if (spot != null) {
-            storeSpotCellIntoBlackboard(spot, blackBoard);
+            storeSpotCellIntoBlackboard(spot, currentBlackBoard);
             writeEvent(spot);
         }
         return spot != null;

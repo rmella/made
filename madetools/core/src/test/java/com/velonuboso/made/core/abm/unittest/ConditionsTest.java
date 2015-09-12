@@ -72,7 +72,7 @@ public class ConditionsTest {
         map.initialize(10, 10);
         defaultActionNode = new BehaviourTreeNode();
         conditionSatisfied = false;
-        defaultActionNode.setActionWhenRun(blackboard -> {
+        defaultActionNode.setActionWhenRun((currentBlackBoard, oldBlackBoard) -> {
             conditionSatisfied = true;
         }
         );

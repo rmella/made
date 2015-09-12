@@ -34,11 +34,11 @@ public class ConditionCanReduceEnemySimilarity extends BaseCondition implements 
 
     
     @Override
-    public boolean test(IBlackBoard blackboard) {
-        ICharacter candidateToPush = getBestCandidateToPush(blackboard);
+    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        ICharacter candidateToPush = getBestCandidateToPush(currentBlackBoard);
 
         if (candidateToPush != null) {
-            storeCandidateToPushIntoBlackboard(candidateToPush, blackboard);
+            storeCandidateToPushIntoBlackboard(candidateToPush, currentBlackBoard);
             writeEvent(candidateToPush);
         }
         return candidateToPush != null;

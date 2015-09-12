@@ -55,6 +55,10 @@ public class PieceAbmConfigurationHelper {
         return getGene(Gene.JOY_THRESHOLD);
     }
     
+    public float getSurpriseThreshold() {
+        return getGene(Gene.SURPRISE_THRESHOLD);
+    }
+    
     private float getGene(Gene gene) {
         return abmConfiguration.getChromosome()[gene.ordinal()];
     }
@@ -64,6 +68,7 @@ public class PieceAbmConfigurationHelper {
         FOREGROUND_COLOR_SIMILARITY_WEIGHT,
         BACKGROUND_COLOR_SIMILARITY_WEIGHT,
         NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT,
-        JOY_THRESHOLD
+        JOY_THRESHOLD,
+        SURPRISE_THRESHOLD
     }
 }

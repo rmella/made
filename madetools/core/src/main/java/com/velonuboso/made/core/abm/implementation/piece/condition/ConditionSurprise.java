@@ -17,7 +17,16 @@
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
+import com.velonuboso.made.core.abm.implementation.BlackBoard;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.abm.implementation.piece.PieceAbmConfigurationHelper;
+import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.HashMap;
 
 /**
  *
@@ -25,8 +34,25 @@ import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
  */
 public class ConditionSurprise extends BaseCondition  implements IConditionSurprise{
 
-    @Override
-    public boolean test(IBlackBoard t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+@Override
+    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        if (oldBlackBoard==null || !isSurprised(currentBlackBoard, oldBlackBoard)){
+            return false;
+        }
+        writeEvent();
+        return true;
+    }
+    
+    private boolean isSurprised(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        PieceAbmConfigurationHelper helper = new PieceAbmConfigurationHelper(character.getAbmConfiguration());
+        float oldJoy = oldBlackBoard.getFloat(Piece.BLACKBOARD_JOY);
+        float currentJoy = currentBlackBoard.getFloat(Piece.BLACKBOARD_JOY);
+        return oldJoy - currentJoy > helper.getSurpriseThreshold();
+    }
+    
+    private void writeEvent() {
+        IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = eventFactory.isSurprised(character);
+        character.getEventsWriter().add(event);
     }
 }

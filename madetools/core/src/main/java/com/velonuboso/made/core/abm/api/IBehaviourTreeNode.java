@@ -18,6 +18,8 @@ package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -28,8 +30,8 @@ import java.util.function.Predicate;
 @ImplementedBy(targetClass = BehaviourTreeNode.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IBehaviourTreeNode {
     void setCharacter (ICharacter character);
-    void setActionWhenRun(Consumer<IBlackBoard> action);
-    void addChildNodeInOrder(Predicate<IBlackBoard> conditionToRunChildren, 
+    void setActionWhenRun(BiConsumer<IBlackBoard, IBlackBoard> action);
+    void addChildNodeInOrder(BiPredicate<IBlackBoard, IBlackBoard> conditionToRunChildren, 
             float probabilityToRunChildren, IBehaviourTreeNode nodeToRun);
-    boolean run(IBlackBoard blackBoard);
+    boolean run(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard);
 }

@@ -34,10 +34,10 @@ import javafx.scene.paint.Color;
 public class ConditionAnticipation extends BaseCondition implements IConditionAnticipation {
 
     @Override
-    public boolean test(IBlackBoard blackBoard) {
-        IColorSpot spot = getAdjacentColorSpot(blackBoard);
+    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        IColorSpot spot = getAdjacentColorSpot(currentBlackBoard);
         if (spot != null) {
-            storeSpotCellIntoBlackboard(spot, blackBoard);
+            storeSpotCellIntoBlackboard(spot, currentBlackBoard);
             writeEvent(spot);
         }
         return spot != null;

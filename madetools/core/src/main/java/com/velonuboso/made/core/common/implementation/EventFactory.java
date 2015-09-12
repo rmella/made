@@ -78,4 +78,9 @@ public class EventFactory implements IEventFactory {
     public IEvent isSad(ICharacter subject) {
         return new Event(IS_SAD, subject.getId());
     }
+
+    @Override
+    public IEvent isSurprised(ICharacter subject) {
+        return new Event(IS_SURPRISED, subject.getId());
+    }
 }

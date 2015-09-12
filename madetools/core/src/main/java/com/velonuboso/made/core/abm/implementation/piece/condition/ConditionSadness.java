@@ -35,8 +35,8 @@ import java.util.function.Function;
 public class ConditionSadness extends BaseCondition implements IConditionSadness{
 
     @Override
-    public boolean test(IBlackBoard blackBoard) {
-        if (!isSad(blackBoard)){
+    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        if (!isSad(currentBlackBoard)){
             return false;
         }
         writeEvent();

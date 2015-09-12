@@ -25,4 +25,5 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
  */
 @ImplementedBy(targetClass = ConditionSurprise.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IConditionSurprise extends ICondition{
+    
 }
