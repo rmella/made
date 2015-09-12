@@ -49,6 +49,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseCondition implement
     private ICharacter getBestCandidateToExchangeColor(IBlackBoard blackboard) {
         HashMap<ICharacter, Float> affinityMatrix
                 = (HashMap<ICharacter, Float>) blackboard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
+        
         ICharacter candidateToExchangeColors = affinityMatrix.keySet().stream()
                 .filter(targetCharacter -> !targetCharacter.getShape().wins(this.character.getShape()))
                 .max((ICharacter firstCharacter, ICharacter secondCharacter) -> {

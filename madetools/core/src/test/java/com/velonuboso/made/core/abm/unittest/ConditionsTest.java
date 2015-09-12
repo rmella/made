@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.abm.unittest;
 
 import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import com.sun.org.apache.xml.internal.security.encryption.AgreementMethod;
 import com.sun.org.apache.xpath.internal.Arg;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
@@ -277,7 +278,7 @@ public class ConditionsTest {
     
     private void checkBlackboardWhenConditionIsRun(Piece targetPiece, Class conditionType, String propertyName,
             int expectedNumberOfInvocations) {
-        IBlackBoard fakeBlackboard = mock(IBlackBoard.class);
+        IBlackBoard fakeBlackboard = spy(ObjectFactory.createObject(IBlackBoard.class));
         ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
         SetConditionAndRun(targetPiece, (ICondition) ObjectFactory.createObject(conditionType));
         ObjectFactory.removeMock(IBlackBoard.class);

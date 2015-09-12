@@ -63,4 +63,9 @@ public class EventFactory implements IEventFactory {
     public IEvent CanImproveFriendSimilarity(ICharacter subject, ICharacter targetCharacter) {
         return new Event(CAN_IMPROVE_FRIEND_SIMILARITY, subject.getId(), targetCharacter.getId());
     }
+
+    @Override
+    public IEvent CanImproveSelfSimilarity(ICharacter subject, IColorSpot spot) {
+        return new Event(CAN_IMPROVE_SELF_SIMILARITY, subject.getId(), spot.getId());
+    }
 }
