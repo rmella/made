@@ -265,6 +265,7 @@ public class ConditionsTest {
     
     // </editor-fold>
     
+    // <editor-fold desc="Private methods" defaultstate="collapsed">
     
     private void checkBlackboardWhenConditionIsRun(Piece targetPiece, Class conditionType, String propertyName){
         checkBlackboardWhenConditionIsRun(targetPiece, conditionType, propertyName, 1);
@@ -320,4 +321,6 @@ public class ConditionsTest {
         spot.setColor(color);
         map.putColorSpot(spot, map.getCell(posX, posY));
     }
+    
+    // </editor-fold>
 }
