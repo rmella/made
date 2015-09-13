@@ -52,8 +52,8 @@ public class Piece implements ICharacter {
     
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
     public static final String BLACKBOARD_JOY = "BLACKBOARD_JOY";
-    public static final String BLACKBOARD_SPOT_CELL = "BLACKBOARD_TARGET_SPOT";
-    public static final String BLACKBOARD_CHARACTER_CELL = "BLACKBOARD_TARGET_FRIEND_TO_IMPROVE_SIMILARITY";
+    public static final String BLACKBOARD_SPOT_CELL = "BLACKBOARD_SPOT_CELL";
+    public static final String BLACKBOARD_CHARACTER_CELL = "BLACKBOARD_CHARACTER_CELL";
     
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);

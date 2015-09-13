@@ -49,12 +49,17 @@ public class ConditionCanReduceEnemySimilarity extends BaseCondition implements 
                 = (HashMap<ICharacter, Float>) blackboard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
         
         ICharacter candidateToPush = affinityMatrix.keySet().stream()
-                .filter(targetCharacter -> this.character.getShape().wins(targetCharacter.getShape()))
-                .min((ICharacter firstCharacter, ICharacter secondCharacter) -> {
-                    return Float.compare(firstCharacter.getColorDifference(), secondCharacter.getColorDifference());
+                .filter(targetCharacter -> isEnemy(affinityMatrix, targetCharacter))
+                .filter(enemy -> this.character.getShape().wins(enemy.getShape()))
+                .min((ICharacter firstEnemy, ICharacter secondEnemy) -> {
+                    return Float.compare(firstEnemy.getColorDifference(), secondEnemy.getColorDifference());
                 })
                 .orElse(null);
         return candidateToPush;
+    }
+    
+    private boolean isEnemy(HashMap<ICharacter, Float> affinityMatrix, ICharacter targetCharacter) {
+        return affinityMatrix.get(targetCharacter)<0;
     }
 
     private void storeCandidateToPushIntoBlackboard(ICharacter candidate, IBlackBoard blackBoard) {

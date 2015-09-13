@@ -27,6 +27,7 @@ import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.stream.Stream;
 import javafx.scene.paint.Color;
 
 /**
@@ -51,7 +52,9 @@ public class ConditionCanImproveFriendSimilarity extends BaseCondition implement
                 = (HashMap<ICharacter, Float>) blackboard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
         
         ICharacter candidateToExchangeColors = affinityMatrix.keySet().stream()
-                .filter(targetCharacter -> !targetCharacter.getShape().wins(this.character.getShape()))
+                .filter(targetCharacter -> isFriend(affinityMatrix, targetCharacter))
+                .filter(friend -> friendCannotWinCharacter(friend))
+                .filter(friend->wouldBenefitWithColorExchange(friend))
                 .max((ICharacter firstCharacter, ICharacter secondCharacter) -> {
                     float benefitWithFirstCharacter = getColorExchangeBenefit(firstCharacter);
                     float benefitWithSecondCharacter = getColorExchangeBenefit(secondCharacter);
@@ -59,6 +62,18 @@ public class ConditionCanImproveFriendSimilarity extends BaseCondition implement
                 })
                 .orElse(null);
         return candidateToExchangeColors;
+    }
+
+    private boolean wouldBenefitWithColorExchange(ICharacter friend) {
+        return getColorExchangeBenefit(friend)>0;
+    }
+
+    private boolean friendCannotWinCharacter(ICharacter friend) {
+        return !friend.getShape().wins(this.character.getShape());
+    }
+
+    private boolean isFriend(HashMap<ICharacter, Float> affinityMatrix, ICharacter targetCharacter) {
+        return affinityMatrix.get(targetCharacter)>0;
     }
 
     private float getColorExchangeBenefit(ICharacter targetCharacter) {

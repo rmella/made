@@ -66,7 +66,7 @@ public class ConditionsTest {
 
     @Before
     public void setUp() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0});
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
@@ -79,6 +79,8 @@ public class ConditionsTest {
         ObjectFactory.cleanAllMocks();
     }
 
+    // <editor-fold desc="Fear" defaultstate="collapsed">
+    
     @Test
     public void UT_ConditionFear__when_piece_has_no_adjacent_pieces_the_piece_has_no_fear() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
@@ -108,7 +110,11 @@ public class ConditionsTest {
 
         assertTrue("Should've called the defaultActionNode since the adjacent square piece can move it", conditionSatisfied);
     }
-
+    
+    //</editor-fold>
+    
+    // <editor-fold desc="Anticipation" defaultstate="collapsed">
+    
     @Test
     public void UT_ConditionAnticipation__when_piece_has_no_adjacent_spot_it_has_no_anticipation() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
@@ -153,6 +159,99 @@ public class ConditionsTest {
                 conditionSatisfied);
     }
 
+    //</editor-fold>
+    
+    // <editor-fold desc="Can improve friend's similarity" defaultstate="collapsed">
+    
+    @Test
+    public void UT_ConditionCanImproveFriendsSimilarity__when_piece_could_exchange_colors_with_a_friend_and_both_would_benefit_it_can_improve_friend_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.BLACK, Color.WHITE, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class));
+        assertTrue("Should've called the defaultActionNode since both characters could be happier if they exchange colors", 
+                conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionCanImproveFriendsSimilarity__when_piece_could_exchange_colors_with_a_friend_and_both_would_NOT_benefit_it_cannot_improve_friend_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.BLACK, Color.BLACK, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class));
+        assertFalse("Shouldn't have called the defaultActionNode since the second character is already happy", 
+                conditionSatisfied);
+    }
+    
+    @Test
+    public void UT_ConditionCanImproveFriendsSimilarity__when_piece_could_exchange_colors_with_a_piece_but_it_is_an_ememy_it_cannot_improve_friend_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.SQUARE, Color.BLACK, Color.WHITE, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class));
+        assertFalse("Shouldn't have called the defaultActionNode since the second character is an enemy", 
+                conditionSatisfied);
+    }
+    
+    //</editor-fold>
+    
+    
+    // <editor-fold desc="Can improve self-similarity" defaultstate="collapsed">
+    
+    @Test
+    public void UT_ConditionCanImproveSelfSimilarity__when_staining_with_the_spot_would_benefit_the_piece_it_Can_improve_self_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveSelfSimilarity.class));
+        assertTrue("Should've called the defaultActionNode since staining with the spot would benefit the piece", 
+                conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionCanImproveSelfSimilarity__when_staining_with_the_spot_would_NOT_benefit_the_piece_it_cannot_improve_self_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.BLACK, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveSelfSimilarity.class));
+        assertFalse("Shouldn't have called the defaultActionNode since staining with the spot would NOT benefit the piece", 
+                conditionSatisfied);
+    }
+    
+    @Test
+    public void UT_ConditionCanImproveSelfSimilarity__when_there_is_no_spot_it_cannot_improve_self_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveSelfSimilarity.class));
+        assertFalse("Shouldn't have called the defaultActionNode since there is no spot", 
+                conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionCanImproveSelfSimilarity__when_staining_with_the_spot_would_benefit_the_piece_but_the_cell_is_occupied_by_a_piece_that_cannot_displace_it_cannot_improve_self_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.BLACK, 5, 5);
+        buildPiece(0, CharacterShape.SQUARE, Color.WHITE, Color.BLACK, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveSelfSimilarity.class));
+        assertFalse("Shouldn't have called the defaultActionNode since the spot is occupied by a piece that cannot be displaced", 
+                conditionSatisfied);
+    }
+    
+    @Test
+    public void UT_ConditionCanImproveSelfSimilarity__when_staining_with_the_spot_would_benefit_the_piece_and_the_cell_is_occupied_by_a_piece_that_can_displace_it_can_improve_self_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildSpot(2, Color.WHITE, 5, 5);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.WHITE, Color.BLACK, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanImproveSelfSimilarity.class));
+        assertTrue("Should've called the defaultActionNode since the spot is occupied by a piece that can be displaced", 
+                conditionSatisfied);
+    }
+    
+    //</editor-fold>
+    
+    
     // <editor-fold desc="Storage into blackboard" defaultstate="collapsed">
     
     @Test

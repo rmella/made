@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveSelfSimilarity;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
@@ -57,7 +58,7 @@ public class ConditionCanImproveSelfSimilarity extends BaseCondition implements 
 
         return getMap().getCells()
                 .stream()
-                .filter(cell -> isSpotInCell(cell) && !isCharacterInCell(cell))
+                .filter(cell -> isSpotInCell(cell) && !isWinnerCharacterInCell(cell))
                 .map(cellToSpot)
                 .filter(spot -> {
                     return similarityWithSpot(spot) > 1-character.getColorDifference();
@@ -72,8 +73,9 @@ public class ConditionCanImproveSelfSimilarity extends BaseCondition implements 
         return 1-PieceUtilities.calculateColorDifference(spot.getColor(), character.getForegroundColor());
     }
 
-    private boolean isCharacterInCell(Integer cell) {
-        return getMap().getCharacter(cell) != null;
+    private boolean isWinnerCharacterInCell(Integer cell) {
+        ICharacter characterInSpot = getMap().getCharacter(cell);
+        return characterInSpot != null && characterInSpot.getShape().wins(character.getShape());
     }
 
     private boolean isSpotInCell(Integer cell) {
