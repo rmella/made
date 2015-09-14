@@ -284,6 +284,77 @@ public class ConditionsTest {
     
     //</editor-fold>
     
+    // <editor-fold desc="Sadness" defaultstate="collapsed">
+    
+    @Test
+    public void UT_ConditionSadness__when_piece_has_a_joy_level_over_the_threshold_it_doesnt_have_sadness() {
+        float JOY_THRESHOLD = 0.1f;
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0});
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSadness.class));
+
+        assertFalse("Shouldn't have called the defaultActionNode since the joy level of the piece is over the threshold", conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionSadness__when_piece_has_a_joy_level_below_the_threshold_it_has_sadness() {
+        float JOY_THRESHOLD = 0.9f;
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0});
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSadness.class));
+
+        assertTrue("Should've called the defaultActionNode since the joy level of the piece is below the threshold", conditionSatisfied);
+    }
+    //</editor-fold>
+    
+    // <editor-fold desc="Surprise" defaultstate="collapsed">
+    
+    @Test
+    public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_reduced_a_quantity_below_surprise_threshold_it_does_not_have_surprise() {
+        float SURPRISE_THRESHOLD = 0.9f;
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0});
+        
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));  
+        assertFalse("Shouldn't have called the defaultActionNode in the first turn", conditionSatisfied);
+        
+        mainPiece.setBackgroundColor(Color.BLACK);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
+        assertFalse("Shouldn't have called the defaultActionNode since the joy level hasn't been reduced "
+                + "a quantity over the threshold", conditionSatisfied);
+    }
+    
+    @Test
+    public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_reduced_a_quantity_over_surprise_threshold_it_has_surprise() {
+        float SURPRISE_THRESHOLD = 0.3f;
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0});
+        
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));  
+        assertFalse("Shouldn't have called the defaultActionNode in the first turn", conditionSatisfied);
+        
+        mainPiece.setBackgroundColor(Color.BLACK);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
+        assertTrue("Should've called the defaultActionNode since the joy level has been reduced "
+                + "a quantity over the threshold", conditionSatisfied);
+    }
+    
+    @Test
+    public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_increased_it_cannot_have_surprise() {
+        float SURPRISE_THRESHOLD = 0.0f;
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0});
+        
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));  
+        assertFalse("Shouldn't have called the defaultActionNode in the first turn", conditionSatisfied);
+        
+        mainPiece.setBackgroundColor(Color.WHITE);
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
+        assertFalse("Shouldn't have called the defaultActionNode since the joy level has increased", conditionSatisfied);
+    }
+    
+    //</editor-fold>
+    
     // <editor-fold desc="Storage into blackboard" defaultstate="collapsed">
     
     @Test
