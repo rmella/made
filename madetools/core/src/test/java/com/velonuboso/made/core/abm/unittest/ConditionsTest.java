@@ -195,7 +195,6 @@ public class ConditionsTest {
     
     //</editor-fold>
     
-    
     // <editor-fold desc="Can improve self-similarity" defaultstate="collapsed">
     
     @Test
@@ -251,6 +250,39 @@ public class ConditionsTest {
     
     //</editor-fold>
     
+    // <editor-fold desc="Can reduce enemy's similarity" defaultstate="collapsed">
+    
+    @Test
+    public void UT_ConditionCanReduceEnemySimilarity__when_neighbour_is_not_enemy_it_cannot_reduce_enemy_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.BLACK, Color.WHITE, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanReduceEnemySimilarity.class));
+        assertFalse("Shouldn't have called the defaultActionNode since the neighbour is not an enemy", 
+                conditionSatisfied);
+    }
+    
+    @Test
+    public void UT_ConditionCanReduceEnemySimilarity__when_neighbour_is_an_enemy_but_cannot_lose_it_cannot_reduce_enemy_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.SQUARE, Color.BLACK, Color.WHITE, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanReduceEnemySimilarity.class));
+        assertFalse("Shouldn't have called the defaultActionNode since the neighbour can win the main character", 
+                conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionCanReduceEnemySimilarity__when_neighbour_is_an_enemy_and_cannot_win_it_can_reduce_enemy_similarity() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.TRIANGLE, Color.BLACK, Color.WHITE, 5, 5);
+        
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionCanReduceEnemySimilarity.class));
+        assertTrue("Should've called the defaultActionNode since the neighbour an enemy and can lose against the main character", 
+                conditionSatisfied);
+    }
+    
+    //</editor-fold>
     
     // <editor-fold desc="Storage into blackboard" defaultstate="collapsed">
     

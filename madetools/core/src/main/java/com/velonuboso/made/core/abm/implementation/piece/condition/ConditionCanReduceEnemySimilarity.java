@@ -20,7 +20,6 @@ import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimilarity;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
-import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
