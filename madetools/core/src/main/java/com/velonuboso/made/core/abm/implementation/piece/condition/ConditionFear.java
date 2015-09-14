@@ -18,17 +18,13 @@ package com.velonuboso.made.core.abm.implementation.piece.condition;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
-import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 /**
  *

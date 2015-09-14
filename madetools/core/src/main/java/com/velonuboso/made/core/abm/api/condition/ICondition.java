@@ -18,7 +18,6 @@ package com.velonuboso.made.core.abm.api.condition;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import java.util.function.BiPredicate;
 
 /**

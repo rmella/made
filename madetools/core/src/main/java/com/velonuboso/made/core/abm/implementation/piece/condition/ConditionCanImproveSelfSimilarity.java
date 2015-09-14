@@ -25,10 +25,7 @@ import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import java.util.Comparator;
 import java.util.function.Function;
-import java.util.stream.Stream;
-import javafx.scene.paint.Color;
 
 /**
  *

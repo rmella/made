@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.abm.api.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
 import java.util.function.Consumer;
 
 /**
@@ -24,4 +25,5 @@ import java.util.function.Consumer;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public interface IStrategy extends Consumer<IBlackBoard>{
+    public void setCharacter(ICharacter character);
 }

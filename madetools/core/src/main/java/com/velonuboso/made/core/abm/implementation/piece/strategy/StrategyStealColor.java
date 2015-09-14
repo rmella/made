@@ -23,7 +23,7 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyStealColor;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyStealColor implements IStrategyStealColor{
+public class StrategyStealColor extends BaseStrategy implements IStrategyStealColor{
 
     @Override
     public void accept(IBlackBoard t) {

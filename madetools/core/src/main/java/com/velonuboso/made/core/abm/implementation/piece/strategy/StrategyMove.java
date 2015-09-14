@@ -23,7 +23,7 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyMove;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyMove implements IStrategyMove{
+public class StrategyMove extends BaseStrategy implements IStrategyMove{
 
     @Override
     public void accept(IBlackBoard t) {

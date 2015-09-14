@@ -23,7 +23,7 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyStain implements IStrategyStain{
+public class StrategyStain extends BaseStrategy implements IStrategyStain{
 
     @Override
     public void accept(IBlackBoard t) {

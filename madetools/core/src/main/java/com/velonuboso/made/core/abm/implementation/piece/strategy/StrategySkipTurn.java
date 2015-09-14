@@ -23,7 +23,7 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategySkipTurn implements IStrategySkipTurn{
+public class StrategySkipTurn extends BaseStrategy implements IStrategySkipTurn{
 
     @Override
     public void accept(IBlackBoard t) {

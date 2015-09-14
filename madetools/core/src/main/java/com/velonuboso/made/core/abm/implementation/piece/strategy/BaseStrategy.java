@@ -16,18 +16,18 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
-import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.strategy.IStrategyDisplace;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.strategy.IStrategy;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyDisplace extends BaseStrategy implements IStrategyDisplace{
-
+public abstract class BaseStrategy implements IStrategy {
+    ICharacter character;
+    
     @Override
-    public void accept(IBlackBoard t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setCharacter(ICharacter character) {
+        this.character = character;
     }
-
 }

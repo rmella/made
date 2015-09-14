@@ -23,7 +23,7 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyTransferColor implements IStrategyTransferColor{
+public class StrategyTransferColor extends BaseStrategy implements IStrategyTransferColor{
 
     @Override
     public void accept(IBlackBoard t) {
