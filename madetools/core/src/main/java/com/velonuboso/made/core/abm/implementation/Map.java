@@ -22,10 +22,8 @@ import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.TerrainType;
-import java.awt.font.NumericShaper;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +42,8 @@ public class Map implements IMap {
     private HashMap<Integer, TerrainType> terrainByCell = new HashMap<>();
     private HashMap<IColorSpot, Integer> cellByColorSpot = new HashMap<>();
     private HashMap<Integer, IColorSpot> ColorSpotByCell = new HashMap<>();
+
+    private final static double SQRT_2 = Math.sqrt(2);
     
     public Map() {
     }
@@ -94,31 +94,6 @@ public class Map implements IMap {
         ICharacter author = getCharacter(cellId);
         recursiveAddCellsToMove(cellId, navigatedCells, maxMovement, author);
         return new ArrayList<>(navigatedCells);
-    }
-
-    private void recursiveAddCellsToMove(Integer currentCell, HashSet<Integer> navigatedCells,
-            int maxMovement, ICharacter author) {
-
-        if (maxMovement < 0) {
-            return;
-        }
-
-        int sourceX = getXFromId(currentCell);
-        int sourceY = getYFromId(currentCell);
-
-        navigatedCells.add(currentCell);
-
-        for (int offsetX = -1; offsetX < 2; offsetX++) {
-            for (int offsetY = -1; offsetY < 2; offsetY++) {
-
-                int navigableCell = getCell(sourceX + offsetX, sourceY + offsetY);
-                if (!navigatedCells.contains(navigableCell)
-                        && (cellCanBeOccupiedByCharacter(navigableCell, author))) {
-
-                    recursiveAddCellsToMove(navigableCell, navigatedCells, maxMovement - 1, author);
-                }
-            }
-        }
     }
 
     @Override
@@ -198,14 +173,6 @@ public class Map implements IMap {
         return (((y + sizeY) % sizeY) * sizeY) + ((x + sizeX) % sizeX);
     }
 
-    private int getXFromId(int id) {
-        return id % sizeY;
-    }
-
-    private int getYFromId(int id) {
-        return id / sizeY;
-    }
-
     @Override
     public Integer getCell(ICharacter character) {
         return cellByCharacter.get(character);
@@ -232,11 +199,6 @@ public class Map implements IMap {
         }
     }
 
-    private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
-        return getCharacter(navigableCell) == author || getCharacter(navigableCell) == null;
-    }
-
-    
     @Override
     public void putColorSpot(IColorSpot spot, int cell) {
         ColorSpotByCell.put(cell, spot);
@@ -260,5 +222,92 @@ public class Map implements IMap {
     @Override
     public Integer getCell(IColorSpot spot) {
         return cellByColorSpot.get(spot);
+    }
+
+    @Override
+    public boolean isCharacterNearCell(ICharacter character, int cell) {
+        return getCellsAround(getCell(character), 1).contains(cell);
+    }
+
+    @Override
+    public Integer getCloserCell(ICharacter character, int targetCell) {
+        final int PIECE_MOVEMENT = 1;
+
+        int currentCell = getCell(character);
+        List<Integer> cellsToMove = getCellsToMove(currentCell, PIECE_MOVEMENT);
+        return cellsToMove
+                .stream()
+                .min((Integer firstCell, Integer secondCell) -> {
+                    double distanceFirstCell = distanceBetweenCells(firstCell, targetCell);
+                    double distanceSecondCell = distanceBetweenCells(secondCell, targetCell);
+                    return Double.compare(distanceFirstCell, distanceSecondCell);
+                })
+                .orElse(null);
+    }
+
+    private void recursiveAddCellsToMove(Integer currentCell, HashSet<Integer> navigatedCells,
+            int maxMovement, ICharacter author) {
+
+        if (maxMovement < 0) {
+            return;
+        }
+
+        int sourceX = getXFromId(currentCell);
+        int sourceY = getYFromId(currentCell);
+
+        navigatedCells.add(currentCell);
+
+        for (int offsetX = -1; offsetX < 2; offsetX++) {
+            for (int offsetY = -1; offsetY < 2; offsetY++) {
+
+                int navigableCell = getCell(sourceX + offsetX, sourceY + offsetY);
+                if (!navigatedCells.contains(navigableCell)
+                        && (cellCanBeOccupiedByCharacter(navigableCell, author))) {
+
+                    recursiveAddCellsToMove(navigableCell, navigatedCells, maxMovement - 1, author);
+                }
+            }
+        }
+    }
+
+    private int getXFromId(int id) {
+        return id % sizeY;
+    }
+
+    private int getYFromId(int id) {
+        return id / sizeY;
+    }
+
+    private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
+        return getCharacter(navigableCell) == author || getCharacter(navigableCell) == null;
+    }
+
+    private double distanceBetweenCells(int sourceCell, int targetCell) {
+        int currentCellX = getPositionX(sourceCell);
+        int currentCellY = getPositionY(sourceCell);
+        int targetCellX = getPositionX(targetCell);
+        int targetCellY = getPositionY(targetCell);
+        
+        double minimum = Double.MAX_VALUE;
+
+        for (int offsetX = currentCellX - getWidth(); offsetX <= currentCellX + getWidth(); offsetX += getWidth()) {
+            for (int offsetY = currentCellY - getHeight(); offsetY <= currentCellY + getHeight(); offsetY += getHeight()) {
+                minimum = Math.min(minimum, getDistance(offsetX, offsetY, targetCellX, targetCellY));
+            }
+        }
+        return minimum;
+    }
+
+    private double getDistance(int x1, int y1, int x2, int y2) {
+        int dx = Math.abs(x2 - x1);
+        int dy = Math.abs(y2 - y1);
+
+        int min = Math.min(dx, dy);
+        int max = Math.max(dx, dy);
+
+        int diagonalSteps = min;
+        int straightSteps = max - min;
+
+        return SQRT_2 * diagonalSteps + straightSteps;
     }
 }

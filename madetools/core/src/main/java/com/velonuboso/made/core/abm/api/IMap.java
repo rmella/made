@@ -17,7 +17,6 @@
 package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.entity.TerrainType;
-import com.velonuboso.made.core.abm.implementation.ColorSpot;
 import com.velonuboso.made.core.abm.implementation.Map;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 import java.util.List;
@@ -71,4 +70,7 @@ public interface IMap {
 
     public int getHeight();
 
+    public boolean isCharacterNearCell(ICharacter character, int ccell);
+    
+    public Integer getCloserCell(ICharacter character, int cell);
 }

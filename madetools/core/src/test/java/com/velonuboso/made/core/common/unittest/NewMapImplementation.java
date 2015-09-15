@@ -136,5 +136,15 @@ public class NewMapImplementation implements IMap{
     public Integer getCell(IColorSpot character) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public boolean isCharacterNearCell(ICharacter character, int ccell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Integer getCloserCell(ICharacter character, int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
         
     }
