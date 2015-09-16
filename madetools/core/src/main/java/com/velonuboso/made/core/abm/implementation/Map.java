@@ -279,7 +279,9 @@ public class Map implements IMap {
     }
 
     private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
-        return getCharacter(navigableCell) == author || getCharacter(navigableCell) == null;
+        return getCharacter(navigableCell) == author 
+                || getCharacter(navigableCell) == null
+                || author.getShape().wins(getCharacter(navigableCell).getShape());
     }
 
     private double distanceBetweenCells(int sourceCell, int targetCell) {

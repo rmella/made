@@ -20,6 +20,7 @@ import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.entity.TerrainType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -401,8 +402,8 @@ public class MapTest {
         Integer targetCell = map.getCell(newX, newY);
         Integer obstacleCell = map.getCell(newX, newY);
 
-        ICharacter newCharacter = mock(ICharacter.class);
-        map.putCharacter(newCharacter, obstacleCell);
+        putCharacterInMap(1, sourceCell, CharacterShape.CIRCLE);
+        putCharacterInMap(2, obstacleCell, CharacterShape.CIRCLE);
 
         assertFalse("Shouldn't contain cell " + targetCell + " (" + newX + "," + newY + ") "
                 + "since an obstacle is present in (" + obstacleX + "," + obstacleY + ")",
@@ -458,6 +459,38 @@ public class MapTest {
     }
 
     @Test
+    public void getCloserCell__When_piece_is_in_0_0_and_target_is_5_5_but_1_1_is_occupied_by_same_shape_the_closer_cell_s_0_1_or_1_0() {
+        final int CHARACTER_CELL = map.getCell(0, 0);
+        final int OBSTACLE_CELL = map.getCell(1, 1);
+        final int TARGET_CELL = map.getCell(5, 5);
+        final List<Integer> expectedChoice = new ArrayList<>();
+        expectedChoice.add(map.getCell(0, 1));
+        expectedChoice.add(map.getCell(1, 0));
+
+        putCharacterInMap(2, OBSTACLE_CELL, CharacterShape.SQUARE);
+        int closerCell = getCloserCell(CHARACTER_CELL, TARGET_CELL);
+
+        String integerListAsString = String.join(" or ",
+                expectedChoice.stream().map(cell -> Integer.toString(cell)).collect(Collectors.toList()));
+        assertTrue("Should've returned " + integerListAsString,
+                expectedChoice.contains(closerCell));
+    }
+    
+    @Test
+    public void getCloserCell__When_square_is_in_0_0_and_target_is_5_5_but_1_1_is_occupied_by_shape_that_can_be_won_the_closer_cell_s_0_1_or_1_0() {
+                final int CHARACTER_CELL = map.getCell(0, 0);
+        final int OBSTACLE_CELL = map.getCell(1, 1);
+        final int TARGET_CELL = map.getCell(5, 5);
+        final int EXPECTED_CELL = map.getCell(1, 1);
+
+        putCharacterInMap(2, OBSTACLE_CELL, CharacterShape.CIRCLE);
+        int closerCell = getCloserCell(CHARACTER_CELL, TARGET_CELL);
+
+        assertEquals("Should've returned " + EXPECTED_CELL,
+                EXPECTED_CELL, closerCell);
+    }
+    
+    @Test
     public void getCloserCell__When_piece_is_in_0_0_and_target_is_5_5_but_1_1_is_occupied_the_closer_cell_is_0_1_or_1_0() {
         final int CHARACTER_CELL = map.getCell(0, 0);
         final int OBSTACLE_CELL = map.getCell(1, 1);
@@ -466,7 +499,7 @@ public class MapTest {
         expectedChoice.add(map.getCell(0, 1));
         expectedChoice.add(map.getCell(1, 0));
 
-        putCharacterInMap(2, OBSTACLE_CELL);
+        putCharacterInMap(2, OBSTACLE_CELL, CharacterShape.SQUARE);
         int closerCell = getCloserCell(CHARACTER_CELL, TARGET_CELL);
 
         String integerListAsString = String.join(" or ",
@@ -480,7 +513,7 @@ public class MapTest {
         final int CHARACTER_CELL = map.getCell(0, 0);
         final int EXPECTED_CELL_NEAR = map.getCell(1, 1);
 
-        ICharacter character = putCharacterInMap(1, CHARACTER_CELL);
+        ICharacter character = putCharacterInMap(1, CHARACTER_CELL, CharacterShape.SQUARE);
         assertTrue("Character in " + CHARACTER_CELL + " should be near " + EXPECTED_CELL_NEAR,
                 map.isCharacterNearCell(character, EXPECTED_CELL_NEAR));
     }
@@ -490,7 +523,7 @@ public class MapTest {
         final int CHARACTER_CELL = map.getCell(0, 0);
         final int EXPECTED_CELL_NEAR = map.getCell(19, 19);
 
-        ICharacter character = putCharacterInMap(1, CHARACTER_CELL);
+        ICharacter character = putCharacterInMap(1, CHARACTER_CELL,CharacterShape.SQUARE);
         assertTrue("Character in " + CHARACTER_CELL + " should be near " + EXPECTED_CELL_NEAR,
                 map.isCharacterNearCell(character, EXPECTED_CELL_NEAR));
     }
@@ -500,20 +533,21 @@ public class MapTest {
         final int CHARACTER_CELL = map.getCell(0, 0);
         final int EXPECTED_CELL_NEAR = map.getCell(5, 5);
 
-        ICharacter character = putCharacterInMap(1, CHARACTER_CELL);
+        ICharacter character = putCharacterInMap(1, CHARACTER_CELL, CharacterShape.SQUARE);
         assertFalse("Character in " + CHARACTER_CELL + " shouldn't be near " + EXPECTED_CELL_NEAR,
                 map.isCharacterNearCell(character, EXPECTED_CELL_NEAR));
     }
 
     private int getCloserCell(final int CHARACTER_CELL, final int TARGET_CELL) {
-        ICharacter newCharacter = putCharacterInMap(1, CHARACTER_CELL);
+        ICharacter newCharacter = putCharacterInMap(1, CHARACTER_CELL, CharacterShape.SQUARE);
         int closerCell = map.getCloserCell(newCharacter, TARGET_CELL);
         return closerCell;
     }
 
-    private ICharacter putCharacterInMap(final int id, final int CHARACTER_CELL) {
+    private ICharacter putCharacterInMap(final int id, final int CHARACTER_CELL, CharacterShape shape) {
         ICharacter newCharacter = mock(ICharacter.class);
         stub(newCharacter.getId()).toReturn(id);
+        stub(newCharacter.getShape()).toReturn(shape);
         map.putCharacter(newCharacter, CHARACTER_CELL);
         return newCharacter;
     }
