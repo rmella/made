@@ -30,35 +30,54 @@ import java.util.List;
  */
 public class StrategyDisplace extends BaseAction implements IStrategyDisplace {
 
+    private int characterCell;
+    private int targetCell;
+    private Integer cellToDisplace;
+    
     @Override
     public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
-        int targetCell = currentBlackboard.getInt(Piece.BLACKBOARD_CHARACTER_CELL);
-
-        if (targetCell == -1) {
-            return false;
-        }
-
-        IMap map = getCharacter().getMap();
-        int characterCell = map.getCell(getCharacter());
-        List<Integer> cellsAround = map.getCellsAround(characterCell, 1);
-        if (cellsAround.contains(targetCell)) {
-            ICharacter targetCharacter = map.getCharacter(targetCell);
-
-            return false;
-        }
-
-        int closerCell = map.getCloserCell(getCharacter(), targetCell);
-        ICharacter characterInCloserCell = map.getCharacter(closerCell);
-        if (characterInCloserCell != null) {
-
-            //TODO log
-            return false;
-        }
-
-        map.moveCharacter(characterCell, targetCell);
-        //TODO log
         
+        retrieveTargetCellFromBlackboard(currentBlackboard);
+        if (!targetCellIsAround()){
+            return false;
+        }
+        
+        calculateFreeCellToDisplaceTarget();
+        if (cellToDisplace==null){
+            return false;
+        }
+
+        displaceTarget();
+        moveCharacterToTarget();
         return true;
+    }
+
+    private void retrieveTargetCellFromBlackboard(IBlackBoard currentBlackboard) {
+        targetCell = currentBlackboard.getInt(Piece.BLACKBOARD_CHARACTER_CELL);
+    }
+
+    private boolean targetCellIsAround() {
+        IMap map = getCharacter().getMap();
+        characterCell = map.getCell(getCharacter());
+        List<Integer> cellsAround = map.getCellsAround(characterCell, 1);
+        return cellsAround.contains(targetCell);
+    }
+
+    private void calculateFreeCellToDisplaceTarget() {
+        ICharacter targetCharacter = getMap().getCharacter(targetCell);
+        List<Integer> cellsAroundTargetCharacter = targetCharacter.getMap().getCellsAround(targetCell, 1);
+        cellToDisplace = cellsAroundTargetCharacter.stream()
+                .filter(cell->getMap().getCharacter(cell)==null)
+                .findFirst()
+                .orElse(null);
+    }
+    
+    private void displaceTarget() {
+        getMap().moveCharacter(targetCell, cellToDisplace);
+    }
+
+    private void moveCharacterToTarget() {
+        getMap().moveCharacter(characterCell, targetCell);
     }
 }
 

@@ -17,9 +17,6 @@
 package com.velonuboso.made.core.abm.api.strategy;
 
 import com.velonuboso.made.core.abm.api.IAction;
-import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.ICharacter;
-import java.util.function.Consumer;
 
 /**
  *
