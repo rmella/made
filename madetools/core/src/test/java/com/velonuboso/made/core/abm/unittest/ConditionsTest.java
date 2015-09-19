@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.unittest;
 
+import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
@@ -52,7 +53,6 @@ public class ConditionsTest {
     private AbmConfigurationEntity abmConfigurationEntity;
     private IEventsWriter fakeEventsWriter;
     private IMap map;
-    private BehaviourTreeNode defaultActionNode;
     private boolean conditionSatisfied;
 
     @Before
@@ -61,12 +61,6 @@ public class ConditionsTest {
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
-        defaultActionNode = new BehaviourTreeNode();
-        conditionSatisfied = false;
-        defaultActionNode.setActionWhenRun((currentBlackBoard, oldBlackBoard) -> {
-            conditionSatisfied = true;
-        }
-        );
         ObjectFactory.cleanAllMocks();
     }
 
@@ -488,12 +482,14 @@ public class ConditionsTest {
     
     private void SetConditionAndRun(Piece mainPiece, ICondition condition) {
         condition.setCharacter(mainPiece);
-        BehaviourTreeNode rootNode = new BehaviourTreeNode();
-        rootNode.setCharacter(mainPiece);
-        defaultActionNode.setCharacter(mainPiece);
-        rootNode.addChildNodeInOrder(condition, 1, defaultActionNode);
-        mainPiece.setBehaviourTree(rootNode);
-        mainPiece.run();
+        
+        IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
+        node.setCharacter(mainPiece);
+        node.setProbability(1);
+        node.setAction(condition);
+        
+        mainPiece.setBehaviourTree(node);
+        conditionSatisfied = mainPiece.run();
     }
 
     private Piece buildPiece(int id, CharacterShape shape, Color foreground, Color background, int posX, int posY) {

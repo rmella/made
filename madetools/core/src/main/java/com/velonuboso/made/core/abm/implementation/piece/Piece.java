@@ -48,7 +48,7 @@ public class Piece implements ICharacter {
     private IProbabilityHelper probabilityHelper;
     private AbmConfigurationEntity abmConfigurationEntity;
     private PieceAbmConfigurationHelper abmConfigurationHelper;
-    private IBlackBoard currentBlackBoard;
+    private IBlackBoard pieceCurrentBlackBoard;
     
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
     public static final String BLACKBOARD_JOY = "BLACKBOARD_JOY";
@@ -65,7 +65,7 @@ public class Piece implements ICharacter {
         backgroundColor = probabilityHelper.getRandomColor();
 
         allCharacters = null;
-        currentBlackBoard = null;
+        pieceCurrentBlackBoard = null;
     }
 
     @Override
@@ -144,16 +144,16 @@ public class Piece implements ICharacter {
     }
 
     @Override
-    public void run() {
-        IBlackBoard oldBlackBoard = currentBlackBoard;
-        currentBlackBoard = newEmptyBlackBoard();
-        rootNode.run(currentBlackBoard, oldBlackBoard);
+    public boolean run() {
+        IBlackBoard oldBlackBoard = pieceCurrentBlackBoard;
+        pieceCurrentBlackBoard = newEmptyBlackBoard();
+        return rootNode.run(pieceCurrentBlackBoard, oldBlackBoard);
     }
 
     public void setBehaviourTree (IBehaviourTreeNode node){
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
-        rootNode.addChildNodeInOrder((currentBlackBoard, oldBlackBoard)->true, 1, node);
+        rootNode.addChildNode(node);
     }
 
     @Override
@@ -173,8 +173,9 @@ public class Piece implements ICharacter {
     }
 
     private void addBlackBoardInitializerToNode(IBehaviourTreeNode node) {
-        node.setActionWhenRun((IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) -> {
+        node.setAction((IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) -> {
             initializeBlackboard(currentBlackBoard);
+            return true;
         });
     }
 

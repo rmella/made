@@ -18,7 +18,6 @@
 package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.entity.CharacterShape;
-import com.velonuboso.made.core.abm.implementation.EventsWriter;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ImplementedBy;
@@ -51,5 +50,5 @@ public interface ICharacter {
     public void setForegroundColor(Color foregroundColor);
     public void setBackgroundColor(Color backgroundColor);
     
-    public void run();
+    public boolean run();
 }

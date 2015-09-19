@@ -35,13 +35,16 @@ import java.util.function.Predicate;
 public class BehaviourTreeNode implements IBehaviourTreeNode {
 
     private ICharacter character;
-    private BiConsumer<IBlackBoard, IBlackBoard> action;
-    private ArrayList<ChildCondition> childrenConditions;
+    private BiPredicate<IBlackBoard, IBlackBoard> action;
+    private float probability;
+    private ArrayList<IBehaviourTreeNode> children;
+    
     private IProbabilityHelper probabilityHelper;
 
     public BehaviourTreeNode() {
         action = new NullAction();
-        childrenConditions = new ArrayList<>();
+        probability = 1f;
+        children = new ArrayList<>();
         character = null;
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
     }
@@ -52,48 +55,41 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
-    public void setActionWhenRun(BiConsumer<IBlackBoard, IBlackBoard> action) {
+    public void setAction(BiPredicate<IBlackBoard, IBlackBoard> action) {
         this.action = action;
     }
 
     @Override
-    public void addChildNodeInOrder(BiPredicate<IBlackBoard, IBlackBoard> conditionToRunChildren, 
-            float probabilityToRunChildren, IBehaviourTreeNode nodeToRun) {
-        
-        ChildCondition child = new ChildCondition();
-        child.conditionToRunChildren = conditionToRunChildren;
-        child.nodeToRun = nodeToRun;
-        child.probabilityToRunChildren = probabilityToRunChildren;
-        
-        childrenConditions.add(child);
+    public void setProbability(float probability) {
+        this.probability = probability;
     }
 
     @Override
+    public void addChildNode(IBehaviourTreeNode child) {
+        children.add(child);
+    }
+    
+    @Override
     public boolean run(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
         checkCorrectInitialization();
-        action.accept(currentBlackBoard, oldBlackBoard);
         
-        boolean success = false;
-        int childIndex = 0;
-        
-        while (!success && childIndex<childrenConditions.size()){
-            ChildCondition child = childrenConditions.get(childIndex);
-            
-            if (isInProbability(child) && conditionValidates(child, currentBlackBoard, oldBlackBoard)){
-                 success |= child.nodeToRun.run(currentBlackBoard, oldBlackBoard);
+        if (!isInProbability() || !action.test(currentBlackBoard, oldBlackBoard)){
+            return false;
+        }else{
+            if (children.isEmpty()){
+                return true;
+            }else{
+                IBehaviourTreeNode executedSuccessfully =  children.stream()
+                        .filter(node -> node.run(currentBlackBoard, oldBlackBoard))
+                        .findFirst()
+                        .orElse(null);
+                return executedSuccessfully != null;
             }
-            childIndex++;
         }
-        
-        return success;
     }
 
-    private boolean conditionValidates(ChildCondition child, IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
-        return child.conditionToRunChildren.test(currentBlackBoard, oldBlackBoard);
-    }
-
-    private boolean isInProbability(ChildCondition child) {
-        return probabilityHelper.getNextProbability(this.getClass())<child.probabilityToRunChildren;
+    private boolean isInProbability() {
+        return probabilityHelper.getNextProbability(this.getClass())<probability;
     }
 
     private void checkCorrectInitialization() throws RuntimeException {
@@ -113,15 +109,10 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         }
     }
 
-    private class ChildCondition {
-        BiPredicate<IBlackBoard,IBlackBoard> conditionToRunChildren = null;
-        float probabilityToRunChildren = 0f;
-        IBehaviourTreeNode nodeToRun = null;
-    }
-
-    private class NullAction implements BiConsumer<IBlackBoard,IBlackBoard> {
+    private class NullAction implements BiPredicate<IBlackBoard,IBlackBoard> {
         @Override
-        public void accept(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+        public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
+            return true;
         }
     };
 }
