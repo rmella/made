@@ -14,32 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.implementation.piece.strategy;
+package com.velonuboso.made.core.abm.unittest;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.strategy.IStrategy;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
+import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
+import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
+import com.velonuboso.made.core.abm.implementation.ColorSpot;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
-import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import javafx.scene.paint.Color;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.mockito.ArgumentMatcher;
+import static org.mockito.Mockito.*;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public abstract class BaseStrategy implements IStrategy {
-    ICharacter character;
+public class StrategiesTest {
+
     
-    @Override
-    public void setCharacter(ICharacter character) {
-        this.character = character;
-    }
-    
-    void writeLogError(String message) {
-        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent asd = factory.error(character, message);
-        character.getEventsWriter().add(null);
-    }
 }

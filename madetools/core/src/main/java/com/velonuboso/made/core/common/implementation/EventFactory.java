@@ -38,6 +38,7 @@ public class EventFactory implements IEventFactory {
     public static final String CAN_REDUCE_ENEMY_SIMILARITY = "CanReduceEnemySimilarity";
     public static final String IS_SAD = "IsSad";
     public static final String IS_SURPRISED = "IsSurprised";
+    public static final String ERROR = "Error";
     
     @Override
     public IEvent worldExists(final IWorld world) {
@@ -72,6 +73,11 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent canReduceEnemySimilarity(ICharacter subject, ICharacter enemy) {
         return new Event(CAN_REDUCE_ENEMY_SIMILARITY, subject.getId(), enemy.getId());
+    }
+    
+    @Override
+    public IEvent error(ICharacter subject, String message) {
+        return new Event(ERROR, subject.getId(), message);
     }
 
     @Override

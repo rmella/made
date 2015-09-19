@@ -17,7 +17,11 @@
 package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyDisplace;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import java.util.List;
 
 /**
  *
@@ -26,8 +30,34 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyDisplace;
 public class StrategyDisplace extends BaseStrategy implements IStrategyDisplace{
 
     @Override
-    public void accept(IBlackBoard t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void accept(IBlackBoard blackBoard) {
+        int targetCell = blackBoard.getInt(Piece.BLACKBOARD_CHARACTER_CELL);
+        
+        if (targetCell == -1){
+            writeLogError("target cell not found");
+            return;
+        }
+        
+        IMap map = character.getMap();
+        int characterCell = map.getCell(character);
+        List<Integer> cellsAround = map.getCellsAround(characterCell, 1);
+        if (cellsAround.contains(targetCell)){
+            ICharacter targetCharacter = map.getCharacter(targetCell);
+            
+            return;
+        }
+        
+        int closerCell = map.getCloserCell(character, targetCell);
+        ICharacter characterInCloserCell = map.getCharacter(closerCell);
+        if (characterInCloserCell!=null){
+            
+            //TODO log
+            return;
+        }
+        
+        map.moveCharacter(characterCell, targetCell);
+        //TODO log
     }
+
 
 }

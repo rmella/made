@@ -40,4 +40,5 @@ public interface IEventFactory {
     IEvent canReduceEnemySimilarity(ICharacter subject, ICharacter enemy);
     IEvent isSad(ICharacter subject);
     IEvent isSurprised(ICharacter subject);
+    IEvent error(ICharacter subject, String message);
 }
