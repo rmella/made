@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimilarity;
@@ -29,7 +30,7 @@ import java.util.HashMap;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionCanReduceEnemySimilarity extends BaseCondition implements IConditionCanReduceEnemySimilarity{
+public class ConditionCanReduceEnemySimilarity extends BaseAction implements IConditionCanReduceEnemySimilarity{
 
     
     @Override
@@ -49,7 +50,7 @@ public class ConditionCanReduceEnemySimilarity extends BaseCondition implements 
         
         ICharacter candidateToPush = affinityMatrix.keySet().stream()
                 .filter(targetCharacter -> isEnemy(affinityMatrix, targetCharacter))
-                .filter(enemy -> this.character.getShape().wins(enemy.getShape()))
+                .filter(enemy -> this.getCharacter().getShape().wins(enemy.getShape()))
                 .min((ICharacter firstEnemy, ICharacter secondEnemy) -> {
                     return Float.compare(firstEnemy.getColorDifference(), secondEnemy.getColorDifference());
                 })
@@ -67,7 +68,7 @@ public class ConditionCanReduceEnemySimilarity extends BaseCondition implements 
 
     private void writeEvent(ICharacter targetCharacter) {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent canReduceEnemySimilarityevent = eventFactory.canReduceEnemySimilarity(character, targetCharacter);
-        character.getEventsWriter().add(canReduceEnemySimilarityevent);
+        IEvent canReduceEnemySimilarityevent = eventFactory.canReduceEnemySimilarity(getCharacter(), targetCharacter);
+        getCharacter().getEventsWriter().add(canReduceEnemySimilarityevent);
     }
 }

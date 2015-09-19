@@ -18,16 +18,18 @@ package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyStain extends BaseStrategy implements IStrategyStain{
+public class StrategyStain extends BaseAction implements IStrategyStain {
 
     @Override
-    public void accept(IBlackBoard t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
+        // TODO logic
+        return false;
     }
 
 }

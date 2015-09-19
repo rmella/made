@@ -16,17 +16,32 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece;
 
+import com.velonuboso.made.core.abm.api.IAction;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.api.condition.IConditionAnticipation;
+import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveFriendSimilarity;
+import com.velonuboso.made.core.abm.api.condition.IConditionFear;
+import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
+import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyDisplace;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyMove;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
+import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyStealColor;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
+import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.BiPredicate;
 import javafx.scene.paint.Color;
 
 /**
@@ -49,17 +64,17 @@ public class Piece implements ICharacter {
     private AbmConfigurationEntity abmConfigurationEntity;
     private PieceAbmConfigurationHelper abmConfigurationHelper;
     private IBlackBoard pieceCurrentBlackBoard;
-    
+
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
     public static final String BLACKBOARD_JOY = "BLACKBOARD_JOY";
     public static final String BLACKBOARD_SPOT_CELL = "BLACKBOARD_SPOT_CELL";
     public static final String BLACKBOARD_CHARACTER_CELL = "BLACKBOARD_CHARACTER_CELL";
-    
+
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;
         eventsWriter = null;
-        InitializeBehaviourTree();
+        TryInitializeBehaviourTree();
 
         foregroundColor = probabilityHelper.getRandomColor();
         backgroundColor = probabilityHelper.getRandomColor();
@@ -91,7 +106,7 @@ public class Piece implements ICharacter {
     public IEventsWriter getEventsWriter() {
         return eventsWriter;
     }
-    
+
     @Override
     public void setEventsWriter(final IEventsWriter newEventsWriter) {
         this.eventsWriter = newEventsWriter;
@@ -131,6 +146,7 @@ public class Piece implements ICharacter {
     public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
         this.abmConfigurationEntity = abmConfiguration;
         this.abmConfigurationHelper = new PieceAbmConfigurationHelper(abmConfiguration);
+        TryInitializeBehaviourTree();
     }
 
     @Override
@@ -150,7 +166,7 @@ public class Piece implements ICharacter {
         return rootNode.run(pieceCurrentBlackBoard, oldBlackBoard);
     }
 
-    public void setBehaviourTree (IBehaviourTreeNode node){
+    public void setBehaviourTree(IBehaviourTreeNode node) {
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
         rootNode.addChildNode(node);
@@ -160,11 +176,17 @@ public class Piece implements ICharacter {
     public AbmConfigurationEntity getAbmConfiguration() {
         return abmConfigurationEntity;
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Private methods">
-    private void InitializeBehaviourTree() {
+    private void TryInitializeBehaviourTree() {
+        
+        if (abmConfigurationEntity== null){
+            return;
+        }
+        
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
+
         addChildForSurpriseBehaviour(rootNode);
         addChildForFearBehaviour(rootNode);
         addChildForAnticipationBehaviour(rootNode);
@@ -180,18 +202,123 @@ public class Piece implements ICharacter {
     }
 
     private void addChildForSurpriseBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode surpriseCondition = createActionNode(
+                ObjectFactory.createObject(IConditionSurprise.class),
+                abmConfigurationHelper.getSurpriseProbability());
+        IBehaviourTreeNode moveAwayStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyMoveAway.class), 1);
+
+        parentNode.addChildNode(surpriseCondition);
+        surpriseCondition.addChildNode(moveAwayStrategy);
     }
 
     private void addChildForFearBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode fearCondition = createActionNode(
+                ObjectFactory.createObject(IConditionFear.class),
+                abmConfigurationHelper.getFearProbability());
+
+        IBehaviourTreeNode skipTurnStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategySkipTurn.class), 1);
+
+        parentNode.addChildNode(fearCondition);
+        fearCondition.addChildNode(skipTurnStrategy);
     }
 
     private void addChildForAnticipationBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode anticipationCondition = createActionNode(
+                ObjectFactory.createObject(IConditionAnticipation.class),
+                abmConfigurationHelper.getFearProbability());
+
+        IBehaviourTreeNode displaceStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyDisplace.class), 1);
+
+        IBehaviourTreeNode moveStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyMove.class), 1);
+
+        IBehaviourTreeNode stainStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyStain.class), 1);
+
+        parentNode.addChildNode(anticipationCondition);
+        anticipationCondition.addChildNode(displaceStrategy);
+        anticipationCondition.addChildNode(moveStrategy);
+        anticipationCondition.addChildNode(stainStrategy);
     }
 
     private void addChildForSadnessBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode sadnessCondition = createActionNode(
+                ObjectFactory.createObject(IConditionSadness.class),
+                abmConfigurationHelper.getSadnessProbability());
+
+        parentNode.addChildNode(sadnessCondition);
+        addChildForImprovingFriendSimilarityBehaviour(sadnessCondition);
+        addChildForReducingEnemySimilarityBehaviour(sadnessCondition);
+        addChildForImprovingSelfSimilarityBehaviour(sadnessCondition);
+    }
+
+    private void addChildForImprovingFriendSimilarityBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode canImproveFriendSimilarityCondition = createActionNode(
+                ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class),
+                abmConfigurationHelper.getImprovingFriendSimilarityProbability());
+
+        IBehaviourTreeNode displaceStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyDisplace.class), 1);
+
+        IBehaviourTreeNode moveStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyMove.class), 1);
+
+        IBehaviourTreeNode transferColorStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyTransferColor.class), 1);
+
+        parentNode.addChildNode(canImproveFriendSimilarityCondition);
+        canImproveFriendSimilarityCondition.addChildNode(displaceStrategy);
+        canImproveFriendSimilarityCondition.addChildNode(moveStrategy);
+        canImproveFriendSimilarityCondition.addChildNode(transferColorStrategy);
+    }
+
+    private void addChildForReducingEnemySimilarityBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode canReduceEnemySimilarityCondition = createActionNode(
+                ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class),
+                abmConfigurationHelper.getReducingEnemySimilarityProbability());
+
+        IBehaviourTreeNode displaceStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyDisplace.class), 1);
+
+        IBehaviourTreeNode moveStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyMove.class), 1);
+
+        IBehaviourTreeNode stealColorStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyStealColor.class), 1);
+
+        parentNode.addChildNode(canReduceEnemySimilarityCondition);
+        canReduceEnemySimilarityCondition.addChildNode(displaceStrategy);
+        canReduceEnemySimilarityCondition.addChildNode(moveStrategy);
+        canReduceEnemySimilarityCondition.addChildNode(stealColorStrategy);
+    }
+
+    private void addChildForImprovingSelfSimilarityBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode canImproveSelfSimilarityCondition = createActionNode(
+                ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class),
+                abmConfigurationHelper.getImprovingSelfSimilarityProbability());
+
+        IBehaviourTreeNode displaceStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyDisplace.class), 1);
+
+        IBehaviourTreeNode moveStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyMove.class), 1);
+
+        IBehaviourTreeNode stainStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategyStain.class), 1);
+
+        parentNode.addChildNode(canImproveSelfSimilarityCondition);
+        canImproveSelfSimilarityCondition.addChildNode(displaceStrategy);
+        canImproveSelfSimilarityCondition.addChildNode(moveStrategy);
+        canImproveSelfSimilarityCondition.addChildNode(stainStrategy);
     }
 
     private void addChildForFallbackBehaviour(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode skipTurnStrategy = createActionNode(
+                ObjectFactory.createObject(IStrategySkipTurn.class), 1);
+        parentNode.addChildNode(skipTurnStrategy);
     }
 
     private void initializeBlackboard(IBlackBoard blackBoard) {
@@ -295,9 +422,19 @@ public class Piece implements ICharacter {
                 .average()
                 .orElse(0f);
     }
-    
+
     private IBlackBoard newEmptyBlackBoard() {
         return ObjectFactory.createObject(IBlackBoard.class);
     }
     // </editor-fold>
+
+    private IBehaviourTreeNode createActionNode(IAction action, float probability) {
+        IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
+        node.setAction(action);
+        node.setCharacter(this);
+        node.setProbability(probability);
+        action.setCharacter(this);
+
+        return node;
+    }
 }

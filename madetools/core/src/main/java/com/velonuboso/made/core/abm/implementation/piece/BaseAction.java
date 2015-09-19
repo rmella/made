@@ -14,21 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.implementation.piece.strategy;
+
+package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.strategy.IStrategyStealColor;
-import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.api.condition.ICondition;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyStealColor extends BaseAction implements IStrategyStealColor {
+public abstract class BaseAction implements ICondition{
+
+    ICharacter character;
+    
+    @Override
+    public void setCharacter(ICharacter character) {
+        this.character = character;
+    }
 
     @Override
-    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
-        // TODO logic
-        return false;
+    public ICharacter getCharacter() {
+        return character;
     }
+    
+    public IMap getMap(){
+        return character.getMap();
+    }
+    
+    @Override
+    public abstract boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard);
+
 }

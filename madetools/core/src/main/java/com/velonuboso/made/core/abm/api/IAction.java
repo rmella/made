@@ -17,10 +17,13 @@
 
 package com.velonuboso.made.core.abm.api;
 
+import java.util.function.BiPredicate;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface IAction{
-    public void run (final ICharacter protagonist, final IWorld world, final String state);
+public interface IAction extends BiPredicate<IBlackBoard, IBlackBoard>{
+    public void setCharacter(ICharacter character);
+    public ICharacter getCharacter();
 }

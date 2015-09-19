@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
@@ -28,7 +29,7 @@ import com.velonuboso.made.core.common.util.ObjectFactory;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionSurprise extends BaseCondition  implements IConditionSurprise{
+public class ConditionSurprise extends BaseAction  implements IConditionSurprise{
 
 @Override
     public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
@@ -40,7 +41,7 @@ public class ConditionSurprise extends BaseCondition  implements IConditionSurpr
     }
     
     private boolean isSurprised(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
-        PieceAbmConfigurationHelper helper = new PieceAbmConfigurationHelper(character.getAbmConfiguration());
+        PieceAbmConfigurationHelper helper = new PieceAbmConfigurationHelper(getCharacter().getAbmConfiguration());
         float oldJoy = oldBlackBoard.getFloat(Piece.BLACKBOARD_JOY);
         float currentJoy = currentBlackBoard.getFloat(Piece.BLACKBOARD_JOY);
         return oldJoy - currentJoy > helper.getSurpriseThreshold();
@@ -48,7 +49,7 @@ public class ConditionSurprise extends BaseCondition  implements IConditionSurpr
     
     private void writeEvent() {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = eventFactory.isSurprised(character);
-        character.getEventsWriter().add(event);
+        IEvent event = eventFactory.isSurprised(getCharacter());
+        getCharacter().getEventsWriter().add(event);
     }
 }

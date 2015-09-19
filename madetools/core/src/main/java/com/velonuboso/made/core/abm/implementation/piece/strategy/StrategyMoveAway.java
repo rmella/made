@@ -17,29 +17,18 @@
 package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.strategy.IStrategy;
-import com.velonuboso.made.core.abm.implementation.piece.Piece;
-import com.velonuboso.made.core.common.api.IEvent;
-import com.velonuboso.made.core.common.api.IEventFactory;
-import com.velonuboso.made.core.common.implementation.EventFactory;
-import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public abstract class BaseStrategy implements IStrategy {
-    ICharacter character;
-    
+public class StrategyMoveAway extends BaseAction implements IStrategyMoveAway{
+
     @Override
-    public void setCharacter(ICharacter character) {
-        this.character = character;
+    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    void writeLogError(String message) {
-        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent asd = factory.error(character, message);
-        character.getEventsWriter().add(null);
-    }
+
 }

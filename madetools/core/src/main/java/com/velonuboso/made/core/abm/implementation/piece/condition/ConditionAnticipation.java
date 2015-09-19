@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.condition.IConditionAnticipation;
@@ -31,7 +32,7 @@ import javafx.scene.paint.Color;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionAnticipation extends BaseCondition implements IConditionAnticipation {
+public class ConditionAnticipation extends BaseAction implements IConditionAnticipation {
 
     @Override
     public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
@@ -44,7 +45,7 @@ public class ConditionAnticipation extends BaseCondition implements IConditionAn
     }
 
     private IColorSpot getAdjacentColorSpot(IBlackBoard blackBoard) {
-        int currentCharacterPosition = getMap().getCell(character);
+        int currentCharacterPosition = super.getMap().getCell(getCharacter());
         List<Integer> cellsToLookAt = getMap().getCellsAround(currentCharacterPosition, 1);
 
         IColorSpot spot = cellsToLookAt.stream()
@@ -63,12 +64,12 @@ public class ConditionAnticipation extends BaseCondition implements IConditionAn
 
     private boolean betterColorThanCharacterBackground(IColorSpot spotIncell) {
         float similarityOfSpot = getSimilarityWithForeground(spotIncell.getColor());
-        float similarityOfCurrentBackground = getSimilarityWithForeground(character.getBackgroundColor());
+        float similarityOfCurrentBackground = getSimilarityWithForeground(getCharacter().getBackgroundColor());
         return similarityOfSpot > similarityOfCurrentBackground;
     }
     
     private float getSimilarityWithForeground(Color color) {
-        return 1f - PieceUtilities.calculateColorDifference(color, character.getForegroundColor());
+        return 1f - PieceUtilities.calculateColorDifference(color, getCharacter().getForegroundColor());
     }
 
     private boolean notOccupiedByOtherCharacter(IColorSpot spotIncell) {
@@ -82,7 +83,7 @@ public class ConditionAnticipation extends BaseCondition implements IConditionAn
 
     private void writeEvent(IColorSpot spot) {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent anticipationEvent = eventFactory.hasAnticipation(character, spot);
-        character.getEventsWriter().add(anticipationEvent);
+        IEvent anticipationEvent = eventFactory.hasAnticipation(getCharacter(), spot);
+        getCharacter().getEventsWriter().add(anticipationEvent);
     }
 }

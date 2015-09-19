@@ -16,7 +16,10 @@
  */
 package com.velonuboso.made.core.abm.api.condition;
 
+import com.velonuboso.made.core.abm.api.IAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import java.util.function.BiPredicate;
 
@@ -24,8 +27,5 @@ import java.util.function.BiPredicate;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface ICondition extends BiPredicate<IBlackBoard, IBlackBoard>{
-
-    public void setCharacter(ICharacter character);
-    
+public interface ICondition extends IAction{
 }

@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveFriendSimilarity;
@@ -30,7 +31,7 @@ import java.util.HashMap;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionCanImproveFriendSimilarity extends BaseCondition implements IConditionCanImproveFriendSimilarity {
+public class ConditionCanImproveFriendSimilarity extends BaseAction implements IConditionCanImproveFriendSimilarity {
 
     @Override
     public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
@@ -65,7 +66,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseCondition implement
     }
 
     private boolean friendCannotWinCharacter(ICharacter friend) {
-        return !friend.getShape().wins(this.character.getShape());
+        return !friend.getShape().wins(this.getCharacter().getShape());
     }
 
     private boolean isFriend(HashMap<ICharacter, Float> affinityMatrix, ICharacter targetCharacter) {
@@ -80,14 +81,14 @@ public class ConditionCanImproveFriendSimilarity extends BaseCondition implement
 
     private float getFutureSumOfSimilarities(ICharacter targetCharacter) {
         float futureSimilarityInCharacter = 1 - PieceUtilities.calculateColorDifference(
-                character.getForegroundColor(), targetCharacter.getBackgroundColor());
+                getCharacter().getForegroundColor(), targetCharacter.getBackgroundColor());
         float futureSimilarityInTargetCharacter = 1 - PieceUtilities.calculateColorDifference(
-                targetCharacter.getForegroundColor(), character.getBackgroundColor());
+                targetCharacter.getForegroundColor(), getCharacter().getBackgroundColor());
         return futureSimilarityInCharacter + futureSimilarityInTargetCharacter;
     }
 
     private float getCurrentSumOfSimilarities(ICharacter targetCharacter) {
-        float currentSimilarityInCharacter = 1 - character.getColorDifference();
+        float currentSimilarityInCharacter = 1 - getCharacter().getColorDifference();
         float currentSimilarityInTargetCharacter = 1 - targetCharacter.getColorDifference();
         return currentSimilarityInCharacter + currentSimilarityInTargetCharacter;
     }
@@ -98,7 +99,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseCondition implement
 
     private void writeEvent(ICharacter targetCharacter) {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent anticipationEvent = eventFactory.canImproveFriendSimilarity(character, targetCharacter);
-        character.getEventsWriter().add(anticipationEvent);
+        IEvent anticipationEvent = eventFactory.canImproveFriendSimilarity(getCharacter(), targetCharacter);
+        getCharacter().getEventsWriter().add(anticipationEvent);
     }
 }

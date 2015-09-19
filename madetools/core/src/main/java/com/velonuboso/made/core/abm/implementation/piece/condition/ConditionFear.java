@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
@@ -30,8 +31,8 @@ import java.util.List;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionFear extends BaseCondition implements IConditionFear {
-
+public class ConditionFear extends BaseAction implements IConditionFear {
+    
     @Override
     public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
         ICharacter enemy = getAdjacentEnemy(currentBlackBoard);
@@ -43,14 +44,14 @@ public class ConditionFear extends BaseCondition implements IConditionFear {
     }
 
     private ICharacter getAdjacentEnemy(IBlackBoard blackBoard) {
-        int currentCharacterPosition = getMap().getCell(character);
+        int currentCharacterPosition = getMap().getCell(getCharacter());
         List<Integer> cellsToLookAt = getMap().getCellsAround(currentCharacterPosition, 1);
         HashMap<ICharacter, Float> affinityMatrix
                 = (HashMap<ICharacter, Float>) blackBoard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
 
         ICharacter enemy = cellsToLookAt.stream()
                 .map(cell -> getMap().getCharacter(cell))
-                .filter(piece -> piece != null && piece != character && piece.getShape().wins(character.getShape()))
+                .filter(piece -> piece != null && piece != getCharacter() && piece.getShape().wins(getCharacter().getShape()))
                 .min((ICharacter firstCharacter, ICharacter secondCharacter) -> {
                     return Float.compare(affinityMatrix.get(firstCharacter),
                             affinityMatrix.get(secondCharacter));
@@ -66,7 +67,7 @@ public class ConditionFear extends BaseCondition implements IConditionFear {
     
     private void writeEvent(ICharacter enemy) {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent fearEvent = eventFactory.hasFear(character, enemy);
-        character.getEventsWriter().add(fearEvent);
+        IEvent fearEvent = eventFactory.hasFear(getCharacter(), enemy);
+        getCharacter().getEventsWriter().add(fearEvent);
     }
 }

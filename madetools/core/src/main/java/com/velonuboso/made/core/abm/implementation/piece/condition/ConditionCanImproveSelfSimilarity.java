@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece.condition;
 
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
@@ -31,7 +32,7 @@ import java.util.function.Function;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionCanImproveSelfSimilarity extends BaseCondition implements IConditionCanImproveSelfSimilarity {
+public class ConditionCanImproveSelfSimilarity extends BaseAction implements IConditionCanImproveSelfSimilarity {
 
     @Override
     public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
@@ -58,7 +59,7 @@ public class ConditionCanImproveSelfSimilarity extends BaseCondition implements 
                 .filter(cell -> isSpotInCell(cell) && !isWinnerCharacterInCell(cell))
                 .map(cellToSpot)
                 .filter(spot -> {
-                    return similarityWithSpot(spot) > 1-character.getColorDifference();
+                    return similarityWithSpot(spot) > 1-getCharacter().getColorDifference();
                 })
                 .max((IColorSpot firstSpot, IColorSpot secondSpot) -> {
                     return Float.compare(similarityWithSpot(firstSpot), similarityWithSpot(secondSpot));
@@ -67,12 +68,12 @@ public class ConditionCanImproveSelfSimilarity extends BaseCondition implements 
     }
 
     private float similarityWithSpot(IColorSpot spot) {
-        return 1-PieceUtilities.calculateColorDifference(spot.getColor(), character.getForegroundColor());
+        return 1-PieceUtilities.calculateColorDifference(spot.getColor(), getCharacter().getForegroundColor());
     }
 
     private boolean isWinnerCharacterInCell(Integer cell) {
         ICharacter characterInSpot = getMap().getCharacter(cell);
-        return characterInSpot != null && characterInSpot.getShape().wins(character.getShape());
+        return characterInSpot != null && characterInSpot.getShape().wins(getCharacter().getShape());
     }
 
     private boolean isSpotInCell(Integer cell) {
@@ -81,8 +82,8 @@ public class ConditionCanImproveSelfSimilarity extends BaseCondition implements 
 
     private void writeEvent(IColorSpot spot) {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent anticipationEvent = eventFactory.canImproveSelfSimilarity(character, spot);
-        character.getEventsWriter().add(anticipationEvent);
+        IEvent anticipationEvent = eventFactory.canImproveSelfSimilarity(getCharacter(), spot);
+        getCharacter().getEventsWriter().add(anticipationEvent);
     }
 
     private void storeSpotCellIntoBlackboard(IColorSpot spot, IBlackBoard blackBoard) {

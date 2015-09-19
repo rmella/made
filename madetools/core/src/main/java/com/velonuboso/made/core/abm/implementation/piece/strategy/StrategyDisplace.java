@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyDisplace;
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import java.util.List;
 
@@ -27,37 +28,37 @@ import java.util.List;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyDisplace extends BaseStrategy implements IStrategyDisplace{
+public class StrategyDisplace extends BaseAction implements IStrategyDisplace {
 
     @Override
-    public void accept(IBlackBoard blackBoard) {
-        int targetCell = blackBoard.getInt(Piece.BLACKBOARD_CHARACTER_CELL);
-        
-        if (targetCell == -1){
-            writeLogError("target cell not found");
-            return;
+    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
+        int targetCell = currentBlackboard.getInt(Piece.BLACKBOARD_CHARACTER_CELL);
+
+        if (targetCell == -1) {
+            return false;
         }
-        
-        IMap map = character.getMap();
-        int characterCell = map.getCell(character);
+
+        IMap map = getCharacter().getMap();
+        int characterCell = map.getCell(getCharacter());
         List<Integer> cellsAround = map.getCellsAround(characterCell, 1);
-        if (cellsAround.contains(targetCell)){
+        if (cellsAround.contains(targetCell)) {
             ICharacter targetCharacter = map.getCharacter(targetCell);
-            
-            return;
+
+            return false;
         }
-        
-        int closerCell = map.getCloserCell(character, targetCell);
+
+        int closerCell = map.getCloserCell(getCharacter(), targetCell);
         ICharacter characterInCloserCell = map.getCharacter(closerCell);
-        if (characterInCloserCell!=null){
-            
+        if (characterInCloserCell != null) {
+
             //TODO log
-            return;
+            return false;
         }
-        
+
         map.moveCharacter(characterCell, targetCell);
         //TODO log
+        
+        return true;
     }
-
-
 }
+

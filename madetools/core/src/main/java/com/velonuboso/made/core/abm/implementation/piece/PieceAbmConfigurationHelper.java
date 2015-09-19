@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
@@ -24,7 +23,7 @@ import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class PieceAbmConfigurationHelper {
-   
+
     private AbmConfigurationEntity abmConfiguration;
 
     public PieceAbmConfigurationHelper(AbmConfigurationEntity abmConfiguration) {
@@ -41,12 +40,12 @@ public class PieceAbmConfigurationHelper {
 
     public float getBackgroundColorSimilarityWeight() {
         return getGene(Gene.BACKGROUND_COLOR_SIMILARITY_WEIGHT);
-    } 
+    }
 
     public float getNeighbourSimilarityForJoyWeight() {
         return getGene(Gene.NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT);
     }
-    
+
     public float getSelfSimilarityForJoyWeight() {
         return 1f - getNeighbourSimilarityForJoyWeight();
     }
@@ -54,11 +53,35 @@ public class PieceAbmConfigurationHelper {
     public float getJoyThreshold() {
         return getGene(Gene.JOY_THRESHOLD);
     }
-    
+
     public float getSurpriseThreshold() {
         return getGene(Gene.SURPRISE_THRESHOLD);
     }
-    
+
+    float getFearProbability() {
+        return getGene(Gene.FEAR_PROBABILITY);
+    }
+
+    float getSurpriseProbability() {
+        return getGene(Gene.SURPRISE_PROBABILITY);
+    }
+
+    float getSadnessProbability() {
+        return getGene(Gene.SADNESS_PROBABILITY);
+    }
+
+    float getImprovingFriendSimilarityProbability() {
+        return getGene(Gene.IMPROVE_FRIEND_SIMILARITY_PROBABILITY);
+    }
+
+    float getReducingEnemySimilarityProbability() {
+        return getGene(Gene.REDUCE_ENEMY_SIMILARITY_PROBABILITY);
+    }
+
+    float getImprovingSelfSimilarityProbability() {
+        return getGene(Gene.IMPROVE_SELF_SIMILARITY_PROBABILITY);
+    }
+
     private float getGene(Gene gene) {
         return abmConfiguration.getChromosome()[gene.ordinal()];
     }
@@ -69,6 +92,12 @@ public class PieceAbmConfigurationHelper {
         BACKGROUND_COLOR_SIMILARITY_WEIGHT,
         NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT,
         JOY_THRESHOLD,
-        SURPRISE_THRESHOLD
+        SURPRISE_THRESHOLD,
+        FEAR_PROBABILITY,
+        SURPRISE_PROBABILITY,
+        SADNESS_PROBABILITY,
+        IMPROVE_FRIEND_SIMILARITY_PROBABILITY,
+        REDUCE_ENEMY_SIMILARITY_PROBABILITY,
+        IMPROVE_SELF_SIMILARITY_PROBABILITY
     }
 }
