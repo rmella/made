@@ -18,18 +18,18 @@ package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategySkipTurn extends BaseAction implements IStrategySkipTurn{
-    
+public class StrategySkipTurn extends BaseAction implements IStrategySkipTurn {
+
     @Override
-    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
-        // TODO logic
-        return false;
+    public boolean testAction(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) throws ActionReturnException {
+        return true;
     }
-    
+
 }

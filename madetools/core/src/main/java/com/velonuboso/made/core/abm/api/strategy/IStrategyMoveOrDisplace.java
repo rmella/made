@@ -14,21 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.implementation.piece.strategy;
+package com.velonuboso.made.core.abm.api.strategy;
 
-import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.strategy.IStrategyStealColor;
-import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import com.velonuboso.made.core.abm.implementation.piece.strategy.StrategyMoveOrDisplace;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyStealColor extends BaseAction implements IStrategyStealColor {
-
-    @Override
-    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
-        // TODO logic
-        return false;
-    }
+@ImplementedBy(targetClass = StrategyMoveOrDisplace.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IStrategyMoveOrDisplace extends IStrategy{
 }

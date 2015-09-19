@@ -56,6 +56,7 @@ public class Simulator implements ISimulator{
         
         EventsLogEntity eventsLog = abm.getEventsLog();
         
+        narrator.setEventsLog(eventsLog);
         narrator.narrate();
         return narrator.getNarration();
     }

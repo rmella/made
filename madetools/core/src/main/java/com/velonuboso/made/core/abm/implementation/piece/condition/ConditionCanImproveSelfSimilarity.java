@@ -21,6 +21,7 @@ import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveSelfSimilarity;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
 import com.velonuboso.made.core.common.api.IEvent;
@@ -35,7 +36,8 @@ import java.util.function.Function;
 public class ConditionCanImproveSelfSimilarity extends BaseAction implements IConditionCanImproveSelfSimilarity {
 
     @Override
-    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
 
         IColorSpot spot = getBestColorSpot(currentBlackBoard);
         if (spot != null) {
@@ -87,6 +89,6 @@ public class ConditionCanImproveSelfSimilarity extends BaseAction implements ICo
     }
 
     private void storeSpotCellIntoBlackboard(IColorSpot spot, IBlackBoard blackBoard) {
-        blackBoard.setInt(Piece.BLACKBOARD_SPOT_CELL, getMap().getCell(spot));
+        blackBoard.setInt(Piece.BLACKBOARD_TARGET_CELL, getMap().getCell(spot));
     }
 }

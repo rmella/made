@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
+ * Copyright (C) 2015 rhgarcia
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.api.strategy;
 
-import com.velonuboso.made.core.abm.implementation.piece.strategy.StrategyDisplace;
-import com.velonuboso.made.core.common.util.ImplementedBy;
+package com.velonuboso.made.core.abm.entity;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = StrategyDisplace.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IStrategyDisplace extends IStrategy{
+public class ActionReturnException extends Exception{
+    boolean result;
+
+    public ActionReturnException(boolean result) {
+        super();
+        this.result = result;
+    }
+    
+    public boolean getResult(){
+        return result;
+    }
 }

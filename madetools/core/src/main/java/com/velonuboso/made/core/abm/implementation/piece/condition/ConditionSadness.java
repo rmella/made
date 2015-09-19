@@ -19,6 +19,7 @@ package com.velonuboso.made.core.abm.implementation.piece.condition;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.PieceAbmConfigurationHelper;
 import com.velonuboso.made.core.common.api.IEvent;
@@ -29,23 +30,24 @@ import com.velonuboso.made.core.common.util.ObjectFactory;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ConditionSadness extends BaseAction implements IConditionSadness{
+public class ConditionSadness extends BaseAction implements IConditionSadness {
 
     @Override
-    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
-        if (!isSad(currentBlackBoard)){
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
+        if (!isSad(currentBlackBoard)) {
             return false;
         }
         writeEvent();
         return true;
     }
 
-    public boolean isSad(IBlackBoard blackBoard){
-        PieceAbmConfigurationHelper abmConfigurationHelper = 
-                new PieceAbmConfigurationHelper(getCharacter().getAbmConfiguration());
+    public boolean isSad(IBlackBoard blackBoard) {
+        PieceAbmConfigurationHelper abmConfigurationHelper
+                = new PieceAbmConfigurationHelper(getCharacter().getAbmConfiguration());
         return blackBoard.getFloat(Piece.BLACKBOARD_JOY) < abmConfigurationHelper.getJoyThreshold();
     }
-    
+
     private void writeEvent() {
         IEventFactory eventFactory = ObjectFactory.createObject(IEventFactory.class);
         IEvent sadnessEvent = eventFactory.isSad(getCharacter());

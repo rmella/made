@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
@@ -34,7 +35,8 @@ import java.util.List;
 public class ConditionFear extends BaseAction implements IConditionFear {
     
     @Override
-    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
         ICharacter enemy = getAdjacentEnemy(currentBlackBoard);
         if (enemy != null){
             storeEnemyCellIntoBlackboard(enemy, currentBlackBoard);
@@ -62,7 +64,7 @@ public class ConditionFear extends BaseAction implements IConditionFear {
     }
 
     private void storeEnemyCellIntoBlackboard(ICharacter enemy, IBlackBoard blackBoard) {
-        blackBoard.setInt(Piece.BLACKBOARD_CHARACTER_CELL, getMap().getCell(enemy));
+        blackBoard.setInt(Piece.BLACKBOARD_TARGET_CELL, getMap().getCell(enemy));
     }
     
     private void writeEvent(ICharacter enemy) {

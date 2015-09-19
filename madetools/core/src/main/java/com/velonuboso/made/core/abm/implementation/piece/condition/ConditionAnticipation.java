@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.condition.IConditionAnticipation;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
 import com.velonuboso.made.core.common.api.IEvent;
@@ -35,7 +36,8 @@ import javafx.scene.paint.Color;
 public class ConditionAnticipation extends BaseAction implements IConditionAnticipation {
 
     @Override
-    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
         IColorSpot spot = getAdjacentColorSpot(currentBlackBoard);
         if (spot != null) {
             storeSpotCellIntoBlackboard(spot, currentBlackBoard);
@@ -78,7 +80,7 @@ public class ConditionAnticipation extends BaseAction implements IConditionAntic
     }
     
     private void storeSpotCellIntoBlackboard(IColorSpot spot, IBlackBoard blackBoard) {
-        blackBoard.setInt(Piece.BLACKBOARD_SPOT_CELL, getMap().getCell(spot));
+        blackBoard.setInt(Piece.BLACKBOARD_TARGET_CELL, getMap().getCell(spot));
     }
 
     private void writeEvent(IColorSpot spot) {

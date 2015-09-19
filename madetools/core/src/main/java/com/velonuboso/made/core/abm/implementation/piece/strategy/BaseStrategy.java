@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
+ * Copyright (C) 2015 rhgarcia
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.abm.api.strategy;
 
-import com.velonuboso.made.core.abm.implementation.piece.strategy.StrategyStealColor;
-import com.velonuboso.made.core.common.util.ImplementedBy;
+package com.velonuboso.made.core.abm.implementation.piece.strategy;
+
+import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import java.util.List;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = StrategyStealColor.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IStrategyStealColor extends IStrategy{
+public abstract class BaseStrategy extends BaseAction{
+    
 }

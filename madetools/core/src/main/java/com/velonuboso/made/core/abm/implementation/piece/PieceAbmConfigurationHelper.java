@@ -58,33 +58,38 @@ public class PieceAbmConfigurationHelper {
         return getGene(Gene.SURPRISE_THRESHOLD);
     }
 
-    float getFearProbability() {
+    public float getFearProbability() {
         return getGene(Gene.FEAR_PROBABILITY);
     }
 
-    float getSurpriseProbability() {
+    public float getSurpriseProbability() {
         return getGene(Gene.SURPRISE_PROBABILITY);
     }
 
-    float getSadnessProbability() {
+    public float getSadnessProbability() {
         return getGene(Gene.SADNESS_PROBABILITY);
     }
 
-    float getImprovingFriendSimilarityProbability() {
+    public float getImprovingFriendSimilarityProbability() {
         return getGene(Gene.IMPROVE_FRIEND_SIMILARITY_PROBABILITY);
     }
 
-    float getReducingEnemySimilarityProbability() {
+    public float getReducingEnemySimilarityProbability() {
         return getGene(Gene.REDUCE_ENEMY_SIMILARITY_PROBABILITY);
     }
 
-    float getImprovingSelfSimilarityProbability() {
+    public float getImprovingSelfSimilarityProbability() {
         return getGene(Gene.IMPROVE_SELF_SIMILARITY_PROBABILITY);
+    }
+    
+    public float getSpotDissapearProbability() {
+        return getGene(Gene.SPOT_DISSAPEAR_PROBABILITY);
     }
 
     private float getGene(Gene gene) {
         return abmConfiguration.getChromosome()[gene.ordinal()];
     }
+
 
     private enum Gene {
         SHAPE_SIMILARITY_WEIGHT,
@@ -98,6 +103,7 @@ public class PieceAbmConfigurationHelper {
         SADNESS_PROBABILITY,
         IMPROVE_FRIEND_SIMILARITY_PROBABILITY,
         REDUCE_ENEMY_SIMILARITY_PROBABILITY,
-        IMPROVE_SELF_SIMILARITY_PROBABILITY
+        IMPROVE_SELF_SIMILARITY_PROBABILITY,
+        SPOT_DISSAPEAR_PROBABILITY
     }
 }

@@ -19,7 +19,8 @@ package com.velonuboso.made.core.abm.implementation.piece.strategy;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.api.strategy.IStrategyDisplace;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import java.util.List;
@@ -28,50 +29,79 @@ import java.util.List;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class StrategyDisplace extends BaseAction implements IStrategyDisplace {
+public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMoveOrDisplace {
 
-    private int characterCell;
-    private int targetCell;
-    private Integer cellToDisplace;
-    
+    int characterCell;
+    int targetCell;
+    boolean targetCellIsAround;
+    Integer cellToDisplace;
+
     @Override
-    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
+
+        retrieveTargetCellFromBlackboard(currentBlackBoard);
+    
+        validatePieceIsInAlreadyTargetCell();
+
+        replaceTargetCellByTheCloser();
         
-        retrieveTargetCellFromBlackboard(currentBlackboard);
-        if (!targetCellIsAround()){
-            return false;
-        }
-        
-        calculateFreeCellToDisplaceTarget();
-        if (cellToDisplace==null){
-            return false;
+        if (getMap().getCharacter(targetCell) == null) {
+            moveCharacterToTarget();
+            return true;
         }
 
+        calculateFreeCellToDisplaceTarget();
+        if (cellToDisplace == null) {
+            return false;
+        }
+        
         displaceTarget();
         moveCharacterToTarget();
         return true;
     }
 
-    private void retrieveTargetCellFromBlackboard(IBlackBoard currentBlackboard) {
-        targetCell = currentBlackboard.getInt(Piece.BLACKBOARD_CHARACTER_CELL);
+    private void replaceTargetCellByTheCloser() {
+        if (!isTargetCellAround()){
+            targetCell = getMap().getCloserCell(getCharacter(), targetCell);
+        }
     }
 
-    private boolean targetCellIsAround() {
+    private void validatePieceIsInAlreadyTargetCell() throws ActionReturnException {
+        if (pieceIsInTargetCell()) {
+            throw new ActionReturnException(false);
+        }
+    }
+
+    private void retrieveTargetCellFromBlackboard(IBlackBoard currentBlackboard) {
+        targetCell = currentBlackboard.getInt(Piece.BLACKBOARD_TARGET_CELL);
+    }
+
+    private boolean isTargetCellAround() {
         IMap map = getCharacter().getMap();
         characterCell = map.getCell(getCharacter());
         List<Integer> cellsAround = map.getCellsAround(characterCell, 1);
         return cellsAround.contains(targetCell);
     }
+        
+    protected boolean targetCellHasCharacter() {
+        return getMap().getCharacter(targetCell)!=null;
+    }
+    
+    private boolean pieceIsInTargetCell() {
+        return targetCell == characterCell;
+    }
+
 
     private void calculateFreeCellToDisplaceTarget() {
         ICharacter targetCharacter = getMap().getCharacter(targetCell);
         List<Integer> cellsAroundTargetCharacter = targetCharacter.getMap().getCellsAround(targetCell, 1);
         cellToDisplace = cellsAroundTargetCharacter.stream()
-                .filter(cell->getMap().getCharacter(cell)==null)
+                .filter(cell -> getMap().getCharacter(cell) == null)
                 .findFirst()
                 .orElse(null);
     }
-    
+
     private void displaceTarget() {
         getMap().moveCharacter(targetCell, cellToDisplace);
     }
@@ -80,4 +110,3 @@ public class StrategyDisplace extends BaseAction implements IStrategyDisplace {
         getMap().moveCharacter(characterCell, targetCell);
     }
 }
-

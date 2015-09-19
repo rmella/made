@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimilarity;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
@@ -34,7 +35,8 @@ public class ConditionCanReduceEnemySimilarity extends BaseAction implements ICo
 
     
     @Override
-    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
         ICharacter candidateToPush = getBestCandidateToPush(currentBlackBoard);
 
         if (candidateToPush != null) {
@@ -63,7 +65,7 @@ public class ConditionCanReduceEnemySimilarity extends BaseAction implements ICo
     }
 
     private void storeCandidateToPushIntoBlackboard(ICharacter candidate, IBlackBoard blackBoard) {
-        blackBoard.setInt(Piece.BLACKBOARD_CHARACTER_CELL, getMap().getCell(candidate));
+        blackBoard.setInt(Piece.BLACKBOARD_TARGET_CELL, getMap().getCell(candidate));
     }
 
     private void writeEvent(ICharacter targetCharacter) {

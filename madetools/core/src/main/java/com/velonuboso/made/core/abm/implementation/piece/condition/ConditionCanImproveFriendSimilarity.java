@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveFriendSimilarity;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
 import com.velonuboso.made.core.common.api.IEvent;
@@ -34,7 +35,9 @@ import java.util.HashMap;
 public class ConditionCanImproveFriendSimilarity extends BaseAction implements IConditionCanImproveFriendSimilarity {
 
     @Override
-    public boolean test(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) {
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
+
         ICharacter candidateToExchangeColors = getBestCandidateToExchangeColor(currentBlackBoard);
 
         if (candidateToExchangeColors != null) {
@@ -47,11 +50,11 @@ public class ConditionCanImproveFriendSimilarity extends BaseAction implements I
     private ICharacter getBestCandidateToExchangeColor(IBlackBoard blackboard) {
         HashMap<ICharacter, Float> affinityMatrix
                 = (HashMap<ICharacter, Float>) blackboard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
-        
+
         ICharacter candidateToExchangeColors = affinityMatrix.keySet().stream()
                 .filter(targetCharacter -> isFriend(affinityMatrix, targetCharacter))
                 .filter(friend -> friendCannotWinCharacter(friend))
-                .filter(friend->wouldBenefitWithColorExchange(friend))
+                .filter(friend -> wouldBenefitWithColorExchange(friend))
                 .max((ICharacter firstCharacter, ICharacter secondCharacter) -> {
                     float benefitWithFirstCharacter = getColorExchangeBenefit(firstCharacter);
                     float benefitWithSecondCharacter = getColorExchangeBenefit(secondCharacter);
@@ -62,7 +65,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseAction implements I
     }
 
     private boolean wouldBenefitWithColorExchange(ICharacter friend) {
-        return getColorExchangeBenefit(friend)>0;
+        return getColorExchangeBenefit(friend) > 0;
     }
 
     private boolean friendCannotWinCharacter(ICharacter friend) {
@@ -70,7 +73,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseAction implements I
     }
 
     private boolean isFriend(HashMap<ICharacter, Float> affinityMatrix, ICharacter targetCharacter) {
-        return affinityMatrix.get(targetCharacter)>0;
+        return affinityMatrix.get(targetCharacter) > 0;
     }
 
     private float getColorExchangeBenefit(ICharacter targetCharacter) {
@@ -94,7 +97,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseAction implements I
     }
 
     private void storeCandidateToExchangeColorsIntoBlackboard(ICharacter candidate, IBlackBoard blackBoard) {
-        blackBoard.setInt(Piece.BLACKBOARD_CHARACTER_CELL, getMap().getCell(candidate));
+        blackBoard.setInt(Piece.BLACKBOARD_TARGET_CELL, getMap().getCell(candidate));
     }
 
     private void writeEvent(ICharacter targetCharacter) {

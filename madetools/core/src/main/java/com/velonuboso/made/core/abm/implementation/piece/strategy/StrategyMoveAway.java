@@ -17,8 +17,11 @@
 package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import java.util.List;
 
 /**
  *
@@ -27,8 +30,19 @@ import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 public class StrategyMoveAway extends BaseAction implements IStrategyMoveAway{
 
     @Override
-    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException {
+        
+        int characterCell = getMap().getCell(getCharacter());
+        List<Integer> cellsAround = getMap().getCellsAround(characterCell, characterCell);
+        Integer targetCell = cellsAround.stream().filter(cell -> getMap().getCharacter(cell)==null).findFirst().orElse(null);
+        
+        if (targetCell == null){
+            return false;
+        }
+        
+        getMap().moveCharacter(characterCell, targetCell);
+        return true;
     }
 
 }

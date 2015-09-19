@@ -17,6 +17,7 @@
 
 package com.velonuboso.made.core.abm.implementation.piece;
 
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IMap;
@@ -45,6 +46,15 @@ public abstract class BaseAction implements ICondition{
     }
     
     @Override
-    public abstract boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard);
+    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard){
+        try{
+            return testAction(currentBlackboard, oldBlackBoard);
+        }catch(ActionReturnException exception){
+            return exception.getResult();
+        }
+    }
+
+    public abstract boolean testAction(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard)
+            throws ActionReturnException;
 
 }

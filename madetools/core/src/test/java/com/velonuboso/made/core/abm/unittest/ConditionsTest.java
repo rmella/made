@@ -332,42 +332,42 @@ public class ConditionsTest {
     public void UT_ConditionFear__when_piece_has_fear_it_stores_the_source_of_fear_in_the_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.BLACK, 1, 0);
-        checkBlackboardWhenConditionIsRun(mainPiece, IConditionFear.class, Piece.BLACKBOARD_CHARACTER_CELL);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionFear.class, Piece.BLACKBOARD_TARGET_CELL);
     }
 
     @Test
     public void UT_ConditionAnticipation__when_piece_has_anticipation_it_stores_the_target_spot_in_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.GREEN, 1, 1);
-        checkBlackboardWhenConditionIsRun(mainPiece, IConditionAnticipation.class, Piece.BLACKBOARD_SPOT_CELL);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionAnticipation.class, Piece.BLACKBOARD_TARGET_CELL);
     }
 
     @Test
     public void ConditionCanImproveFriendSimilarity__when_piece_can_improve_friend_similarity_it_stores_the_target_friend_in_the_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.CIRCLE, Color.BLACK, Color.WHITE, 5, 5);
-        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanImproveFriendSimilarity.class, Piece.BLACKBOARD_CHARACTER_CELL);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanImproveFriendSimilarity.class, Piece.BLACKBOARD_TARGET_CELL);
     }
 
     @Test
     public void UT_ConditionCanImproveSelfSimilarity__when_piece_can_improve_self_similarity_it_stores_the_target_spot_in_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.WHITE, 5, 5);
-        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanImproveSelfSimilarity.class, Piece.BLACKBOARD_SPOT_CELL);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanImproveSelfSimilarity.class, Piece.BLACKBOARD_TARGET_CELL);
     }
 
     @Test
     public void UT_ConditionCanReduceEnemySimilarity__when_piece_can_reduce_enemy_similarity_it_stores_the_enemy_in_the_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildPiece(1, CharacterShape.TRIANGLE, Color.BLACK, Color.WHITE, 5, 5);
-        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanReduceEnemySimilarity.class, Piece.BLACKBOARD_CHARACTER_CELL);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionCanReduceEnemySimilarity.class, Piece.BLACKBOARD_TARGET_CELL);
     }
 
     @Test
     public void UT_ConditionSadness__when_piece_is_it_stores_nothing_in_the_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.WHITE, 5, 5);
-        checkBlackboardWhenConditionIsRun(mainPiece, IConditionSadness.class, Piece.BLACKBOARD_SPOT_CELL, 0);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionSadness.class, Piece.BLACKBOARD_TARGET_CELL, 0);
     }
 
     @Ignore
@@ -375,7 +375,7 @@ public class ConditionsTest {
     public void UT_ConditionSurprise__when_piece_is_surprised_it_stores_the_source_of_surprise_in_the_blackboard() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.WHITE, 5, 5);
-        checkBlackboardWhenConditionIsRun(mainPiece, IConditionSurprise.class, Piece.BLACKBOARD_CHARACTER_CELL);
+        checkBlackboardWhenConditionIsRun(mainPiece, IConditionSurprise.class, Piece.BLACKBOARD_TARGET_CELL);
     }
 
     //</editor-fold>

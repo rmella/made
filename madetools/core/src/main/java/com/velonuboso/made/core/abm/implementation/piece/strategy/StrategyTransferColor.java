@@ -17,8 +17,12 @@
 package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -27,8 +31,18 @@ import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 public class StrategyTransferColor extends BaseAction implements IStrategyTransferColor {
 
     @Override
-    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
-        // TODO logic
-        return false;
+    public boolean testAction(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) throws ActionReturnException {
+        int characterCell = getMap().getCell(getCharacter());
+        int friendCell = currentBlackboard.getInt(Piece.BLACKBOARD_TARGET_CELL);
+        ICharacter friend = getMap().getCharacter(friendCell);
+        
+        exchangeColors(getCharacter(), friend);
+        return true;
+    }
+
+    private void exchangeColors(ICharacter character, ICharacter friend) {
+        Color auxiliaryColor = character.getBackgroundColor();
+        character.setBackgroundColor(friend.getBackgroundColor());
+        friend.setBackgroundColor(auxiliaryColor);
     }
 }

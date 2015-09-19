@@ -17,8 +17,14 @@
 package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
+import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import com.velonuboso.made.core.abm.implementation.piece.PieceAbmConfigurationHelper;
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 
 /**
  *
@@ -27,9 +33,23 @@ import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 public class StrategyStain extends BaseAction implements IStrategyStain {
 
     @Override
-    public boolean test(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) {
-        // TODO logic
-        return false;
+    public boolean testAction(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) throws ActionReturnException {
+        int characterCell = getMap().getCell(getCharacter());
+        IColorSpot spot = getMap().getColorSpot(characterCell);
+        
+        if (spot == null){
+            return false;
+        }
+        
+        getCharacter().setBackgroundColor(spot.getColor());
+        
+        float probability = ObjectFactory.createObject(IProbabilityHelper.class).getNextProbability(StrategyStain.class);
+        
+        PieceAbmConfigurationHelper helper = new PieceAbmConfigurationHelper(getCharacter().getAbmConfiguration());
+        if (probability < helper.getSpotDissapearProbability()){
+            getMap().removeSpot(characterCell);
+        }
+        return true;
     }
 
 }
