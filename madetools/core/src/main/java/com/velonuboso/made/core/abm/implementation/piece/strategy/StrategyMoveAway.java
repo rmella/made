@@ -37,7 +37,7 @@ public class StrategyMoveAway extends BaseAction implements IStrategyMoveAway{
             throws ActionReturnException {
         
         int characterCell = getMap().getCell(getCharacter());
-        List<Integer> cellsAround = getMap().getCellsAround(characterCell, characterCell);
+        List<Integer> cellsAround = getMap().getCellsAround(characterCell, 1);
         Integer targetCell = cellsAround.stream().filter(cell -> getMap().getCharacter(cell)==null).findFirst().orElse(null);
         
         if (targetCell == null){
