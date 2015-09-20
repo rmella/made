@@ -43,8 +43,8 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
     public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
             throws ActionReturnException {
 
+        retrieveCurrentCharacterCell();
         retrieveTargetCellFromBlackboard(currentBlackBoard);
-
         validatePieceIsInAlreadyTargetCell();
 
         replaceTargetCellByTheCloser();
@@ -124,5 +124,9 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         IEvent event = factory.displaces(getCharacter());
         getCharacter().getEventsWriter().add(event);
+    }
+
+    private void retrieveCurrentCharacterCell() {
+        characterCell = getMap().getCell(getCharacter());
     }
 }

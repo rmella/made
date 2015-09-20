@@ -24,6 +24,7 @@ import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.condition.ICondition;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.ColorSpot;
@@ -71,19 +72,19 @@ public class StrategiesTest {
     @Test
     public void UT_StrategyMoveAway_When_there_are_empty_cells_it_moves_successfully_to_an_empty_cell() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int oldCell = (int) map.getCell(mainPiece);
         setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategyMoveAway.class));
-        
-        int oldCell = (int)map.getCell(mainPiece);
-        setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategyMoveAway.class));
-        assertThat("Piece position should not change since there's no place to go", 
-                (int)map.getCell(mainPiece), is(not(oldCell)));
+        assertThat("Piece position should change since there are free cells",
+                (int) map.getCell(mainPiece), is(not(oldCell)));
+        verifyStrategyReturnedTrue();
     }
 
     @Test
     public void UT_StrategyMoveAway_When_there_is_only_one_empty_cell_it_moves_successfully_to_the_cell() {
         int freeCellX = 1;
         int freeCellY = 1;
-        
+
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
         buildPiece(1, CharacterShape.CIRCLE, Color.BLUE, Color.RED, -1, -1);
         buildPiece(2, CharacterShape.CIRCLE, Color.BLUE, Color.RED, -1, 0);
@@ -92,11 +93,12 @@ public class StrategiesTest {
         buildPiece(5, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 1);
         buildPiece(6, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, -1);
         buildPiece(7, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 0);
-                
+
         setStrategyAndRun(100, mainPiece, ObjectFactory.createObject(IStrategyMoveAway.class));
-        
+
         int expectedCell = map.getCell(freeCellX, freeCellY);
-        assertEquals("New piece's position should be the free position", (int)map.getCell(mainPiece), expectedCell);
+        assertEquals("New piece's position should be the free position", (int) map.getCell(mainPiece), expectedCell);
+        verifyStrategyReturnedTrue();
     }
 
     @Test
@@ -110,11 +112,12 @@ public class StrategiesTest {
         buildPiece(6, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, -1);
         buildPiece(7, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 0);
         buildPiece(8, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 1);
-        
-        int oldCell = (int)map.getCell(mainPiece);
+
+        int oldCell = (int) map.getCell(mainPiece);
         setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategyMoveAway.class));
-        assertEquals("Piece position should not change since there's no place to go", 
-                (int)map.getCell(mainPiece), oldCell);
+        assertEquals("Piece position should not change since there's no place to go",
+                (int) map.getCell(mainPiece), oldCell);
+        verifyStrategyReturnedFalse();
     }
 
     @Test
@@ -122,6 +125,7 @@ public class StrategiesTest {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
         setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategyMoveAway.class));
         verifyEventAddedToFakeEventWriter(EventFactory.MOVES_AWAY, 1);
+        verifyStrategyReturnedTrue();
     }
 
     @Test
@@ -135,18 +139,45 @@ public class StrategiesTest {
         buildPiece(6, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, -1);
         buildPiece(7, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 0);
         buildPiece(8, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 1);
-        
+
         setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategyMoveAway.class));
         verifyEventAddedToFakeEventWriter(EventFactory.MOVES_AWAY, 0);
+        verifyStrategyReturnedFalse();
     }
 
+    @Test
     public void UT_StrategyMoveOrDisplace_When_the_piece_is_already_in_the_cell_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 1);
+
+        int targetCell = map.getCell(mainPiece);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+        assertEquals("Piece position should not change since there's no place to go",
+                targetCell, (int) map.getCell(mainPiece));
+        verifyStrategyReturnedFalse();
     }
 
+    @Test
     public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_free_it_moves_sucesfully_to_the_cell() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int targetCell = map.getCell(1, 1);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+        assertEquals("Piece position should change to target",
+                targetCell, (int) map.getCell(mainPiece));
+        verifyStrategyReturnedTrue();
     }
 
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_can_be_won_it_displaces_the_piece_and_moves_to_the_cell() {
+    
+    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_cannot_be_won_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 1);
+
+        int oldCell = map.getCell(0,0);
+        int targetCell = map.getCell(1, 1);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+        assertEquals("Piece position should not change since the target is occupied by a circle",
+                oldCell, (int) map.getCell(mainPiece));
+        verifyStrategyReturnedFalse();
     }
 
     public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_can_be_won_but_is_not__enemy_it_fails() {
@@ -155,7 +186,7 @@ public class StrategiesTest {
     public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_can_be_won_but_does_not_have_free_cells_around_it_fails() {
     }
 
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_cannot_be_won_it_fails() {
+    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_can_be_won_is_enemy_andhas_free_cells_around_displaces_the_piece_and_moves_to_the_cell_succesfully() {
     }
 
     public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_free_it_moves_successfully_to_the_piece() {
@@ -235,16 +266,16 @@ public class StrategiesTest {
 
     private void setStrategyAndRun(int targetCell, Piece mainPiece, IAction action) {
         stub(fakeBlackboard.getInt(eq(Piece.BLACKBOARD_TARGET_CELL))).toReturn(targetCell);
-        
+
         action.setCharacter(mainPiece);
-        
+
         IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
         node.setCharacter(mainPiece);
         node.setProbability(1);
         node.setAction(action);
-        
+
         mainPiece.setBehaviourTree(node);
-        
+
         ObjectFactory.installMock(IBlackBoard.class, fakeBlackboard);
         conditionSatisfied = mainPiece.run();
         ObjectFactory.removeMock(IBlackBoard.class);
@@ -268,13 +299,21 @@ public class StrategiesTest {
         spot.setColor(color);
         map.putColorSpot(spot, map.getCell(posX, posY));
     }
-    
-    private void verifyEventAddedToFakeEventWriter(String beginswith, int times){
+
+    private void verifyEventAddedToFakeEventWriter(String beginswith, int times) {
         verify(fakeEventsWriter, times(times)).add(argThat(new ArgumentMatcher<IEvent>() {
             @Override
             public boolean matches(Object item) {
                 return ((IEvent) item).toLogicalPredicate().startsWith(beginswith);
             }
         }));
+    }
+
+    private void verifyStrategyReturnedTrue() {
+        assertTrue("Should've returned true", conditionSatisfied);
+    }
+
+    private void verifyStrategyReturnedFalse() {
+        assertFalse("Should've returned false", conditionSatisfied);
     }
 }
