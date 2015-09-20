@@ -41,4 +41,10 @@ public interface IEventFactory {
     IEvent isSad(ICharacter subject);
     IEvent isSurprised(ICharacter subject);
     IEvent error(ICharacter subject, String message);
+    IEvent movesAway(ICharacter character);
+    IEvent moves(ICharacter character);
+    IEvent displaces(ICharacter character);
+    IEvent skipsTurn(ICharacter character);
+    IEvent stains(ICharacter character);
+    IEvent transfersColor(ICharacter character);
 }

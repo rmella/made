@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.common.implementation;
 
 import com.velonuboso.made.core.common.api.IEventFactory;
@@ -39,24 +38,30 @@ public class EventFactory implements IEventFactory {
     public static final String IS_SAD = "IsSad";
     public static final String IS_SURPRISED = "IsSurprised";
     public static final String ERROR = "Error";
-    
+    public static final String MOVES_AWAY = "MovesAway";
+    public static final String MOVES = "Moves";
+    public static final String DISPLACES = "Displaces";
+    public static final String SKIPS_TURN = "SkipsTurn";
+    public static final String STAINS = "Stains";
+    public static final String TRANSFERS_COLOR = "TransferColor";
+
     @Override
     public IEvent worldExists(final IWorld world) {
         return new Event(WORLD_EXISTS, world.getTimeUnit());
     }
-    
+
     @Override
-    public IEvent inhabitantExists(final ICharacter inhabitant){
+    public IEvent inhabitantExists(final ICharacter inhabitant) {
         return new Event(INHABITANT_EXISTS, inhabitant.getId());
     }
 
     @Override
-    public IEvent hasFear(final ICharacter subject, final ICharacter enemy){
+    public IEvent hasFear(final ICharacter subject, final ICharacter enemy) {
         return new Event(HAS_FEAR, subject.getId(), enemy.getId());
     }
-    
+
     @Override
-    public IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot){
+    public IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot) {
         return new Event(HAS_ANTICIPATION, subject.getId(), spot.getId());
     }
 
@@ -74,7 +79,7 @@ public class EventFactory implements IEventFactory {
     public IEvent canReduceEnemySimilarity(ICharacter subject, ICharacter enemy) {
         return new Event(CAN_REDUCE_ENEMY_SIMILARITY, subject.getId(), enemy.getId());
     }
-    
+
     @Override
     public IEvent error(ICharacter subject, String message) {
         return new Event(ERROR, subject.getId(), message);
@@ -88,5 +93,35 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent isSurprised(ICharacter subject) {
         return new Event(IS_SURPRISED, subject.getId());
+    }
+
+    @Override
+    public IEvent movesAway(ICharacter subject) {
+        return new Event(MOVES_AWAY, subject.getId());
+    }
+
+    @Override
+    public IEvent moves(ICharacter subject) {
+        return new Event(MOVES, subject.getId());
+    }
+
+    @Override
+    public IEvent displaces(ICharacter subject) {
+        return new Event(DISPLACES, subject.getId());
+    }
+
+    @Override
+    public IEvent skipsTurn(ICharacter subject) {
+        return new Event(SKIPS_TURN, subject.getId());
+    }
+
+    @Override
+    public IEvent stains(ICharacter subject) {
+        return new Event(STAINS, subject.getId());
+    }
+
+    @Override
+    public IEvent transfersColor(ICharacter subject) {
+        return new Event(TRANSFERS_COLOR, subject.getId());
     }
 }

@@ -23,6 +23,9 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.List;
 
 /**
@@ -41,13 +44,14 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
             throws ActionReturnException {
 
         retrieveTargetCellFromBlackboard(currentBlackBoard);
-    
+
         validatePieceIsInAlreadyTargetCell();
 
         replaceTargetCellByTheCloser();
-        
+
         if (getMap().getCharacter(targetCell) == null) {
             moveCharacterToTarget();
+            writeMoveEvent();
             return true;
         }
 
@@ -55,14 +59,15 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
         if (cellToDisplace == null) {
             return false;
         }
-        
+
         displaceTarget();
         moveCharacterToTarget();
+        writeDisplaceEvent();
         return true;
     }
 
     private void replaceTargetCellByTheCloser() {
-        if (!isTargetCellAround()){
+        if (!isTargetCellAround()) {
             targetCell = getMap().getCloserCell(getCharacter(), targetCell);
         }
     }
@@ -83,15 +88,14 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
         List<Integer> cellsAround = map.getCellsAround(characterCell, 1);
         return cellsAround.contains(targetCell);
     }
-        
+
     protected boolean targetCellHasCharacter() {
-        return getMap().getCharacter(targetCell)!=null;
+        return getMap().getCharacter(targetCell) != null;
     }
-    
+
     private boolean pieceIsInTargetCell() {
         return targetCell == characterCell;
     }
-
 
     private void calculateFreeCellToDisplaceTarget() {
         ICharacter targetCharacter = getMap().getCharacter(targetCell);
@@ -108,5 +112,17 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
 
     private void moveCharacterToTarget() {
         getMap().moveCharacter(characterCell, targetCell);
+    }
+
+    private void writeMoveEvent() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.moves(getCharacter());
+        getCharacter().getEventsWriter().add(event);
+    }
+
+    private void writeDisplaceEvent() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.displaces(getCharacter());
+        getCharacter().getEventsWriter().add(event);
     }
 }

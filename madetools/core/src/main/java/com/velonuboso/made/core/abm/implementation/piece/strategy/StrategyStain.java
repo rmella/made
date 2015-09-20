@@ -17,12 +17,13 @@
 package com.velonuboso.made.core.abm.implementation.piece.strategy;
 
 import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.implementation.piece.PieceAbmConfigurationHelper;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 
@@ -49,7 +50,15 @@ public class StrategyStain extends BaseAction implements IStrategyStain {
         if (probability < helper.getSpotDissapearProbability()){
             getMap().removeSpot(characterCell);
         }
+        
+        writeEvent();
+        
         return true;
     }
 
+    private void writeEvent() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.stains(getCharacter());
+        getCharacter().getEventsWriter().add(event);
+    }
 }

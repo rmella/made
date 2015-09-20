@@ -20,6 +20,9 @@ import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 
 /**
  *
@@ -29,7 +32,13 @@ public class StrategySkipTurn extends BaseAction implements IStrategySkipTurn {
 
     @Override
     public boolean testAction(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) throws ActionReturnException {
+        writeEvent();
         return true;
     }
-
+    
+    private void writeEvent() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.skipsTurn(getCharacter());
+        getCharacter().getEventsWriter().add(event);
+    }
 }

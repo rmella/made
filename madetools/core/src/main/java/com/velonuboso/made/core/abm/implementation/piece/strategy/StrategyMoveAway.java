@@ -21,6 +21,9 @@ import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.List;
 
 /**
@@ -42,7 +45,15 @@ public class StrategyMoveAway extends BaseAction implements IStrategyMoveAway{
         }
         
         getMap().moveCharacter(characterCell, targetCell);
+        writeEvent();
+        
         return true;
+    }
+
+    private void writeEvent() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.movesAway(getCharacter());
+        getCharacter().getEventsWriter().add(event);
     }
 
 }

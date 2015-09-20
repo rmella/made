@@ -22,6 +22,9 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import javafx.scene.paint.Color;
 
 /**
@@ -37,6 +40,7 @@ public class StrategyTransferColor extends BaseAction implements IStrategyTransf
         ICharacter friend = getMap().getCharacter(friendCell);
         
         exchangeColors(getCharacter(), friend);
+        writeEvent();
         return true;
     }
 
@@ -44,5 +48,11 @@ public class StrategyTransferColor extends BaseAction implements IStrategyTransf
         Color auxiliaryColor = character.getBackgroundColor();
         character.setBackgroundColor(friend.getBackgroundColor());
         friend.setBackgroundColor(auxiliaryColor);
+    }
+    
+    private void writeEvent() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.transfersColor(getCharacter());
+        getCharacter().getEventsWriter().add(event);
     }
 }
