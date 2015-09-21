@@ -167,50 +167,151 @@ public class StrategiesTest {
         verifyStrategyReturnedTrue();
     }
 
-    
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_cannot_be_won_it_fails() {
+    @Test
+    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_with_free_cells_around_it_is_displaced_and_the_piece_moves_to_the_target() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
-        buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 1, 1);
+        Piece targetPiece = buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
 
-        int oldCell = map.getCell(0,0);
+        int targetCell = map.getCell(1, 1);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+
+        assertEquals("Piece position should be the target change since the target is occupied by a circle",
+                targetCell, (int) map.getCell(mainPiece));
+        assertThat("Target piece position should change since it has been displaced",
+                map.getCell(targetPiece), is(not(targetCell)));
+
+        verifyStrategyReturnedTrue();
+    }
+
+    @Test
+    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_has_no_free_cells_around_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece targetPiece = buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
+
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 0, 1);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 0, 2);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 2);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 1);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 2);
+
+        int oldCell = map.getCell(0, 0);
         int targetCell = map.getCell(1, 1);
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
-        assertEquals("Piece position should not change since the target is occupied by a circle",
+
+        assertEquals("Piece position should not change since the target has no cell to be displaced to",
                 oldCell, (int) map.getCell(mainPiece));
+        assertThat("Target piece position should not change since it has no cell to be displaced to",
+                map.getCell(targetPiece), is(targetCell));
         verifyStrategyReturnedFalse();
     }
 
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_can_be_won_but_is_not__enemy_it_fails() {
+    @Test
+    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_free_it_moves_successfully_to_the_cell() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece pieceThatIsNotInTheWay = buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 0, 1);
+
+        int targetCell = map.getCell(2, 2);
+        int closerCell = map.getCell(1, 1);
+        int unchangedCell = map.getCell(0, 1);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+
+        assertEquals("Piece position should be the closer cell to the target since it is not occupied",
+                closerCell, (int) map.getCell(mainPiece));
+        assertThat("A piece that is not in the way os the mani cell should not be moved",
+                map.getCell(pieceThatIsNotInTheWay), is(unchangedCell));
+
+        verifyStrategyReturnedTrue();
+    }
+    
+    @Test
+    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_occupied_by_a_piece_with_free_cells_around_it_is_displaced_and_the_piece_moves_to_the_target() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece closerPiece = buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
+
+        int closerCell = map.getCell(1, 1);
+        int targetCell = map.getCell(2, 2);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+
+        assertEquals("Piece position should be the target change since the target is occupied by a circle",
+                closerCell, (int) map.getCell(mainPiece));
+        assertThat("Target piece position should change since it has been displaced",
+                map.getCell(closerPiece), is(not(closerCell)));
+
+        verifyStrategyReturnedTrue();
     }
 
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_can_be_won_but_does_not_have_free_cells_around_it_fails() {
+    @Test
+    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_occupied_by_a_piece_that_has_no_free_cells_around_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece closerPiece = buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
+
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 0, 1);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 0, 2);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 2);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 1);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 2);
+
+        int closerCell = map.getCell(1, 1);
+        int targetCell = map.getCell(2, 2);
+        int oldCell = map.getCell(0, 0);
+        
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+
+        assertEquals("Piece position should not change since the target has no cell to be displaced to",
+                oldCell, (int) map.getCell(mainPiece));
+        assertThat("Target piece position should not change since it has no cell to be displaced to",
+                map.getCell(closerPiece), is(closerCell));
+        verifyStrategyReturnedFalse();
     }
 
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_around_and_occupied_by_a_piece_that_can_be_won_is_enemy_andhas_free_cells_around_displaces_the_piece_and_moves_to_the_cell_succesfully() {
-    }
-
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_free_it_moves_successfully_to_the_piece() {
-    }
-
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_occupied_by_a_piece_that_can_be_won_it_displaces_the_piece_and_moves_to_the_cell() {
-    }
-
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_occupied_by_a_piece_that_can_be_won_but_is_not_enemy_it_fails() {
-    }
-
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_occupied_by_a_piece_that_can_be_won_but_does_not_have_free_cells_around_it_fails() {
-    }
-
-    public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_occupied_by_a_piece_that_cannot_be_won_it_fails() {
-    }
-
+    @Test
     public void UT_StrategyMoveOrDisplace_When_moves_successfully_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int targetCell = map.getCell(1, 1);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+        verifyEventAddedToFakeEventWriter(EventFactory.MOVES, 1);
+        verifyEventAddedToFakeEventWriter(EventFactory.DISPLACES, 0);
+        verifyStrategyReturnedTrue();
     }
 
+    @Test
     public void UT_StrategyMoveOrDisplace_When_moves_and_displaces_successfully_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
+        int targetCell = map.getCell(1, 1);
+        
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+        verifyEventAddedToFakeEventWriter(EventFactory.MOVES, 1);
+        verifyEventAddedToFakeEventWriter(EventFactory.DISPLACES, 1);
+        verifyStrategyReturnedTrue();
     }
 
+    @Test
     public void UT_StrategyMoveOrDisplace_When_called_unsuccessfully_it_does_not_write_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
+
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 0, 1);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 0, 2);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 2);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 0);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 1);
+        buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 2);
+        
+        int targetCell = map.getCell(1, 1);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
+        verifyEventAddedToFakeEventWriter(EventFactory.MOVES, 0);
+        verifyEventAddedToFakeEventWriter(EventFactory.DISPLACES, 0);
+        verifyStrategyReturnedFalse();
     }
 
     public void UT_StrategySkipTurn_the_piece_does_not_move_or_stain() {

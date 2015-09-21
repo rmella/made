@@ -61,8 +61,9 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
         }
 
         displaceTarget();
-        moveCharacterToTarget();
         writeDisplaceEvent();
+        moveCharacterToTarget();
+        writeMoveEvent();
         return true;
     }
 
