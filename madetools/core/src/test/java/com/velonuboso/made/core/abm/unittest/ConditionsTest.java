@@ -57,7 +57,7 @@ public class ConditionsTest {
 
     @Before
     public void setUp() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0});
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
@@ -264,7 +264,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_over_the_threshold_it_doesnt_have_sadness() {
         float JOY_THRESHOLD = 0.1f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0.5f});
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSadness.class));
 
@@ -274,7 +274,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_below_the_threshold_it_has_sadness() {
         float JOY_THRESHOLD = 0.9f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0.5f});
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSadness.class));
 
@@ -286,7 +286,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_reduced_a_quantity_below_surprise_threshold_it_does_not_have_surprise() {
         float SURPRISE_THRESHOLD = 0.9f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
 
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
@@ -301,7 +301,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_reduced_a_quantity_over_surprise_threshold_it_has_surprise() {
         float SURPRISE_THRESHOLD = 0.3f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
 
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
@@ -316,7 +316,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_increased_it_cannot_have_surprise() {
         float SURPRISE_THRESHOLD = 0.0f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
 
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
@@ -418,7 +418,7 @@ public class ConditionsTest {
 
     @Test
     public void UT_ConditionSadness__when_piece_is_sad_it_writes_to_the_log() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0});
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.WHITE, 5, 5);
         checkLogWhenConditionIsRun(mainPiece, IConditionSadness.class, EventFactory.IS_SAD);

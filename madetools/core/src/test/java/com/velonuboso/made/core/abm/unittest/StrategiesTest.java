@@ -65,7 +65,7 @@ public class StrategiesTest {
 
     @Before
     public void setUp() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0, 0});
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
@@ -378,7 +378,7 @@ public class StrategiesTest {
 
     @Test
     public void UT_StrategyStain_When_called_succesfully_and_the_random_value_is_bellow_the_probability_the_spot_disappears() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 1});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0, 1});
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
         buildSpot(2, Color.BLUE, 0, 0);
 

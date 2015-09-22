@@ -58,6 +58,10 @@ public class PieceAbmConfigurationHelper {
         return getGene(Gene.SURPRISE_THRESHOLD);
     }
 
+    public float getAnticipationProbability() {
+        return getGene(Gene.ANTICIPATION_PROBABILITY);
+    }
+    
     public float getFearProbability() {
         return getGene(Gene.FEAR_PROBABILITY);
     }
@@ -98,6 +102,7 @@ public class PieceAbmConfigurationHelper {
         NEIGHBOUR_SIMILARITY_FOR_JOY_WEIGHT,
         JOY_THRESHOLD,
         SURPRISE_THRESHOLD,
+        ANTICIPATION_PROBABILITY,
         FEAR_PROBABILITY,
         SURPRISE_PROBABILITY,
         SADNESS_PROBABILITY,

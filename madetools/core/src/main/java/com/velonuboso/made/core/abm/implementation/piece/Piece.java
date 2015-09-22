@@ -224,7 +224,7 @@ public class Piece implements ICharacter {
     private void addChildForAnticipationBehaviour(IBehaviourTreeNode parentNode) {
         IBehaviourTreeNode anticipationCondition = createActionNode(
                 ObjectFactory.createObject(IConditionAnticipation.class),
-                abmConfigurationHelper.getFearProbability());
+                abmConfigurationHelper.getAnticipationProbability());
 
         IBehaviourTreeNode moveOrDisplaceStrategy = createActionNode(ObjectFactory.createObject(IStrategyMoveOrDisplace.class), 1);
 

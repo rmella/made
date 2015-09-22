@@ -173,7 +173,7 @@ public class PieceTest {
     public void UT_run_affinity_must_be_minus1_when_enemy_shape_is_different_and_colors_opposite() {
         final float EXPECTED_AFFINITY = -1;
 
-        float affinity = getAffinityForCharacter(new float[]{1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED.invert(),
+        float affinity = getAffinityForCharacter(new float[]{1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED.invert(),
                 Color.BLUE.invert(), CharacterShape.SQUARE);
 
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY + " with the enemy since"
@@ -185,7 +185,7 @@ public class PieceTest {
     public void UT_run_affinity_must_be_1_when_enemy_shape__and_colors_are_the_same() {
         final float EXPECTED_AFFINITY = 1;
 
-        float affinity = getAffinityForCharacter(new float[]{1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED,
+        float affinity = getAffinityForCharacter(new float[]{1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED,
                 Color.BLUE, CharacterShape.TRIANGLE);
 
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY + " with the friend since"
@@ -197,7 +197,7 @@ public class PieceTest {
     public void UT_run_affinity_must_be_0_when_configuration_is_all_0() {
         final float EXPECTED_AFFINITY = 0;
 
-        float affinity = getAffinityForCharacter(new float[]{0f, 0f, 0f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED,
+        float affinity = getAffinityForCharacter(new float[]{0f, 0f, 0f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED,
                 Color.BLUE, CharacterShape.TRIANGLE);
 
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY + " with the friend since"
@@ -209,7 +209,7 @@ public class PieceTest {
     public void UT_run_affinity_must_be_minus_1_divided_by_3_when_only_foreground_color_is_the_same() {
         final float EXPECTED_AFFINITY = -1f / 3f;
 
-        float affinity = getAffinityForCharacter(new float[]{1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED.invert(),
+        float affinity = getAffinityForCharacter(new float[]{1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}, Color.RED.invert(),
                 Color.BLUE, CharacterShape.CIRCLE);
 
         assertEquals("Should've had an affinity of " + EXPECTED_AFFINITY + " with the character since"
@@ -222,7 +222,7 @@ public class PieceTest {
         float expectedJoy = 1 - character.getColorDifference();
 
         character.setAbmConfiguration(new AbmConfigurationEntity(
-                new float[]{1f, 1f, 1f, 0f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}
+                new float[]{1f, 1f, 1f, 0f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}
         ));
 
         final ArrayList<Float> currentJoy = new ArrayList<>();
@@ -280,7 +280,7 @@ public class PieceTest {
         character.setShape(CharacterShape.TRIANGLE);
 
         AbmConfigurationEntity abmConfiguration = new AbmConfigurationEntity(
-                new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}
+                new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f}
         );
         character.setAbmConfiguration(abmConfiguration);
 
