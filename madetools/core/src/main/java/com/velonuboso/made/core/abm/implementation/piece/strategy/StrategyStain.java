@@ -47,10 +47,6 @@ public class StrategyStain extends BaseAction implements IStrategyStain {
         float probability = ObjectFactory.createObject(IProbabilityHelper.class).getNextProbability(StrategyStain.class);
         
         PieceAbmConfigurationHelper helper = new PieceAbmConfigurationHelper(getCharacter().getAbmConfiguration());
-        if (probability < helper.getSpotDissapearProbability()){
-            getMap().removeSpot(characterCell);
-        }
-        
         writeEvent();
         
         return true;

@@ -49,27 +49,39 @@ public class WorldAbmConfigurationHelper {
     }
 
     public void validateTypes() throws Exception {
-        checkValue(Gene.WORLD_SIZE, MIN_WORLD_SIZE, MAX_WORLD_SIZE);
-        checkValue(Gene.NUMBER_OF_CIRCLES, MIN_NUMBER_OF_CIRCLES, MAX_NUMBER_OF_CIRCLES);
-        checkValue(Gene.NUMBER_OF_TRIANGLES, MIN_NUMBER_OF_TRIANGLES, MAX_NUMBER_OF_TRIANGLES);
-        checkValue(Gene.NUMBER_OF_SQUARES, MIN_NUMBER_OF_SQUARES, MAX_NUMBER_OF_SQUARES);
-        checkValue(Gene.NUMBER_OF_DAYS, MIN_NUMBER_OF_DAYS, MAX_NUMBER_OF_DAYS);
+        checkValueInteger(Gene.WORLD_SIZE, MIN_WORLD_SIZE, MAX_WORLD_SIZE);
+        checkValueInteger(Gene.NUMBER_OF_CIRCLES, MIN_NUMBER_OF_CIRCLES, MAX_NUMBER_OF_CIRCLES);
+        checkValueInteger(Gene.NUMBER_OF_TRIANGLES, MIN_NUMBER_OF_TRIANGLES, MAX_NUMBER_OF_TRIANGLES);
+        checkValueInteger(Gene.NUMBER_OF_SQUARES, MIN_NUMBER_OF_SQUARES, MAX_NUMBER_OF_SQUARES);
+        checkValueInteger(Gene.NUMBER_OF_DAYS, MIN_NUMBER_OF_DAYS, MAX_NUMBER_OF_DAYS);
+        checkValueProbability(Gene.PROBABILITY_TO_ADD_SPOT, 0, 1);
+        checkValueProbability(Gene.PROBABILITY_TO_REMOVE_SPOT, 0, 1);
     }
 
-    private void checkValue(Gene gene, int minimumValue, int maximumValue) throws Exception {
+    private void checkValueInteger(Gene gene, int minimumValue, int maximumValue) throws Exception {
         float value = getGene(gene);
         if (value < minimumValue && value > maximumValue) {
             throw new Exception("value for gene " + gene.ordinal() + " is not between " + minimumValue + " and " + maximumValue);
         }
+        if (Math.abs(value) != value) {
+            throw new Exception("value for gene " + gene.ordinal() + " is not an integer");
+        }
+    }
 
+    private void checkValueProbability(Gene gene, int minimumValue, int maximumValue) throws Exception {
+        float value = getGene(gene);
+        if (value < 0 && value > 1) {
+            throw new Exception("value for gene " + gene.ordinal() + " is not a probability between 0 and 1");
+        }
     }
 
     public enum Gene {
-
         WORLD_SIZE,
         NUMBER_OF_CIRCLES,
         NUMBER_OF_TRIANGLES,
         NUMBER_OF_SQUARES,
-        NUMBER_OF_DAYS
+        NUMBER_OF_DAYS,
+        PROBABILITY_TO_ADD_SPOT,
+        PROBABILITY_TO_REMOVE_SPOT
     }
 }

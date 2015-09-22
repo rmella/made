@@ -377,33 +377,6 @@ public class StrategiesTest {
     }
 
     @Test
-    public void UT_StrategyStain_When_called_succesfully_and_the_random_value_is_bellow_the_probability_the_spot_disappears() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0, 1});
-        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
-        buildSpot(2, Color.BLUE, 0, 0);
-
-        int targetCell = map.getCell(0, 0);
-        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
-
-        IColorSpot spot = map.getColorSpot(targetCell);
-        assertNull("Spot should've disappeared", spot);
-        verifyStrategyReturnedTrue();
-    }
-
-    @Test
-    public void UT_StrategyStain_When_called_succesfully_and_the_random_value_is_over_the_probability_the_spot_remains() {
-        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
-        buildSpot(2, Color.BLUE, 0, 0);
-
-        int targetCell = map.getCell(0, 0);
-        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
-
-        IColorSpot spot = map.getColorSpot(targetCell);
-        assertNotNull("Spot should've remained", spot);
-        verifyStrategyReturnedTrue();
-    }
-
-    @Test
     public void UT_StrategyStain_When_stains_successfully_it_writes_to_the_log() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
         buildSpot(2, Color.BLUE, 0, 0);

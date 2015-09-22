@@ -88,10 +88,6 @@ public class PieceAbmConfigurationHelper {
         return getGene(Gene.IMPROVE_SELF_SIMILARITY_PROBABILITY);
     }
 
-    public float getSpotDissapearProbability() {
-        return getGene(Gene.SPOT_DISSAPEAR_PROBABILITY);
-    }
-
     private float getGene(Gene gene) {
         return abmConfiguration.getChromosome()[gene.ordinal()];
     }
@@ -123,6 +119,5 @@ public class PieceAbmConfigurationHelper {
         IMPROVE_FRIEND_SIMILARITY_PROBABILITY,
         REDUCE_ENEMY_SIMILARITY_PROBABILITY,
         IMPROVE_SELF_SIMILARITY_PROBABILITY,
-        SPOT_DISSAPEAR_PROBABILITY
     }
 }
