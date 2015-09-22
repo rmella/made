@@ -51,6 +51,7 @@ public class ConditionCanReduceEnemySimilarity extends BaseAction implements ICo
                 = (HashMap<ICharacter, Float>) blackboard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
         
         ICharacter candidateToPush = affinityMatrix.keySet().stream()
+                .filter(targetCharacter -> getCharacter().getShape().wins(targetCharacter.getShape()))
                 .filter(targetCharacter -> isEnemy(affinityMatrix, targetCharacter))
                 .filter(enemy -> this.getCharacter().getShape().wins(enemy.getShape()))
                 .min((ICharacter firstEnemy, ICharacter secondEnemy) -> {

@@ -93,10 +93,10 @@ public class Map implements IMap {
     }
 
     @Override
-    public List<Integer> getCellsToMove(Integer cellId, int maxMovement) {
+    public List<Integer> getCellsToMove(Integer cellId, int maxMovement, HashMap<ICharacter, Float> affinityMatrix) {
         HashSet<Integer> navigatedCells = new HashSet<>();
         ICharacter author = getCharacter(cellId);
-        recursiveAddCellsToMove(cellId, navigatedCells, maxMovement, author);
+        recursiveAddCellsToMove(cellId, navigatedCells, maxMovement, author, affinityMatrix);
         return new ArrayList<>(navigatedCells);
     }
 
@@ -236,11 +236,11 @@ public class Map implements IMap {
     }
 
     @Override
-    public Integer getCloserCell(ICharacter character, int targetCell) {
+    public Integer getCloserCell(ICharacter character, int targetCell, HashMap<ICharacter, Float> affinityMatrix) {
         final int PIECE_MOVEMENT = 1;
 
         int currentCell = getCell(character);
-        List<Integer> cellsToMove = getCellsToMove(currentCell, PIECE_MOVEMENT);
+        List<Integer> cellsToMove = getCellsToMove(currentCell, PIECE_MOVEMENT, affinityMatrix);
         return cellsToMove
                 .stream()
                 .min((Integer firstCell, Integer secondCell) -> {
@@ -257,7 +257,7 @@ public class Map implements IMap {
     }
 
     private void recursiveAddCellsToMove(Integer currentCell, HashSet<Integer> navigatedCells,
-            int maxMovement, ICharacter author) {
+            int maxMovement, ICharacter author, HashMap<ICharacter, Float> affinityMatrix) {
 
         if (maxMovement < 0) {
             return;
@@ -273,9 +273,9 @@ public class Map implements IMap {
 
                 int navigableCell = getCell(sourceX + offsetX, sourceY + offsetY);
                 if (!navigatedCells.contains(navigableCell)
-                        && (cellCanBeOccupiedByCharacter(navigableCell, author))) {
+                        && (cellCanBeOccupiedByCharacter(navigableCell, author, affinityMatrix))) {
 
-                    recursiveAddCellsToMove(navigableCell, navigatedCells, maxMovement - 1, author);
+                    recursiveAddCellsToMove(navigableCell, navigatedCells, maxMovement - 1, author, affinityMatrix);
                 }
             }
         }
@@ -289,10 +289,29 @@ public class Map implements IMap {
         return id / sizeY;
     }
 
-    private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
+    private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author, HashMap<ICharacter, Float> affinityMatrix) {
+        ICharacter neighbor = getCharacter(navigableCell);
+        Float affinity = CalculateAffinityForNeighbor(neighbor, affinityMatrix);
+
         return getCharacter(navigableCell) == author
                 || getCharacter(navigableCell) == null
-                || author.getShape().wins(getCharacter(navigableCell).getShape());
+                || (author.getShape().wins(neighbor.getShape()) && affinity<0);
+    }
+
+    private Float CalculateAffinityForNeighbor(ICharacter neighbor, HashMap<ICharacter, Float> affinityMatrix) {
+        
+        final float DEFAULT_AFFINITY_WHEN_NOT_FOUND = -1f;
+        
+        if (neighbor == null || affinityMatrix == null){
+            return DEFAULT_AFFINITY_WHEN_NOT_FOUND;
+        }
+        
+        Float affinity = affinityMatrix.get(neighbor);
+        if (affinity == null){
+            return DEFAULT_AFFINITY_WHEN_NOT_FOUND;
+        }
+        
+        return affinity;
     }
 
     private double distanceBetweenCells(int sourceCell, int targetCell) {

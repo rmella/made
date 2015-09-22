@@ -26,6 +26,7 @@ import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -47,7 +48,9 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
         retrieveTargetCellFromBlackboard(currentBlackBoard);
         validatePieceIsInAlreadyTargetCell();
 
-        replaceTargetCellByTheCloser();
+        HashMap<ICharacter, Float> affinityMatrix = 
+                (HashMap<ICharacter, Float>) currentBlackBoard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
+        replaceTargetCellByTheCloser(affinityMatrix);
 
         if (getMap().getCharacter(targetCell) == null) {
             moveCharacterToTarget();
@@ -67,9 +70,9 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
         return true;
     }
 
-    private void replaceTargetCellByTheCloser() {
+    private void replaceTargetCellByTheCloser(HashMap<ICharacter, Float> affinityMatrix) {
         if (!isTargetCellAround()) {
-            targetCell = getMap().getCloserCell(getCharacter(), targetCell);
+            targetCell = getMap().getCloserCell(getCharacter(), targetCell, affinityMatrix);
         }
     }
 

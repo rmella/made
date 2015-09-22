@@ -52,6 +52,7 @@ public class ConditionCanImproveFriendSimilarity extends BaseAction implements I
                 = (HashMap<ICharacter, Float>) blackboard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
 
         ICharacter candidateToExchangeColors = affinityMatrix.keySet().stream()
+                .filter(targetCharacter -> !targetCharacter.getShape().wins(getCharacter().getShape()))
                 .filter(targetCharacter -> isFriend(affinityMatrix, targetCharacter))
                 .filter(friend -> friendCannotWinCharacter(friend))
                 .filter(friend -> wouldBenefitWithColorExchange(friend))

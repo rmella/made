@@ -27,10 +27,12 @@ import com.velonuboso.made.core.abm.entity.TerrainType;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import static org.hamcrest.CoreMatchers.not;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -48,12 +50,14 @@ public class MapTest {
 
     private IMap map = null;
     private IEventsWriter fakeEventsWriter;
+    private static HashMap<ICharacter, Float> emptyAffinityMatrix;
 
     public MapTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
+        emptyAffinityMatrix = new HashMap<>();
     }
 
     @AfterClass
@@ -352,7 +356,7 @@ public class MapTest {
         Integer sourceCell = map.getCell(0, 0);
         Integer targetCell = map.getCell(newX, newY);
         assertFalse("Shouldn't have contain cell " + " (" + newX + "," + newY + ")",
-                map.getCellsToMove(sourceCell, movement).contains(targetCell));
+                map.getCellsToMove(sourceCell, movement, null).contains(targetCell));
     }
 
     @Test
@@ -363,7 +367,7 @@ public class MapTest {
         Integer sourceCell = map.getCell(0, 0);
         Integer targetCell = map.getCell(newX, newY);
         assertTrue("Should've contain cell " + targetCell + " (" + newX + "," + newY + ")",
-                map.getCellsToMove(sourceCell, movement).contains(targetCell));
+                map.getCellsToMove(sourceCell, movement, null).contains(targetCell));
     }
 
     @Test
@@ -374,7 +378,7 @@ public class MapTest {
         Integer sourceCell = map.getCell(0, 0);
         Integer targetCell = map.getCell(newX, newY);
         assertTrue("Should've contained cell " + targetCell + " (" + newX + "," + newY + ")",
-                map.getCellsToMove(sourceCell, movement).contains(targetCell));
+                map.getCellsToMove(sourceCell, movement, null).contains(targetCell));
     }
 
     @Test
@@ -385,7 +389,7 @@ public class MapTest {
         Integer sourceCell = map.getCell(0, 0);
         Integer targetCell = map.getCell(newX, newY);
         assertTrue("Should've contain cell " + targetCell + " (" + newX + "," + newY + ")",
-                map.getCellsToMove(sourceCell, movement).contains(targetCell));
+                map.getCellsToMove(sourceCell, movement, null).contains(targetCell));
     }
 
     @Test
@@ -396,7 +400,7 @@ public class MapTest {
         Integer sourceCell = map.getCell(0, 0);
         Integer targetCell = map.getCell(newX, newY);
         assertTrue("Should've contain cell " + targetCell + " (" + newX + "," + newY + ")",
-                map.getCellsToMove(sourceCell, movement).contains(targetCell));
+                map.getCellsToMove(sourceCell, movement, null).contains(targetCell));
     }
 
     @Test
@@ -416,7 +420,7 @@ public class MapTest {
 
         assertFalse("Shouldn't contain cell " + targetCell + " (" + newX + "," + newY + ") "
                 + "since an obstacle is present in (" + obstacleX + "," + obstacleY + ")",
-                map.getCellsToMove(sourceCell, movement).contains(targetCell));
+                map.getCellsToMove(sourceCell, movement, null).contains(targetCell));
     }
 
     @Test
@@ -497,6 +501,40 @@ public class MapTest {
 
         assertEquals("Should've returned " + EXPECTED_CELL,
                 EXPECTED_CELL, closerCell);
+    }
+    
+    @Test
+    public void getCloserCell__When_closer_cell_is_occupied_by_a_winnable_cell_that_is_enemy_it_returns_the_cell() {
+        final int CHARACTER_CELL = map.getCell(0, 0);
+        final int OBSTACLE_CELL = map.getCell(1, 1);
+        final int TARGET_CELL = map.getCell(5, 5);
+        final int EXPECTED_CELL = map.getCell(1, 1);
+
+        ICharacter character =  putCharacterInMap(2, OBSTACLE_CELL, CharacterShape.CIRCLE);
+        
+        HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
+        affinityMatrix.put(character, -1f);
+        int closerCell = getCloserCell(CHARACTER_CELL, TARGET_CELL, affinityMatrix);
+
+        assertEquals("Should've returned " + EXPECTED_CELL,
+                EXPECTED_CELL, closerCell);
+    }
+    
+    @Test
+    public void getCloserCell__When_closer_cell_is_occupied_by_a_winnable_cell_that_is_friend_it_returns_other_cell() {
+        final int CHARACTER_CELL = map.getCell(0, 0);
+        final int OBSTACLE_CELL = map.getCell(1, 1);
+        final int TARGET_CELL = map.getCell(5, 5);
+        final int EXPECTED_CELL = map.getCell(1, 1);
+
+        ICharacter character =  putCharacterInMap(2, OBSTACLE_CELL, CharacterShape.CIRCLE);
+        
+        HashMap<ICharacter, Float> affinityMatrix = new HashMap<>();
+        affinityMatrix.put(character, 1f);
+        int closerCell = getCloserCell(CHARACTER_CELL, TARGET_CELL, affinityMatrix);
+
+        assertFalse("Shouldn't have returned " + EXPECTED_CELL,
+                EXPECTED_CELL == closerCell);
     }
 
     @Test
@@ -600,8 +638,15 @@ public class MapTest {
     }
 
     private int getCloserCell(final int CHARACTER_CELL, final int TARGET_CELL) {
+        return getCloserCell(CHARACTER_CELL, TARGET_CELL, null);
+    }
+    
+    private int getCloserCell(final int CHARACTER_CELL, final int TARGET_CELL, HashMap<ICharacter, Float> affinityMatrix) {
+        if (affinityMatrix == null){
+            affinityMatrix = emptyAffinityMatrix;
+        }
         ICharacter newCharacter = putCharacterInMap(1, CHARACTER_CELL, CharacterShape.SQUARE);
-        int closerCell = map.getCloserCell(newCharacter, TARGET_CELL);
+        int closerCell = map.getCloserCell(newCharacter, TARGET_CELL, affinityMatrix);
         return closerCell;
     }
 

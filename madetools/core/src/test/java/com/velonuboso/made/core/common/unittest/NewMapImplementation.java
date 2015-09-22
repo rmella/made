@@ -22,96 +22,97 @@ import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.TerrainType;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  *
  * @author Ruben
  */
-public class NewMapImplementation implements IMap{
+public class NewMapImplementation implements IMap {
 
-        public NewMapImplementation() {
-        }
-        
-        @Override
-        public void initialize(int widthInCells, int heighInCells) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    public NewMapImplementation() {
+    }
 
-        @Override
-        public List<Integer> getCells() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public void initialize(int widthInCells, int heighInCells) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public void moveCharacter(int sourceCell, int targetCell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public List<Integer> getCells() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public List<Integer> getCellsToMove(Integer cellId, int maxMovement) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public void moveCharacter(int sourceCell, int targetCell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public void putCharacter(ICharacter character, int cell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public List<Integer> getCellsToMove(Integer cellId, int maxMovement, HashMap<ICharacter, Float> affinityMatrix) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public void removeCharacter(int cell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public void putCharacter(ICharacter character, int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public ICharacter getCharacter(int cell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public void removeCharacter(int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public TerrainType getTerrain(int cell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public ICharacter getCharacter(int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public Integer getPositionX(int cell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public TerrainType getTerrain(int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public Integer getPositionY(int cell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public Integer getPositionX(int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public IPosition getPosition(int cell) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public Integer getPositionY(int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public Integer getCell(int coordX, int coordY) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public IPosition getPosition(int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public Integer getCell(IPosition position) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public Integer getCell(int coordX, int coordY) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public Integer getCell(ICharacter character) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public Integer getCell(IPosition position) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public int getWidth() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public Integer getCell(ICharacter character) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
-        @Override
-        public int getHeight() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+    @Override
+    public int getWidth() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getHeight() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public List<Integer> getCellsAround(Integer currentCellId, int maxMovement) {
@@ -144,13 +145,13 @@ public class NewMapImplementation implements IMap{
     }
 
     @Override
-    public Integer getCloserCell(ICharacter character, int cell) {
+    public void setEventsWriter(IEventsWriter eventsWriter) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setEventsWriter(IEventsWriter eventsWriter) {
+    public Integer getCloserCell(ICharacter character, int cell, HashMap<ICharacter, Float> affinityMatrix) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        
-    }
+
+}

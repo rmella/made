@@ -19,6 +19,7 @@ package com.velonuboso.made.core.abm.api;
 import com.velonuboso.made.core.abm.entity.TerrainType;
 import com.velonuboso.made.core.abm.implementation.Map;
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public interface IMap {
 
     public void moveCharacter(int sourceCell, int targetCell);
 
-    public List<Integer> getCellsToMove(Integer cellId, int maxMovement);
+    public List<Integer> getCellsToMove(Integer cellId, int maxMovement,HashMap<ICharacter, Float> affinityMatrix);
 
     public List<Integer> getCellsAround(Integer currentCellId, int maxMovement);
     
@@ -72,7 +73,7 @@ public interface IMap {
 
     public boolean isCharacterNearCell(ICharacter character, int ccell);
     
-    public Integer getCloserCell(ICharacter character, int cell);
+    public Integer getCloserCell(ICharacter character, int cell, HashMap<ICharacter, Float> affinityMatrix);
 
     public void setEventsWriter(IEventsWriter eventsWriter);
 
