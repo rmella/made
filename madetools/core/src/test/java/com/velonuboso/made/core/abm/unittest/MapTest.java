@@ -18,10 +18,14 @@ package com.velonuboso.made.core.abm.unittest;
 
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IColorSpot;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.entity.TerrainType;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.implementation.EventFactory;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +37,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.ArgumentMatcher;
 import static org.mockito.Mockito.*;
 
 /**
@@ -42,6 +47,7 @@ import static org.mockito.Mockito.*;
 public class MapTest {
 
     private IMap map = null;
+    private IEventsWriter fakeEventsWriter;
 
     public MapTest() {
     }
@@ -58,6 +64,9 @@ public class MapTest {
     public void setUp() {
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(20, 20);
+
+        fakeEventsWriter = mock(IEventsWriter.class);
+        map.setEventsWriter(fakeEventsWriter);
     }
 
     @After
@@ -475,10 +484,10 @@ public class MapTest {
         assertTrue("Should've returned " + integerListAsString,
                 expectedChoice.contains(closerCell));
     }
-    
+
     @Test
     public void getCloserCell__When_square_is_in_0_0_and_target_is_5_5_but_1_1_is_occupied_by_shape_that_can_be_won_the_closer_cell_s_0_1_or_1_0() {
-                final int CHARACTER_CELL = map.getCell(0, 0);
+        final int CHARACTER_CELL = map.getCell(0, 0);
         final int OBSTACLE_CELL = map.getCell(1, 1);
         final int TARGET_CELL = map.getCell(5, 5);
         final int EXPECTED_CELL = map.getCell(1, 1);
@@ -489,7 +498,7 @@ public class MapTest {
         assertEquals("Should've returned " + EXPECTED_CELL,
                 EXPECTED_CELL, closerCell);
     }
-    
+
     @Test
     public void getCloserCell__When_piece_is_in_0_0_and_target_is_5_5_but_1_1_is_occupied_the_closer_cell_is_0_1_or_1_0() {
         final int CHARACTER_CELL = map.getCell(0, 0);
@@ -523,7 +532,7 @@ public class MapTest {
         final int CHARACTER_CELL = map.getCell(0, 0);
         final int EXPECTED_CELL_NEAR = map.getCell(19, 19);
 
-        ICharacter character = putCharacterInMap(1, CHARACTER_CELL,CharacterShape.SQUARE);
+        ICharacter character = putCharacterInMap(1, CHARACTER_CELL, CharacterShape.SQUARE);
         assertTrue("Character in " + CHARACTER_CELL + " should be near " + EXPECTED_CELL_NEAR,
                 map.isCharacterNearCell(character, EXPECTED_CELL_NEAR));
     }
@@ -538,6 +547,58 @@ public class MapTest {
                 map.isCharacterNearCell(character, EXPECTED_CELL_NEAR));
     }
 
+    @Test
+    public void putColorSpot__cell_without_spot_must_put_the_spot_into_the_map() {
+        IColorSpot spot = mock(IColorSpot.class);
+
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(1, 2);
+        Integer cell = map.getCell(position);
+        map.putColorSpot(spot, cell);
+
+        assertNotNull("spot should be in the cell", map.getColorSpot(cell));
+        assertNotNull("spot should have a cell", map.getCell(spot));
+    }
+
+    @Test
+    public void putColorSpot__when_success_it_must_write_to_the_log() {
+        IColorSpot spot = mock(IColorSpot.class);
+
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(1, 2);
+        Integer cell = map.getCell(position);
+        map.putColorSpot(spot, cell);
+
+        verifyEventAddedToFakeEventWriter(EventFactory.COLOR_SPOT_APPEARS, 1);
+    }
+
+    @Test
+    public void removeColorSpot__cell_with_spot_must_remove_the_spot_from_the_map() {
+        IColorSpot spot = mock(IColorSpot.class);
+
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(1, 2);
+        Integer cell = map.getCell(position);
+        map.putColorSpot(spot, cell);
+        map.removeSpot(cell);
+
+        assertNull("spot should not be in the cell", map.getColorSpot(cell));
+        assertNull("spot should have no cell", map.getCell(spot));
+    }
+
+    @Test
+    public void removeColorSpot__when_success_it_must_write_to_the_log() {
+        IColorSpot spot = mock(IColorSpot.class);
+
+        IPosition position = ObjectFactory.createObject(IPosition.class);
+        position.setCoords(1, 2);
+        Integer cell = map.getCell(position);
+        map.putColorSpot(spot, cell);
+        map.removeSpot(cell);
+
+        verifyEventAddedToFakeEventWriter(EventFactory.COLOR_SPOT_DISAPPEARS, 1);
+    }
+
     private int getCloserCell(final int CHARACTER_CELL, final int TARGET_CELL) {
         ICharacter newCharacter = putCharacterInMap(1, CHARACTER_CELL, CharacterShape.SQUARE);
         int closerCell = map.getCloserCell(newCharacter, TARGET_CELL);
@@ -550,5 +611,14 @@ public class MapTest {
         stub(newCharacter.getShape()).toReturn(shape);
         map.putCharacter(newCharacter, CHARACTER_CELL);
         return newCharacter;
+    }
+
+    private void verifyEventAddedToFakeEventWriter(String beginswith, int times) {
+        verify(fakeEventsWriter, times(times)).add(argThat(new ArgumentMatcher<IEvent>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((IEvent) item).toLogicalPredicate().startsWith(beginswith);
+            }
+        }));
     }
 }

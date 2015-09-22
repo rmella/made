@@ -18,6 +18,7 @@ package com.velonuboso.made.core.common.unittest;
 
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.TerrainType;
@@ -144,6 +145,11 @@ public class NewMapImplementation implements IMap{
 
     @Override
     public Integer getCloserCell(ICharacter character, int cell) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setEventsWriter(IEventsWriter eventsWriter) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
         

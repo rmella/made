@@ -19,9 +19,13 @@ package com.velonuboso.made.core.abm.implementation;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
 import com.velonuboso.made.core.abm.entity.TerrainType;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.implementation.EventFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,7 +47,8 @@ public class Map implements IMap {
     private HashMap<Integer, IColorSpot> ColorSpotByCell = new HashMap<>();
 
     private final static double SQRT_2 = Math.sqrt(2);
-    
+    private IEventsWriter eventsWriter;
+
     public Map() {
     }
 
@@ -202,6 +207,7 @@ public class Map implements IMap {
     public void putColorSpot(IColorSpot spot, int cell) {
         ColorSpotByCell.put(cell, spot);
         cellByColorSpot.put(spot, cell);
+        writeEventPutColorSpot(spot, cell);
     }
 
     @Override
@@ -210,6 +216,7 @@ public class Map implements IMap {
         if (spot != null) {
             ColorSpotByCell.remove(cell);
             cellByColorSpot.remove(spot);
+            writeEventRemoveColorSpot(spot, cell);
         }
     }
 
@@ -242,6 +249,11 @@ public class Map implements IMap {
                     return Double.compare(distanceFirstCell, distanceSecondCell);
                 })
                 .orElse(null);
+    }
+
+    @Override
+    public void setEventsWriter(IEventsWriter eventsWriter) {
+        this.eventsWriter = eventsWriter;
     }
 
     private void recursiveAddCellsToMove(Integer currentCell, HashSet<Integer> navigatedCells,
@@ -278,7 +290,7 @@ public class Map implements IMap {
     }
 
     private boolean cellCanBeOccupiedByCharacter(int navigableCell, ICharacter author) {
-        return getCharacter(navigableCell) == author 
+        return getCharacter(navigableCell) == author
                 || getCharacter(navigableCell) == null
                 || author.getShape().wins(getCharacter(navigableCell).getShape());
     }
@@ -288,7 +300,7 @@ public class Map implements IMap {
         int currentCellY = getPositionY(sourceCell);
         int targetCellX = getPositionX(targetCell);
         int targetCellY = getPositionY(targetCell);
-        
+
         double minimum = Double.MAX_VALUE;
 
         for (int offsetX = currentCellX - getWidth(); offsetX <= currentCellX + getWidth(); offsetX += getWidth()) {
@@ -311,4 +323,17 @@ public class Map implements IMap {
 
         return SQRT_2 * diagonalSteps + straightSteps;
     }
+
+    private void writeEventPutColorSpot(IColorSpot spot, int cell) {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.colorSpotAppears(spot);
+        eventsWriter.add(event);
+    }
+
+    private void writeEventRemoveColorSpot(IColorSpot spot, int cell) {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.colorSpotDisappears(spot);
+        eventsWriter.add(event);
+    }
+
 }

@@ -44,6 +44,8 @@ public class EventFactory implements IEventFactory {
     public static final String SKIPS_TURN = "SkipsTurn";
     public static final String STAINS = "Stains";
     public static final String TRANSFERS_COLOR = "TransferColor";
+    public static final String COLOR_SPOT_DISAPPEARS = "ColorSpotDisappears";
+    public static final String COLOR_SPOT_APPEARS = "ColorSpotAppears";
 
     @Override
     public IEvent worldExists(final IWorld world) {
@@ -123,5 +125,15 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent transfersColor(ICharacter subject) {
         return new Event(TRANSFERS_COLOR, subject.getId());
+    }
+
+    @Override
+    public IEvent colorSpotAppears(IColorSpot subject) {
+        return new Event(COLOR_SPOT_APPEARS, subject.getId());
+    }
+
+    @Override
+    public IEvent colorSpotDisappears(IColorSpot subject) {
+        return new Event(COLOR_SPOT_DISAPPEARS, subject.getId());
     }
 }

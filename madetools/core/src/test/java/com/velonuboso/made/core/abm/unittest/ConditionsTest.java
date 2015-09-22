@@ -61,6 +61,7 @@ public class ConditionsTest {
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
+        map.setEventsWriter(fakeEventsWriter);
         ObjectFactory.cleanAllMocks();
     }
 

@@ -47,4 +47,6 @@ public interface IEventFactory {
     IEvent skipsTurn(ICharacter character);
     IEvent stains(ICharacter character);
     IEvent transfersColor(ICharacter character);
+    IEvent colorSpotAppears(IColorSpot subject);
+    IEvent colorSpotDisappears(IColorSpot subject);
 }

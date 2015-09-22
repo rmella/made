@@ -20,11 +20,14 @@ import com.velonuboso.made.core.abm.api.IAction;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.condition.ICondition;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
+import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.ColorSpot;
@@ -61,10 +64,11 @@ public class StrategiesTest {
 
     @Before
     public void setUp() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0});
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
+        map.setEventsWriter(fakeEventsWriter);
         ObjectFactory.cleanAllMocks();
         fakeBlackboard = spy(ObjectFactory.createObject(IBlackBoard.class));
     }
@@ -226,7 +230,7 @@ public class StrategiesTest {
 
         verifyStrategyReturnedTrue();
     }
-    
+
     @Test
     public void UT_StrategyMoveOrDisplace_When_the_cell_is_not_around_and_the_closer_cell_is_occupied_by_a_piece_with_free_cells_around_it_is_displaced_and_the_piece_moves_to_the_target() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
@@ -261,7 +265,7 @@ public class StrategiesTest {
         int closerCell = map.getCell(1, 1);
         int targetCell = map.getCell(2, 2);
         int oldCell = map.getCell(0, 0);
-        
+
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
 
         assertEquals("Piece position should not change since the target has no cell to be displaced to",
@@ -287,7 +291,7 @@ public class StrategiesTest {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
         buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
         int targetCell = map.getCell(1, 1);
-        
+
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
         verifyEventAddedToFakeEventWriter(EventFactory.MOVES, 1);
         verifyEventAddedToFakeEventWriter(EventFactory.DISPLACES, 1);
@@ -306,7 +310,7 @@ public class StrategiesTest {
         buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 0);
         buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 1);
         buildPiece(0, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 2, 2);
-        
+
         int targetCell = map.getCell(1, 1);
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
         verifyEventAddedToFakeEventWriter(EventFactory.MOVES, 0);
@@ -314,34 +318,111 @@ public class StrategiesTest {
         verifyStrategyReturnedFalse();
     }
 
+    @Test
     public void UT_StrategySkipTurn_the_piece_does_not_move_or_stain() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int oldCell = map.getCell(0, 0);
+        setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategySkipTurn.class));
+
+        assertEquals("Piece position should not change when skipping turn",
+                oldCell, (int) map.getCell(mainPiece));
+        verifyStrategyReturnedTrue();
     }
 
+    @Test
     public void UT_StrategySkipTurn_When_called_successfully_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int oldCell = map.getCell(0, 0);
+        setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategySkipTurn.class));
+
+        verifyEventAddedToFakeEventWriter(EventFactory.SKIPS_TURN, 1);
+        verifyStrategyReturnedTrue();
     }
 
-    public void UT_StrategyStain_When_the_cell_is_not_around_it_fails() {
+    @Test
+    public void UT_StrategyStain_When_the_piece_is_not_over_the_cell_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int targetCell = map.getCell(1, 1);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
+
+        assertEquals("Should've stained", mainPiece.getBackgroundColor(), Color.RED);
+        verifyStrategyReturnedFalse();
     }
 
+    @Test
     public void UT_StrategyStain_When_the_cell_does_not_have_a_spot() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int targetCell = map.getCell(0, 0);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
+
+        assertEquals("Should've stained", mainPiece.getBackgroundColor(), Color.RED);
+        verifyStrategyReturnedFalse();
     }
 
+    @Test
     public void UT_StrategyStain_When_the_cell_is_around_and_has_a_spot_the_piece_fills_its_background_with_the_spot_color_succesfully() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        buildSpot(2, Color.BLUE, 0, 0);
+
+        int targetCell = map.getCell(0, 0);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
+
+        assertEquals("Should've stained", mainPiece.getBackgroundColor(), Color.BLUE);
+        verifyStrategyReturnedTrue();
     }
 
-    public void UT_StrategyStain_When_called_succesfully_and_the_random_value_is_bellow_the_probability_the_spot_dissapears() {
+    @Test
+    public void UT_StrategyStain_When_called_succesfully_and_the_random_value_is_bellow_the_probability_the_spot_disappears() {
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 1});
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        buildSpot(2, Color.BLUE, 0, 0);
+
+        int targetCell = map.getCell(0, 0);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
+
+        IColorSpot spot = map.getColorSpot(targetCell);
+        assertNull("Spot should've disappeared", spot);
+        verifyStrategyReturnedTrue();
     }
 
+    @Test
     public void UT_StrategyStain_When_called_succesfully_and_the_random_value_is_over_the_probability_the_spot_remains() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        buildSpot(2, Color.BLUE, 0, 0);
+
+        int targetCell = map.getCell(0, 0);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
+
+        IColorSpot spot = map.getColorSpot(targetCell);
+        assertNotNull("Spot should've remained", spot);
+        verifyStrategyReturnedTrue();
     }
 
+    @Test
     public void UT_StrategyStain_When_stains_successfully_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        buildSpot(2, Color.BLUE, 0, 0);
+
+        int targetCell = map.getCell(0, 0);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
+
+        verifyEventAddedToFakeEventWriter(EventFactory.STAINS, 1);
+        verifyStrategyReturnedTrue();
     }
 
-    public void UT_StrategyStain_When_the_spot_dissapears_it_writes_to_the_log() {
-    }
-
+    @Test
     public void UT_StrategyStain_When_called_unsuccessfully_it_does_not_write_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int targetCell = map.getCell(0, 0);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
+
+        verifyEventAddedToFakeEventWriter(EventFactory.STAINS, 0);
+        verifyStrategyReturnedFalse();
     }
 
     public void UT_StrategyTransferColor_When_cell_is_not_around_it_fails() {

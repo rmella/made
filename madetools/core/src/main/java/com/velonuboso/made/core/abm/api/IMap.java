@@ -73,4 +73,7 @@ public interface IMap {
     public boolean isCharacterNearCell(ICharacter character, int ccell);
     
     public Integer getCloserCell(ICharacter character, int cell);
+
+    public void setEventsWriter(IEventsWriter eventsWriter);
+
 }
