@@ -26,6 +26,7 @@ import javafx.scene.paint.Color;
  */
 public class EventsLogEntity implements Serializable {
 
+    private String[] log;
     private BoardEntity board;
     private CharacterEntity[] characters;
     private DayLog[] dayLogs;
@@ -33,6 +34,14 @@ public class EventsLogEntity implements Serializable {
     public EventsLogEntity() {
     }
 
+    public String[] getLog() {
+        return log;
+    }
+
+    public void setLog(String[] log) {
+        this.log = log;
+    }
+    
     public EventsLogEntity(BoardEntity board, CharacterEntity[] characters, DayLog[] dayLogs) {
         this.board = board;
         this.characters = characters;

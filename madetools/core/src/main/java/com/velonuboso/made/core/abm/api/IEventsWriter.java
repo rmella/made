@@ -17,12 +17,15 @@
 
 package com.velonuboso.made.core.abm.api;
 
+import com.velonuboso.made.core.abm.implementation.EventsWriter;
 import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = EventsWriter.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IEventsWriter {
 
     void add(IEvent event);

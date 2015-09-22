@@ -46,6 +46,7 @@ public class EventFactory implements IEventFactory {
     public static final String TRANSFERS_COLOR = "TransferColor";
     public static final String COLOR_SPOT_DISAPPEARS = "ColorSpotDisappears";
     public static final String COLOR_SPOT_APPEARS = "ColorSpotAppears";
+    public static final String EXCEPTION = "Exception";
 
     @Override
     public IEvent worldExists(final IWorld world) {
@@ -135,5 +136,10 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent colorSpotDisappears(IColorSpot subject) {
         return new Event(COLOR_SPOT_DISAPPEARS, subject.getId());
+    }
+
+    @Override
+    public IEvent exception(String message) {
+        return new Event(EXCEPTION, message);
     }
 }

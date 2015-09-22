@@ -19,6 +19,7 @@ package com.velonuboso.made.core.abm.implementation;
 
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.common.api.IEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,12 +30,16 @@ public class EventsWriter implements IEventsWriter {
 
     private List<IEvent> events;
 
+    public EventsWriter() {
+        events = new ArrayList<>();
+    }
+    
     public EventsWriter(List<IEvent> events) {
         this.events = events;
     }
     
     @Override
     public void add (IEvent event){
-        //events.add(event);
+        events.add(event);
     }
 }

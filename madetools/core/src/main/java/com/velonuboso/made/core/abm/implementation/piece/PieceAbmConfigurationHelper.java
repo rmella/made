@@ -17,6 +17,8 @@
 package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -61,7 +63,7 @@ public class PieceAbmConfigurationHelper {
     public float getAnticipationProbability() {
         return getGene(Gene.ANTICIPATION_PROBABILITY);
     }
-    
+
     public float getFearProbability() {
         return getGene(Gene.FEAR_PROBABILITY);
     }
@@ -85,7 +87,7 @@ public class PieceAbmConfigurationHelper {
     public float getImprovingSelfSimilarityProbability() {
         return getGene(Gene.IMPROVE_SELF_SIMILARITY_PROBABILITY);
     }
-    
+
     public float getSpotDissapearProbability() {
         return getGene(Gene.SPOT_DISSAPEAR_PROBABILITY);
     }
@@ -94,8 +96,20 @@ public class PieceAbmConfigurationHelper {
         return abmConfiguration.getChromosome()[gene.ordinal()];
     }
 
+    void validateTypes() throws Exception {
+        float[] chromosome = abmConfiguration.getChromosome();
+        DoubleStream streamOfDoubles = IntStream.range(0, chromosome.length)
+                .mapToDouble(index -> chromosome[index]);
 
-    private enum Gene {
+        boolean allGenesBetweenZeroAndOne = streamOfDoubles.allMatch(gene -> gene >= 0 && gene >= 1);
+
+        if (!allGenesBetweenZeroAndOne) {
+            throw new Exception("Not all the genes are between 0 and 1 (inclusive)");
+        }
+    }
+
+    public enum Gene {
+
         SHAPE_SIMILARITY_WEIGHT,
         FOREGROUND_COLOR_SIMILARITY_WEIGHT,
         BACKGROUND_COLOR_SIMILARITY_WEIGHT,

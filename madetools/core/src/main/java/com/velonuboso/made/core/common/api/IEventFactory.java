@@ -49,4 +49,5 @@ public interface IEventFactory {
     IEvent transfersColor(ICharacter character);
     IEvent colorSpotAppears(IColorSpot subject);
     IEvent colorSpotDisappears(IColorSpot subject);
+    IEvent exception(String message);
 }
