@@ -28,6 +28,7 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
 import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.ColorSpot;
@@ -425,25 +426,76 @@ public class StrategiesTest {
         verifyStrategyReturnedFalse();
     }
 
+    @Test
     public void UT_StrategyTransferColor_When_cell_is_not_around_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int targetCell = map.getCell(2, 2);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyTransferColor.class));
+
+        verifyStrategyReturnedFalse();
     }
 
+    @Test
     public void UT_StrategyTransferColor_When_cell_does_not_have_a_piece_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+
+        int targetCell = map.getCell(1, 1);
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyTransferColor.class));
+
+        verifyStrategyReturnedFalse();
     }
 
-    public void UT_StrategyTransferColor_When_piece_around_is_an_enemy_it_fails() {
+    @Test
+    public void UT_StrategyTransferColor_When_piece_around_can_win_the_character_it_fails() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece friend = buildPiece(1, CharacterShape.SQUARE, Color.GREEN, Color.YELLOW, 1, 1);
+
+        int targetCell = map.getCell(1, 1);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyTransferColor.class));
+
+        assertEquals("character shouln't have changed of color", mainPiece.getBackgroundColor(), Color.RED);
+        assertEquals("friend shouln't have changed of color", friend.getBackgroundColor(), Color.YELLOW);
+
+        verifyStrategyReturnedFalse();
     }
 
-    public void UT_StrategyTransferColor_When_piece_around_is_a_friend_but_cannot_be_won_it_fails() {
-    }
-
+    @Test
     public void UT_StrategyTransferColor_When_piece_around_is_a_friend_it_transfers_bachground_colors_succesfully() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece friend = buildPiece(1, CharacterShape.TRIANGLE, Color.GREEN, Color.YELLOW, 1, 1);
+
+        int targetCell = map.getCell(1, 1);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyTransferColor.class));
+
+        assertEquals("character shouln't have changed of color", mainPiece.getBackgroundColor(), Color.YELLOW);
+        assertEquals("friend shouln't have changed of color", friend.getBackgroundColor(), Color.RED);
+
+        verifyStrategyReturnedTrue();
     }
 
+    @Test
     public void UT_StrategyTransferColor_When_transfer_color_succesfully_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece friend = buildPiece(1, CharacterShape.TRIANGLE, Color.GREEN, Color.YELLOW, 1, 1);
+
+        int targetCell = map.getCell(1, 1);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyTransferColor.class));
+        verifyStrategyReturnedTrue();
+        verifyEventAddedToFakeEventWriter(EventFactory.TRANSFERS_COLOR, 1);
     }
 
-    public void UT_StrategyTransferColor_When_transfer_color_succesfully_it_does_not_write_to_the_log() {
+    @Test
+    public void UT_StrategyTransferColor_When_transfer_color_fails_it_does_not_write_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        int targetCell = map.getCell(1, 1);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyTransferColor.class));
+        verifyStrategyReturnedFalse();
+        verifyEventAddedToFakeEventWriter(EventFactory.TRANSFERS_COLOR, 0);
     }
 
     private void setStrategyAndRun(int targetCell, Piece mainPiece, IAction action) {

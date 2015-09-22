@@ -20,11 +20,13 @@ import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import java.util.List;
 import javafx.scene.paint.Color;
 
 /**
@@ -36,8 +38,21 @@ public class StrategyTransferColor extends BaseAction implements IStrategyTransf
     @Override
     public boolean testAction(IBlackBoard currentBlackboard, IBlackBoard oldBlackBoard) throws ActionReturnException {
         int characterCell = getMap().getCell(getCharacter());
+        List<Integer> cells = getMap().getCellsAround(characterCell, 1);
+        
         int friendCell = currentBlackboard.getInt(Piece.BLACKBOARD_TARGET_CELL);
+        if (!cells.contains(friendCell)){
+            return false;
+        }
+        
         ICharacter friend = getMap().getCharacter(friendCell);
+        if (friend==null){
+            return false;
+        }
+        
+        if (friend.getShape().wins(getCharacter().getShape())){
+            return false;
+        }
         
         exchangeColors(getCharacter(), friend);
         writeEvent();
