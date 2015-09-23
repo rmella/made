@@ -44,7 +44,7 @@ public class AbmConfigurationHelper {
         numberOfPieceType = CharacterShape.values().length;
     }
 
-    public void prepare() throws Exception{
+    public void prepare() throws Exception {
         validateNumberOfGenes();
         setAndValidateTypeOfGenes();
     }
@@ -56,7 +56,7 @@ public class AbmConfigurationHelper {
         if (expectedNumberOfGenes != currentNumberOfGenes) {
             throw new Exception(
                     "Currently found " + currentNumberOfGenes + " genes. "
-                    + "Should've received " + expectedNumberOfGenes + "genes:\n"
+                    + "Should've received " + expectedNumberOfGenes + " genes:\n"
                     + " - " + numberOfGenesForWorld + " for the world\n"
                     + " - " + numberOfGenesForPiece + " for every type of piece (" + numberOfPieceType + ")"
             );
@@ -68,14 +68,15 @@ public class AbmConfigurationHelper {
         worldAbmConfigurationHelper = new AbmConfigurationHelperWorld(new AbmConfigurationEntity(worldConfiguration));
         worldAbmConfigurationHelper.validateTypes();
 
+        pieceAbmConfigurationHelpers = new HashMap<>();
         for (CharacterShape shape : CharacterShape.values()) {
             processShape(shape);
         }
     }
 
     private void processShape(CharacterShape shape) throws Exception {
-        int initialPosition = shape.ordinal() * numberOfGenesForPiece;
-        int endPositionExclusive = (shape.ordinal() + 1) * numberOfGenesForPiece;
+        int initialPosition = shape.ordinal() * numberOfGenesForPiece + numberOfGenesForWorld;
+        int endPositionExclusive = (shape.ordinal() + 1) * numberOfGenesForPiece + numberOfGenesForWorld;
 
         float[] pieceConfiguration = Arrays.copyOfRange(abmConfiguration.getChromosome(),
                 initialPosition, endPositionExclusive);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 ubén Héctor García (raiben@gmail.com)
+ * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import org.junit.Ignore;
 
 /**
  *
- * @author ubén Héctor García (raiben@gmail.com)
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class AbmConfigurationUtilitiesTest {
 
