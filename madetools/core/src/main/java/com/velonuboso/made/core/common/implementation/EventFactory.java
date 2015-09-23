@@ -21,6 +21,7 @@ import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.abm.api.IWorld;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
 
 /**
  *
@@ -47,40 +48,55 @@ public class EventFactory implements IEventFactory {
     public static final String COLOR_SPOT_DISAPPEARS = "ColorSpotDisappears";
     public static final String COLOR_SPOT_APPEARS = "ColorSpotAppears";
     public static final String EXCEPTION = "Exception";
+    public static final String JOY = "Joy";
+    public static final String IS_FRIEND_OF = "IsFriendOf";
+    public static final String IS_ENEMY_OF = "IsEnemyOf";
+    
+    
+    private int currentDay;
+
+    public EventFactory() {
+        currentDay = 0;
+    }
 
     @Override
+    public void setDay(int day) {
+        currentDay = day;
+    }
+    
+    @Override
     public IEvent worldExists(final IWorld world) {
-        return new Event(WORLD_EXISTS, world.getTimeUnit());
+        return new Event(WORLD_EXISTS, currentDay, world.getTimeUnit());
     }
 
     @Override
     public IEvent inhabitantExists(final ICharacter inhabitant) {
-        return new Event(INHABITANT_EXISTS, inhabitant.getId());
+        return new Event(INHABITANT_EXISTS, currentDay, inhabitant.getId());
     }
 
     @Override
     public IEvent hasFear(final ICharacter subject, final ICharacter enemy) {
-        return new Event(HAS_FEAR, subject.getId(), enemy.getId());
+        return new Event(HAS_FEAR, currentDay, subject.getId(), enemy.getId());
     }
 
     @Override
     public IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot) {
-        return new Event(HAS_ANTICIPATION, subject.getId(), spot.getId());
+        return new Event(HAS_ANTICIPATION, currentDay, subject.getId(), spot.getId());
     }
 
     @Override
     public IEvent canImproveFriendSimilarity(ICharacter subject, ICharacter friend) {
-        return new Event(CAN_IMPROVE_FRIEND_SIMILARITY, subject.getId(), friend.getId());
+        return new Event(CAN_IMPROVE_FRIEND_SIMILARITY, currentDay, subject.getId(), friend.getId());
     }
 
     @Override
     public IEvent canImproveSelfSimilarity(ICharacter subject, IColorSpot spot) {
-        return new Event(CAN_IMPROVE_SELF_SIMILARITY, subject.getId(), spot.getId());
+        return new Event(CAN_IMPROVE_SELF_SIMILARITY, currentDay, subject.getId(), spot.getId());
     }
 
     @Override
     public IEvent canReduceEnemySimilarity(ICharacter subject, ICharacter enemy) {
-        return new Event(CAN_REDUCE_ENEMY_SIMILARITY, subject.getId(), enemy.getId());
+        return new Event(CAN_REDUCE_ENEMY_SIMILARITY, currentDay, subject.getId(), enemy.getId());
     }
 
     @Override
@@ -90,56 +106,71 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent isSad(ICharacter subject) {
-        return new Event(IS_SAD, subject.getId());
+        return new Event(IS_SAD, currentDay, subject.getId());
     }
 
     @Override
     public IEvent isSurprised(ICharacter subject) {
-        return new Event(IS_SURPRISED, subject.getId());
+        return new Event(IS_SURPRISED, currentDay, subject.getId());
     }
 
     @Override
     public IEvent movesAway(ICharacter subject) {
-        return new Event(MOVES_AWAY, subject.getId());
+        return new Event(MOVES_AWAY, currentDay, subject.getId());
     }
 
     @Override
     public IEvent moves(ICharacter subject) {
-        return new Event(MOVES, subject.getId());
+        return new Event(MOVES, currentDay, subject.getId());
     }
 
     @Override
     public IEvent displaces(ICharacter subject) {
-        return new Event(DISPLACES, subject.getId());
+        return new Event(DISPLACES, currentDay, subject.getId());
     }
 
     @Override
     public IEvent skipsTurn(ICharacter subject) {
-        return new Event(SKIPS_TURN, subject.getId());
+        return new Event(SKIPS_TURN, currentDay, subject.getId());
     }
 
     @Override
     public IEvent stains(ICharacter subject) {
-        return new Event(STAINS, subject.getId());
+        return new Event(STAINS, currentDay, subject.getId());
     }
 
     @Override
     public IEvent transfersColor(ICharacter subject) {
-        return new Event(TRANSFERS_COLOR, subject.getId());
+        return new Event(TRANSFERS_COLOR, currentDay, subject.getId());
     }
 
     @Override
     public IEvent colorSpotAppears(IColorSpot subject) {
-        return new Event(COLOR_SPOT_APPEARS, subject.getId());
+        return new Event(COLOR_SPOT_APPEARS, currentDay, subject.getId());
     }
 
     @Override
     public IEvent colorSpotDisappears(IColorSpot subject) {
-        return new Event(COLOR_SPOT_DISAPPEARS, subject.getId());
+        return new Event(COLOR_SPOT_DISAPPEARS, currentDay, subject.getId());
     }
 
     @Override
     public IEvent exception(String message) {
-        return new Event(EXCEPTION, message);
+        return new Event(EXCEPTION, currentDay, message);
+    }
+
+    @Override
+    public IEvent joy(ICharacter subject, float joy) {
+        return new Event(JOY, currentDay, subject.getId(), joy);
+    }
+
+    @Override
+    public IEvent isFriendOf(ICharacter subject, ICharacter friend) {
+        return new Event(IS_FRIEND_OF, currentDay, subject.getId(), friend.getId());
+    }
+    
+    @Override
+    public IEvent isEnemyOf(ICharacter subject, ICharacter enemy) {
+        return new Event(IS_ENEMY_OF, currentDay, subject.getId(), enemy.getId());
     }
 }

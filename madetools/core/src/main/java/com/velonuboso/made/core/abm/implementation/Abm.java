@@ -85,6 +85,7 @@ public class Abm implements IAbm {
             initializeHelper(abmConfiguration);
             initializeMap();
             placeCharactersInMap();
+            initializeEventFactory();
             mainLoop();
         } catch (Exception exception) {
             writeExceptionToLog(abmConfiguration, exception);
@@ -99,13 +100,18 @@ public class Abm implements IAbm {
     private void mainLoop() {
         int numberOfDays = helper.getWorldAbmConfigurationHelper().getNumberOfDays();
         for (int day = 0; day < numberOfDays; day++) {
-            System.out.println(day + " *************************************************************************");
+            setDayToEventFactory(day);
             placeSpotsInMap(map);
             runCharactersInMap(map);
             removeSpotsFromMap();
         }
     }
 
+    private void setDayToEventFactory(int day) {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        factory.setDay(day);
+    }
+    
     private void writeExceptionToLog(AbmConfigurationEntity abmConfiguration, Exception exception) {
         String configuration = Arrays.toString(abmConfiguration.getChromosome());
         String message = "Could not run using configuration :" + configuration;
@@ -132,6 +138,11 @@ public class Abm implements IAbm {
         map.initialize(size, size);
     }
 
+    private void initializeEventFactory() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        factory.setDay(0);
+    }
+    
     private void placeCharactersInMap() {
         int numberOfSquares = helper.getWorldAbmConfigurationHelper().getNumberOfSquares();
         int numberOfTriangles = helper.getWorldAbmConfigurationHelper().getNumberOfTraingles();
@@ -233,4 +244,5 @@ public class Abm implements IAbm {
             map.removeSpot(cell);
         }
     }
+
 }

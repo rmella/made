@@ -36,6 +36,8 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
+import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
@@ -315,11 +317,13 @@ public class Piece implements ICharacter {
                 -> affinityMatrix.put(character, calculateAffinityWithCharacter(character)));
 
         blackBoard.setObject(BLACKBOARD_AFFINITY_MATRIX, affinityMatrix);
+        writeAffinityEvents(affinityMatrix);
     }
 
     private void resetJoy(IBlackBoard blackBoard) {
         float joy = calculateJoy(blackBoard);
         blackBoard.setFloat(BLACKBOARD_JOY, joy);
+        writeJoyEvent(joy);
     }
 
     private ArrayList<ICharacter> getAllCharacters() {
@@ -402,8 +406,7 @@ public class Piece implements ICharacter {
     private IBlackBoard newEmptyBlackBoard() {
         return ObjectFactory.createObject(IBlackBoard.class);
     }
-    // </editor-fold>
-
+    
     private IBehaviourTreeNode createActionNode(IAction action, float probability) {
         IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
         node.setAction(action);
@@ -413,4 +416,22 @@ public class Piece implements ICharacter {
 
         return node;
     }
+    
+    private void writeJoyEvent(float joy) {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent joyEvent = factory.joy(this, joy);
+        eventsWriter.add(joyEvent);
+    }
+
+    private void writeAffinityEvents(HashMap<ICharacter, Float> affinityMatrix) {
+        affinityMatrix.keySet().stream().forEach(target -> writeAffinityEvent(target, affinityMatrix.get(target)));
+    }
+    
+    private void writeAffinityEvent(ICharacter target, Float affinity) {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = affinity<0? factory.isEnemyOf(this, target):factory.isFriendOf(this, target);
+        eventsWriter.add(event);
+    }
+    
+    // </editor-fold>
 }

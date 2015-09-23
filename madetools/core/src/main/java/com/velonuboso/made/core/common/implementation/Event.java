@@ -61,10 +61,13 @@ public class Event implements IEvent {
     }
     
     private boolean isANumber(Object argument) {
-        return argument instanceof Integer;
+        return argument instanceof Integer || argument instanceof Float;
     }
 
     private String argumentAsString(Object argument) {
+        if(argument == null) {
+            argument = "NULL";
+        }
         return isANumber(argument)? argument.toString(): decorateStringWithQuotes(argument);
     }
 }

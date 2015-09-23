@@ -20,6 +20,7 @@ package com.velonuboso.made.core.common.api;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.IWorld;
+import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ImplementedBy;
@@ -29,8 +30,9 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 
-@ImplementedBy(targetClass = EventFactory.class, targetMode = ImplementedBy.Mode.NORMAL)
+@ImplementedBy(targetClass = EventFactory.class, targetMode = ImplementedBy.Mode.SINGLETON)
 public interface IEventFactory {
+    public void setDay(int day);
     IEvent inhabitantExists(ICharacter inhabitant);
     IEvent worldExists(IWorld world);
     IEvent hasFear(final ICharacter subject, final ICharacter enemy);
@@ -50,4 +52,7 @@ public interface IEventFactory {
     IEvent colorSpotAppears(IColorSpot subject);
     IEvent colorSpotDisappears(IColorSpot subject);
     IEvent exception(String message);
+    IEvent joy(ICharacter aThis, float joy);
+    IEvent isFriendOf(ICharacter subject, ICharacter friend);
+    IEvent isEnemyOf(ICharacter subject, ICharacter enemy);
 }

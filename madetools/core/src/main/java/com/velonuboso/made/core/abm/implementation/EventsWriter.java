@@ -30,36 +30,31 @@ import java.util.stream.IntStream;
  */
 public class EventsWriter implements IEventsWriter {
 
-    private List<IEvent> events;
+    private StringBuilder stringBuilder;
 
     public EventsWriter() {
-        events = new ArrayList<>();
+        stringBuilder =new StringBuilder();
     }
 
     public EventsWriter(List<IEvent> events) {
-        this.events = events;
+        this();
+        events.forEach(event -> appendPredicateToStringBuilder(event));
     }
 
     @Override
     public void add(IEvent event) {
-        events.add(event);
-        System.out.println(event.toLogicalPredicate());
+        appendPredicateToStringBuilder(event);
     }
 
     @Override
     public EventsLogEntity getEventsLog() {
         EventsLogEntity entity = new EventsLogEntity();
-
-        String[] predicates = new String[events.size()];
-        int counter = 0;
-        
-        Iterator<IEvent> iterator = events.iterator();
-        while (iterator.hasNext()){
-            IEvent event = iterator.next();
-            predicates[counter++] = event.toLogicalPredicate();
-        }
-
-        entity.setLog(predicates);
+        entity.setLog(stringBuilder.toString());
         return entity;
+    }
+    
+    private StringBuilder appendPredicateToStringBuilder(IEvent event) {
+        //System.out.println(event.toLogicalPredicate());
+        return stringBuilder.append(event.toLogicalPredicate()+"\n");
     }
 }

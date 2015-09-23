@@ -56,7 +56,7 @@ public class AbmTest {
         abm.setInferences(inferencesEntity);
         
         ObjectFactory.cleanAllMocks();
-        IMap map = Mockito.spy(ObjectFactory.createObject(IMap.class));
+        IMap map = ObjectFactory.createObject(IMap.class);
         ObjectFactory.installMock(IMap.class, map);
     }
 
@@ -67,25 +67,43 @@ public class AbmTest {
     
    
     @Test
-    public void testRun() {
+    public void testRun_many_characters() {
         int size = 46;
         float[] chromosome = new float[size];
-        chromosome[0] = 8;
-        chromosome[1] = 1;
-        chromosome[2] = 0;
-        chromosome[3] = 0;
-        chromosome[4] = 100;
+        
+        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
+        chromosome[1] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_CIRCLES;
+        chromosome[2] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_TRIANGLES;
+        chromosome[3] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_SQUARES;
+        chromosome[4] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_DAYS/10;
         chromosome[5] = 1;
-        chromosome[6] = 0f;
-        Arrays.fill(chromosome, 5, size, 1f);
+        chromosome[6] = 0.2f;
+        Arrays.fill(chromosome, 5, size, 0.5f);
         AbmConfigurationEntity entity = new AbmConfigurationEntity(chromosome);
         
         abm.run(entity);
         
-        //EventsLogEntity log = abm.getEventsLog();
-        /*for (String line: log.getLog()){
-            System.out.println(line);
-        }*/
+        //System.out.println(abm.getEventsLog().getLog());
+    }
+    
+    @Test
+    public void testRun_one_character() {
+        int size = 46;
+        float[] chromosome = new float[size];
+        
+        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
+        chromosome[1] = 1;
+        chromosome[2] = 0;
+        chromosome[3] = 0;
+        chromosome[4] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_DAYS;
+        chromosome[5] = 1;
+        chromosome[6] = 0.4f;
+        Arrays.fill(chromosome, 5, size, 0.5f);
+        AbmConfigurationEntity entity = new AbmConfigurationEntity(chromosome);
+        
+        abm.run(entity);
+        
+        //System.out.println(abm.getEventsLog().getLog());
     }
 
     
