@@ -93,9 +93,7 @@ public class Abm implements IAbm {
 
     @Override
     public EventsLogEntity getEventsLog() {
-        EventsLogEntity entity = new EventsLogEntity();
-        entity.setLog((String[]) log.toArray());
-        return entity;
+        return eventsWriter.getEventsLog();
     }
 
     private void mainLoop() {
@@ -201,6 +199,13 @@ public class Abm implements IAbm {
     }
 
     private void runCharactersInMap(IMap map) {
+        List<ICharacter> characters = map.getCells().stream()
+                .filter(cell->map.getCharacter(cell)!=null)
+                .map(map::getCharacter)
+                .collect(Collectors.toList());
+        
+        Collections.shuffle(characters);
+        characters.stream().forEach((character) -> character.run());
     }
 
     private void removeSpotsFromMap() {

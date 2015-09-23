@@ -19,6 +19,7 @@ package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.implementation.EventsWriter;
 import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 
 /**
@@ -29,5 +30,6 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
 public interface IEventsWriter {
 
     void add(IEvent event);
+    public EventsLogEntity getEventsLog();
 
 }

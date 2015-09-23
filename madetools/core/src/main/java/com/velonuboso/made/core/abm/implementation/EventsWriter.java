@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.velonuboso.made.core.abm.implementation;
 
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -33,13 +35,31 @@ public class EventsWriter implements IEventsWriter {
     public EventsWriter() {
         events = new ArrayList<>();
     }
-    
+
     public EventsWriter(List<IEvent> events) {
         this.events = events;
     }
-    
+
     @Override
-    public void add (IEvent event){
+    public void add(IEvent event) {
         events.add(event);
+        System.out.println(event.toLogicalPredicate());
+    }
+
+    @Override
+    public EventsLogEntity getEventsLog() {
+        EventsLogEntity entity = new EventsLogEntity();
+
+        String[] predicates = new String[events.size()];
+        int counter = 0;
+        
+        Iterator<IEvent> iterator = events.iterator();
+        while (iterator.hasNext()){
+            IEvent event = iterator.next();
+            predicates[counter++] = event.toLogicalPredicate();
+        }
+
+        entity.setLog(predicates);
+        return entity;
     }
 }

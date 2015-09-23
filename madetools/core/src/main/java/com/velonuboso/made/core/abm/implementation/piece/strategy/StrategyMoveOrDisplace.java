@@ -52,6 +52,8 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
                 (HashMap<ICharacter, Float>) currentBlackBoard.getObject(Piece.BLACKBOARD_AFFINITY_MATRIX);
         replaceTargetCellByTheCloser(affinityMatrix);
 
+        validatePieceIsInAlreadyTargetCell();
+        
         if (getMap().getCharacter(targetCell) == null) {
             moveCharacterToTarget();
             writeMoveEvent();

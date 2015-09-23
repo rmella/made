@@ -71,13 +71,14 @@ public class Piece implements ICharacter {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;
         eventsWriter = null;
-        TryInitializeBehaviourTree();
-
+        
         foregroundColor = probabilityHelper.getRandomColor();
         backgroundColor = probabilityHelper.getRandomColor();
 
         allCharacters = null;
         pieceCurrentBlackBoard = null;
+        
+        TryInitializeBehaviourTree();
     }
 
     @Override
@@ -143,7 +144,6 @@ public class Piece implements ICharacter {
     public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
         this.abmConfigurationEntity = abmConfiguration;
         this.abmConfigurationHelper = new AbmConfigurationHelperPiece(abmConfiguration);
-        TryInitializeBehaviourTree();
     }
 
     @Override
@@ -158,6 +158,10 @@ public class Piece implements ICharacter {
 
     @Override
     public boolean run() {
+        
+        TryInitializeBehaviourTree();
+
+        
         IBlackBoard oldBlackBoard = pieceCurrentBlackBoard;
         pieceCurrentBlackBoard = newEmptyBlackBoard();
         return rootNode.run(pieceCurrentBlackBoard, oldBlackBoard);
@@ -175,8 +179,7 @@ public class Piece implements ICharacter {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Private methods">
-    private void TryInitializeBehaviourTree() {
-        
+    private void TryInitializeBehaviourTree() { 
         if (abmConfigurationEntity== null){
             return;
         }
