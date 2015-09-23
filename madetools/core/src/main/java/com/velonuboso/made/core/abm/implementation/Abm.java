@@ -44,6 +44,8 @@ public class Abm implements IAbm {
     private InferencesEntity inferencesEntity;
     private IEventsWriter eventsWriter;
     private List<String> log;
+    private IMap map;
+    private AbmConfigurationHelper helper;
 
     public Abm() {
         reset();
@@ -72,16 +74,35 @@ public class Abm implements IAbm {
     public void run(AbmConfigurationEntity abmConfiguration) {
 
         try {
-            IMap map = ObjectFactory.createObject(IMap.class);
-            AbmConfigurationHelper helper = new AbmConfigurationHelper(abmConfiguration);
-            helper.prepare();
-            
-            
+            initializeHelper(abmConfiguration);
+            initializeMap();
+            placeCharactersInMap();
+            mainLoop();
         } catch (Exception exception) {
-            String configuration = Arrays.toString(abmConfiguration.getChromosome());
-            String message = "Could not run using configuration :" + configuration;
-            writeException(message, exception);
+            writeExceptionToLog(abmConfiguration, exception);
         }
+    }
+
+    @Override
+    public EventsLogEntity getEventsLog() {
+        EventsLogEntity entity = new EventsLogEntity();
+        entity.setLog((String[]) log.toArray());
+        return entity;
+    }
+    
+    private void mainLoop() {
+        int numberOfDays = helper.getWorldAbmConfigurationHelper().getNumberOfDays();
+        for (int day = 0; day < numberOfDays; day++) {
+            placeSpotsInMap(map);
+            runCharactersInMap(map);
+            removeSpotsFromMap();
+        }
+    }
+
+    private void writeExceptionToLog(AbmConfigurationEntity abmConfiguration, Exception exception) {
+        String configuration = Arrays.toString(abmConfiguration.getChromosome());
+        String message = "Could not run using configuration :" + configuration;
+        writeException(message, exception);
     }
 
     private void writeException(String message, Exception exeption) {
@@ -91,10 +112,27 @@ public class Abm implements IAbm {
         Logger.getLogger(Abm.class.getName()).log(Level.SEVERE, message + "." + exeption.getMessage(), exeption);
     }
 
-    @Override
-    public EventsLogEntity getEventsLog() {
-        EventsLogEntity entity = new EventsLogEntity();
-        entity.setLog((String[]) log.toArray());
-        return entity;
+    private void initializeMap() {
+        map = ObjectFactory.createObject(IMap.class);
+        map.setEventsWriter(eventsWriter);
+
     }
+
+    private void initializeHelper(AbmConfigurationEntity abmConfiguration) throws Exception {
+        helper = new AbmConfigurationHelper(abmConfiguration);
+        helper.prepare();
+    }
+
+    private void placeCharactersInMap() {
+    }
+
+    private void placeSpotsInMap(IMap map) {
+    }
+
+    private void runCharactersInMap(IMap map) {
+    }
+
+    private void removeSpotsFromMap() {
+    }
+
 }

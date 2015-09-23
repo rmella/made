@@ -20,8 +20,6 @@ import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -49,6 +47,14 @@ public class AbmConfigurationHelper {
         setAndValidateTypeOfGenes();
     }
 
+    public AbmConfigurationHelperWorld getWorldAbmConfigurationHelper() {
+        return worldAbmConfigurationHelper;
+    }
+
+    public AbmConfigurationHelperPiece getPieceAbmConfigurationHelpers(CharacterShape shape) {
+        return pieceAbmConfigurationHelpers.get(shape);
+    }
+    
     private void validateNumberOfGenes() throws Exception {
         int expectedNumberOfGenes = numberOfGenesForWorld + (numberOfPieceType * numberOfGenesForPiece);
         int currentNumberOfGenes = abmConfiguration.getChromosome().length;

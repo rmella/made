@@ -66,6 +66,10 @@ public class AbmConfigurationHelperWorld {
         return AbmConfigurationUtilities.getGene(gene, abmConfiguration);
     }
 
+    public int getNumberOfDays() {
+        return (int) getGene(Gene.NUMBER_OF_DAYS);
+    }
+
     public enum Gene {
         WORLD_SIZE,
         NUMBER_OF_CIRCLES,
