@@ -51,7 +51,7 @@ public class AbmConfigurationHelper {
         return worldAbmConfigurationHelper;
     }
 
-    public AbmConfigurationHelperPiece getPieceAbmConfigurationHelpers(CharacterShape shape) {
+    public AbmConfigurationHelperPiece getPieceAbmConfigurationHelper(CharacterShape shape) {
         return pieceAbmConfigurationHelpers.get(shape);
     }
     

@@ -44,6 +44,10 @@ public class AbmConfigurationHelperWorld {
         this.abmConfiguration = abmConfiguration;
     }
 
+    public AbmConfigurationEntity getAbmConfiguration() {
+        return abmConfiguration;
+    }
+
     public void validateTypes() throws Exception {
         checkValueInteger(Gene.WORLD_SIZE, MIN_WORLD_SIZE, MAX_WORLD_SIZE);
         checkValueInteger(Gene.NUMBER_OF_CIRCLES, MIN_NUMBER_OF_CIRCLES, MAX_NUMBER_OF_CIRCLES);
@@ -70,6 +74,30 @@ public class AbmConfigurationHelperWorld {
         return (int) getGene(Gene.NUMBER_OF_DAYS);
     }
 
+    public int getWorldSize() {
+        return (int) getGene(Gene.WORLD_SIZE);
+    }
+
+    public int getNumberOfSquares() {
+        return (int) getGene(Gene.NUMBER_OF_SQUARES);
+    }
+
+    public int getNumberOfCircles() {
+        return (int) getGene(Gene.NUMBER_OF_CIRCLES);
+    }
+    
+    public int getNumberOfTraingles() {
+        return (int) getGene(Gene.NUMBER_OF_TRIANGLES);
+    }
+    
+    public float getProbabilityToAddSpot(){
+        return getGene(Gene.PROBABILITY_TO_ADD_SPOT);
+    }
+    
+    public float getProbabilityToRemoveSpot(){
+        return getGene(Gene.PROBABILITY_TO_REMOVE_SPOT);
+    }
+    
     public enum Gene {
         WORLD_SIZE,
         NUMBER_OF_CIRCLES,

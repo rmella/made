@@ -33,6 +33,10 @@ public class AbmConfigurationHelperPiece {
         this.abmConfiguration = abmConfiguration;
     }
 
+    public AbmConfigurationEntity getAbmConfiguration() {
+        return abmConfiguration;
+    }
+    
     public float getShapeSimilarityWeight() {
         return getGene(Gene.SHAPE_SIMILARITY_WEIGHT);
     }
@@ -107,7 +111,6 @@ public class AbmConfigurationHelperPiece {
     }
 
     public enum Gene {
-
         SHAPE_SIMILARITY_WEIGHT,
         FOREGROUND_COLOR_SIMILARITY_WEIGHT,
         BACKGROUND_COLOR_SIMILARITY_WEIGHT,
