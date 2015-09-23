@@ -99,6 +99,7 @@ public class Abm implements IAbm {
     private void mainLoop() {
         int numberOfDays = helper.getWorldAbmConfigurationHelper().getNumberOfDays();
         for (int day = 0; day < numberOfDays; day++) {
+            System.out.println(day + " *************************************************************************");
             placeSpotsInMap(map);
             runCharactersInMap(map);
             removeSpotsFromMap();
@@ -133,8 +134,8 @@ public class Abm implements IAbm {
 
     private void placeCharactersInMap() {
         int numberOfSquares = helper.getWorldAbmConfigurationHelper().getNumberOfSquares();
-        int numberOfTriangles = helper.getWorldAbmConfigurationHelper().getNumberOfSquares();
-        int numberOfCircles = helper.getWorldAbmConfigurationHelper().getNumberOfSquares();
+        int numberOfTriangles = helper.getWorldAbmConfigurationHelper().getNumberOfTraingles();
+        int numberOfCircles = helper.getWorldAbmConfigurationHelper().getNumberOfCircles();
 
         List<Integer> cells = map.getCells();
         Collections.shuffle(cells);
@@ -161,8 +162,8 @@ public class Abm implements IAbm {
         addNewColorSpotToMap(cell, cell);
     }
 
-    private void AddCharacters(int numberOfSquares, List<Integer> cells, CharacterShape shape) {
-        for (int characterIndex = 0; characterIndex < numberOfSquares; characterIndex++) {
+    private void AddCharacters(int numberOfPieces, List<Integer> cells, CharacterShape shape) {
+        for (int characterIndex = 0; characterIndex < numberOfPieces; characterIndex++) {
             int cell = cells.remove(0);
             addNewCharacterToMap(counterForId++, shape, cell);
         }

@@ -24,6 +24,8 @@ import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.condition.IConditionAnticipation;
 import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveFriendSimilarity;
+import com.velonuboso.made.core.abm.api.condition.IConditionCanImproveSelfSimilarity;
+import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimilarity;
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
 import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
 import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
@@ -144,6 +146,7 @@ public class Piece implements ICharacter {
     public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
         this.abmConfigurationEntity = abmConfiguration;
         this.abmConfigurationHelper = new AbmConfigurationHelperPiece(abmConfiguration);
+        TryInitializeBehaviourTree();
     }
 
     @Override
@@ -158,10 +161,6 @@ public class Piece implements ICharacter {
 
     @Override
     public boolean run() {
-        
-        TryInitializeBehaviourTree();
-
-        
         IBlackBoard oldBlackBoard = pieceCurrentBlackBoard;
         pieceCurrentBlackBoard = newEmptyBlackBoard();
         return rootNode.run(pieceCurrentBlackBoard, oldBlackBoard);
@@ -260,14 +259,14 @@ public class Piece implements ICharacter {
         IBehaviourTreeNode transferColorStrategy = createActionNode(
                 ObjectFactory.createObject(IStrategyTransferColor.class), 1);
 
+        canImproveFriendSimilarityCondition.addChildNode(transferColorStrategy);
         parentNode.addChildNode(canImproveFriendSimilarityCondition);
         canImproveFriendSimilarityCondition.addChildNode(moveOrDisplaceStrategy);
-        canImproveFriendSimilarityCondition.addChildNode(transferColorStrategy);
     }
 
     private void addChildForReducingEnemySimilarityBehaviour(IBehaviourTreeNode parentNode) {
         IBehaviourTreeNode canReduceEnemySimilarityCondition = createActionNode(
-                ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class),
+                ObjectFactory.createObject(IConditionCanReduceEnemySimilarity.class),
                 abmConfigurationHelper.getReducingEnemySimilarityProbability());
 
         IBehaviourTreeNode moveOrDisplaceStrategy = 
@@ -279,7 +278,7 @@ public class Piece implements ICharacter {
 
     private void addChildForImprovingSelfSimilarityBehaviour(IBehaviourTreeNode parentNode) {
         IBehaviourTreeNode canImproveSelfSimilarityCondition = createActionNode(
-                ObjectFactory.createObject(IConditionCanImproveFriendSimilarity.class),
+                ObjectFactory.createObject(IConditionCanImproveSelfSimilarity.class),
                 abmConfigurationHelper.getImprovingSelfSimilarityProbability());
 
         IBehaviourTreeNode moveOrDisplaceStrategy = createActionNode(ObjectFactory.createObject(IStrategyMoveOrDisplace.class), 1);

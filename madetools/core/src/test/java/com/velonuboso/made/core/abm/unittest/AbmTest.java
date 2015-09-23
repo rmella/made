@@ -30,6 +30,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 
 /**
@@ -64,17 +65,19 @@ public class AbmTest {
         ObjectFactory.cleanAllMocks();
     }
     
-    @Ignore
+   
     @Test
     public void testRun() {
         int size = 46;
         float[] chromosome = new float[size];
-        chromosome[0] = AbmConfigurationHelperWorld.MAX_WORLD_SIZE;
-        chromosome[1] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_CIRCLES;
-        chromosome[2] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_TRIANGLES;
-        chromosome[3] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_SQUARES;
-        chromosome[4] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_DAYS;
-        Arrays.fill(chromosome, 5, size, 0.5f);
+        chromosome[0] = 8;
+        chromosome[1] = 1;
+        chromosome[2] = 0;
+        chromosome[3] = 0;
+        chromosome[4] = 100;
+        chromosome[5] = 1;
+        chromosome[6] = 0f;
+        Arrays.fill(chromosome, 5, size, 1f);
         AbmConfigurationEntity entity = new AbmConfigurationEntity(chromosome);
         
         abm.run(entity);

@@ -38,12 +38,24 @@ public class ConditionAnticipation extends BaseAction implements IConditionAntic
     @Override
     public boolean testAction(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard)
             throws ActionReturnException {
-        IColorSpot spot = getAdjacentColorSpot(currentBlackBoard);
-        if (spot != null) {
-            storeSpotCellIntoBlackboard(spot, currentBlackBoard);
-            writeEvent(spot);
+        IColorSpot spotNear = getAdjacentColorSpot(currentBlackBoard);
+
+        if (spotNear != null) {
+
+            int characterCell = getMap().getCell(getCharacter());
+            IColorSpot spotInCurrentcell = getMap().getColorSpot(characterCell);
+            if (getMap().getColorSpot(characterCell) != null) {
+                float differenceWithSpotInCurrentCell = getSimilarityWithForeground(spotInCurrentcell.getColor());
+                float differenceWithSpotNear = getSimilarityWithForeground(spotNear.getColor());
+                if (differenceWithSpotInCurrentCell < differenceWithSpotNear) {
+                    return false;
+                }
+            }
+
+            storeSpotCellIntoBlackboard(spotNear, currentBlackBoard);
+            writeEvent(spotNear);
         }
-        return spot != null;
+        return spotNear != null;
     }
 
     private IColorSpot getAdjacentColorSpot(IBlackBoard blackBoard) {
@@ -52,7 +64,7 @@ public class ConditionAnticipation extends BaseAction implements IConditionAntic
 
         IColorSpot spot = cellsToLookAt.stream()
                 .map(cell -> getMap().getColorSpot(cell))
-                .filter(spotIncell -> spotIncell != null 
+                .filter(spotIncell -> spotIncell != null
                         && betterColorThanCharacterBackground(spotIncell)
                         && notOccupiedByOtherCharacter(spotIncell))
                 .max((IColorSpot firstSpot, IColorSpot secondSpot) -> {
@@ -69,7 +81,7 @@ public class ConditionAnticipation extends BaseAction implements IConditionAntic
         float similarityOfCurrentBackground = getSimilarityWithForeground(getCharacter().getBackgroundColor());
         return similarityOfSpot > similarityOfCurrentBackground;
     }
-    
+
     private float getSimilarityWithForeground(Color color) {
         return 1f - PieceUtilities.calculateColorDifference(color, getCharacter().getForegroundColor());
     }
@@ -78,7 +90,7 @@ public class ConditionAnticipation extends BaseAction implements IConditionAntic
         int cellOfSpot = getMap().getCell(spotIncell);
         return getMap().getCharacter(cellOfSpot) == null;
     }
-    
+
     private void storeSpotCellIntoBlackboard(IColorSpot spot, IBlackBoard blackBoard) {
         blackBoard.setInt(Piece.BLACKBOARD_TARGET_CELL, getMap().getCell(spot));
     }

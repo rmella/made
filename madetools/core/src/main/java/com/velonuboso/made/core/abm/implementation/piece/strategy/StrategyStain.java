@@ -44,9 +44,7 @@ public class StrategyStain extends BaseAction implements IStrategyStain {
         
         getCharacter().setBackgroundColor(spot.getColor());
         
-        float probability = ObjectFactory.createObject(IProbabilityHelper.class).getNextProbability(StrategyStain.class);
         
-        AbmConfigurationHelperPiece helper = new AbmConfigurationHelperPiece(getCharacter().getAbmConfiguration());
         writeEvent();
         
         return true;
