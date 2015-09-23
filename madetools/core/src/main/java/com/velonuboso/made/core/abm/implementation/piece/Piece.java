@@ -60,7 +60,7 @@ public class Piece implements ICharacter {
 
     private IProbabilityHelper probabilityHelper;
     private AbmConfigurationEntity abmConfigurationEntity;
-    private PieceAbmConfigurationHelper abmConfigurationHelper;
+    private AbmConfigurationHelperPiece abmConfigurationHelper;
     private IBlackBoard pieceCurrentBlackBoard;
 
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
@@ -142,7 +142,7 @@ public class Piece implements ICharacter {
     @Override
     public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
         this.abmConfigurationEntity = abmConfiguration;
-        this.abmConfigurationHelper = new PieceAbmConfigurationHelper(abmConfiguration);
+        this.abmConfigurationHelper = new AbmConfigurationHelperPiece(abmConfiguration);
         TryInitializeBehaviourTree();
     }
 

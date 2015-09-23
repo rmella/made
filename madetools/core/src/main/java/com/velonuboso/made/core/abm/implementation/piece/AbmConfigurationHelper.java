@@ -34,13 +34,13 @@ public class AbmConfigurationHelper {
     private int numberOfGenesForWorld;
     private int numberOfPieceType;
 
-    private WorldAbmConfigurationHelper worldAbmConfigurationHelper;
-    private HashMap<CharacterShape, PieceAbmConfigurationHelper> pieceAbmConfigurationHelpers;
+    private AbmConfigurationHelperWorld worldAbmConfigurationHelper;
+    private HashMap<CharacterShape, AbmConfigurationHelperPiece> pieceAbmConfigurationHelpers;
 
     public AbmConfigurationHelper(AbmConfigurationEntity abmConfiguration) {
         this.abmConfiguration = abmConfiguration;
-        numberOfGenesForWorld = WorldAbmConfigurationHelper.Gene.values().length;
-        numberOfGenesForPiece = PieceAbmConfigurationHelper.Gene.values().length;
+        numberOfGenesForWorld = AbmConfigurationHelperWorld.Gene.values().length;
+        numberOfGenesForPiece = AbmConfigurationHelperPiece.Gene.values().length;
         numberOfPieceType = CharacterShape.values().length;
     }
 
@@ -65,7 +65,7 @@ public class AbmConfigurationHelper {
 
     private void setAndValidateTypeOfGenes() throws Exception {
         float[] worldConfiguration = Arrays.copyOfRange(abmConfiguration.getChromosome(), 0, numberOfGenesForWorld);
-        worldAbmConfigurationHelper = new WorldAbmConfigurationHelper(new AbmConfigurationEntity(worldConfiguration));
+        worldAbmConfigurationHelper = new AbmConfigurationHelperWorld(new AbmConfigurationEntity(worldConfiguration));
         worldAbmConfigurationHelper.validateTypes();
 
         for (CharacterShape shape : CharacterShape.values()) {
@@ -79,7 +79,7 @@ public class AbmConfigurationHelper {
 
         float[] pieceConfiguration = Arrays.copyOfRange(abmConfiguration.getChromosome(),
                 initialPosition, endPositionExclusive);
-        PieceAbmConfigurationHelper pieceAbmConfigurationHelper = new PieceAbmConfigurationHelper(
+        AbmConfigurationHelperPiece pieceAbmConfigurationHelper = new AbmConfigurationHelperPiece(
                 new AbmConfigurationEntity(pieceConfiguration)
         );
         try {
@@ -90,5 +90,4 @@ public class AbmConfigurationHelper {
         }
         pieceAbmConfigurationHelpers.put(shape, pieceAbmConfigurationHelper);
     }
-
 }

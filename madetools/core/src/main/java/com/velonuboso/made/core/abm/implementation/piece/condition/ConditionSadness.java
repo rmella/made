@@ -21,7 +21,7 @@ import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
-import com.velonuboso.made.core.abm.implementation.piece.PieceAbmConfigurationHelper;
+import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperPiece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
@@ -43,8 +43,8 @@ public class ConditionSadness extends BaseAction implements IConditionSadness {
     }
 
     public boolean isSad(IBlackBoard blackBoard) {
-        PieceAbmConfigurationHelper abmConfigurationHelper
-                = new PieceAbmConfigurationHelper(getCharacter().getAbmConfiguration());
+        AbmConfigurationHelperPiece abmConfigurationHelper
+                = new AbmConfigurationHelperPiece(getCharacter().getAbmConfiguration());
         return blackBoard.getFloat(Piece.BLACKBOARD_JOY) < abmConfigurationHelper.getJoyThreshold();
     }
 

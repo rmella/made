@@ -21,7 +21,7 @@ import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
 import com.velonuboso.made.core.abm.entity.ActionReturnException;
 import com.velonuboso.made.core.abm.implementation.piece.BaseAction;
-import com.velonuboso.made.core.abm.implementation.piece.PieceAbmConfigurationHelper;
+import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperPiece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
@@ -46,7 +46,7 @@ public class StrategyStain extends BaseAction implements IStrategyStain {
         
         float probability = ObjectFactory.createObject(IProbabilityHelper.class).getNextProbability(StrategyStain.class);
         
-        PieceAbmConfigurationHelper helper = new PieceAbmConfigurationHelper(getCharacter().getAbmConfiguration());
+        AbmConfigurationHelperPiece helper = new AbmConfigurationHelperPiece(getCharacter().getAbmConfiguration());
         writeEvent();
         
         return true;

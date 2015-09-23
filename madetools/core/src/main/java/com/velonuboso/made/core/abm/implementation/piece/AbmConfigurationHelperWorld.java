@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class WorldAbmConfigurationHelper {
+public class AbmConfigurationHelperWorld {
 
     public int MIN_WORLD_SIZE = 10;
     public int MAX_WORLD_SIZE = 20;
@@ -40,12 +40,8 @@ public class WorldAbmConfigurationHelper {
 
     private AbmConfigurationEntity abmConfiguration;
 
-    public WorldAbmConfigurationHelper(AbmConfigurationEntity abmConfiguration) {
+    public AbmConfigurationHelperWorld(AbmConfigurationEntity abmConfiguration) {
         this.abmConfiguration = abmConfiguration;
-    }
-
-    private float getGene(Gene gene) {
-        return abmConfiguration.getChromosome()[gene.ordinal()];
     }
 
     public void validateTypes() throws Exception {
@@ -54,25 +50,20 @@ public class WorldAbmConfigurationHelper {
         checkValueInteger(Gene.NUMBER_OF_TRIANGLES, MIN_NUMBER_OF_TRIANGLES, MAX_NUMBER_OF_TRIANGLES);
         checkValueInteger(Gene.NUMBER_OF_SQUARES, MIN_NUMBER_OF_SQUARES, MAX_NUMBER_OF_SQUARES);
         checkValueInteger(Gene.NUMBER_OF_DAYS, MIN_NUMBER_OF_DAYS, MAX_NUMBER_OF_DAYS);
-        checkValueProbability(Gene.PROBABILITY_TO_ADD_SPOT, 0, 1);
-        checkValueProbability(Gene.PROBABILITY_TO_REMOVE_SPOT, 0, 1);
+        checkValueProbability(Gene.PROBABILITY_TO_ADD_SPOT);
+        checkValueProbability(Gene.PROBABILITY_TO_REMOVE_SPOT);
     }
 
-    private void checkValueInteger(Gene gene, int minimumValue, int maximumValue) throws Exception {
-        float value = getGene(gene);
-        if (value < minimumValue && value > maximumValue) {
-            throw new Exception("value for gene " + gene.ordinal() + " is not between " + minimumValue + " and " + maximumValue);
-        }
-        if (Math.abs(value) != value) {
-            throw new Exception("value for gene " + gene.ordinal() + " is not an integer");
-        }
+    private void checkValueInteger(Gene gene, int from, int to) throws Exception {
+        AbmConfigurationUtilities.checkValueInteger(getGene(gene), gene.ordinal(),  from, to);    
     }
 
-    private void checkValueProbability(Gene gene, int minimumValue, int maximumValue) throws Exception {
-        float value = getGene(gene);
-        if (value < 0 && value > 1) {
-            throw new Exception("value for gene " + gene.ordinal() + " is not a probability between 0 and 1");
-        }
+    private void checkValueProbability(Gene gene) throws Exception {
+        AbmConfigurationUtilities.checkValueProbability(getGene(gene), gene.ordinal());
+    }
+
+    private float getGene(Gene gene) {
+        return AbmConfigurationUtilities.getGene(gene, abmConfiguration);
     }
 
     public enum Gene {

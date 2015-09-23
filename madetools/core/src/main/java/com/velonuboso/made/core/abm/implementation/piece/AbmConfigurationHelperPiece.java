@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import java.util.function.DoublePredicate;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
@@ -24,11 +25,11 @@ import java.util.stream.IntStream;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class PieceAbmConfigurationHelper {
+public class AbmConfigurationHelperPiece {
 
     private AbmConfigurationEntity abmConfiguration;
 
-    public PieceAbmConfigurationHelper(AbmConfigurationEntity abmConfiguration) {
+    public AbmConfigurationHelperPiece(AbmConfigurationEntity abmConfiguration) {
         this.abmConfiguration = abmConfiguration;
     }
 
@@ -89,7 +90,7 @@ public class PieceAbmConfigurationHelper {
     }
 
     private float getGene(Gene gene) {
-        return abmConfiguration.getChromosome()[gene.ordinal()];
+        return AbmConfigurationUtilities.getGene(gene, abmConfiguration);
     }
 
     void validateTypes() throws Exception {
@@ -97,7 +98,8 @@ public class PieceAbmConfigurationHelper {
         DoubleStream streamOfDoubles = IntStream.range(0, chromosome.length)
                 .mapToDouble(index -> chromosome[index]);
 
-        boolean allGenesBetweenZeroAndOne = streamOfDoubles.allMatch(gene -> gene >= 0 && gene >= 1);
+        boolean allGenesBetweenZeroAndOne = streamOfDoubles.allMatch(value
+                -> AbmConfigurationUtilities.valueIsProbability((float) value));
 
         if (!allGenesBetweenZeroAndOne) {
             throw new Exception("Not all the genes are between 0 and 1 (inclusive)");
