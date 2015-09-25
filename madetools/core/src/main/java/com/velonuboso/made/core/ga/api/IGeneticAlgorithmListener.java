@@ -16,12 +16,15 @@
  */
 package com.velonuboso.made.core.ga.api;
 
-import com.velonuboso.made.core.ga.entity.IndividualDefinition;
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ga.implementation.GeneticAlgorithmListener;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = GeneticAlgorithmListener.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IGeneticAlgorithmListener {
+
     void notifyIterationSummary(int iteration, IIndividual bestIndividual, float bestFitnessValue, float averagePopulationFitness);
 }

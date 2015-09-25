@@ -16,12 +16,15 @@
  */
 package com.velonuboso.made.core.ga.api;
 
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.ga.entity.IndividualDefinition;
+import com.velonuboso.made.core.ga.implementation.GeneticAlgorithm;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = GeneticAlgorithm.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IGeneticAlgorithm {
     public void configure(IndividualDefinition definition, int populationSize, int maximumIterations, float blxAlpha);
     public void addListener(IGeneticAlgorithmListener listener);

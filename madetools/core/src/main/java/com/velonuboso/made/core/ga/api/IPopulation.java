@@ -16,9 +16,18 @@
  */
 package com.velonuboso.made.core.ga.api;
 
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ga.implementation.Population;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = Population.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IPopulation {
+    public IIndividual getBestIndividual();
+    public float getAverageFitness();
+    public void add(IIndividual individual);
+    public IPopulation selectMatingPool();
+    public IPopulation createOffspring(int populationSize, float blxAlpha);
 }

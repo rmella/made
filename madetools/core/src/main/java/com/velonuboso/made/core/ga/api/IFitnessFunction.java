@@ -16,10 +16,14 @@
  */
 package com.velonuboso.made.core.ga.api;
 
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ga.implementation.FitnessFunction;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = FitnessFunction.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IFitnessFunction {
     public float evaluateIndividual(IIndividual individual);
 }

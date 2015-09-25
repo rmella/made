@@ -14,15 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ga.api;
+package com.velonuboso.made.core.ga.implementation;
 
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ga.implementation.Gene;
+import com.velonuboso.made.core.ga.api.ISelectionOperator;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Gene.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IGene {
+public class SelectionOperator implements ISelectionOperator{
+    
 }

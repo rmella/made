@@ -16,12 +16,15 @@
  */
 package com.velonuboso.made.core.ga.api;
 
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.ga.entity.IndividualDefinition;
+import com.velonuboso.made.core.ga.implementation.Individual;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = Individual.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IIndividual {
     public void setGenes(IndividualDefinition definition, IGene ... gene);
     public void setRandomGenes(IndividualDefinition definition);

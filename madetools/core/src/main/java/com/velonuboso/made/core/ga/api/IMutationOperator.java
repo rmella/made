@@ -16,10 +16,14 @@
  */
 package com.velonuboso.made.core.ga.api;
 
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ga.implementation.MutationOperator;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
+@ImplementedBy(targetClass = MutationOperator.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IMutationOperator {
     
 }

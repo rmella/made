@@ -16,28 +16,28 @@
  */
 package com.velonuboso.made.core.ga.implementation;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ga.api.*;
-import com.velonuboso.made.core.ga.entity.GenType;
 import com.velonuboso.made.core.ga.entity.GeneDefinition;
 import com.velonuboso.made.core.ga.entity.IndividualDefinition;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class GeneticAlgorithm implements IGeneticAlgorithm{
+public class GeneticAlgorithm implements IGeneticAlgorithm {
 
     private List<IGeneticAlgorithmListener> listeners;
     private IndividualDefinition definition;
     private int populationSize;
     private int maximumIterations;
     private float blxAlpha;
-    
+
     private static final IndividualDefinition EmptyDefinition = new IndividualDefinition(new GeneDefinition[0]);
-    
+
     public GeneticAlgorithm() {
         listeners = new ArrayList<>();
         definition = EmptyDefinition;
@@ -61,6 +61,40 @@ public class GeneticAlgorithm implements IGeneticAlgorithm{
 
     @Override
     public void run() {
+        int iteration = 0;
+        ITerminationCondition condition = ObjectFactory.createObject(ITerminationCondition.class);
+        condition.setMaximumIterations(maximumIterations);
+
+        IPopulation population = buildInitialPopulation();
+        IIndividual bestIndividual = population.getBestIndividual();
         
+        while (condition.mustFinish(iteration, bestIndividual)) {
+            IPopulation matingPool = population.selectMatingPool();
+            IPopulation newGeneration = matingPool.createOffspring(populationSize, blxAlpha);
+            bestIndividual = newGeneration.getBestIndividual();
+            notifyAllListeners(iteration, bestIndividual, newGeneration);
+            
+            population = newGeneration;
+        }
+    }
+
+    private void notifyAllListeners(int iteration, IIndividual bestIndividual, IPopulation newGeneration) {
+        listeners.stream().forEach((listener) -> {
+            listener.notifyIterationSummary(iteration, bestIndividual,
+                    bestIndividual.getCurrentFitness(),
+                    newGeneration.getAverageFitness());
+        });
+    }
+
+    private IPopulation buildInitialPopulation() {
+        IPopulation population = ObjectFactory.createObject(IPopulation.class);
+        IntStream.range(0, populationSize).forEach(index -> addNewRandomIndividualToPopulation(population));
+        return population;
+    }
+
+    private void addNewRandomIndividualToPopulation(IPopulation population) {
+        IIndividual individual = ObjectFactory.createObject(IIndividual.class);
+        individual.setRandomGenes(definition);
+        population.add(individual);
     }
 }

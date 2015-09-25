@@ -14,14 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ga.api;
+package com.velonuboso.made.core.ga.implementation;
 
-import com.velonuboso.made.core.ga.entity.GenType;
+import com.velonuboso.made.core.ga.api.IMutationOperator;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface IDefinitionOfIndividual {
-    public void configure(GenType ... type);
+public class MutationOperator implements IMutationOperator{
+    
 }

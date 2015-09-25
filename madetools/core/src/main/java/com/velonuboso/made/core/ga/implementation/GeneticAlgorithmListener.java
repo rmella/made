@@ -14,15 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ga.api;
+package com.velonuboso.made.core.ga.implementation;
 
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ga.implementation.Gene;
+import com.velonuboso.made.core.ga.api.IGeneticAlgorithmListener;
+import com.velonuboso.made.core.ga.api.IIndividual;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Gene.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IGene {
+public class GeneticAlgorithmListener implements IGeneticAlgorithmListener{
+
+    @Override
+    public void notifyIterationSummary(int iteration, IIndividual bestIndividual, float bestFitnessValue, float averagePopulationFitness) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }
