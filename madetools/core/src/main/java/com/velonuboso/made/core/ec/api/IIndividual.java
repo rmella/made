@@ -19,6 +19,7 @@ package com.velonuboso.made.core.ec.api;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.ec.entity.IndividualDefinition;
 import com.velonuboso.made.core.ec.implementation.Individual;
+import java.util.List;
 
 /**
  *
@@ -29,6 +30,7 @@ public interface IIndividual {
     public void setGenes(IndividualDefinition definition, IGene ... gene);
     public void setRandomGenes(IndividualDefinition definition);
     public void copyFromIndividual (IIndividual target);
+    public IGene[] getGenes();
     public void reEvaluate();
     public float getCurrentFitness();
     @Override

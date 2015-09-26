@@ -17,12 +17,12 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.implementation.Gene;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Gene.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IGene {
+    float getValue();
+    void setValue(float value);
 }

@@ -17,16 +17,12 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.implementation.TerminationCondition;
+import com.velonuboso.made.core.ec.implementation.IntGene;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = TerminationCondition.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface ITerminationCondition {
-    
-    public boolean mustFinish(int iteration, IIndividual bestIndividual);
-    public void setMaximumIterations(int maximumIterations);
-    
+@ImplementedBy(targetClass = IntGene.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IIntGene extends IGene{
 }

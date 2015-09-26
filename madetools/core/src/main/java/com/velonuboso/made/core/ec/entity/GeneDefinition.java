@@ -21,25 +21,25 @@ package com.velonuboso.made.core.ec.entity;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class GeneDefinition {
-    private GenType type;
+    private GeneType type;
     private float maxValue;
     private float minValue;
 
-    public GeneDefinition(GenType type, float maxValue, float minValue) {
+    public GeneDefinition(GeneType type, float minValue, float maxValue) {
         this.type = type;
-        this.maxValue = maxValue;
         this.minValue = minValue;
-    }
-
-    public float getMaxValue() {
-        return maxValue;
+        this.maxValue = maxValue;
     }
 
     public float getMinValue() {
         return minValue;
     }
+    
+    public float getMaxValue() {
+        return maxValue;
+    }
 
-    public GenType getType() {
+    public GeneType getType() {
         return type;
     }
 }

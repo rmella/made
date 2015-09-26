@@ -16,8 +16,11 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.api.IPopulation;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  *
@@ -25,9 +28,19 @@ import com.velonuboso.made.core.ec.api.IPopulation;
  */
 public class Population implements IPopulation {
 
+    ArrayList<IIndividual> individuals;
+
+    public Population() {
+        individuals = new ArrayList<>();
+    }
+
     @Override
     public IIndividual getBestIndividual() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        individuals.stream().forEach(individual -> individual.reEvaluate());
+        return individuals.stream()
+                .max((IIndividual firstIndividual, IIndividual secondIndividual) -> 
+                        Float.compare(firstIndividual.getCurrentFitness(), secondIndividual.getCurrentFitness()))
+                .orElse(null);
     }
 
     @Override
@@ -37,7 +50,7 @@ public class Population implements IPopulation {
 
     @Override
     public void add(IIndividual individual) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        individuals.add(individual);
     }
 
     @Override
@@ -49,5 +62,5 @@ public class Population implements IPopulation {
     public IPopulation createOffspring(int populationSize, float blxAlpha) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

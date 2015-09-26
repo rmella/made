@@ -20,7 +20,7 @@ package com.velonuboso.made.core.ec.entity;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public enum GenType {
+public enum GeneType {
     INTEGER,
     FLOAT
 }

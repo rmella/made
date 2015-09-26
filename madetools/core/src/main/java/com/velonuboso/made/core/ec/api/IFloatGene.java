@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.implementation;
+package com.velonuboso.made.core.ec.api;
 
-import com.velonuboso.made.core.ec.api.IGene;
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ec.implementation.FloatGene;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class Gene implements IGene {
-    
+@ImplementedBy(targetClass = FloatGene.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IFloatGene extends IGene{
 }

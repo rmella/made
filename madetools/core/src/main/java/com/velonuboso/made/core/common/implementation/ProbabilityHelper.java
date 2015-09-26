@@ -53,4 +53,14 @@ public class ProbabilityHelper implements IProbabilityHelper{
         
         return new Color(red, green, blue, DEFAULT_OPACITY);
     }
+
+    @Override
+    public float getNextFloat(float minValue, float maxValue) {
+        return randomGenerator.nextFloat() * (maxValue - minValue) + minValue;
+    }
+
+    @Override
+    public int getNextInt(int minValue, int maxValue) {
+        return randomGenerator.nextInt(maxValue-minValue+1)+minValue;
+    }
 }

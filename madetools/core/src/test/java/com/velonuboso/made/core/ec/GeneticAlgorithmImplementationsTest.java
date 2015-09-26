@@ -16,18 +16,103 @@
  */
 package com.velonuboso.made.core.ec;
 
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.ec.api.IFitnessFunction;
+import com.velonuboso.made.core.ec.api.IGene;
+import com.velonuboso.made.core.ec.api.IGeneticAlgorithm;
+import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
+import com.velonuboso.made.core.ec.api.IIndividual;
+import com.velonuboso.made.core.ec.entity.GeneType;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
+import com.velonuboso.made.core.ec.entity.IndividualDefinition;
+import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
+import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.Mockito;
 
 /**
  *
  * @author rhgarcia
  */
 public class GeneticAlgorithmImplementationsTest {
-   
+    private IGeneticAlgorithm algorithm;
+    private IGeneticAlgorithmListener fakeListener;
+    private IndividualDefinition definition;
+    private SampleFitnessFunction sampleFitnessFunction;
+    private int SEED = 314;
     
+    @Before
+    public void before(){
+        ObjectFactory.createObject(IProbabilityHelper.class).setSeed(SEED);
+        
+        definition = new IndividualDefinition(new GeneDefinition[]{
+            new GeneDefinition(GeneType.FLOAT, 0, 1),
+            new GeneDefinition(GeneType.FLOAT, -1, 1),
+            new GeneDefinition(GeneType.INTEGER, 0, 100),
+            new GeneDefinition(GeneType.INTEGER, 10, 20)
+        });
+        fakeListener = Mockito.mock(IGeneticAlgorithmListener.class);
+        algorithm = ObjectFactory.createObject(IGeneticAlgorithm.class);
+        algorithm.addListener(fakeListener);
+        
+        sampleFitnessFunction = new SampleFitnessFunction();
+        ObjectFactory.installMock(IFitnessFunction.class, sampleFitnessFunction);
+    }
+    
+    @After
+    public void after(){
+        ObjectFactory.removeMock(IFitnessFunction.class);
+    }
+    
+    @Test
+    public void GeneticAlgorithm_finds_better_solution_when_population_is_bigger(){
+        
+        float phenotypeWithShortPopulation = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(2, 0);
+        float phenotypeWithMiddlePopulation = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(10, 0);
+        float phenotypeWithBigPopulation = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(1000, 0);
+        
+        assertTrue("the best phenotype whith medium population should've been better than with short population", 
+                Math.abs(Math.PI - phenotypeWithShortPopulation) > Math.abs(Math.PI - phenotypeWithMiddlePopulation));
+        
+        assertTrue("the best phenotype whith medium population should've been better than with short population", 
+                Math.abs(Math.PI - phenotypeWithMiddlePopulation) > Math.abs(Math.PI - phenotypeWithBigPopulation));
+    }
+
+    private float getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(int population, int iterations) {
+        ObjectFactory.createObject(IProbabilityHelper.class).setSeed(SEED);
+        algorithm.configure(definition, population, iterations, 0.3f);
+        IIndividual bestInShortPopulation = algorithm.run();
+        return sampleFitnessFunction.calculatePhenotypeForIndividual(bestInShortPopulation);
+    }
+    
+    public class SampleFitnessFunction implements IFitnessFunction{
+
+        @Override
+        public float evaluateIndividual(IIndividual individual) {
+            float targetValue = (float)Math.PI;
+            
+            IGene[] genes = individual.getGenes();
+            try{
+                float calculation = calculatePhenotypeForIndividual(individual);
+                return 1/Math.abs(targetValue - calculation);
+            }catch(Exception e){
+                return 0;
+            }
+        }
+        
+        public float calculatePhenotypeForIndividual (IIndividual individual){
+            IGene[] genes = individual.getGenes();
+            return calculate(genes[0].getValue(), genes[1].getValue(),genes[2].getValue(), genes[3].getValue());
+        }
+        
+        public float calculate(float firstValue, float secondValue, float thirdValue, float fourthValue){
+            return (firstValue-secondValue)*(thirdValue-fourthValue);
+        }
+    }
 }

@@ -28,5 +28,5 @@ import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
 public interface IGeneticAlgorithm {
     public void configure(IndividualDefinition definition, int populationSize, int maximumIterations, float blxAlpha);
     public void addListener(IGeneticAlgorithmListener listener);
-    public void run();
+    public IIndividual run();
 }

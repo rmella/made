@@ -30,4 +30,6 @@ public interface IProbabilityHelper {
     void setSeed(long seed);
     float getNextProbability(Class userClass);
     public Color getRandomColor();
+    public float getNextFloat(float minValue, float maxValue);
+    public int getNextInt(int i, int i0);
 }

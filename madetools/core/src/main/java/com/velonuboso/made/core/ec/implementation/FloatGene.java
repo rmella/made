@@ -14,19 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.api;
+package com.velonuboso.made.core.ec.implementation;
 
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.implementation.TerminationCondition;
+import com.velonuboso.made.core.ec.api.IFloatGene;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = TerminationCondition.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface ITerminationCondition {
+public class FloatGene implements IFloatGene{
+    float value;
+
+    public FloatGene() {
+        value = 0;
+    }
     
-    public boolean mustFinish(int iteration, IIndividual bestIndividual);
-    public void setMaximumIterations(int maximumIterations);
+    @Override
+    public float getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(float value) {
+        this.value = value;
+    }
     
 }

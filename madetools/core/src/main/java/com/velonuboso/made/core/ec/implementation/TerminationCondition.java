@@ -25,19 +25,16 @@ import com.velonuboso.made.core.ec.api.ITerminationCondition;
  */
 public class TerminationCondition implements ITerminationCondition{
 
-    @Override
-    public boolean mustFinish() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    private int maximumIterations;
+    
     @Override
     public boolean mustFinish(int iteration, IIndividual bestIndividual) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return iteration>=maximumIterations;
     }
 
     @Override
     public void setMaximumIterations(int maximumIterations) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.maximumIterations = maximumIterations;
     }
     
 }

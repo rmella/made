@@ -16,15 +16,35 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.ec.api.IFitnessFunction;
+import com.velonuboso.made.core.ec.api.IFloatGene;
 import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.api.IIndividual;
+import com.velonuboso.made.core.ec.api.IIntGene;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
 import com.velonuboso.made.core.ec.entity.IndividualDefinition;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class Individual implements IIndividual{
+public class Individual implements IIndividual {
+
+    private ArrayList<IGene> genes;
+    private IndividualDefinition definition;
+    IProbabilityHelper probabilityHelper;
+    private float currentFitnessValue;
+    
+    public Individual() {
+        genes = new ArrayList<>();
+        definition = null;
+        probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
+        currentFitnessValue = Float.MIN_VALUE;
+    }
 
     @Override
     public void setGenes(IndividualDefinition definition, IGene... gene) {
@@ -33,7 +53,9 @@ public class Individual implements IIndividual{
 
     @Override
     public void setRandomGenes(IndividualDefinition definition) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.definition = definition;
+        genes.clear();
+        Arrays.stream(definition.getGeneDefinition()).forEach(geneDefinition -> addNewRandomGene(geneDefinition));
     }
 
     @Override
@@ -43,12 +65,37 @@ public class Individual implements IIndividual{
 
     @Override
     public void reEvaluate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        IFitnessFunction fitnessFunction = ObjectFactory.createObject(IFitnessFunction.class);
+        currentFitnessValue = fitnessFunction.evaluateIndividual(this);
     }
 
     @Override
     public float getCurrentFitness() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return currentFitnessValue;
     }
-    
+
+    private void addNewRandomGene(GeneDefinition geneDefinition) {
+        IGene gene = buildRandomGene(geneDefinition);
+        genes.add(gene);
+    }
+
+    private IGene buildRandomGene(GeneDefinition geneDefinition) {
+        IGene gene;
+        switch (geneDefinition.getType()) {
+            case FLOAT:
+                gene =  ObjectFactory.createObject(IFloatGene.class);
+                gene.setValue(probabilityHelper.getNextFloat(geneDefinition.getMinValue(), geneDefinition.getMaxValue()));
+                break;
+            default:
+                gene = ObjectFactory.createObject(IIntGene.class);
+                gene.setValue(probabilityHelper.getNextInt((int)geneDefinition.getMinValue(), (int)geneDefinition.getMaxValue()));
+                break;
+        }
+        return gene;
+    }
+
+    @Override
+    public IGene[] getGenes() {
+        return genes.toArray(new IGene[genes.size()]);
+    }
 }

@@ -64,7 +64,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
     }
 
     @Override
-    public void run() {
+    public IIndividual run() {
         int iteration = 0;
         ITerminationCondition condition = ObjectFactory.createObject(ITerminationCondition.class);
         condition.setMaximumIterations(maximumIterations);
@@ -72,7 +72,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
         IPopulation population = buildInitialPopulation();
         IIndividual bestIndividual = population.getBestIndividual();
         
-        while (condition.mustFinish(iteration, bestIndividual)) {
+        while (!condition.mustFinish(iteration, bestIndividual)) {
             IPopulation matingPool = population.selectMatingPool();
             IPopulation newGeneration = matingPool.createOffspring(populationSize, blxAlpha);
             bestIndividual = newGeneration.getBestIndividual();
@@ -80,6 +80,8 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
             
             population = newGeneration;
         }
+        
+        return bestIndividual;
     }
 
     private void notifyAllListeners(int iteration, IIndividual bestIndividual, IPopulation newGeneration) {
