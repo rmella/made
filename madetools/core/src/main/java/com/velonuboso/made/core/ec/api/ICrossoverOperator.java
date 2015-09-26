@@ -17,13 +17,12 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.implementation.CrossoverOperator;
+import com.velonuboso.made.core.ec.implementation.IntCrossoverOperatorBlxAlpha;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = CrossoverOperator.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface ICrossoverOperator {
     
 }

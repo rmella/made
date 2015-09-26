@@ -16,12 +16,42 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.ec.api.IIndividual;
+import com.velonuboso.made.core.ec.api.IPopulation;
 import com.velonuboso.made.core.ec.api.ISelectionOperator;
+import java.util.stream.IntStream;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class SelectionOperator implements ISelectionOperator{
-    
+
+    @Override
+    public IPopulation selectMatingPool(IPopulation sourcePopulation) {
+        IPopulation matingPool = ObjectFactory.createObject(IPopulation.class);
+        
+        IntStream.range(0, sourcePopulation.getIndividuals().size())
+                .forEach(index -> selectByBinaryTournament(sourcePopulation, matingPool));
+        
+        return matingPool;
+    }
+
+    private void selectByBinaryTournament(IPopulation sourcePopulation, IPopulation matingPool) {
+        IIndividual firstIndividualIndex = selectRandomIndividual(sourcePopulation);
+        IIndividual secondIIndividual = selectRandomIndividual(sourcePopulation);
+        
+        IIndividual selected =  firstIndividualIndex.getCurrentFitness()>secondIIndividual.getCurrentFitness()?
+                firstIndividualIndex: secondIIndividual;
+        
+        matingPool.add(selected);
+    }
+
+    private IIndividual selectRandomIndividual(IPopulation sourcePopulation) {
+        IProbabilityHelper helper = ObjectFactory.createObject(IProbabilityHelper.class);
+        int firstIndividualIndex = helper.getNextInt(0, sourcePopulation.getIndividuals().size()-1);
+        return sourcePopulation.getIndividuals().get(firstIndividualIndex);
+    }
 }

@@ -27,12 +27,13 @@ import java.util.List;
  */
 @ImplementedBy(targetClass = Individual.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IIndividual {
-    public void setGenes(IndividualDefinition definition, IGene ... gene);
-    public void setRandomGenes(IndividualDefinition definition);
-    public void copyFromIndividual (IIndividual target);
-    public IGene[] getGenes();
-    public void reEvaluate();
-    public float getCurrentFitness();
+    void setGenes(IndividualDefinition definition, IGene ... gene);
+    void setRandomGenes(IndividualDefinition definition);
+    void copyFromIndividual (IIndividual target);
+    IGene[] getGenes();
+    void reEvaluate();
+    float getCurrentFitness();
     @Override
-    public String toString();
+    String toString();
+    IndividualDefinition getIndividualDefinition();
 }

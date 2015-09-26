@@ -16,8 +16,8 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import com.velonuboso.made.core.ec.api.ICrossoverOperator;
 import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.api.IIntCrossoverOperator;
 import com.velonuboso.made.core.ec.api.IIntGene;
@@ -27,31 +27,26 @@ import com.velonuboso.made.core.ec.entity.GeneDefinition;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class IntGene implements IIntGene {
-    int value;
-
-    public IntGene() {
-        value = 0;
-    }
-    
+public class IntCrossoverOperatorBlxAlpha implements IIntCrossoverOperator{
     @Override
-    public float getValue() {
-        return (float)value;
-    }
-
-    @Override
-    public void setValue(float value) {
-        this.value = (int)value;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf((int)value);
-    }
-
-    @Override
-    public IGene crossover(GeneDefinition targetGeneDefinition, IGene targetGene, float blxAlpha) {
-        IIntCrossoverOperator operator = ObjectFactory.createObject(IIntCrossoverOperator.class);
-        return operator.crossover(targetGeneDefinition, this, (IIntGene) targetGene, blxAlpha); 
+    public IGene crossover(GeneDefinition geneDefinition, IIntGene firstGene, IIntGene secondGene, float blxAlpha) {
+        int max = Math.max((int)firstGene.getValue(), (int)secondGene.getValue());
+        int min = Math.min((int)firstGene.getValue(), (int)secondGene.getValue());
+        
+        int difference = max-min;
+        
+        int maxBoundary = Math.round(max+(difference*blxAlpha));
+        maxBoundary = Math.min(maxBoundary, (int) geneDefinition.getMaxValue());
+        
+        int minBoundary = Math.round(min-(difference*blxAlpha));
+        minBoundary = Math.max(minBoundary, (int) geneDefinition.getMinValue());
+        
+        IProbabilityHelper helper = ObjectFactory.createObject(IProbabilityHelper.class);
+        int newValue = helper.getNextInt(minBoundary, maxBoundary);
+        
+        IIntGene newGene = ObjectFactory.createObject(IIntGene.class);
+        newGene.setValue(newValue);
+        
+        return newGene;
     }
 }

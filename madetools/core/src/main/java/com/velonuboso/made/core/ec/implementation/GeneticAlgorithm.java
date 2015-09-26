@@ -39,6 +39,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
     private int populationSize;
     private int maximumIterations;
     private float blxAlpha;
+    private float polynomialBoundary;
 
     private static final IndividualDefinition EmptyDefinition = new IndividualDefinition(new GeneDefinition[0]);
 
@@ -48,6 +49,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
         populationSize = 0;
         maximumIterations = 0;
         blxAlpha = 0;
+        polynomialBoundary = 0;
     }
 
     @Override
@@ -56,29 +58,39 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
     }
 
     @Override
-    public void configure(IndividualDefinition definition, int populationSize, int maximumIterations, float blxAlpha) {
+    public void configure (IndividualDefinition definition, int populationSize, int maximumIterations, 
+            float blxAlpha, float polynomialBoundary) {
+        this.listeners = listeners;
         this.definition = definition;
         this.populationSize = populationSize;
         this.maximumIterations = maximumIterations;
         this.blxAlpha = blxAlpha;
+        this.polynomialBoundary = polynomialBoundary;
     }
 
     @Override
     public IIndividual run() {
-        int iteration = 0;
+        
         ITerminationCondition condition = ObjectFactory.createObject(ITerminationCondition.class);
         condition.setMaximumIterations(maximumIterations);
 
         IPopulation population = buildInitialPopulation();
         IIndividual bestIndividual = population.getBestIndividual();
         
+        int iteration = 0;
         while (!condition.mustFinish(iteration, bestIndividual)) {
             IPopulation matingPool = population.selectMatingPool();
-            IPopulation newGeneration = matingPool.createOffspring(populationSize, blxAlpha);
-            bestIndividual = newGeneration.getBestIndividual();
+            IPopulation newGeneration = matingPool.createOffspring(blxAlpha, polynomialBoundary);
+            
+            IIndividual bestIndividualInGeneration = newGeneration.getBestIndividual();
+            if (bestIndividualInGeneration.getCurrentFitness()>bestIndividual.getCurrentFitness()){
+                bestIndividual = bestIndividualInGeneration;
+            }
+            
             notifyAllListeners(iteration, bestIndividual, newGeneration);
             
             population = newGeneration;
+            iteration++;
         }
         
         return bestIndividual;

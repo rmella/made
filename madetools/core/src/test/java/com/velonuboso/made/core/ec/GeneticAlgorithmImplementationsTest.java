@@ -57,7 +57,8 @@ public class GeneticAlgorithmImplementationsTest {
             new GeneDefinition(GeneType.INTEGER, 0, 100),
             new GeneDefinition(GeneType.INTEGER, 10, 20)
         });
-        fakeListener = Mockito.mock(IGeneticAlgorithmListener.class);
+        fakeListener =  Mockito.mock(IGeneticAlgorithmListener.class);
+        
         algorithm = ObjectFactory.createObject(IGeneticAlgorithm.class);
         algorithm.addListener(fakeListener);
         
@@ -80,13 +81,27 @@ public class GeneticAlgorithmImplementationsTest {
         assertTrue("the best phenotype whith medium population should've been better than with short population", 
                 Math.abs(Math.PI - phenotypeWithShortPopulation) > Math.abs(Math.PI - phenotypeWithMiddlePopulation));
         
-        assertTrue("the best phenotype whith medium population should've been better than with short population", 
+        assertTrue("the best phenotype whith big population should've been better than with medium population", 
                 Math.abs(Math.PI - phenotypeWithMiddlePopulation) > Math.abs(Math.PI - phenotypeWithBigPopulation));
+    }
+    
+    @Test
+    public void GeneticAlgorithm_finds_better_solution_when_number_of_iterations_are_bigger(){
+        
+        float phenotypeWithFewIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(20, 0);
+        float phenotypeWithMediumIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(20, 5);
+        float phenotypeWithManyIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(20, 100);
+        
+        assertTrue("the best phenotype whith medium number of iterations should've been better than with short number", 
+                Math.abs(Math.PI - phenotypeWithFewIterations) > Math.abs(Math.PI - phenotypeWithMediumIterations));
+        
+        assertTrue("the best phenotype whith hight number of iterations should've been better than with medium number", 
+                Math.abs(Math.PI - phenotypeWithMediumIterations) > Math.abs(Math.PI - phenotypeWithManyIterations));
     }
 
     private float getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(int population, int iterations) {
         ObjectFactory.createObject(IProbabilityHelper.class).setSeed(SEED);
-        algorithm.configure(definition, population, iterations, 0.3f);
+        algorithm.configure(definition, population, iterations, 0.5f, 0.5f);
         IIndividual bestInShortPopulation = algorithm.run();
         return sampleFitnessFunction.calculatePhenotypeForIndividual(bestInShortPopulation);
     }

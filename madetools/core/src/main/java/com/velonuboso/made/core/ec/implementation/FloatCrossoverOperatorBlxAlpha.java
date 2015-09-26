@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IFloatCrossoverOperator;
 import com.velonuboso.made.core.ec.api.IFloatGene;
@@ -26,31 +27,29 @@ import com.velonuboso.made.core.ec.entity.GeneDefinition;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class FloatGene implements IFloatGene{
-    float value;
+public class FloatCrossoverOperatorBlxAlpha implements IFloatCrossoverOperator{
 
-    public FloatGene() {
-        value = 0;
+    @Override
+    public IGene crossover(GeneDefinition geneDefinition, IFloatGene firstGene, IFloatGene secondGene, float blxAlpha) {
+        float max = Math.max(firstGene.getValue(), secondGene.getValue());
+        float min = Math.min(firstGene.getValue(), secondGene.getValue());
+        
+        float difference = max-min;
+        
+        float maxBoundary = max+(difference*blxAlpha);
+        maxBoundary = Math.min(maxBoundary, geneDefinition.getMaxValue());
+        
+        float minBoundary = min-(difference*blxAlpha);
+        minBoundary = Math.max(minBoundary, geneDefinition.getMinValue());
+        
+        IProbabilityHelper helper = ObjectFactory.createObject(IProbabilityHelper.class);
+        float newValue = helper.getNextFloat(minBoundary, maxBoundary);
+        
+        IFloatGene newGene = ObjectFactory.createObject(IFloatGene.class);
+        newGene.setValue(newValue);
+        
+        return newGene;
+    
     }
     
-    @Override
-    public float getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(float value) {
-        this.value = value;
-    }
-    
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    @Override
-    public IGene crossover(GeneDefinition targetGeneDefinition, IGene targetGene, float blxAlpha) {
-        IFloatCrossoverOperator operator = ObjectFactory.createObject(IFloatCrossoverOperator.class);
-        return operator.crossover(targetGeneDefinition, this, (IFloatGene)targetGene, blxAlpha);
-    }
 }

@@ -17,10 +17,16 @@
 package com.velonuboso.made.core.ec.implementation;
 
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.api.IPopulation;
+import com.velonuboso.made.core.ec.api.ISelectionOperator;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
+import com.velonuboso.made.core.ec.entity.IndividualDefinition;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -29,23 +35,35 @@ import java.util.Comparator;
 public class Population implements IPopulation {
 
     ArrayList<IIndividual> individuals;
+    IIndividual bestIndividual;
+    float averageFitness;
 
     public Population() {
         individuals = new ArrayList<>();
+        bestIndividual = null;
+        averageFitness = 0;
     }
 
     @Override
     public IIndividual getBestIndividual() {
         individuals.stream().forEach(individual -> individual.reEvaluate());
-        return individuals.stream()
+        
+        averageFitness =  (float) individuals.stream()
+                .mapToDouble(IIndividual::getCurrentFitness)
+                .average()
+                .orElse(0f);
+        
+        bestIndividual =  individuals.stream()
                 .max((IIndividual firstIndividual, IIndividual secondIndividual) -> 
                         Float.compare(firstIndividual.getCurrentFitness(), secondIndividual.getCurrentFitness()))
                 .orElse(null);
+        
+        return bestIndividual;
     }
 
     @Override
     public float getAverageFitness() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return averageFitness;
     }
 
     @Override
@@ -55,12 +73,47 @@ public class Population implements IPopulation {
 
     @Override
     public IPopulation selectMatingPool() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       ISelectionOperator selectionOperator =  ObjectFactory.createObject(ISelectionOperator.class);
+       return selectionOperator.selectMatingPool(this);
     }
 
     @Override
-    public IPopulation createOffspring(int populationSize, float blxAlpha) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public IPopulation createOffspring(float blxAlpha, float polynomialBoundary) {
+       IPopulation offspring = ObjectFactory.createObject(IPopulation.class);
+       
+       IndividualDefinition definition = individuals.get(0).getIndividualDefinition();
+       
+       for (int individualIndex =0; individualIndex < individuals.size(); individualIndex+=2){
+           IGene [] firstParentGenes = individuals.get(individualIndex).getGenes();
+           IGene [] secondParentGenes = individuals.get(individualIndex+1).getGenes();
+           
+           IGene [] firstChildGenes = new IGene[firstParentGenes.length];
+           IGene [] secondChildGenes = new IGene[firstParentGenes.length];
+           
+           int numberOfGenes = firstParentGenes.length;
+           for (int geneIndex = 0; geneIndex<numberOfGenes; geneIndex++){
+               IGene firstGene = firstParentGenes[geneIndex];
+               IGene secondGene = secondParentGenes[geneIndex];
+               GeneDefinition geneDefinition = definition.getGeneDefinition()[geneIndex];
+               
+               firstChildGenes[geneIndex] =  firstGene.crossover(geneDefinition, secondGene, blxAlpha);
+               secondChildGenes[geneIndex] = firstGene.crossover(geneDefinition, secondGene, blxAlpha);
+           }
+           
+           IIndividual firstChild = ObjectFactory.createObject(IIndividual.class);
+           firstChild.setGenes(definition, firstChildGenes);
+           offspring.add(firstChild);
+           
+           IIndividual secondChild = ObjectFactory.createObject(IIndividual.class);
+           secondChild.setGenes(definition, secondChildGenes);
+           offspring.add(secondChild);
+       }
+       
+       return offspring;
     }
 
+    @Override
+    public List<IIndividual> getIndividuals() {
+        return individuals;
+    }
 }

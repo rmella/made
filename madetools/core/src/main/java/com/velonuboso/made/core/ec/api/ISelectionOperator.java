@@ -25,5 +25,7 @@ import com.velonuboso.made.core.ec.implementation.SelectionOperator;
  */
 @ImplementedBy(targetClass = SelectionOperator.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface ISelectionOperator {
+
+    public IPopulation selectMatingPool(IPopulation sourcePopulation);
     
 }

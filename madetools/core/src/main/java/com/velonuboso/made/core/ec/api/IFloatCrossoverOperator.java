@@ -14,14 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.implementation;
+package com.velonuboso.made.core.ec.api;
 
-import com.velonuboso.made.core.ec.api.ICrossoverOperator;
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
+import com.velonuboso.made.core.ec.implementation.FloatCrossoverOperatorBlxAlpha;
+import com.velonuboso.made.core.ec.implementation.FloatGene;
+import com.velonuboso.made.core.ec.implementation.IntCrossoverOperatorBlxAlpha;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class CrossoverOperator implements ICrossoverOperator{
+@ImplementedBy(targetClass = FloatCrossoverOperatorBlxAlpha.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IFloatCrossoverOperator extends ICrossoverOperator{
+
+    public IGene crossover(GeneDefinition targetGeneDefinition, IFloatGene aThis, IFloatGene iFloatGene, float blxAlpha);
     
 }

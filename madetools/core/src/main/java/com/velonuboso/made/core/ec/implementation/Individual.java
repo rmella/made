@@ -18,6 +18,7 @@ package com.velonuboso.made.core.ec.implementation;
 
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.common.util.StringUtil;
 import com.velonuboso.made.core.ec.api.IFitnessFunction;
 import com.velonuboso.made.core.ec.api.IFloatGene;
 import com.velonuboso.made.core.ec.api.IGene;
@@ -27,6 +28,7 @@ import com.velonuboso.made.core.ec.entity.GeneDefinition;
 import com.velonuboso.made.core.ec.entity.IndividualDefinition;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  *
@@ -48,7 +50,8 @@ public class Individual implements IIndividual {
 
     @Override
     public void setGenes(IndividualDefinition definition, IGene... gene) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        genes = new ArrayList<>(Arrays.asList(gene));
+        this.definition = definition;
     }
 
     @Override
@@ -98,4 +101,15 @@ public class Individual implements IIndividual {
     public IGene[] getGenes() {
         return genes.toArray(new IGene[genes.size()]);
     }
+
+    @Override
+    public IndividualDefinition getIndividualDefinition() {
+        return definition;
+    }
+    
+    @Override
+    public String toString() {
+        return Arrays.deepToString(getGenes());
+    }
+
 }

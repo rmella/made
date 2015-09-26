@@ -63,4 +63,5 @@ public class ProbabilityHelper implements IProbabilityHelper{
     public int getNextInt(int minValue, int maxValue) {
         return randomGenerator.nextInt(maxValue-minValue+1)+minValue;
     }
+    
 }

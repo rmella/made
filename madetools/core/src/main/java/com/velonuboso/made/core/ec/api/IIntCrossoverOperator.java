@@ -17,19 +17,17 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.implementation.Population;
-import java.util.List;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
+import com.velonuboso.made.core.ec.implementation.IntCrossoverOperatorBlxAlpha;
+import com.velonuboso.made.core.ec.implementation.IntGene;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Population.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IPopulation {
-    IIndividual getBestIndividual();
-    float getAverageFitness();
-    void add(IIndividual individual);
-    List<IIndividual> getIndividuals();
-    IPopulation selectMatingPool();
-    IPopulation createOffspring(float blxAlpha, float polynomialBoundary);
+@ImplementedBy(targetClass = IntCrossoverOperatorBlxAlpha.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IIntCrossoverOperator extends ICrossoverOperator{
+
+    public IGene crossover(GeneDefinition geneDefinition, IIntGene firstGene, IIntGene secondGene, float blxAlpha);
+    
 }
