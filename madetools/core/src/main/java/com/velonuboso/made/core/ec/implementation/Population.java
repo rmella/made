@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.api.IIndividual;
@@ -78,7 +79,9 @@ public class Population implements IPopulation {
     }
 
     @Override
-    public IPopulation createOffspring(float blxAlpha, float polynomialBoundary) {
+    public IPopulation createOffspring(float blxAlpha, float distanceParameterMutationDistribution) {
+        IProbabilityHelper helper = ObjectFactory.createObject(IProbabilityHelper.class);
+        
        IPopulation offspring = ObjectFactory.createObject(IPopulation.class);
        
        IndividualDefinition definition = individuals.get(0).getIndividualDefinition();
@@ -97,8 +100,18 @@ public class Population implements IPopulation {
                GeneDefinition geneDefinition = definition.getGeneDefinition()[geneIndex];
                
                firstChildGenes[geneIndex] =  firstGene.crossover(geneDefinition, secondGene, blxAlpha);
+               if (helper.getNextProbability(Population.class) < 1f/numberOfGenes){
+                   firstChildGenes[geneIndex].mutate(geneDefinition, distanceParameterMutationDistribution);
+               }
+               
                secondChildGenes[geneIndex] = firstGene.crossover(geneDefinition, secondGene, blxAlpha);
+               if (helper.getNextProbability(Population.class) < 1f/numberOfGenes){
+                   secondChildGenes[geneIndex].mutate(geneDefinition, distanceParameterMutationDistribution);
+               }
            }
+           
+           
+           
            
            IIndividual firstChild = ObjectFactory.createObject(IIndividual.class);
            firstChild.setGenes(definition, firstChildGenes);

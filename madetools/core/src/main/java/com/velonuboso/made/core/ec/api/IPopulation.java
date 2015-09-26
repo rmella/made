@@ -31,5 +31,5 @@ public interface IPopulation {
     void add(IIndividual individual);
     List<IIndividual> getIndividuals();
     IPopulation selectMatingPool();
-    IPopulation createOffspring(float blxAlpha, float polynomialBoundary);
+    IPopulation createOffspring(float blxAlpha, float distanceParameterMutationDistribution);
 }

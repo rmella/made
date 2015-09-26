@@ -14,14 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.implementation;
+package com.velonuboso.made.core.ec.api;
 
-import com.velonuboso.made.core.ec.api.IMutationOperator;
+import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
+import com.velonuboso.made.core.ec.implementation.IntMutationOperator;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class MutationOperator implements IMutationOperator{
-    
+@ImplementedBy(targetClass = IntMutationOperator.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IIntMutationOperator {
+    void mutate(GeneDefinition targetGeneDefinition, IIntGene gene, float distanceParameterMutationDistribution);
 }

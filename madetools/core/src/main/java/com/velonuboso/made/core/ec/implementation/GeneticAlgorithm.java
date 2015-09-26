@@ -39,7 +39,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
     private int populationSize;
     private int maximumIterations;
     private float blxAlpha;
-    private float polynomialBoundary;
+    private float distanceParameterMutationDistribution;
 
     private static final IndividualDefinition EmptyDefinition = new IndividualDefinition(new GeneDefinition[0]);
 
@@ -49,7 +49,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
         populationSize = 0;
         maximumIterations = 0;
         blxAlpha = 0;
-        polynomialBoundary = 0;
+        distanceParameterMutationDistribution = 0;
     }
 
     @Override
@@ -59,13 +59,13 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
 
     @Override
     public void configure (IndividualDefinition definition, int populationSize, int maximumIterations, 
-            float blxAlpha, float polynomialBoundary) {
+            float blxAlpha, float distanceParameterMutationDistribution) {
         this.listeners = listeners;
         this.definition = definition;
         this.populationSize = populationSize;
         this.maximumIterations = maximumIterations;
         this.blxAlpha = blxAlpha;
-        this.polynomialBoundary = polynomialBoundary;
+        this.distanceParameterMutationDistribution = distanceParameterMutationDistribution;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
         int iteration = 0;
         while (!condition.mustFinish(iteration, bestIndividual)) {
             IPopulation matingPool = population.selectMatingPool();
-            IPopulation newGeneration = matingPool.createOffspring(blxAlpha, polynomialBoundary);
+            IPopulation newGeneration = matingPool.createOffspring(blxAlpha, distanceParameterMutationDistribution);
             
             IIndividual bestIndividualInGeneration = newGeneration.getBestIndividual();
             if (bestIndividualInGeneration.getCurrentFitness()>bestIndividual.getCurrentFitness()){

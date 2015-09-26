@@ -19,6 +19,7 @@ package com.velonuboso.made.core.ec.implementation;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IFloatCrossoverOperator;
 import com.velonuboso.made.core.ec.api.IFloatGene;
+import com.velonuboso.made.core.ec.api.IFloatMutationOperator;
 import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.entity.GeneDefinition;
 
@@ -52,5 +53,11 @@ public class FloatGene implements IFloatGene{
     public IGene crossover(GeneDefinition targetGeneDefinition, IGene targetGene, float blxAlpha) {
         IFloatCrossoverOperator operator = ObjectFactory.createObject(IFloatCrossoverOperator.class);
         return operator.crossover(targetGeneDefinition, this, (IFloatGene)targetGene, blxAlpha);
+    }
+
+    @Override
+    public void mutate(GeneDefinition targetGeneDefinition, float distanceParameterMutationDistribution) {
+        IFloatMutationOperator operator = ObjectFactory.createObject(IFloatMutationOperator.class);
+        operator.mutate(targetGeneDefinition, this, distanceParameterMutationDistribution);
     }
 }

@@ -21,6 +21,7 @@ import com.velonuboso.made.core.ec.api.ICrossoverOperator;
 import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.api.IIntCrossoverOperator;
 import com.velonuboso.made.core.ec.api.IIntGene;
+import com.velonuboso.made.core.ec.api.IIntMutationOperator;
 import com.velonuboso.made.core.ec.entity.GeneDefinition;
 
 /**
@@ -54,4 +55,9 @@ public class IntGene implements IIntGene {
         IIntCrossoverOperator operator = ObjectFactory.createObject(IIntCrossoverOperator.class);
         return operator.crossover(targetGeneDefinition, this, (IIntGene) targetGene, blxAlpha); 
     }
+
+    @Override
+    public void mutate(GeneDefinition targetGeneDefinition, float distanceParameterMutationDistribution) {
+        IIntMutationOperator operator = ObjectFactory.createObject(IIntMutationOperator.class);
+        operator.mutate(targetGeneDefinition, this, distanceParameterMutationDistribution);}
 }

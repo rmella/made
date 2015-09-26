@@ -14,20 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.api;
+package com.velonuboso.made.core.ec.implementation;
 
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.entity.IndividualDefinition;
-import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
+import com.velonuboso.made.core.ec.api.IIntGene;
+import com.velonuboso.made.core.ec.api.IIntMutationOperator;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = GeneticAlgorithm.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IGeneticAlgorithm {
-    public void configure(IndividualDefinition definition, int populationSize, int maximumIterations, 
-            float blxAlpha, float distanceParameterMutationDistribution);
-    public void addListener(IGeneticAlgorithmListener listener);
-    public IIndividual run();
+public class IntMutationOperator implements IIntMutationOperator{
+
+    @Override
+    public void mutate(GeneDefinition targetGeneDefinition, IIntGene gene, float distanceParameterMutationDistribution) {
+        PolynomialMutationHelper polynomialHelper = new PolynomialMutationHelper();
+        gene.setValue(Math.round(polynomialHelper.mutate(targetGeneDefinition, gene.getValue(), distanceParameterMutationDistribution)));
+    }
+    
 }

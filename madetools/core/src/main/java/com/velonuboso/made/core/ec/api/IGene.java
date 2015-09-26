@@ -26,5 +26,6 @@ import com.velonuboso.made.core.ec.entity.GeneDefinition;
 public interface IGene {
     float getValue();
     void setValue(float value);
-    public IGene crossover(GeneDefinition targetGeneDefinition, IGene targetGene, float blxAlpha);
+    IGene crossover(GeneDefinition targetGeneDefinition, IGene targetGene, float blxAlpha);
+    void mutate(GeneDefinition targetGeneDefinition, float distanceParameterMutationDistribution);
 }

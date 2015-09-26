@@ -88,9 +88,9 @@ public class GeneticAlgorithmImplementationsTest {
     @Test
     public void GeneticAlgorithm_finds_better_solution_when_number_of_iterations_are_bigger(){
         
-        float phenotypeWithFewIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(20, 0);
-        float phenotypeWithMediumIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(20, 5);
-        float phenotypeWithManyIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(20, 100);
+        float phenotypeWithFewIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(2, 0);
+        float phenotypeWithMediumIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(2, 5);
+        float phenotypeWithManyIterations = getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(2, 20);
         
         assertTrue("the best phenotype whith medium number of iterations should've been better than with short number", 
                 Math.abs(Math.PI - phenotypeWithFewIterations) > Math.abs(Math.PI - phenotypeWithMediumIterations));
@@ -101,7 +101,7 @@ public class GeneticAlgorithmImplementationsTest {
 
     private float getPhenotypeOfBestIndividualWhenGeneticAlgorithmIsRun(int population, int iterations) {
         ObjectFactory.createObject(IProbabilityHelper.class).setSeed(SEED);
-        algorithm.configure(definition, population, iterations, 0.5f, 0.5f);
+        algorithm.configure(definition, population, iterations, 0.5f, 10);
         IIndividual bestInShortPopulation = algorithm.run();
         return sampleFitnessFunction.calculatePhenotypeForIndividual(bestInShortPopulation);
     }

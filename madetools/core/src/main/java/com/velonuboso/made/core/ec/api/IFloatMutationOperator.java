@@ -17,17 +17,15 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.entity.IndividualDefinition;
-import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
+import com.velonuboso.made.core.ec.entity.GeneDefinition;
+import com.velonuboso.made.core.ec.implementation.FloatGene;
+import com.velonuboso.made.core.ec.implementation.FloatMutationOperator;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = GeneticAlgorithm.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IGeneticAlgorithm {
-    public void configure(IndividualDefinition definition, int populationSize, int maximumIterations, 
-            float blxAlpha, float distanceParameterMutationDistribution);
-    public void addListener(IGeneticAlgorithmListener listener);
-    public IIndividual run();
+@ImplementedBy(targetClass = FloatMutationOperator.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IFloatMutationOperator {
+    void mutate(GeneDefinition targetGeneDefinition, IFloatGene gene, float distanceParameterMutationDistribution);
 }
