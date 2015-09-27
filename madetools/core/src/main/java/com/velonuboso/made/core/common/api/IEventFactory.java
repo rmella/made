@@ -49,8 +49,8 @@ public interface IEventFactory {
     IEvent skipsTurn(ICharacter character);
     IEvent stains(ICharacter subject, IColorSpot targetSpot);
     IEvent transfersColor(ICharacter subject, ICharacter targetCharacter);
-    IEvent colorSpotAppears(IColorSpot spot);
-    IEvent colorSpotDisappears(IColorSpot spot);
+    IEvent colorSpotAppears(IColorSpot spot, int cellId);
+    IEvent colorSpotDisappears(IColorSpot spot, int cellId);
     IEvent exception(String message);
     IEvent joy(ICharacter aThis, float joy);
     IEvent isFriendOf(ICharacter subject, ICharacter friend);

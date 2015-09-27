@@ -345,13 +345,13 @@ public class Map implements IMap {
 
     private void writeEventPutColorSpot(IColorSpot spot, int cell) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = factory.colorSpotAppears(spot);
+        IEvent event = factory.colorSpotAppears(spot, cell);
         eventsWriter.add(event);
     }
 
     private void writeEventRemoveColorSpot(IColorSpot spot, int cell) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = factory.colorSpotDisappears(spot);
+        IEvent event = factory.colorSpotDisappears(spot, cell);
         eventsWriter.add(event);
     }
 

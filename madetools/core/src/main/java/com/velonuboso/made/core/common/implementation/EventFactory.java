@@ -145,13 +145,13 @@ public class EventFactory implements IEventFactory {
     }
 
     @Override
-    public IEvent colorSpotAppears(IColorSpot spot) {
-        return new Event(COLOR_SPOT_APPEARS, currentDay, spot.getId());
+    public IEvent colorSpotAppears(IColorSpot spot, int cellId) {
+        return new Event(COLOR_SPOT_APPEARS, currentDay, spot.getId(), cellId);
     }
 
     @Override
-    public IEvent colorSpotDisappears(IColorSpot spot) {
-        return new Event(COLOR_SPOT_DISAPPEARS, currentDay, spot.getId());
+    public IEvent colorSpotDisappears(IColorSpot spot, int cellId) {
+        return new Event(COLOR_SPOT_DISAPPEARS, currentDay, spot.getId(), cellId);
     }
 
     @Override
