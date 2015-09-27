@@ -182,13 +182,13 @@ public class Piece implements ICharacter {
     @Override
     public void applyColorChange() {
         int crowdingDegree = 1+ (int)(abmConfigurationHelper.getColorChangeCrowdingDegree() * CROWDING_DEGREE_FACTOR);
-        float red = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getBackgroundColor().getRed());
-        float green = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getBackgroundColor().getGreen());
-        float blue = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getBackgroundColor().getBlue());
+        float red = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getForegroundColor().getRed());
+        float green = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getForegroundColor().getGreen());
+        float blue = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getForegroundColor().getBlue());
         
         Color currentColor = getBackgroundColor();
         Color newColor = new Color(red, green, blue, 1f);
-        this.setBackgroundColor(newColor);
+        this.setForegroundColor(newColor);
         
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         IEvent event = factory.naturalChange(this, currentColor, newColor);
