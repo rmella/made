@@ -68,7 +68,7 @@ public class AbmTest {
    
     @Test
     public void testRun_many_characters() {
-        int size = 46;
+        int size = 49;
         float[] chromosome = new float[size];
         
         chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
@@ -88,7 +88,7 @@ public class AbmTest {
     
     @Test
     public void testRun_one_character() {
-        int size = 46;
+        int size = 49;
         float[] chromosome = new float[size];
         
         chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;

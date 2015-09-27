@@ -50,5 +50,6 @@ public interface ICharacter {
     public void setForegroundColor(Color foregroundColor);
     public void setBackgroundColor(Color backgroundColor);
     
+    public void applyColorChange();
     public boolean run();
 }

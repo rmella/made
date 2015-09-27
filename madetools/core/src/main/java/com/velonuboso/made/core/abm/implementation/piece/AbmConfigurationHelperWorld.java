@@ -17,9 +17,6 @@
 package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
-import java.util.Arrays;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -105,6 +102,6 @@ public class AbmConfigurationHelperWorld {
         NUMBER_OF_SQUARES,
         NUMBER_OF_DAYS,
         PROBABILITY_TO_ADD_SPOT,
-        PROBABILITY_TO_REMOVE_SPOT
+        PROBABILITY_TO_REMOVE_SPOT,
     }
 }

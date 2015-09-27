@@ -24,6 +24,7 @@ import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -55,4 +56,5 @@ public interface IEventFactory {
     IEvent joy(ICharacter aThis, float joy);
     IEvent isFriendOf(ICharacter subject, ICharacter friend);
     IEvent isEnemyOf(ICharacter subject, ICharacter enemy);
+    IEvent naturalChange(Piece aThis, Color currentColor, Color newColor);
 }

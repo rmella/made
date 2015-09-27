@@ -111,7 +111,7 @@ public class Abm implements IAbm {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         factory.setDay(day);
     }
-    
+
     private void writeExceptionToLog(AbmConfigurationEntity abmConfiguration, Exception exception) {
         String configuration = Arrays.toString(abmConfiguration.getChromosome());
         String message = "Could not run using configuration :" + configuration;
@@ -142,7 +142,7 @@ public class Abm implements IAbm {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         factory.setDay(0);
     }
-    
+
     private void placeCharactersInMap() {
         int numberOfSquares = helper.getWorldAbmConfigurationHelper().getNumberOfSquares();
         int numberOfTriangles = helper.getWorldAbmConfigurationHelper().getNumberOfTraingles();
@@ -212,12 +212,15 @@ public class Abm implements IAbm {
 
     private void runCharactersInMap(IMap map) {
         List<ICharacter> characters = map.getCells().stream()
-                .filter(cell->map.getCharacter(cell)!=null)
+                .filter(cell -> map.getCharacter(cell) != null)
                 .map(map::getCharacter)
                 .collect(Collectors.toList());
-        
+
         Collections.shuffle(characters);
-        characters.stream().forEach((character) -> character.run());
+        characters.stream().forEach((character) -> {
+            character.applyColorChange();
+            character.run();
+        });
     }
 
     private void removeSpotsFromMap() {

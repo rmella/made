@@ -17,7 +17,6 @@
 package com.velonuboso.made.core.abm.implementation.piece;
 
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
-import java.util.function.DoublePredicate;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
@@ -92,6 +91,10 @@ public class AbmConfigurationHelperPiece {
     public float getImprovingSelfSimilarityProbability() {
         return getGene(Gene.IMPROVE_SELF_SIMILARITY_PROBABILITY);
     }
+    
+    public float getColorChangeCrowdingDegree() {
+        return getGene(Gene.COLOR_CHANGE_CROWDING_DEGREE_PER_TURN);
+    }
 
     private float getGene(Gene gene) {
         return AbmConfigurationUtilities.getGene(gene, abmConfiguration);
@@ -124,5 +127,6 @@ public class AbmConfigurationHelperPiece {
         IMPROVE_FRIEND_SIMILARITY_PROBABILITY,
         REDUCE_ENEMY_SIMILARITY_PROBABILITY,
         IMPROVE_SELF_SIMILARITY_PROBABILITY,
+        COLOR_CHANGE_CROWDING_DEGREE_PER_TURN
     }
 }

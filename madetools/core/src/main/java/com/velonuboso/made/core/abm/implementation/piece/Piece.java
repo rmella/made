@@ -35,15 +35,14 @@ import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
-import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.common.util.PolynomialHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.BiPredicate;
 import javafx.scene.paint.Color;
 
 /**
@@ -70,18 +69,19 @@ public class Piece implements ICharacter {
     public static final String BLACKBOARD_AFFINITY_MATRIX = "BLACKBOARD_AFFINITY_MATRIX";
     public static final String BLACKBOARD_JOY = "BLACKBOARD_JOY";
     public static final String BLACKBOARD_TARGET_CELL = "BLACKBOARD_CHARACTER_CELL";
+    public static final float CROWDING_DEGREE_FACTOR = 99f;
 
     public Piece() {
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
         id = null;
         eventsWriter = null;
-        
+
         foregroundColor = probabilityHelper.getRandomColor();
         backgroundColor = probabilityHelper.getRandomColor();
 
         allCharacters = null;
         pieceCurrentBlackBoard = null;
-        
+
         TryInitializeBehaviourTree();
     }
 
@@ -179,12 +179,28 @@ public class Piece implements ICharacter {
         return abmConfigurationEntity;
     }
 
+    @Override
+    public void applyColorChange() {
+        int crowdingDegree = 1+ (int)(abmConfigurationHelper.getColorChangeCrowdingDegree() * CROWDING_DEGREE_FACTOR);
+        float red = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getBackgroundColor().getRed());
+        float green = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getBackgroundColor().getGreen());
+        float blue = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getBackgroundColor().getBlue());
+        
+        Color currentColor = getBackgroundColor();
+        Color newColor = new Color(red, green, blue, 1f);
+        this.setBackgroundColor(newColor);
+        
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.naturalChange(this, currentColor, newColor);
+        eventsWriter.add(event);
+    }
+
     // <editor-fold defaultstate="collapsed" desc="Private methods">
-    private void TryInitializeBehaviourTree() { 
-        if (abmConfigurationEntity== null){
+    private void TryInitializeBehaviourTree() {
+        if (abmConfigurationEntity == null) {
             return;
         }
-        
+
         rootNode = buildSimpleNodeForCharacter();
         addBlackBoardInitializerToNode(rootNode);
 
@@ -271,8 +287,8 @@ public class Piece implements ICharacter {
                 ObjectFactory.createObject(IConditionCanReduceEnemySimilarity.class),
                 abmConfigurationHelper.getReducingEnemySimilarityProbability());
 
-        IBehaviourTreeNode moveOrDisplaceStrategy = 
-                createActionNode(ObjectFactory.createObject(IStrategyMoveOrDisplace.class), 1);
+        IBehaviourTreeNode moveOrDisplaceStrategy
+                = createActionNode(ObjectFactory.createObject(IStrategyMoveOrDisplace.class), 1);
 
         parentNode.addChildNode(canReduceEnemySimilarityCondition);
         canReduceEnemySimilarityCondition.addChildNode(moveOrDisplaceStrategy);
@@ -406,7 +422,7 @@ public class Piece implements ICharacter {
     private IBlackBoard newEmptyBlackBoard() {
         return ObjectFactory.createObject(IBlackBoard.class);
     }
-    
+
     private IBehaviourTreeNode createActionNode(IAction action, float probability) {
         IBehaviourTreeNode node = ObjectFactory.createObject(IBehaviourTreeNode.class);
         node.setAction(action);
@@ -416,7 +432,7 @@ public class Piece implements ICharacter {
 
         return node;
     }
-    
+
     private void writeJoyEvent(float joy) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         IEvent joyEvent = factory.joy(this, joy);
@@ -426,11 +442,16 @@ public class Piece implements ICharacter {
     private void writeAffinityEvents(HashMap<ICharacter, Float> affinityMatrix) {
         affinityMatrix.keySet().stream().forEach(target -> writeAffinityEvent(target, affinityMatrix.get(target)));
     }
-    
+
     private void writeAffinityEvent(ICharacter target, Float affinity) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = affinity<0? factory.isEnemyOf(this, target):factory.isFriendOf(this, target);
+        IEvent event = affinity < 0 ? factory.isEnemyOf(this, target) : factory.isFriendOf(this, target);
         eventsWriter.add(event);
+    }
+
+    private float getNewRandomPolynomialColorComponent(int crowdingDegree, float colorValue) {
+        PolynomialHelper helper = new PolynomialHelper();
+        return helper.mutate(0, 1, colorValue, crowdingDegree);
     }
     
     // </editor-fold>
