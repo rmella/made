@@ -16,8 +16,7 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
-import com.velonuboso.made.core.common.api.IProbabilityHelper;
-import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.common.util.PolynomialHelper;
 import com.velonuboso.made.core.ec.api.IFloatGene;
 import com.velonuboso.made.core.ec.api.IFloatMutationOperator;
 import com.velonuboso.made.core.ec.entity.GeneDefinition;
@@ -30,7 +29,8 @@ public class FloatMutationOperator implements IFloatMutationOperator {
 
     @Override
     public void mutate(GeneDefinition targetGeneDefinition, IFloatGene gene, float distanceParameterMutationDistribution) {
-        PolynomialMutationHelper polynomialHelper = new PolynomialMutationHelper();
-        gene.setValue(polynomialHelper.mutate(targetGeneDefinition, gene.getValue(), distanceParameterMutationDistribution));
+        PolynomialHelper polynomialHelper = new PolynomialHelper();
+        gene.setValue(polynomialHelper.mutate(targetGeneDefinition.getMinValue(),
+                targetGeneDefinition.getMaxValue(), gene.getValue(), distanceParameterMutationDistribution));
     }
 }

@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.util.PolynomialHelper;
 import com.velonuboso.made.core.ec.api.IIntGene;
 import com.velonuboso.made.core.ec.api.IIntMutationOperator;
 import com.velonuboso.made.core.ec.entity.GeneDefinition;
@@ -28,8 +29,9 @@ public class IntMutationOperator implements IIntMutationOperator{
 
     @Override
     public void mutate(GeneDefinition targetGeneDefinition, IIntGene gene, float distanceParameterMutationDistribution) {
-        PolynomialMutationHelper polynomialHelper = new PolynomialMutationHelper();
-        gene.setValue(Math.round(polynomialHelper.mutate(targetGeneDefinition, gene.getValue(), distanceParameterMutationDistribution)));
+        PolynomialHelper polynomialHelper = new PolynomialHelper();
+        gene.setValue(Math.round(polynomialHelper.mutate(targetGeneDefinition.getMinValue(),
+                targetGeneDefinition.getMaxValue(), gene.getValue(), distanceParameterMutationDistribution)));
     }
     
 }
