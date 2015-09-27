@@ -45,14 +45,14 @@ public class StrategyStain extends BaseAction implements IStrategyStain {
         getCharacter().setBackgroundColor(spot.getColor());
         
         
-        writeEvent();
+        writeEvent(spot);
         
         return true;
     }
 
-    private void writeEvent() {
+    private void writeEvent(IColorSpot spot) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = factory.stains(getCharacter());
+        IEvent event = factory.stains(getCharacter(), spot);
         getCharacter().getEventsWriter().add(event);
     }
 }

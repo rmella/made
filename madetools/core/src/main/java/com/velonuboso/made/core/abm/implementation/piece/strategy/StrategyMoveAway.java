@@ -45,14 +45,14 @@ public class StrategyMoveAway extends BaseAction implements IStrategyMoveAway{
         }
         
         getMap().moveCharacter(characterCell, targetCell);
-        writeEvent();
+        writeEvent(targetCell);
         
         return true;
     }
 
-    private void writeEvent() {
+    private void writeEvent(int targetCell) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = factory.movesAway(getCharacter());
+        IEvent event = factory.movesAway(getCharacter(), targetCell);
         getCharacter().getEventsWriter().add(event);
     }
 

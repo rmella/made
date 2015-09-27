@@ -55,7 +55,7 @@ public class StrategyTransferColor extends BaseAction implements IStrategyTransf
         }
         
         exchangeColors(getCharacter(), friend);
-        writeEvent();
+        writeEvent(friend);
         return true;
     }
 
@@ -65,9 +65,9 @@ public class StrategyTransferColor extends BaseAction implements IStrategyTransf
         friend.setBackgroundColor(auxiliaryColor);
     }
     
-    private void writeEvent() {
+    private void writeEvent(ICharacter friend) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = factory.transfersColor(getCharacter());
+        IEvent event = factory.transfersColor(getCharacter(), friend);
         getCharacter().getEventsWriter().add(event);
     }
 }

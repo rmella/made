@@ -115,18 +115,18 @@ public class EventFactory implements IEventFactory {
     }
 
     @Override
-    public IEvent movesAway(ICharacter subject) {
-        return new Event(MOVES_AWAY, currentDay, subject.getId());
+    public IEvent movesAway(ICharacter subject, int cellId) {
+        return new Event(MOVES_AWAY, currentDay, subject.getId(), cellId);
     }
 
     @Override
-    public IEvent moves(ICharacter subject) {
-        return new Event(MOVES, currentDay, subject.getId());
+    public IEvent moves(ICharacter subject, int cellId) {
+        return new Event(MOVES, currentDay, subject.getId(), cellId);
     }
 
     @Override
-    public IEvent displaces(ICharacter subject) {
-        return new Event(DISPLACES, currentDay, subject.getId());
+    public IEvent displaces(ICharacter subject, ICharacter targetCharacter, int cellId) {
+        return new Event(DISPLACES, currentDay, subject.getId(), targetCharacter.getId(), cellId);
     }
 
     @Override
@@ -135,23 +135,23 @@ public class EventFactory implements IEventFactory {
     }
 
     @Override
-    public IEvent stains(ICharacter subject) {
-        return new Event(STAINS, currentDay, subject.getId());
+    public IEvent stains(ICharacter subject, IColorSpot targetSpot) {
+        return new Event(STAINS, currentDay, subject.getId(), targetSpot.getId());
     }
 
     @Override
-    public IEvent transfersColor(ICharacter subject) {
-        return new Event(TRANSFERS_COLOR, currentDay, subject.getId());
+    public IEvent transfersColor(ICharacter subject, ICharacter targetCharacter) {
+        return new Event(TRANSFERS_COLOR, currentDay, subject.getId(), targetCharacter.getId());
     }
 
     @Override
-    public IEvent colorSpotAppears(IColorSpot subject) {
-        return new Event(COLOR_SPOT_APPEARS, currentDay, subject.getId());
+    public IEvent colorSpotAppears(IColorSpot spot) {
+        return new Event(COLOR_SPOT_APPEARS, currentDay, spot.getId());
     }
 
     @Override
-    public IEvent colorSpotDisappears(IColorSpot subject) {
-        return new Event(COLOR_SPOT_DISAPPEARS, currentDay, subject.getId());
+    public IEvent colorSpotDisappears(IColorSpot spot) {
+        return new Event(COLOR_SPOT_DISAPPEARS, currentDay, spot.getId());
     }
 
     @Override

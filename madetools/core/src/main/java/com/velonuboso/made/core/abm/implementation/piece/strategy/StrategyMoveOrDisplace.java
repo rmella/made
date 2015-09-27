@@ -37,6 +37,7 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
 
     int characterCell;
     int targetCell;
+    ICharacter targetCharacter;
     boolean targetCellIsAround;
     Integer cellToDisplace;
 
@@ -104,7 +105,7 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
     }
 
     private void calculateFreeCellToDisplaceTarget() {
-        ICharacter targetCharacter = getMap().getCharacter(targetCell);
+        targetCharacter = getMap().getCharacter(targetCell);
         List<Integer> cellsAroundTargetCharacter = targetCharacter.getMap().getCellsAround(targetCell, 1);
         cellToDisplace = cellsAroundTargetCharacter.stream()
                 .filter(cell -> getMap().getCharacter(cell) == null)
@@ -122,13 +123,13 @@ public class StrategyMoveOrDisplace extends BaseStrategy implements IStrategyMov
 
     private void writeMoveEvent() {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = factory.moves(getCharacter());
+        IEvent event = factory.moves(getCharacter(), targetCell);
         getCharacter().getEventsWriter().add(event);
     }
 
     private void writeDisplaceEvent() {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = factory.displaces(getCharacter());
+        IEvent event = factory.displaces(getCharacter(), targetCharacter, cellToDisplace);
         getCharacter().getEventsWriter().add(event);
     }
 

@@ -19,34 +19,26 @@ package com.velonuboso.made.core.abm;
 import com.velonuboso.made.core.abm.api.IAction;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
-import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.api.condition.ICondition;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
 import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyStain;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyTransferColor;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
-import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.ColorSpot;
-import com.velonuboso.made.core.abm.implementation.EventsWriter;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
-import com.velonuboso.made.core.abm.implementation.piece.strategy.StrategyMoveAway;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
+import java.util.function.ToLongBiFunction;
+import java.util.regex.Pattern;
 import javafx.scene.paint.Color;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.mockito.ArgumentMatcher;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -129,7 +121,7 @@ public class StrategiesTest {
     public void UT_StrategyMoveAway_When_called_successfully_it_writes_to_the_log() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
         setStrategyAndRun(-1, mainPiece, ObjectFactory.createObject(IStrategyMoveAway.class));
-        verifyEventAddedToFakeEventWriter(EventFactory.MOVES_AWAY, 1);
+        verifyEventAddedToFakeEventWriter(EventFactory.MOVES_AWAY, 1, 3);
         verifyStrategyReturnedTrue();
     }
 
@@ -294,8 +286,8 @@ public class StrategiesTest {
         int targetCell = map.getCell(1, 1);
 
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyMoveOrDisplace.class));
-        verifyEventAddedToFakeEventWriter(EventFactory.MOVES, 1);
-        verifyEventAddedToFakeEventWriter(EventFactory.DISPLACES, 1);
+        verifyEventAddedToFakeEventWriter(EventFactory.MOVES, 1, 3);
+        verifyEventAddedToFakeEventWriter(EventFactory.DISPLACES, 1, 4);
         verifyStrategyReturnedTrue();
     }
 
@@ -384,7 +376,7 @@ public class StrategiesTest {
         int targetCell = map.getCell(0, 0);
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyStain.class));
 
-        verifyEventAddedToFakeEventWriter(EventFactory.STAINS, 1);
+        verifyEventAddedToFakeEventWriter(EventFactory.STAINS, 1, 3);
         verifyStrategyReturnedTrue();
     }
 
@@ -458,7 +450,7 @@ public class StrategiesTest {
 
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyTransferColor.class));
         verifyStrategyReturnedTrue();
-        verifyEventAddedToFakeEventWriter(EventFactory.TRANSFERS_COLOR, 1);
+        verifyEventAddedToFakeEventWriter(EventFactory.TRANSFERS_COLOR, 1, 3);
     }
 
     @Test
@@ -512,6 +504,18 @@ public class StrategiesTest {
             @Override
             public boolean matches(Object item) {
                 return ((IEvent) item).toLogicalPredicate().startsWith(beginswith);
+            }
+        }));
+    }
+    
+    private void verifyEventAddedToFakeEventWriter(String beginswith, int times, int numberOfArguments) {
+        verify(fakeEventsWriter, times(times)).add(argThat(new ArgumentMatcher<IEvent>() {
+            @Override
+            public boolean matches(Object item) {
+                String predicate = ((IEvent) item).toLogicalPredicate();
+                boolean startsWithGivenWord = predicate.startsWith(beginswith);
+                int numberOfElements = predicate.split("[\\(,]").length;
+                return startsWithGivenWord && (numberOfArguments == numberOfElements-1);
             }
         }));
     }
