@@ -16,12 +16,11 @@
  */
 package com.velonuboso.made.core.abm;
 
+import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.implementation.Abm;
 import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperWorld;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
-import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.common.entity.InferencesEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
@@ -29,8 +28,6 @@ import java.util.Arrays;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.mockito.Mockito;
 
 /**
@@ -103,6 +100,10 @@ public class AbmTest {
         
         abm.run(entity);
         
+        
+        for(Term term : abm.getEventsLog().getLogicalTerms()){
+            System.out.println(term);
+        }
         //System.out.println(abm.getEventsLog().getLog());
     }
 

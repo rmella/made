@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.common.entity;
 
+import alice.tuprolog.Term;
 import java.io.Serializable;
 import java.util.Arrays;
 import javafx.scene.paint.Color;
@@ -27,6 +28,8 @@ import javafx.scene.paint.Color;
 public class EventsLogEntity implements Serializable {
 
     private String log;
+    private Term[] logicalTerms;
+    
     private BoardEntity board;
     private CharacterEntity[] characters;
     private DayLog[] dayLogs;
@@ -41,7 +44,15 @@ public class EventsLogEntity implements Serializable {
     public void setLog(String log) {
         this.log = log;
     }
-    
+
+    public void setLogicalTerms(Term[] logicalTerms) {
+        this.logicalTerms = logicalTerms;
+    }
+
+    public Term[] getLogicalTerms() {
+        return logicalTerms;
+    }
+
     public EventsLogEntity(BoardEntity board, CharacterEntity[] characters, DayLog[] dayLogs) {
         this.board = board;
         this.characters = characters;

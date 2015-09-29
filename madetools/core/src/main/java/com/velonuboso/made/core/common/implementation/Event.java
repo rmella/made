@@ -16,8 +16,11 @@
  */
 package com.velonuboso.made.core.common.implementation;
 
+import alice.tuprolog.Struct;
+import alice.tuprolog.Term;
 import com.velonuboso.made.core.common.api.IEvent;
 import java.util.Arrays;
+import java.util.function.Function;
 
 /**
  *
@@ -50,6 +53,25 @@ public class Event implements IEvent {
         return logicalPredicate.toString();
     }
 
+    
+    @Override
+    public Term toLogicalTerm() {
+        Term[] argumentsAsTerms = Arrays.stream(arguments).map(argument -> objectToTerm(argument)).toArray(Term[]::new);
+        return new Struct(name, argumentsAsTerms);
+    }
+    
+    private Term objectToTerm(Object object){
+        if (object instanceof Integer){
+            return new alice.tuprolog.Int((int)object);
+        }else if (object instanceof String){
+            return new Struct((String)object);
+        }else if (object instanceof Float){
+            return new alice.tuprolog.Float((float)object);
+        }else{
+            throw new RuntimeException("Could not convert object "+object+" to term");
+        }
+    }
+    
     private String getCommaSeparatedArguments() {
         String[] argumentsArray = Arrays.stream(arguments).map(argument -> argumentAsString(argument)).toArray(String[]::new);
         String commaSeparatedArguments = String.join(ARGUMENT_SEPARATOR, argumentsArray);

@@ -17,10 +17,13 @@
 
 package com.velonuboso.made.core.common.api;
 
+import alice.tuprolog.Term;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public interface IEvent {
     String toLogicalPredicate();
+    Term toLogicalTerm();
 }

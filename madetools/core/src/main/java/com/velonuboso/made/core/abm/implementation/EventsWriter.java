@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation;
 
+import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
@@ -31,9 +32,11 @@ import java.util.stream.IntStream;
 public class EventsWriter implements IEventsWriter {
 
     private StringBuilder stringBuilder;
+    private ArrayList<Term> logicalTerms;
 
     public EventsWriter() {
         stringBuilder =new StringBuilder();
+        logicalTerms = new ArrayList<>();
     }
 
     public EventsWriter(List<IEvent> events) {
@@ -44,17 +47,23 @@ public class EventsWriter implements IEventsWriter {
     @Override
     public void add(IEvent event) {
         appendPredicateToStringBuilder(event);
+        appendPredicateToTerms(event);
     }
 
     @Override
     public EventsLogEntity getEventsLog() {
         EventsLogEntity entity = new EventsLogEntity();
         entity.setLog(stringBuilder.toString());
+        entity.setLogicalTerms(logicalTerms.toArray(new Term[0]));
         return entity;
     }
     
     private StringBuilder appendPredicateToStringBuilder(IEvent event) {
         //System.out.println(event.toLogicalPredicate());
         return stringBuilder.append(event.toLogicalPredicate()+"\n");
+    }
+
+    private void appendPredicateToTerms(IEvent event) {
+        logicalTerms.add(event.toLogicalTerm());
     }
 }
