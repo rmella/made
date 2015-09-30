@@ -22,6 +22,7 @@ import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.api.IPosition;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.entity.TerrainType;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IEventFactory;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -150,6 +152,10 @@ public class Map implements IMap {
         characterByCell.put(cell, character);
         cellByCharacter.put(character, cell);
         character.setMap(this);
+        
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent event = factory.characterAppears(character, cell);
+        eventsWriter.add(event);
     }
 
     @Override

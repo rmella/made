@@ -14,20 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.inference.api;
-
-import alice.tuprolog.Term;
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.inference.entity.Trope;
-import com.velonuboso.made.core.inference.entity.WorldDeductions;
-import com.velonuboso.made.core.inference.implementation.MonomythReasoner;
+package com.velonuboso.made.core.inference.entity;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = MonomythReasoner.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IReasoner {
-    WorldDeductions getWorldDeductions(Term[] events);
-    WorldDeductions getWorldDeductionsWithTropesInWhiteList(Term[] events, Trope[] tropesWhiteList);
+public enum Trope {
+    CONFLICT,
+    JOURNEY,
+    SHADOW,
+    HERO,
+    MENTOR,
+    HERALD,
+    GUARDIAN,
+    ALLIED,
+    TRICKSTER,
+    SHAPESHIFTER,
+    MONOMYTH
 }

@@ -21,6 +21,7 @@ import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.abm.api.IWorld;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
 import javafx.scene.paint.Color;
@@ -54,7 +55,7 @@ public class EventFactory implements IEventFactory {
     public static final String IS_FRIEND_OF = "IsFriendOf";
     public static final String IS_ENEMY_OF = "IsEnemyOf";
     public static final String NATURAL_CHANGE = "NaturalChange";
-    
+    public static final String CHARACTER_APPEARS = "CharacterAppears";
     
     private int currentDay;
 
@@ -181,6 +182,16 @@ public class EventFactory implements IEventFactory {
     public IEvent naturalChange(Piece subject, Color currentColor, Color newColor) {
         float colorDifference = PieceUtilities.calculateColorDifference(currentColor, newColor);
         return new Event(NATURAL_CHANGE, currentDay, subject.getId(), colorToHexadecimal(currentColor), colorToHexadecimal(newColor), colorDifference);
+    }
+    
+    @Override
+    public IEvent characterAppears(ICharacter subject, int cellId) {
+        Color foreground = subject.getForegroundColor()==null? Color.BLACK: subject.getForegroundColor();
+        Color background = subject.getBackgroundColor()==null? Color.BLACK: subject.getBackgroundColor();
+        CharacterShape shape = subject.getShape() == null? CharacterShape.CIRCLE: subject.getShape();
+        
+        return new Event(NATURAL_CHANGE, currentDay, subject.getId(), colorToHexadecimal(background),
+                colorToHexadecimal(background), shape.name());
     }
     
     private String colorToHexadecimal(Color color){

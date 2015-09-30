@@ -16,17 +16,85 @@
  */
 package com.velonuboso.made.core.inference.implementation;
 
+import alice.tuprolog.InvalidTheoryException;
+import alice.tuprolog.NoMoreSolutionException;
+import alice.tuprolog.NoSolutionException;
+import alice.tuprolog.Prolog;
+import alice.tuprolog.SolveInfo;
+import alice.tuprolog.Struct;
+import alice.tuprolog.Term;
+import alice.tuprolog.Theory;
+import alice.tuprolog.Var;
 import com.velonuboso.made.core.inference.api.IReasoner;
+import com.velonuboso.made.core.inference.entity.Trope;
+import com.velonuboso.made.core.inference.entity.WorldDeductions;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class MonomythReasoner implements IReasoner{
+public class MonomythReasoner implements IReasoner {
+
+    private Prolog engine;
+    
+    private static final String PREDICATE_CONFLICT = "Conflict";
+    
+    @Override
+    public WorldDeductions getWorldDeductions(Term[] events) {
+        return getWorldDeductionsWithTropesInWhiteList(events, Trope.values());
+    }
 
     @Override
-    public String getWorldDeductions(String events) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public WorldDeductions getWorldDeductionsWithTropesInWhiteList(Term[] events, Trope[] tropesWhiteList) {
+        WorldDeductions deductions = new WorldDeductions();
+        Arrays.stream(tropesWhiteList, 0, tropesWhiteList.length)
+                .forEach(trope -> searchTrope(events, trope, deductions));
+        return deductions;
     }
-    
+
+    private void searchTrope(Term[] events, Trope trope, WorldDeductions deductions) {
+
+        engine = new Prolog();
+        Term predicateToSolve = getpredicateToSolve(trope);
+        ArrayList<Term> solutions = new ArrayList<>();
+        
+        try {
+            createTheoryAndSolveTrope(events, predicateToSolve, solutions);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        deductions.put(trope, solutions.toArray(new Term[0]));
+    }
+
+    private void createTheoryAndSolveTrope(Term[] events, Term predicateToSolve, ArrayList<Term> solutions) 
+            throws InvalidTheoryException, NoSolutionException, NoMoreSolutionException {
+        
+        Theory theory = new Theory(new Struct(events));
+        engine.setTheory(theory);
+        SolveInfo solveInfo = engine.solve(predicateToSolve);
+        
+        if (solveInfo.isSuccess()) {
+            System.out.println("Bindings: " + solveInfo.getSolution());
+            solutions.add(solveInfo.getSolution());
+        
+            while (engine.hasOpenAlternatives()) {
+                solveInfo = engine.solveNext();
+                if (solveInfo.isSuccess()) {
+                    System.out.println("Bindings: " + solveInfo.getSolution());
+                    solutions.add(solveInfo.getSolution());
+                }
+            }
+        }
+    }
+
+    private Term getpredicateToSolve(Trope trope) {
+        switch(trope){
+            case CONFLICT:
+                return new Struct(PREDICATE_CONFLICT);
+            default:
+                return new Struct();
+        }
+    }
 }

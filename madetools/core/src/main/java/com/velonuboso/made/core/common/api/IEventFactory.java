@@ -20,6 +20,7 @@ package com.velonuboso.made.core.common.api;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
 import com.velonuboso.made.core.abm.api.IWorld;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.implementation.EventFactory;
@@ -36,6 +37,7 @@ public interface IEventFactory {
     public void setDay(int day);
     IEvent inhabitantExists(ICharacter inhabitant);
     IEvent worldExists(IWorld world);
+    
     IEvent hasFear(final ICharacter subject, final ICharacter enemy);
     IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot);
     IEvent canImproveFriendSimilarity(ICharacter subject, ICharacter friend);
@@ -57,4 +59,5 @@ public interface IEventFactory {
     IEvent isFriendOf(ICharacter subject, ICharacter friend);
     IEvent isEnemyOf(ICharacter subject, ICharacter enemy);
     IEvent naturalChange(Piece aThis, Color currentColor, Color newColor);
+    IEvent characterAppears (ICharacter subject, int cellId);
 }

@@ -22,9 +22,18 @@ import alice.tuprolog.NoMoreSolutionException;
 import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.Prolog;
 import alice.tuprolog.SolveInfo;
+import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import alice.tuprolog.Theory;
 import alice.tuprolog.UnknownVarException;
+import com.velonuboso.made.core.abm.api.ICharacter;
+import com.velonuboso.made.core.abm.api.IColorSpot;
+import com.velonuboso.made.core.abm.entity.CharacterShape;
+import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.inference.api.IReasoner;
+import com.velonuboso.made.core.inference.entity.Trope;
+import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,10 +41,12 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import javafx.scene.paint.Color;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.Mockito;
 
 /**
  *
@@ -43,9 +54,12 @@ import static org.junit.Assert.*;
  */
 public class MonomythReasonerTest {
 
-    Prolog engine;
-    ArrayList<SolveInfo> solutions;
-
+    private Prolog engine;
+    private ArrayList<SolveInfo> solutions;
+    private ICharacter character;
+    private IColorSpot spot;
+    private IReasoner reasoner;
+    
     public MonomythReasonerTest() {
     }
 
@@ -53,6 +67,9 @@ public class MonomythReasonerTest {
     public void setUp() {
         engine = new Prolog();
         solutions = new ArrayList<>();
+        initializeCharacter();
+        initializeSpot();
+        reasoner = ObjectFactory.createObject(IReasoner.class);
     }
 
     @After
@@ -60,7 +77,7 @@ public class MonomythReasonerTest {
     }
 
     @Test
-    public void UT_Tuprolog_works() throws IOException, InvalidTheoryException, MalformedGoalException, NoSolutionException, UnknownVarException, NoMoreSolutionException {
+    public void UT_Tuprolog_works() {
 
         String predicateArray[] = new String[]{
             "associatedWith(\"a\",\"b\")",
@@ -78,31 +95,58 @@ public class MonomythReasonerTest {
 
         assertTrue("Should've found 5 solutions", solutions.size() == 5);
     }
+    
+    @Test
+    public void UT_ConflictNotFound_whenThereIsNoConflictBetweenElements() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        Term[] terms = new Term[]{
+            factory.characterAppears(character, 20).toLogicalTerm(),
+            factory.colorSpotAppears(spot, 30).toLogicalTerm()
+        };
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, new Trope[]{Trope.CONFLICT});
+        assertTrue("Should've found 0 solutions", worldDeductions.get(Trope.CONFLICT).length == 0);
+    }
 
     private void solveWithReasoner(String theoryAsString, String predicateToSolve) {
         try {
             Theory theory = new Theory(theoryAsString);
             engine.setTheory(theory);
-
             SolveInfo solveInfo = engine.solve(predicateToSolve);
+            InternalSolve(solveInfo);
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
 
-            if (solveInfo.isSuccess()) {
+    private void initializeCharacter() {
+        character = ObjectFactory.createObject(ICharacter.class);
+        character.setId(0);
+        character.setForegroundColor(Color.BLACK);
+        character.setBackgroundColor(Color.AQUA);
+        character.setShape(CharacterShape.CIRCLE);
+    }
 
-                Term solution = solveInfo.getSolution();
-
-                System.out.println("Bindings: " + solveInfo.getSolution());
-                solutions.add(solveInfo);
-
-                while (engine.hasOpenAlternatives()) {
-                    solveInfo = engine.solveNext();
-                    if (solveInfo.isSuccess()) {
-                        System.out.println("Bindings: " + solveInfo.getSolution());
-                        solutions.add(solveInfo);
-                    }
+    private void initializeSpot() {
+        spot = ObjectFactory.createObject(IColorSpot.class);
+        spot.setId(100);
+        spot.setColor(Color.AZURE);
+    }
+    
+    private void InternalSolve(SolveInfo solveInfo) throws NoMoreSolutionException, NoSolutionException {
+        if (solveInfo.isSuccess()) {
+            Term solution = solveInfo.getSolution();
+            
+            System.out.println("Bindings: " + solveInfo.getSolution());
+            solutions.add(solveInfo);
+            
+            while (engine.hasOpenAlternatives()) {
+                solveInfo = engine.solveNext();
+                if (solveInfo.isSuccess()) {
+                    System.out.println("Bindings: " + solveInfo.getSolution());
+                    solutions.add(solveInfo);
                 }
             }
-        } catch (InvalidTheoryException | MalformedGoalException | NoSolutionException | NoMoreSolutionException ex) {
-            fail(ex.getMessage());
         }
     }
 }
