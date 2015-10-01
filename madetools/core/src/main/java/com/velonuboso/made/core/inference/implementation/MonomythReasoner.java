@@ -25,6 +25,7 @@ import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import alice.tuprolog.Theory;
 import alice.tuprolog.Var;
+import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
@@ -38,9 +39,12 @@ import java.util.Arrays;
 public class MonomythReasoner implements IReasoner {
 
     private Prolog engine;
-    
-    private static final String PREDICATE_CONFLICT = "Conflict";
-    
+
+    private static final String PREDICATE_CONFLICT = "conflict";
+    private static final String PREDICATE_CHARACTER = "character";
+    private static final String PREDICATE_COLOR_SPOT = "colorSpot";
+    private static final String PREDICATE_ELEMENT = "element";
+
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
         return getWorldDeductionsWithTropesInWhiteList(events, Trope.values());
@@ -54,12 +58,13 @@ public class MonomythReasoner implements IReasoner {
         return deductions;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Private methods">
     private void searchTrope(Term[] events, Trope trope, WorldDeductions deductions) {
 
         engine = new Prolog();
         Term predicateToSolve = getpredicateToSolve(trope);
         ArrayList<Term> solutions = new ArrayList<>();
-        
+
         try {
             createTheoryAndSolveTrope(events, predicateToSolve, solutions);
         } catch (Exception ex) {
@@ -68,17 +73,18 @@ public class MonomythReasoner implements IReasoner {
         deductions.put(trope, solutions.toArray(new Term[0]));
     }
 
-    private void createTheoryAndSolveTrope(Term[] events, Term predicateToSolve, ArrayList<Term> solutions) 
+    private void createTheoryAndSolveTrope(Term[] events, Term predicateToSolve, ArrayList<Term> solutions)
             throws InvalidTheoryException, NoSolutionException, NoMoreSolutionException {
-        
-        Theory theory = new Theory(new Struct(events));
-        engine.setTheory(theory);
+
+        engine.setTheory(new Theory(getMonomythRules()));
+        engine.addTheory(new Theory(new Struct(events)));
+
         SolveInfo solveInfo = engine.solve(predicateToSolve);
-        
+
         if (solveInfo.isSuccess()) {
             System.out.println("Bindings: " + solveInfo.getSolution());
             solutions.add(solveInfo.getSolution());
-        
+
             while (engine.hasOpenAlternatives()) {
                 solveInfo = engine.solveNext();
                 if (solveInfo.isSuccess()) {
@@ -90,11 +96,24 @@ public class MonomythReasoner implements IReasoner {
     }
 
     private Term getpredicateToSolve(Trope trope) {
-        switch(trope){
+        switch (trope) {
+            case ELEMENT:
+                return new Struct(PREDICATE_ELEMENT, new Var());
             case CONFLICT:
-                return new Struct(PREDICATE_CONFLICT);
+                return new Struct(PREDICATE_CONFLICT, new Var());
             default:
                 return new Struct();
         }
     }
+
+    private String getMonomythRules() {
+        String rules[] = new String[]{
+            PREDICATE_CHARACTER + "(X):-" + EventFactory.CHARACTER_APPEARS + "(_,X,_,_,_)",
+            PREDICATE_COLOR_SPOT + "(X):-" + EventFactory.COLOR_SPOT_APPEARS + "(_,X,_)",
+            PREDICATE_ELEMENT + "(X):-" + PREDICATE_CHARACTER+"(X)",
+            PREDICATE_ELEMENT + "(X):-" + PREDICATE_COLOR_SPOT+"(X)"
+        };
+        return String.join(".\n", rules) + ".";
+    }
+    //</editor-fold>
 }

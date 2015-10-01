@@ -21,15 +21,30 @@ package com.velonuboso.made.core.inference.entity;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public enum Trope {
-    CONFLICT,
-    JOURNEY,
-    SHADOW,
-    HERO,
-    MENTOR,
-    HERALD,
-    GUARDIAN,
-    ALLIED,
-    TRICKSTER,
-    SHAPESHIFTER,
-    MONOMYTH
+    
+    ELEMENT, TIME, CONFLICT,
+    BEFORE, MORE_EVIL, IMMEDIATE,
+    WISER, HELPS, ENCOURAGES,
+    ACCOMPANIES, TRICKIER,
+    
+    JOURNEY, SHADOW, HERO,
+    MENTOR, HERALD, GUARDIAN, ALLIED,
+    TRICKSTER, SHAPESHIFTER, MONOMYTH;
+    
+    public static Trope[] getBaseElements(){
+        return new Trope[]{
+            ELEMENT, TIME, CONFLICT,
+            BEFORE, MORE_EVIL, IMMEDIATE,
+            WISER, HELPS, ENCOURAGES,
+            ACCOMPANIES, TRICKIER,
+        };
+    }
+    
+    public static Trope[] getTropesInFromMonomyth(){
+        return new Trope[]{
+            CONFLICT, JOURNEY, SHADOW, HERO,
+            MENTOR, HERALD, GUARDIAN, ALLIED,
+            TRICKSTER, SHAPESHIFTER, MONOMYTH
+        };
+    }
 }

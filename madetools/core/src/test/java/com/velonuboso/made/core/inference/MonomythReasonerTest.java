@@ -59,6 +59,7 @@ public class MonomythReasonerTest {
     private ICharacter character;
     private IColorSpot spot;
     private IReasoner reasoner;
+    IEventFactory eventFactory;
     
     public MonomythReasonerTest() {
     }
@@ -70,6 +71,7 @@ public class MonomythReasonerTest {
         initializeCharacter();
         initializeSpot();
         reasoner = ObjectFactory.createObject(IReasoner.class);
+        eventFactory = ObjectFactory.createObject(IEventFactory.class);
     }
 
     @After
@@ -98,16 +100,27 @@ public class MonomythReasonerTest {
     
     @Test
     public void UT_ConflictNotFound_whenThereIsNoConflictBetweenElements() {
-        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         Term[] terms = new Term[]{
-            factory.characterAppears(character, 20).toLogicalTerm(),
-            factory.colorSpotAppears(spot, 30).toLogicalTerm()
+            eventFactory.characterAppears(character, 20).toLogicalTerm(),
+            eventFactory.colorSpotAppears(spot, 30).toLogicalTerm()
         };
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, new Trope[]{Trope.CONFLICT});
-        assertTrue("Should've found 0 solutions", worldDeductions.get(Trope.CONFLICT).length == 0);
+        assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 0);
     }
 
+    @Test
+    public void UT_ElementFound() {
+        Term[] terms = new Term[]{
+            eventFactory.characterAppears(character, 20).toLogicalTerm(),
+            eventFactory.colorSpotAppears(spot, 30).toLogicalTerm()
+        };
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
+        assertNumberOfTropes(worldDeductions, Trope.ELEMENT, 2);
+    }
+    
+    // <editor-fold defaultstate="collapsed" desc="Private methods">
+    
     private void solveWithReasoner(String theoryAsString, String predicateToSolve) {
         try {
             Theory theory = new Theory(theoryAsString);
@@ -149,4 +162,11 @@ public class MonomythReasonerTest {
             }
         }
     }
+    
+    private void assertNumberOfTropes(WorldDeductions deductions, Trope trope, int expectedNumber) {
+        int numberOfOccurrences = deductions.get(trope)==null? 0: deductions.get(trope).length;
+        assertEquals("Should've found "+expectedNumber+" occurrences of the trope "+trope.name(),
+                expectedNumber, numberOfOccurrences);
+    }
+    //</editor-fold>
 }

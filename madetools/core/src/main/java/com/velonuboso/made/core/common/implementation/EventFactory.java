@@ -32,30 +32,30 @@ import javafx.scene.paint.Color;
  */
 public class EventFactory implements IEventFactory {
 
-    public static final String WORLD_EXISTS = "WorldExist";
-    public static final String INHABITANT_EXISTS = "InhabitantExists";
-    public static final String HAS_FEAR = "HasFear";
-    public static final String HAS_ANTICIPATION = "HasAnticipation";
-    public static final String CAN_IMPROVE_FRIEND_SIMILARITY = "CanImproveFriendSimilarity";
-    public static final String CAN_IMPROVE_SELF_SIMILARITY = "CanImproveSelfSimilarity";
-    public static final String CAN_REDUCE_ENEMY_SIMILARITY = "CanReduceEnemySimilarity";
-    public static final String IS_SAD = "IsSad";
-    public static final String IS_SURPRISED = "IsSurprised";
-    public static final String ERROR = "Error";
-    public static final String MOVES_AWAY = "MovesAway";
-    public static final String MOVES = "Moves";
-    public static final String DISPLACES = "Displaces";
-    public static final String SKIPS_TURN = "SkipsTurn";
-    public static final String STAINS = "Stains";
-    public static final String TRANSFERS_COLOR = "TransferColor";
-    public static final String COLOR_SPOT_DISAPPEARS = "ColorSpotDisappears";
-    public static final String COLOR_SPOT_APPEARS = "ColorSpotAppears";
-    public static final String EXCEPTION = "Exception";
-    public static final String JOY = "Joy";
-    public static final String IS_FRIEND_OF = "IsFriendOf";
-    public static final String IS_ENEMY_OF = "IsEnemyOf";
-    public static final String NATURAL_CHANGE = "NaturalChange";
-    public static final String CHARACTER_APPEARS = "CharacterAppears";
+    public static final String WORLD_EXISTS = "worldExist";
+    public static final String INHABITANT_EXISTS = "inhabitantExists";
+    public static final String HAS_FEAR = "hasFear";
+    public static final String HAS_ANTICIPATION = "hasAnticipation";
+    public static final String CAN_IMPROVE_FRIEND_SIMILARITY = "canImproveFriendSimilarity";
+    public static final String CAN_IMPROVE_SELF_SIMILARITY = "canImproveSelfSimilarity";
+    public static final String CAN_REDUCE_ENEMY_SIMILARITY = "canReduceEnemySimilarity";
+    public static final String IS_SAD = "isSad";
+    public static final String IS_SURPRISED = "isSurprised";
+    public static final String ERROR = "error";
+    public static final String MOVES_AWAY = "movesAway";
+    public static final String MOVES = "moves";
+    public static final String DISPLACES = "displaces";
+    public static final String SKIPS_TURN = "skipsTurn";
+    public static final String STAINS = "stains";
+    public static final String TRANSFERS_COLOR = "transferColor";
+    public static final String COLOR_SPOT_DISAPPEARS = "colorSpotDisappears";
+    public static final String COLOR_SPOT_APPEARS = "colorSpotAppears";
+    public static final String EXCEPTION = "exception";
+    public static final String JOY = "joy";
+    public static final String IS_FRIEND_OF = "isFriendOf";
+    public static final String IS_ENEMY_OF = "isEnemyOf";
+    public static final String NATURAL_CHANGE = "naturalChange";
+    public static final String CHARACTER_APPEARS = "characterAppears";
     
     private int currentDay;
 
@@ -190,7 +190,7 @@ public class EventFactory implements IEventFactory {
         Color background = subject.getBackgroundColor()==null? Color.BLACK: subject.getBackgroundColor();
         CharacterShape shape = subject.getShape() == null? CharacterShape.CIRCLE: subject.getShape();
         
-        return new Event(NATURAL_CHANGE, currentDay, subject.getId(), colorToHexadecimal(background),
+        return new Event(CHARACTER_APPEARS, currentDay, subject.getId(), colorToHexadecimal(background),
                 colorToHexadecimal(background), shape.name());
     }
     
