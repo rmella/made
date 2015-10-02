@@ -40,11 +40,11 @@ public class MonomythReasoner implements IReasoner {
 
     private Prolog engine;
 
-    private static final String PREDICATE_CONFLICT = "conflict";
     private static final String PREDICATE_CHARACTER = "character";
     private static final String PREDICATE_COLOR_SPOT = "colorSpot";
     private static final String PREDICATE_ELEMENT = "element";
-
+    private static final String PREDICATE_CONFLICT = "conflict";
+    
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
         return getWorldDeductionsWithTropesInWhiteList(events, Trope.values());
@@ -100,7 +100,7 @@ public class MonomythReasoner implements IReasoner {
             case ELEMENT:
                 return new Struct(PREDICATE_ELEMENT, new Var());
             case CONFLICT:
-                return new Struct(PREDICATE_CONFLICT, new Var());
+                return new Struct(PREDICATE_CONFLICT, new Var(), new Var());
             default:
                 return new Struct();
         }
@@ -111,7 +111,8 @@ public class MonomythReasoner implements IReasoner {
             PREDICATE_CHARACTER + "(X):-" + EventFactory.CHARACTER_APPEARS + "(_,X,_,_,_)",
             PREDICATE_COLOR_SPOT + "(X):-" + EventFactory.COLOR_SPOT_APPEARS + "(_,X,_)",
             PREDICATE_ELEMENT + "(X):-" + PREDICATE_CHARACTER+"(X)",
-            PREDICATE_ELEMENT + "(X):-" + PREDICATE_COLOR_SPOT+"(X)"
+            PREDICATE_ELEMENT + "(X):-" + PREDICATE_COLOR_SPOT+"(X)",
+            PREDICATE_CONFLICT + "(Winer,Loser):-"+EventFactory.HAS_FEAR+"(Day,Loser,Winner),"+EventFactory.MOVES_AWAY+"(Day,Loser,_)"
         };
         return String.join(".\n", rules) + ".";
     }

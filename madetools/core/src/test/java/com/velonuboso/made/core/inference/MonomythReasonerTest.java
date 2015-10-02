@@ -26,10 +26,14 @@ import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import alice.tuprolog.Theory;
 import alice.tuprolog.UnknownVarException;
+import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.abm.api.IColorSpot;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
+import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.common.api.IEventFactory;
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.Trope;
@@ -41,6 +45,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import org.junit.After;
 import org.junit.Before;
@@ -56,7 +61,8 @@ public class MonomythReasonerTest {
 
     private Prolog engine;
     private ArrayList<SolveInfo> solutions;
-    private ICharacter character;
+    private ICharacter characterPeter;
+    private ICharacter characterArthur;
     private IColorSpot spot;
     private IReasoner reasoner;
     IEventFactory eventFactory;
@@ -68,7 +74,8 @@ public class MonomythReasonerTest {
     public void setUp() {
         engine = new Prolog();
         solutions = new ArrayList<>();
-        initializeCharacter();
+        characterPeter = buildPuppetCharacter(20, Color.ALICEBLUE, Color.YELLOW, CharacterShape.CIRCLE);
+        characterArthur = buildPuppetCharacter(21, Color.BLACK, Color.WHITE, CharacterShape.TRIANGLE);
         initializeSpot();
         reasoner = ObjectFactory.createObject(IReasoner.class);
         eventFactory = ObjectFactory.createObject(IEventFactory.class);
@@ -101,7 +108,7 @@ public class MonomythReasonerTest {
     @Test
     public void UT_ConflictNotFound_whenThereIsNoConflictBetweenElements() {
         Term[] terms = new Term[]{
-            eventFactory.characterAppears(character, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
             eventFactory.colorSpotAppears(spot, 30).toLogicalTerm()
         };
         
@@ -110,13 +117,25 @@ public class MonomythReasonerTest {
     }
 
     @Test
-    public void UT_ElementFound() {
+    public void UT_WhenACharacterAndASpotappear_TwoElementsAreFound() {
         Term[] terms = new Term[]{
-            eventFactory.characterAppears(character, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
             eventFactory.colorSpotAppears(spot, 30).toLogicalTerm()
         };
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
         assertNumberOfTropes(worldDeductions, Trope.ELEMENT, 2);
+    }
+    
+    @Test
+    public void UT_WhenACharacterMovesAway_ConflictAppears() {
+        Term[] terms = new Term[]{
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            eventFactory.hasFear(characterPeter, characterArthur).toLogicalTerm(),
+            eventFactory.movesAway(characterPeter, 22).toLogicalTerm(),
+        };
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
+        assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">
@@ -132,12 +151,13 @@ public class MonomythReasonerTest {
         }
     }
 
-    private void initializeCharacter() {
-        character = ObjectFactory.createObject(ICharacter.class);
-        character.setId(0);
-        character.setForegroundColor(Color.BLACK);
-        character.setBackgroundColor(Color.AQUA);
-        character.setShape(CharacterShape.CIRCLE);
+    private ICharacter buildPuppetCharacter(int id, Color foreground, Color background, CharacterShape shape) {
+        ICharacter character = new PuppetCharacter();
+        character.setId(id);
+        character.setForegroundColor(foreground);
+        character.setBackgroundColor(background);
+        character.setShape(shape);
+        return character;
     }
 
     private void initializeSpot() {
@@ -169,4 +189,98 @@ public class MonomythReasonerTest {
                 expectedNumber, numberOfOccurrences);
     }
     //</editor-fold>
+    
+    
+    public class PuppetCharacter implements ICharacter{
+        int id;
+        Color background;
+        Color foreground;
+        CharacterShape shape;
+        
+        @Override
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public void setEventsWriter(IEventsWriter eventsWriter) {
+        }
+
+        @Override
+        public void setMap(IMap map) {
+        }
+
+        @Override
+        public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
+        }
+
+        @Override
+        public void setShape(CharacterShape shape) {
+            this.shape = shape;
+        }
+
+        @Override
+        public Integer getId() {
+            return id;
+        }
+
+        @Override
+        public IBehaviourTreeNode getBehaviourTree() {
+            return null;
+        }
+
+        @Override
+        public IMap getMap() {
+            return null;
+        }
+
+        @Override
+        public CharacterShape getShape() {
+            return shape;
+        }
+
+        @Override
+        public IEventsWriter getEventsWriter() {
+            return null;
+        }
+
+        @Override
+        public Color getBackgroundColor() {
+            return background;
+        }
+
+        @Override
+        public Color getForegroundColor() {
+            return foreground;
+        }
+
+        @Override
+        public float getColorDifference() {
+            return 0;
+        }
+
+        @Override
+        public AbmConfigurationEntity getAbmConfiguration() {
+            return null;
+        }
+
+        @Override
+        public void setForegroundColor(Color foregroundColor) {
+            this.foreground = foregroundColor;
+        }
+
+        @Override
+        public void setBackgroundColor(Color backgroundColor) {
+            this.background = backgroundColor;
+        }
+
+        @Override
+        public void applyColorChange() {
+        }
+
+        @Override
+        public boolean run() {
+            return true;
+        }
+    }
 }
