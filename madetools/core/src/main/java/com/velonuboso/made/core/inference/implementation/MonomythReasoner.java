@@ -100,21 +100,44 @@ public class MonomythReasoner implements IReasoner {
             case ELEMENT:
                 return new Struct(PREDICATE_ELEMENT, new Var());
             case CONFLICT:
-                return new Struct(PREDICATE_CONFLICT, new Var(), new Var());
+                return new Struct(PREDICATE_CONFLICT,  new Var(), new Var(), new Var());
             default:
                 return new Struct();
         }
     }
 
     private String getMonomythRules() {
-        String rules[] = new String[]{
-            PREDICATE_CHARACTER + "(X):-" + EventFactory.CHARACTER_APPEARS + "(_,X,_,_,_)",
-            PREDICATE_COLOR_SPOT + "(X):-" + EventFactory.COLOR_SPOT_APPEARS + "(_,X,_)",
-            PREDICATE_ELEMENT + "(X):-" + PREDICATE_CHARACTER+"(X)",
-            PREDICATE_ELEMENT + "(X):-" + PREDICATE_COLOR_SPOT+"(X)",
-            PREDICATE_CONFLICT + "(Winer,Loser):-"+EventFactory.HAS_FEAR+"(Day,Loser,Winner),"+EventFactory.MOVES_AWAY+"(Day,Loser,_)"
+        
+        TermRule rules[] = new TermRule[]{
+            new TermRule(
+                    new Struct(PREDICATE_CHARACTER, new Var("X")),
+                    new Struct(EventFactory.CHARACTER_APPEARS, new Var(), new Var("X"), new Var(), new Var(), new Var())
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_COLOR_SPOT, new Var("X")),
+                    new Struct(EventFactory.COLOR_SPOT_APPEARS, new Var(), new Var("X"), new Var())
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ELEMENT, new Var("X")),
+                    new Struct(PREDICATE_CHARACTER, new Var("X"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ELEMENT, new Var("X")),
+                    new Struct(PREDICATE_COLOR_SPOT, new Var("X"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                    new Struct(EventFactory.HAS_FEAR, new Var("Day"), new Var("Loser"), new Var("Winner")),
+                    new Struct(EventFactory.MOVES_AWAY,  new Var("Day"),  new Var("Loser"),  new Var())
+            )
         };
-        return String.join(".\n", rules) + ".";
+        
+        String[] rulesAsStringArray = Arrays
+                .stream(rules)
+                .map(rule -> rule.toString()+".")
+                .toArray(String[]::new);
+        return String.join("\n", rulesAsStringArray);
     }
     //</editor-fold>
 }
+
