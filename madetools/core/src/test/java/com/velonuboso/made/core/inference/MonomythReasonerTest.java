@@ -138,6 +138,17 @@ public class MonomythReasonerTest {
         assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
     }
     
+    @Test
+    public void UT_WhenACharacterDisplacesOther_ConflictAppears() {
+        Term[] terms = new Term[]{
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            eventFactory.displaces(characterArthur, characterPeter, 22).toLogicalTerm()
+        };
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
+        assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     
     private void solveWithReasoner(String theoryAsString, String predicateToSolve) {
