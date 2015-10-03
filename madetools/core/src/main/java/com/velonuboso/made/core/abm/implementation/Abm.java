@@ -101,6 +101,7 @@ public class Abm implements IAbm {
         int numberOfDays = helper.getWorldAbmConfigurationHelper().getNumberOfDays();
         for (int day = 0; day < numberOfDays; day++) {
             setDayToEventFactory(day);
+            logNewDay();
             placeSpotsInMap(map);
             runCharactersInMap(map);
             removeSpotsFromMap();
@@ -110,6 +111,12 @@ public class Abm implements IAbm {
     private void setDayToEventFactory(int day) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         factory.setDay(day);
+    }
+    
+    private void logNewDay(){
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        IEvent newDayevent = factory.newDay();
+        eventsWriter.add(newDayevent);
     }
 
     private void writeExceptionToLog(AbmConfigurationEntity abmConfiguration, Exception exception) {

@@ -37,7 +37,7 @@ public interface IEventFactory {
     public void setDay(int day);
     IEvent inhabitantExists(ICharacter inhabitant);
     IEvent worldExists(IWorld world);
-    
+    IEvent newDay(); 
     IEvent hasFear(final ICharacter subject, final ICharacter enemy);
     IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot);
     IEvent canImproveFriendSimilarity(ICharacter subject, ICharacter friend);

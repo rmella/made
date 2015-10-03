@@ -56,6 +56,7 @@ public class EventFactory implements IEventFactory {
     public static final String IS_ENEMY_OF = "isEnemyOf";
     public static final String NATURAL_CHANGE = "naturalChange";
     public static final String CHARACTER_APPEARS = "characterAppears";
+    public static final String NEW_DAY = "newDay";
     
     private int currentDay;
 
@@ -66,6 +67,11 @@ public class EventFactory implements IEventFactory {
     @Override
     public void setDay(int day) {
         currentDay = day;
+    }
+    
+    @Override
+    public IEvent newDay() {
+        return new Event(NEW_DAY, currentDay);
     }
     
     @Override

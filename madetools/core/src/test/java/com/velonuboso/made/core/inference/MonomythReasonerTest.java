@@ -192,6 +192,26 @@ public class MonomythReasonerTest {
         assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 2);
     }
     
+    @Test
+    public void UT_WhenACharacterHelpsLessFriendsThanOther_IsItMoreEvil() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.transfersColor(characterPeter, characterMaggie).toLogicalTerm()
+        };
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getBaseElements());
+        assertNumberOfTropes(worldDeductions, Trope.MORE_EVIL, 2);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     
     private void solveWithReasoner(String theoryAsString, String predicateToSolve) {
@@ -232,6 +252,11 @@ public class MonomythReasonerTest {
     }
     
     private void assertNumberOfTropes(WorldDeductions deductions, Trope trope, int expectedNumber) {
+        System.out.println("Deductions for trope "+trope.name()+":");
+        if (deductions.get(trope)!=null){
+            Arrays.stream(deductions.get(trope)).forEach(deduction -> System.out.println(deduction.toString()));
+        }
+        
         int numberOfOccurrences = deductions.get(trope)==null? 0: deductions.get(trope).length;
         assertEquals("Should've found "+expectedNumber+" occurrences of the trope "+trope.name(),
                 expectedNumber, numberOfOccurrences);
