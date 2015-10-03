@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +64,8 @@ public class MonomythReasonerTest {
     private ArrayList<SolveInfo> solutions;
     private ICharacter characterPeter;
     private ICharacter characterArthur;
-    private IColorSpot spot;
+    private IColorSpot spotEmerald;
+    private IColorSpot spotRuby;
     private IReasoner reasoner;
     IEventFactory eventFactory;
     
@@ -76,7 +78,8 @@ public class MonomythReasonerTest {
         solutions = new ArrayList<>();
         characterPeter = buildPuppetCharacter(20, Color.ALICEBLUE, Color.YELLOW, CharacterShape.CIRCLE);
         characterArthur = buildPuppetCharacter(21, Color.BLACK, Color.WHITE, CharacterShape.TRIANGLE);
-        initializeSpot();
+        spotEmerald = buildPuppetSpot(100, Color.GREEN);
+        spotRuby = buildPuppetSpot(100, Color.RED);
         reasoner = ObjectFactory.createObject(IReasoner.class);
         eventFactory = ObjectFactory.createObject(IEventFactory.class);
     }
@@ -109,7 +112,7 @@ public class MonomythReasonerTest {
     public void UT_ConflictNotFound_whenThereIsNoConflictBetweenElements() {
         Term[] terms = new Term[]{
             eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
-            eventFactory.colorSpotAppears(spot, 30).toLogicalTerm()
+            eventFactory.colorSpotAppears(spotEmerald, 30).toLogicalTerm()
         };
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, new Trope[]{Trope.CONFLICT});
@@ -120,7 +123,7 @@ public class MonomythReasonerTest {
     public void UT_WhenACharacterAndASpotappear_TwoElementsAreFound() {
         Term[] terms = new Term[]{
             eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
-            eventFactory.colorSpotAppears(spot, 30).toLogicalTerm()
+            eventFactory.colorSpotAppears(spotEmerald, 30).toLogicalTerm()
         };
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
         assertNumberOfTropes(worldDeductions, Trope.ELEMENT, 2);
@@ -149,6 +152,29 @@ public class MonomythReasonerTest {
         assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
     }
     
+    @Test
+    public void UT_WhenACharacterCannotStainWithSpotButOtherCan_ConflictAppears() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            eventFactory.colorSpotAppears(spotEmerald, 30).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.canImproveSelfSimilarity(characterPeter, spotEmerald).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.stains(characterArthur, spotEmerald).toLogicalTerm(),
+        };
+        
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getBaseElements());
+        assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     
     private void solveWithReasoner(String theoryAsString, String predicateToSolve) {
@@ -169,12 +195,6 @@ public class MonomythReasonerTest {
         character.setBackgroundColor(background);
         character.setShape(shape);
         return character;
-    }
-
-    private void initializeSpot() {
-        spot = ObjectFactory.createObject(IColorSpot.class);
-        spot.setId(100);
-        spot.setColor(Color.AZURE);
     }
     
     private void InternalSolve(SolveInfo solveInfo) throws NoMoreSolutionException, NoSolutionException {
@@ -199,99 +219,20 @@ public class MonomythReasonerTest {
         assertEquals("Should've found "+expectedNumber+" occurrences of the trope "+trope.name(),
                 expectedNumber, numberOfOccurrences);
     }
-    //</editor-fold>
     
-    
-    public class PuppetCharacter implements ICharacter{
-        int id;
-        Color background;
-        Color foreground;
-        CharacterShape shape;
-        
-        @Override
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        @Override
-        public void setEventsWriter(IEventsWriter eventsWriter) {
-        }
-
-        @Override
-        public void setMap(IMap map) {
-        }
-
-        @Override
-        public void setAbmConfiguration(AbmConfigurationEntity abmConfiguration) {
-        }
-
-        @Override
-        public void setShape(CharacterShape shape) {
-            this.shape = shape;
-        }
-
-        @Override
-        public Integer getId() {
-            return id;
-        }
-
-        @Override
-        public IBehaviourTreeNode getBehaviourTree() {
-            return null;
-        }
-
-        @Override
-        public IMap getMap() {
-            return null;
-        }
-
-        @Override
-        public CharacterShape getShape() {
-            return shape;
-        }
-
-        @Override
-        public IEventsWriter getEventsWriter() {
-            return null;
-        }
-
-        @Override
-        public Color getBackgroundColor() {
-            return background;
-        }
-
-        @Override
-        public Color getForegroundColor() {
-            return foreground;
-        }
-
-        @Override
-        public float getColorDifference() {
-            return 0;
-        }
-
-        @Override
-        public AbmConfigurationEntity getAbmConfiguration() {
-            return null;
-        }
-
-        @Override
-        public void setForegroundColor(Color foregroundColor) {
-            this.foreground = foregroundColor;
-        }
-
-        @Override
-        public void setBackgroundColor(Color backgroundColor) {
-            this.background = backgroundColor;
-        }
-
-        @Override
-        public void applyColorChange() {
-        }
-
-        @Override
-        public boolean run() {
-            return true;
-        }
+    private IColorSpot buildPuppetSpot(int id, Color color) {
+        IColorSpot spot = new PuppetColorSpot();
+        spot.setId(id);
+        spot.setColor(color);
+        return spot;
     }
+    
+    private Term[] addArraysToguether(Term[] ... arrays) {
+        ArrayList<Term> allTerms = new ArrayList<>();
+        Arrays.stream(arrays).forEach((terms) -> allTerms.addAll(Arrays.asList(terms)));
+        return allTerms.toArray(new Term[0]);
+    }
+    
+    //</editor-fold>
+
 }
