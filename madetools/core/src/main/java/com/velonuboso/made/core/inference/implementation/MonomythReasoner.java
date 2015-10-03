@@ -44,6 +44,7 @@ public class MonomythReasoner implements IReasoner {
     private static final String PREDICATE_COLOR_SPOT = "colorSpot";
     private static final String PREDICATE_ELEMENT = "element";
     private static final String PREDICATE_CONFLICT = "conflict";
+    private static final String PREDICATE_REAL_FRIENDS = "realFriends";
     
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
@@ -142,10 +143,14 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(">=", new Var("DayWinnerStains"), new Var("DayLoserWantedSpot"))
             ),
             new TermRule(
+                    new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("B"), new Var("A"))
+            ),
+            new TermRule(
                     new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
                     new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Friend"), new Var()),
-                    new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("Loser"), new Var("Friend")),
-                    new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("Friend"), new Var("Loser"))
+                    new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("Loser"), new Var("Friend"))
             )
         };
         
