@@ -49,7 +49,7 @@ public class MonomythReasoner implements IReasoner {
     public WorldDeductions getWorldDeductions(Term[] events) {
         return getWorldDeductionsWithTropesInWhiteList(events, Trope.values());
     }
-
+    
     @Override
     public WorldDeductions getWorldDeductionsWithTropesInWhiteList(Term[] events, Trope[] tropesWhiteList) {
         WorldDeductions deductions = new WorldDeductions();
@@ -140,6 +140,12 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(EventFactory.STAINS, new Var("DayWinnerStains"), new Var("Winner"), new Var("Spot")),
                     new Struct("not", new Struct(EventFactory.STAINS, new Var(), new Var("Loser"), new Var("Spot"))),
                     new Struct(">=", new Var("DayWinnerStains"), new Var("DayLoserWantedSpot"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                    new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Friend"), new Var()),
+                    new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("Loser"), new Var("Friend")),
+                    new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("Friend"), new Var("Loser"))
             )
         };
         

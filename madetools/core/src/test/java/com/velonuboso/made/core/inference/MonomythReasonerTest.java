@@ -64,6 +64,7 @@ public class MonomythReasonerTest {
     private ArrayList<SolveInfo> solutions;
     private ICharacter characterPeter;
     private ICharacter characterArthur;
+    private ICharacter characterMaggie;
     private IColorSpot spotEmerald;
     private IColorSpot spotRuby;
     private IReasoner reasoner;
@@ -78,6 +79,7 @@ public class MonomythReasonerTest {
         solutions = new ArrayList<>();
         characterPeter = buildPuppetCharacter(20, Color.ALICEBLUE, Color.YELLOW, CharacterShape.CIRCLE);
         characterArthur = buildPuppetCharacter(21, Color.BLACK, Color.WHITE, CharacterShape.TRIANGLE);
+        characterMaggie = buildPuppetCharacter(23, Color.AZURE, Color.DARKSALMON, CharacterShape.CIRCLE);
         spotEmerald = buildPuppetSpot(100, Color.GREEN);
         spotRuby = buildPuppetSpot(100, Color.RED);
         reasoner = ObjectFactory.createObject(IReasoner.class);
@@ -173,6 +175,21 @@ public class MonomythReasonerTest {
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getBaseElements());
         assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
+    }
+    
+    @Test
+    public void UT_WhenTwoCharactersAreFriendsAndOtherPieceDisplacesOne_BothHaveAConflictWithIt() {
+        Term[] terms = new Term[]{
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 25).toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isFriendOf(characterMaggie, characterPeter).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            eventFactory.displaces(characterArthur, characterPeter, 22).toLogicalTerm()
+        };
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
+        assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 2);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">
