@@ -44,8 +44,9 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_CHARACTER = "character";
     public static final String PREDICATE_COLOR_SPOT = "colorSpot";
     public static final String PREDICATE_ELEMENT = "element";
-    public static final String PREDICATE_CONFLICT = "conflict";
     public static final String PREDICATE_REAL_FRIENDS = "realFriends";
+    public static final String PREDICATE_REAL_ENEMIES = "realEnemies";
+    public static final String PREDICATE_CONFLICT = "conflict";
     public static final String PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY = "transferColorBeforeMaxday";
     public static final String PREDICATE_HELPED_COUNTER = "helpedCounter";
     public static final String PREDICATE_MORE_EVIL = "moreEvil";
@@ -149,30 +150,39 @@ public class MonomythReasoner implements IReasoner {
                 new Struct(PREDICATE_COLOR_SPOT, new Var("X"))
             ),
             new TermRule(
-                new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
-                new Struct(EventFactory.HAS_FEAR, new Var("Day"), new Var("Loser"), new Var("Winner")),
-                new Struct(EventFactory.MOVES_AWAY,  new Var("Day"),  new Var("Loser"),  new Var())
+                new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B")),
+                new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("B")),
+                new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("B"), new Var("A"))
+            ),
+            new TermRule(
+                new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("A"), new Var("B")),
+                new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("A"), new Var("B")),
+                new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("B"), new Var("A"))
             ),
             new TermRule(
                 new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
-                new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var())
+                new Struct(EventFactory.HAS_FEAR, new Var("Day"), new Var("Loser"), new Var("Winner")),
+                new Struct(EventFactory.MOVES_AWAY,  new Var("Day"),  new Var("Loser"),  new Var()),
+                new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser"))
+            ),
+            new TermRule(
+                new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var()),
+                new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser"))
             ),
             new TermRule(
                 new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
                 new Struct(EventFactory.CAN_IMPROVE_SELF_SIMILARITY, new Var("DayLoserWantedSpot"), new Var("Loser"), new Var("Spot")),
                 new Struct(EventFactory.STAINS, new Var("DayWinnerStains"), new Var("Winner"), new Var("Spot")),
                 new Struct("not", new Struct(EventFactory.STAINS, new Var(), new Var("Loser"), new Var("Spot"))),
-                new Struct(">=", new Var("DayWinnerStains"), new Var("DayLoserWantedSpot"))
-            ),
-            new TermRule(
-                new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B")),
-                new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("B")),
-                new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("B"), new Var("A"))
+                new Struct(">=", new Var("DayWinnerStains"), new Var("DayLoserWantedSpot")),
+                new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser"))
             ),
             new TermRule(
                 new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
                 new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Friend"), new Var()),
-                new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("Loser"), new Var("Friend"))
+                new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("Loser"), new Var("Friend")),
+                new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser"))
             ),
             new TermRule(
                 new Struct(PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY, new Var("MaxDay"), new Var("TransferDay"), new Var("Subject")),

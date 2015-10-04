@@ -151,6 +151,8 @@ public class MonomythReasonerTest {
             eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
             eventFactory.hasFear(characterPeter, characterArthur).toLogicalTerm(),
             eventFactory.movesAway(characterPeter, 22).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm()
         };
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
         assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
@@ -161,7 +163,9 @@ public class MonomythReasonerTest {
         Term[] terms = new Term[]{
             eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
             eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
-            eventFactory.displaces(characterArthur, characterPeter, 22).toLogicalTerm()
+            eventFactory.displaces(characterArthur, characterPeter, 22).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm()
         };
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
         assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
@@ -182,6 +186,8 @@ public class MonomythReasonerTest {
         eventFactory.setDay(2);
         Term[] termsDay2 = new Term[]{
             eventFactory.stains(characterArthur, spotEmerald).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm()
         };
         
         Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
@@ -195,14 +201,18 @@ public class MonomythReasonerTest {
         Term[] terms = new Term[]{
             eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
             eventFactory.characterAppears(characterMaggie, 25).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            
             eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
             eventFactory.isFriendOf(characterMaggie, characterPeter).toLogicalTerm(),
-            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterMaggie).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterMaggie, characterArthur).toLogicalTerm(),
+            
             eventFactory.displaces(characterArthur, characterPeter, 22).toLogicalTerm()
         };
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, Trope.getBaseElements());
-        assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 2);
+        assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 1);
     }
     
     @Test
@@ -238,13 +248,17 @@ public class MonomythReasonerTest {
         Term[] termsDay1 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
             eventFactory.displaces(characterArthur, characterPeter, 45).toLogicalTerm(),
-            eventFactory.transfersColor(characterPeter, characterMaggie).toLogicalTerm()
+            eventFactory.transfersColor(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm()
         };
         eventFactory.setDay(2);
         Term[] termsDay2 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
             eventFactory.hasFear(characterArthur, characterPeter).toLogicalTerm(),
-            eventFactory.movesAway(characterArthur, 46).toLogicalTerm()
+            eventFactory.movesAway(characterArthur, 46).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm()
         };
         Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
         
@@ -313,7 +327,9 @@ public class MonomythReasonerTest {
         eventFactory.setDay(1);
         Term[] termsDay1 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
-            eventFactory.displaces(characterMaggie, characterPeter, 38).toLogicalTerm()
+            eventFactory.displaces(characterMaggie, characterPeter, 38).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterMaggie, characterPeter).toLogicalTerm()
         };
         Term[] extraTerms = new Term[]{
             new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
@@ -339,7 +355,9 @@ public class MonomythReasonerTest {
         Term[] termsDay1 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
             eventFactory.hasFear(characterPeter, characterMaggie).toLogicalTerm(),
-            eventFactory.movesAway(characterPeter, 38).toLogicalTerm()
+            eventFactory.movesAway(characterPeter, 38).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterMaggie, characterPeter).toLogicalTerm()
         };
         Term[] extraTerms = new Term[]{
             new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
