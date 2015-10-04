@@ -54,6 +54,7 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_SHADOW = "shadow";
     public static final String PREDICATE_ALLIED = "allied";
     public static final String PREDICATE_BETWEEN = "between";
+    public static final String PREDICATE_GUARDIAN = "guardian";
     
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
@@ -121,6 +122,8 @@ public class MonomythReasoner implements IReasoner {
                 return new Struct(PREDICATE_SHADOW, new Var("DayBegin"), new Var("DayEnd"), new Var("Shadow"));
             case ALLIED:
                 return new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied"));
+            case GUARDIAN:
+                return new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Guardian"));
             default:
                 return new Struct();
         }
@@ -227,6 +230,18 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied")),
                     new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
                         new Var("Allied"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Guardian")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(EventFactory.DISPLACES, new Var("DayHappened"), new Var("Guardian"), new Var("Hero"), new Var()),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Guardian")),
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Guardian"))
             )
         };
         
