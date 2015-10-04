@@ -253,6 +253,30 @@ public class MonomythReasonerTest {
     }
     
     @Test
+    public void UT_WhenTheJourneyIsFound_ThereIsAHero () {
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new Int(0), new Int(2), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId()))
+        };
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(extraTerms, Trope.getTropesInFromMonomyth());
+        assertNumberOfTropes(worldDeductions, Trope.HERO, 1);
+    }
+    
+    @Test
+    public void UT_WhenTheJourneyIsFound_ThereIsAShadow () {
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new Int(0), new Int(2), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId()))
+        };
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(extraTerms, Trope.getTropesInFromMonomyth());
+        assertNumberOfTropes(worldDeductions, Trope.SHADOW, 1);
+    }
+    
+    @Test
     public void UT_WhenAnSomeoneGivesATurnToTheHeroAlongAJourney_HeIsAnAllied() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{

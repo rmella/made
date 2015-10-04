@@ -50,6 +50,8 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_HELPED_COUNTER = "helpedCounter";
     public static final String PREDICATE_MORE_EVIL = "moreEvil";
     public static final String PREDICATE_JOURNEY = "journey";
+    public static final String PREDICATE_HERO = "hero";
+    public static final String PREDICATE_SHADOW = "shadow";
     public static final String PREDICATE_ALLIED = "allied";
     public static final String PREDICATE_BETWEEN = "between";
     
@@ -108,13 +110,17 @@ public class MonomythReasoner implements IReasoner {
             case ELEMENT:
                 return new Struct(PREDICATE_ELEMENT, new Var());
             case CONFLICT:
-                return new Struct(PREDICATE_CONFLICT,  new Var(), new Var(), new Var());
+                return new Struct(PREDICATE_CONFLICT,  new Var("Day"), new Var("Winer"), new Var("Loser"));
             case MORE_EVIL:
-                return new Struct(PREDICATE_MORE_EVIL, new Var(), new Var(), new Var());
+                return new Struct(PREDICATE_MORE_EVIL, new Var("Day"), new Var("Evil"), new Var("Good"));
             case JOURNEY:
-                return new Struct(PREDICATE_JOURNEY, new Var(), new Var(), new Var(), new Var());
+                return new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"));
+            case HERO:
+                return new Struct(PREDICATE_HERO, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"));
+            case SHADOW:
+                return new Struct(PREDICATE_SHADOW, new Var("DayBegin"), new Var("DayEnd"), new Var("Shadow"));
             case ALLIED:
-                return new Struct(PREDICATE_ALLIED, new Var(), new Var(), new Var(), new Var(), new Var());
+                return new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied"));
             default:
                 return new Struct();
         }
@@ -198,6 +204,14 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(">", new Var("DayEnd"), new Var("DayBegin"))
             ),
             new TermRule(
+                    new Struct(PREDICATE_HERO, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero")), 
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_SHADOW, new Var("DayBegin"), new Var("DayEnd"), new Var("Shadow")), 
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"))
+            ),
+            new TermRule(
                     new Struct(PREDICATE_BETWEEN, new Var("Start"), new Var("NumberBetween"), new Var("End")),
                     new Struct(">=", new Var("NumberBetween"), new Var("Start")),
                     new Struct(">=", new Var("End"), new Var("NumberBetween"))
@@ -208,6 +222,11 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
                     new Struct(EventFactory.GIVES_TURN, new Var("DayHappened"), new Var("Allied"), new Var("Hero")),
                     new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied")),
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Allied"))
             )
         };
         
