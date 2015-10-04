@@ -57,6 +57,7 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_BETWEEN = "between";
     public static final String PREDICATE_GUARDIAN = "guardian";
     public static final String PREDICATE_MENTOR = "mentor";
+    public static final String PREDICATE_SHAPESHIFTER = "shapeshifter";
     public static final String PREDICATE_ENEMY_BETWEEN = "enemyBetween";
     
     @Override
@@ -129,6 +130,8 @@ public class MonomythReasoner implements IReasoner {
                 return new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Guardian"));
             case MENTOR:
                 return new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor"));
+            case SHAPESHIFTER:
+                return new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter"));
             default:
                 return new Struct();
         }
@@ -276,7 +279,19 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor")),
                     new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
                         new Var("Mentor"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Shapeshifter")),
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter")),
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter")),
+                    new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Shapeshifter"))
             )
+                
         };
         
         String[] rulesAsStringArray = Arrays

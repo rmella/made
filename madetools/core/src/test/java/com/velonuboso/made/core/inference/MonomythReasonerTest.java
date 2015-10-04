@@ -371,32 +371,31 @@ public class MonomythReasonerTest {
     }
     
     @Test
-    public void UT_WhenAnSomeoneIsAlwaysFriendOfTheHeroAlongAJourneyAndTransfersColorToHim_HeIsAMentor() {
+    public void UT_WhenAnSomeoneIsAnAlliedButAlsoAGuardian_HeIsAShapeShifter() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
             eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
             eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
-            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
-            eventFactory.isFriendOf(characterMaggie, characterPeter).toLogicalTerm(),
-            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm()
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm()
         };
         eventFactory.setDay(1);
         Term[] termsDay1 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
-            eventFactory.transfersColor(characterMaggie, characterPeter).toLogicalTerm(),
-            eventFactory.isFriendOf(characterMaggie, characterPeter).toLogicalTerm(),
-            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm()
+            eventFactory.givesTurn(characterMaggie, characterPeter).toLogicalTerm(),
+            eventFactory.displaces(characterMaggie, characterPeter, 38).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterMaggie, characterPeter).toLogicalTerm()
         };
         Term[] extraTerms = new Term[]{
             new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
-                    new Int(0), new Int(1), 
+                    new Int(0), new Int(2), 
                     new Int(characterPeter.getId()), new Int(characterArthur.getId()))
         };
         Term allTerms[] = addArraysToguether(termsDay0, termsDay1, extraTerms);
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
-        assertNumberOfTropes(worldDeductions, Trope.MENTOR, 1);
+        assertNumberOfTropes(worldDeductions, Trope.SHAPESHIFTER, 1);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">
