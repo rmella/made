@@ -212,6 +212,33 @@ public class MonomythReasonerTest {
         assertNumberOfTropes(worldDeductions, Trope.MORE_EVIL, 2);
     }
     
+    @Test
+    public void UT_WhenACharacterLosesAConflictWithAMoreEvilCharacterAndHeWinsLater_IsHasLivedAJourney() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.displaces(characterArthur, characterPeter, 45).toLogicalTerm(),
+            eventFactory.transfersColor(characterPeter, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.hasFear(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.movesAway(characterArthur, 46).toLogicalTerm()
+        };
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
+        assertNumberOfTropes(worldDeductions, Trope.JOURNEY, 1);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     
     private void solveWithReasoner(String theoryAsString, String predicateToSolve) {

@@ -50,6 +50,8 @@ public class MonomythReasoner implements IReasoner {
     private static final String PREDICATE_HELPED_COUNTER = "helpedCounter";
     private static final String PREDICATE_MORE_EVIL = "moreEvil";
     
+    private static final String PREDICATE_JOURNEY = "journey";
+    
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
         return getWorldDeductionsWithTropesInWhiteList(events, Trope.values());
@@ -108,6 +110,8 @@ public class MonomythReasoner implements IReasoner {
                 return new Struct(PREDICATE_CONFLICT,  new Var(), new Var(), new Var());
             case MORE_EVIL:
                 return new Struct(PREDICATE_MORE_EVIL, new Var(), new Var(), new Var());
+            case JOURNEY:
+                return new Struct(PREDICATE_JOURNEY, new Var(), new Var(), new Var(), new Var());
             default:
                 return new Struct();
         }
@@ -182,6 +186,12 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Evil"), new Var("EvilCounter")),
                     new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"),  new Var("Good"), new Var("GoodCounter")),
                     new Struct("<", new Var("EvilCounter"), new Var("GoodCounter"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")), 
+                    new Struct(PREDICATE_CONFLICT, new Var("DayBegin"), new Var("Shadow"), new Var("Hero")),
+                    new Struct(PREDICATE_CONFLICT, new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(">", new Var("DayEnd"), new Var("DayBegin"))
             )
         };
         
