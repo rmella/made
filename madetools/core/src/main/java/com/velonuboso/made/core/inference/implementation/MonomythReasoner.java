@@ -56,6 +56,8 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_ALLIED = "allied";
     public static final String PREDICATE_BETWEEN = "between";
     public static final String PREDICATE_GUARDIAN = "guardian";
+    public static final String PREDICATE_MENTOR = "mentor";
+    public static final String PREDICATE_ENEMY_BETWEEN = "enemyBetween";
     
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
@@ -125,6 +127,8 @@ public class MonomythReasoner implements IReasoner {
                 return new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied"));
             case GUARDIAN:
                 return new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Guardian"));
+            case MENTOR:
+                return new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor"));
             default:
                 return new Struct();
         }
@@ -133,6 +137,11 @@ public class MonomythReasoner implements IReasoner {
     public String getMonomythRules() {
         
         TermRule rules[] = new TermRule[]{
+            new TermRule(
+                    new Struct(PREDICATE_BETWEEN, new Var("Start"), new Var("NumberBetween"), new Var("End")),
+                    new Struct(">=", new Var("NumberBetween"), new Var("Start")),
+                    new Struct(">=", new Var("End"), new Var("NumberBetween"))
+            ),
             new TermRule(
                 new Struct(PREDICATE_CHARACTER, new Var("X")),
                 new Struct(EventFactory.CHARACTER_APPEARS, new Var(), new Var("X"), new Var(), new Var(), new Var())
@@ -225,11 +234,6 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"))
             ),
             new TermRule(
-                    new Struct(PREDICATE_BETWEEN, new Var("Start"), new Var("NumberBetween"), new Var("End")),
-                    new Struct(">=", new Var("NumberBetween"), new Var("Start")),
-                    new Struct(">=", new Var("End"), new Var("NumberBetween"))
-            ),
-            new TermRule(
                     new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
                         new Var("Allied")),
                     new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
@@ -252,6 +256,26 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Guardian")),
                     new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
                         new Var("Guardian"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Enemy")),
+                    new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("Subject"), new Var("Enemy")),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("Day"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Mentor")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(EventFactory.TRANSFERS_COLOR, new Var("DayHappened"), new Var("Mentor"), new Var("Hero")),
+                    new Struct("not", 
+                            new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Enemy"))
+                    ),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor")),
+                    new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Mentor"))
             )
         };
         

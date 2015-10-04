@@ -370,6 +370,35 @@ public class MonomythReasonerTest {
         assertNumberOfTropes(worldDeductions, Trope.GUARDIAN, 1);
     }
     
+    @Test
+    public void UT_WhenAnSomeoneIsAlwaysFriendOfTheHeroAlongAJourneyAndTransfersColorToHim_HeIsAMentor() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            eventFactory.isFriendOf(characterMaggie, characterPeter).toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.transfersColor(characterMaggie, characterPeter).toLogicalTerm(),
+            eventFactory.isFriendOf(characterMaggie, characterPeter).toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm()
+        };
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new Int(0), new Int(1), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId()))
+        };
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1, extraTerms);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
+        assertNumberOfTropes(worldDeductions, Trope.MENTOR, 1);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     
     private void solveWithReasoner(String theoryAsString, String predicateToSolve) {
