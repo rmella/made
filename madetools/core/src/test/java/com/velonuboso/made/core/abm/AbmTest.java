@@ -65,7 +65,7 @@ public class AbmTest {
    
     @Test
     public void testRun_many_characters() {
-        int size = 49;
+        int size = 52;
         float[] chromosome = new float[size];
         
         chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
@@ -80,12 +80,17 @@ public class AbmTest {
         
         abm.run(entity);
         
-        //System.out.println(abm.getEventsLog().getLog());
+        /*
+        for(Term term : abm.getEventsLog().getLogicalTerms()){
+            System.out.println(term);
+        }
+        System.out.println(abm.getEventsLog().getLog());
+        */
     }
     
     @Test
     public void testRun_one_character() {
-        int size = 49;
+        int size = 52;
         float[] chromosome = new float[size];
         
         chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
@@ -100,11 +105,12 @@ public class AbmTest {
         
         abm.run(entity);
         
-        
+        /*
         for(Term term : abm.getEventsLog().getLogicalTerms()){
             System.out.println(term);
         }
-        //System.out.println(abm.getEventsLog().getLog());
+        System.out.println(abm.getEventsLog().getLog());
+        */
     }
 
     

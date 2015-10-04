@@ -28,6 +28,7 @@ import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimila
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
 import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
 import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
+import com.velonuboso.made.core.abm.api.condition.IConditionTrust;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.abm.implementation.ColorSpot;
@@ -57,7 +58,7 @@ public class ConditionsTest {
 
     @Before
     public void setUp() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0, 0, 0});
         fakeEventsWriter = mock(IEventsWriter.class);
         map = ObjectFactory.createObject(IMap.class);
         map.initialize(10, 10);
@@ -143,6 +144,28 @@ public class ConditionsTest {
     }
 
     //</editor-fold>
+    // <editor-fold desc="Trust" defaultstate="collapsed">
+    @Test
+    public void UT_ConditionTrust__when_two_pieces_in_map_one_trusts_in_the_other() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 1);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionTrust.class));
+
+        assertTrue("Should've called the defaultActionNode since there is a piece with maximum affinity", conditionSatisfied);
+    }
+
+    @Test
+    public void UT_ConditionTrust__one_piece_is_in_the_it_trusts_no_one() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
+
+        SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionTrust.class));
+
+        assertFalse("Shouldn't have called the defaultActionNode since there is no piece with maximum affinity",
+                conditionSatisfied);
+    }
+    //</editor-fold>
+
     // <editor-fold desc="Can improve friend's similarity" defaultstate="collapsed">
     @Test
     public void UT_ConditionCanImproveFriendsSimilarity__when_piece_could_exchange_colors_with_a_friend_and_both_would_benefit_it_can_improve_friend_similarity() {
@@ -264,7 +287,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_over_the_threshold_it_doesnt_have_sadness() {
         float JOY_THRESHOLD = 0.1f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0, 0.5f});
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSadness.class));
 
@@ -274,7 +297,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_below_the_threshold_it_has_sadness() {
         float JOY_THRESHOLD = 0.9f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, JOY_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0, 0.5f});
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSadness.class));
 
@@ -286,7 +309,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_reduced_a_quantity_below_surprise_threshold_it_does_not_have_surprise() {
         float SURPRISE_THRESHOLD = 0.9f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0.5f});
 
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
@@ -301,7 +324,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_reduced_a_quantity_over_surprise_threshold_it_has_surprise() {
         float SURPRISE_THRESHOLD = 0.3f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0.5f});
 
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
@@ -316,7 +339,7 @@ public class ConditionsTest {
     @Test
     public void UT_ConditionSadness__when_piece_has_a_joy_level_and_the_next_turn_it_is_increased_it_cannot_have_surprise() {
         float SURPRISE_THRESHOLD = 0.0f;
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0.5f});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{1, 0, 0, 0, 0.5f, SURPRISE_THRESHOLD, 0, 0, 0, 0, 0, 0, 0, 0.5f});
 
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.GRAY, 0, 0);
         SetConditionAndRun(mainPiece, ObjectFactory.createObject(IConditionSurprise.class));
@@ -418,7 +441,7 @@ public class ConditionsTest {
 
     @Test
     public void UT_ConditionSadness__when_piece_is_sad_it_writes_to_the_log() {
-        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0});
+        abmConfigurationEntity = new AbmConfigurationEntity(new float[]{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0});
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.WHITE, Color.BLACK, 0, 0);
         buildSpot(2, Color.WHITE, 5, 5);
         checkLogWhenConditionIsRun(mainPiece, IConditionSadness.class, EventFactory.IS_SAD);
@@ -432,7 +455,15 @@ public class ConditionsTest {
         checkLogWhenConditionIsRun(mainPiece, IConditionSurprise.class, EventFactory.IS_SURPRISED);
     }
 
+    @Test
+    public void UT_ConditionSadness__when_piece_trusts_it_writes_to_the_log() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 0);
+        buildPiece(1, CharacterShape.CIRCLE, Color.GREEN, Color.BLACK, 0, 1);
+
+        checkLogWhenConditionIsRun(mainPiece, IConditionTrust.class, EventFactory.TRUSTS);
+    }
     // </editor-fold>
+
     // <editor-fold desc="Private methods" defaultstate="collapsed">
     private void checkBlackboardWhenConditionIsRun(Piece targetPiece, Class conditionType, String propertyName) {
         checkBlackboardWhenConditionIsRun(targetPiece, conditionType, propertyName, 1);

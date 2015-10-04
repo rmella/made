@@ -29,6 +29,8 @@ import com.velonuboso.made.core.abm.api.condition.IConditionCanReduceEnemySimila
 import com.velonuboso.made.core.abm.api.condition.IConditionFear;
 import com.velonuboso.made.core.abm.api.condition.IConditionSadness;
 import com.velonuboso.made.core.abm.api.condition.IConditionSurprise;
+import com.velonuboso.made.core.abm.api.condition.IConditionTrust;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyGiveTurn;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
 import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
@@ -50,7 +52,6 @@ import javafx.scene.paint.Color;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class Piece implements ICharacter {
-
     private Integer id;
     private IEventsWriter eventsWriter;
     private IBehaviourTreeNode rootNode;
@@ -207,6 +208,7 @@ public class Piece implements ICharacter {
         addChildForSurpriseBehaviour(rootNode);
         addChildForFearBehaviour(rootNode);
         addChildForAnticipationBehaviour(rootNode);
+        addChildForTrustBehavior(rootNode);
         addChildForSadnessBehaviour(rootNode);
         addChildForFallbackBehaviour(rootNode);
     }
@@ -256,6 +258,17 @@ public class Piece implements ICharacter {
         anticipationCondition.addChildNode(stainStrategy);
     }
 
+    private void addChildForTrustBehavior(IBehaviourTreeNode parentNode) {
+        IBehaviourTreeNode trustCondition = createActionNode(
+                ObjectFactory.createObject(IConditionTrust.class),
+                abmConfigurationHelper.getTrustProbability());
+
+        IBehaviourTreeNode giveTurnStrategy = createActionNode(ObjectFactory.createObject(IStrategyGiveTurn.class), 1);
+
+        parentNode.addChildNode(trustCondition);
+        trustCondition.addChildNode(giveTurnStrategy);
+    }
+    
     private void addChildForSadnessBehaviour(IBehaviourTreeNode parentNode) {
         IBehaviourTreeNode sadnessCondition = createActionNode(
                 ObjectFactory.createObject(IConditionSadness.class),

@@ -38,6 +38,7 @@ import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
+import com.velonuboso.made.core.inference.implementation.MonomythReasoner;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import java.util.stream.IntStream;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,6 +110,15 @@ public class MonomythReasonerTest {
         solveWithReasoner(theoryAsString, predicateToSolve);
 
         assertTrue("Should've found 5 solutions", solutions.size() == 5);
+    }
+    
+    @Test
+    public void UT_ShowRulesFromTheMonomyth() {
+        MonomythReasoner monomythReasoner = new MonomythReasoner();
+        String rules = monomythReasoner.getMonomythRules();
+        System.out.println("Rules:\n"+rules);
+        assertFalse("The monomyth reasoner should use a non-empty set of rules",
+                StringUtils.isBlank(rules));
     }
     
     @Test
@@ -214,6 +225,33 @@ public class MonomythReasonerTest {
     
     @Test
     public void UT_WhenACharacterLosesAConflictWithAMoreEvilCharacterAndHeWinsLater_IsHasLivedAJourney() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.displaces(characterArthur, characterPeter, 45).toLogicalTerm(),
+            eventFactory.transfersColor(characterPeter, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.hasFear(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.movesAway(characterArthur, 46).toLogicalTerm()
+        };
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
+        assertNumberOfTropes(worldDeductions, Trope.JOURNEY, 1);
+    }
+    
+    @Test
+    public void UT_WhenACharacterIsFriendOfTheHeroAlongTheJourneyAndTransfersHimAndHelps_IsHasLivedAJourney() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),

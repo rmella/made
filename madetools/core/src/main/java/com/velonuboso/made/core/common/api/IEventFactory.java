@@ -60,4 +60,7 @@ public interface IEventFactory {
     IEvent isEnemyOf(ICharacter subject, ICharacter enemy);
     IEvent naturalChange(Piece aThis, Color currentColor, Color newColor);
     IEvent characterAppears (ICharacter subject, int cellId);
+    IEvent trusts(ICharacter subject, ICharacter friendWithMostAffinity);
+    IEvent givesTurn(ICharacter subject, ICharacter target);
+
 }

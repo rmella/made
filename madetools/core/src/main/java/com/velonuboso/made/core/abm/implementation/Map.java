@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 import javafx.scene.paint.Color;
 
@@ -47,6 +48,7 @@ public class Map implements IMap {
     private HashMap<Integer, TerrainType> terrainByCell = new HashMap<>();
     private HashMap<IColorSpot, Integer> cellByColorSpot = new HashMap<>();
     private HashMap<Integer, IColorSpot> ColorSpotByCell = new HashMap<>();
+    private HashSet<ICharacter> extraTurns = new HashSet<>();
 
     private final static double SQRT_2 = Math.sqrt(2);
     private IEventsWriter eventsWriter;
@@ -262,6 +264,22 @@ public class Map implements IMap {
         this.eventsWriter = eventsWriter;
     }
 
+    
+    @Override
+    public void addExtraTurnTo(ICharacter friend) {
+        extraTurns.add(friend);
+    }
+
+    @Override
+    public void cleanExtraTurns() {
+        extraTurns.clear();
+    }
+    
+    @Override
+    public List<ICharacter> getExtraTurns() {
+        return new ArrayList<ICharacter>(extraTurns);
+    }
+    
     private void recursiveAddCellsToMove(Integer currentCell, HashSet<Integer> navigatedCells,
             int maxMovement, ICharacter author, HashMap<ICharacter, Float> affinityMatrix) {
 
@@ -360,5 +378,4 @@ public class Map implements IMap {
         IEvent event = factory.colorSpotDisappears(spot, cell);
         eventsWriter.add(event);
     }
-
 }

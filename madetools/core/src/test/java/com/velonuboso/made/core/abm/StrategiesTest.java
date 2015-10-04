@@ -21,6 +21,7 @@ import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.api.strategy.IStrategyGiveTurn;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveAway;
 import com.velonuboso.made.core.abm.api.strategy.IStrategyMoveOrDisplace;
 import com.velonuboso.made.core.abm.api.strategy.IStrategySkipTurn;
@@ -33,8 +34,6 @@ import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import java.util.function.ToLongBiFunction;
-import java.util.regex.Pattern;
 import javafx.scene.paint.Color;
 import org.junit.Before;
 import org.junit.Test;
@@ -311,6 +310,20 @@ public class StrategiesTest {
         verifyStrategyReturnedFalse();
     }
 
+    
+    @Test
+    public void UT_StrategyGiveTurn_When_run_the_target_cell_receives_an_extra_turn() {
+        Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
+        Piece targetPiece = buildPiece(1, CharacterShape.TRIANGLE, Color.BLUE, Color.RED, 1, 1);
+        int targetCell = map.getCell(1, 1);
+
+        setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyGiveTurn.class));
+        verifyEventAddedToFakeEventWriter(EventFactory.GIVES_TURN, 1, 3);
+        assertTrue("The target piece should've an extra turn", 
+                map.getExtraTurns().contains(targetPiece) && map.getExtraTurns().size()==1);
+        verifyStrategyReturnedTrue();
+    }
+    
     @Test
     public void UT_StrategySkipTurn_the_piece_does_not_move_or_stain() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);

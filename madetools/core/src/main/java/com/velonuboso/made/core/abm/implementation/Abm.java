@@ -104,6 +104,8 @@ public class Abm implements IAbm {
             logNewDay();
             placeSpotsInMap(map);
             runCharactersInMap(map);
+            runExtraTurns(map);
+            map.cleanExtraTurns();
             removeSpotsFromMap();
         }
     }
@@ -112,8 +114,8 @@ public class Abm implements IAbm {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         factory.setDay(day);
     }
-    
-    private void logNewDay(){
+
+    private void logNewDay() {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         IEvent newDayevent = factory.newDay();
         eventsWriter.add(newDayevent);
@@ -223,6 +225,15 @@ public class Abm implements IAbm {
                 .map(map::getCharacter)
                 .collect(Collectors.toList());
 
+        Collections.shuffle(characters);
+        characters.stream().forEach((character) -> {
+            character.applyColorChange();
+            character.run();
+        });
+    }
+
+    private void runExtraTurns(IMap map) {
+        List<ICharacter> characters = map.getExtraTurns();
         Collections.shuffle(characters);
         characters.stream().forEach((character) -> {
             character.applyColorChange();

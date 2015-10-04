@@ -96,6 +96,10 @@ public class AbmConfigurationHelperPiece {
         return getGene(Gene.COLOR_CHANGE_CROWDING_DEGREE_PER_TURN);
     }
 
+    float getTrustProbability() {
+        return getGene(Gene.TRUST_PROBABILITY);
+    }
+    
     private float getGene(Gene gene) {
         return AbmConfigurationUtilities.getGene(gene, abmConfiguration);
     }
@@ -127,6 +131,7 @@ public class AbmConfigurationHelperPiece {
         IMPROVE_FRIEND_SIMILARITY_PROBABILITY,
         REDUCE_ENEMY_SIMILARITY_PROBABILITY,
         IMPROVE_SELF_SIMILARITY_PROBABILITY,
+        TRUST_PROBABILITY,
         COLOR_CHANGE_CROWDING_DEGREE_PER_TURN
     }
 }

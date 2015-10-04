@@ -117,7 +117,7 @@ public class MonomythReasoner implements IReasoner {
         }
     }
 
-    private String getMonomythRules() {
+    public String getMonomythRules() {
         
         TermRule rules[] = new TermRule[]{
             new TermRule(
@@ -202,6 +202,7 @@ public class MonomythReasoner implements IReasoner {
                 .toArray(String[]::new);
         return String.join("\n", rulesAsStringArray);
     }
+    
     //</editor-fold>
 }
 

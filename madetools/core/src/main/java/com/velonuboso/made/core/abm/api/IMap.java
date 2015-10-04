@@ -21,6 +21,7 @@ import com.velonuboso.made.core.abm.implementation.Map;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -76,5 +77,11 @@ public interface IMap {
     public Integer getCloserCell(ICharacter character, int cell, HashMap<ICharacter, Float> affinityMatrix);
 
     public void setEventsWriter(IEventsWriter eventsWriter);
+
+    public void addExtraTurnTo(ICharacter friend);
+    
+    public void cleanExtraTurns();
+    
+    List<ICharacter> getExtraTurns();
 
 }

@@ -57,6 +57,8 @@ public class EventFactory implements IEventFactory {
     public static final String NATURAL_CHANGE = "naturalChange";
     public static final String CHARACTER_APPEARS = "characterAppears";
     public static final String NEW_DAY = "newDay";
+    public static final String TRUSTS = "trusts";
+    public static final String GIVES_TURN = "giveTurn";
     
     private int currentDay;
 
@@ -198,6 +200,16 @@ public class EventFactory implements IEventFactory {
         
         return new Event(CHARACTER_APPEARS, currentDay, subject.getId(), colorToHexadecimal(background),
                 colorToHexadecimal(background), shape.name());
+    }
+    
+    @Override
+    public IEvent trusts(ICharacter subject, ICharacter friendWithMostAffinity) {
+        return new Event(TRUSTS, currentDay, subject.getId(), friendWithMostAffinity.getId());
+    }
+
+    @Override
+    public IEvent givesTurn(ICharacter subject, ICharacter target) {
+        return new Event(GIVES_TURN, currentDay, subject.getId(), target.getId());
     }
     
     private String colorToHexadecimal(Color color){

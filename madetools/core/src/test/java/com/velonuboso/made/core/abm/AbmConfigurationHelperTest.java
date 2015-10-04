@@ -119,7 +119,7 @@ public class AbmConfigurationHelperTest {
     
     @Test
     public void Prepare_when_chromosome_is_valid_it_does_not_throw_exception() throws Exception {
-        int size = 49;
+        int size = 52;
         float[] chromosome = new float[size];
         chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
         chromosome[1] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_CIRCLES;
