@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.inference;
 
+import alice.tuprolog.Int;
 import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.MalformedGoalException;
 import alice.tuprolog.NoMoreSolutionException;
@@ -34,6 +35,7 @@ import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.common.api.IEventFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.Trope;
@@ -251,7 +253,7 @@ public class MonomythReasonerTest {
     }
     
     @Test
-    public void UT_WhenACharacterIsFriendOfTheHeroAlongTheJourneyAndTransfersHimAndHelps_IsHasLivedAJourney() {
+    public void UT_WhenAnSomeoneGivesATurnToTheHeroAlongAJourney_HeIsAnAllied() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
@@ -262,19 +264,17 @@ public class MonomythReasonerTest {
         eventFactory.setDay(1);
         Term[] termsDay1 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
-            eventFactory.displaces(characterArthur, characterPeter, 45).toLogicalTerm(),
-            eventFactory.transfersColor(characterPeter, characterMaggie).toLogicalTerm()
+            eventFactory.givesTurn(characterMaggie, characterPeter).toLogicalTerm(),
         };
-        eventFactory.setDay(2);
-        Term[] termsDay2 = new Term[]{
-            eventFactory.newDay().toLogicalTerm(),
-            eventFactory.hasFear(characterArthur, characterPeter).toLogicalTerm(),
-            eventFactory.movesAway(characterArthur, 46).toLogicalTerm()
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new Int(0), new Int(2), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId()))
         };
-        Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1, extraTerms);
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
-        assertNumberOfTropes(worldDeductions, Trope.JOURNEY, 1);
+        assertNumberOfTropes(worldDeductions, Trope.ALLIED, 1);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">

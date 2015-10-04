@@ -41,16 +41,17 @@ public class MonomythReasoner implements IReasoner {
 
     private Prolog engine;
 
-    private static final String PREDICATE_CHARACTER = "character";
-    private static final String PREDICATE_COLOR_SPOT = "colorSpot";
-    private static final String PREDICATE_ELEMENT = "element";
-    private static final String PREDICATE_CONFLICT = "conflict";
-    private static final String PREDICATE_REAL_FRIENDS = "realFriends";
-    private static final String PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY = "transferColorBeforeMaxday";
-    private static final String PREDICATE_HELPED_COUNTER = "helpedCounter";
-    private static final String PREDICATE_MORE_EVIL = "moreEvil";
-    
-    private static final String PREDICATE_JOURNEY = "journey";
+    public static final String PREDICATE_CHARACTER = "character";
+    public static final String PREDICATE_COLOR_SPOT = "colorSpot";
+    public static final String PREDICATE_ELEMENT = "element";
+    public static final String PREDICATE_CONFLICT = "conflict";
+    public static final String PREDICATE_REAL_FRIENDS = "realFriends";
+    public static final String PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY = "transferColorBeforeMaxday";
+    public static final String PREDICATE_HELPED_COUNTER = "helpedCounter";
+    public static final String PREDICATE_MORE_EVIL = "moreEvil";
+    public static final String PREDICATE_JOURNEY = "journey";
+    public static final String PREDICATE_ALLIED = "allied";
+    public static final String PREDICATE_BETWEEN = "between";
     
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
@@ -112,6 +113,8 @@ public class MonomythReasoner implements IReasoner {
                 return new Struct(PREDICATE_MORE_EVIL, new Var(), new Var(), new Var());
             case JOURNEY:
                 return new Struct(PREDICATE_JOURNEY, new Var(), new Var(), new Var(), new Var());
+            case ALLIED:
+                return new Struct(PREDICATE_ALLIED, new Var(), new Var(), new Var(), new Var(), new Var());
             default:
                 return new Struct();
         }
@@ -193,6 +196,18 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_CONFLICT, new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
                     new Struct(PREDICATE_MORE_EVIL, new Var("DayBegin"), new Var("Shadow"), new Var("Hero")),
                     new Struct(">", new Var("DayEnd"), new Var("DayBegin"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_BETWEEN, new Var("Start"), new Var("NumberBetween"), new Var("End")),
+                    new Struct(">=", new Var("NumberBetween"), new Var("Start")),
+                    new Struct(">=", new Var("End"), new Var("NumberBetween"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Allied")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(EventFactory.GIVES_TURN, new Var("DayHappened"), new Var("Allied"), new Var("Hero")),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
             )
         };
         
