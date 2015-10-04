@@ -235,7 +235,7 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
                         new Var("Guardian")),
                     new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-                    new Struct(EventFactory.DISPLACES, new Var("DayHappened"), new Var("Guardian"), new Var("Hero"), new Var()),
+                    new Struct(PREDICATE_CONFLICT, new Var("DayHappened"), new Var("Guardian"), new Var("Hero")),
                     new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
             ),
             new TermRule(
