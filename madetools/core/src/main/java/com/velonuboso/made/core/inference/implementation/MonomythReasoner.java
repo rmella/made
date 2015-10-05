@@ -59,6 +59,8 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_MENTOR = "mentor";
     public static final String PREDICATE_SHAPESHIFTER = "shapeshifter";
     public static final String PREDICATE_ENEMY_BETWEEN = "enemyBetween";
+    public static final String PREDICATE_POSSIBLE_HERALD = "possibleHerald";
+    public static final String PREDICATE_HERALD = "herald";
     
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
@@ -132,6 +134,9 @@ public class MonomythReasoner implements IReasoner {
                 return new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor"));
             case SHAPESHIFTER:
                 return new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter"));
+            case HERALD:
+                //return new Struct(PREDICATE_POSSIBLE_HERALD, new Var("DayWinnerStains"), new Var("Winner"), new Var("Loser"), new Var("Spot"));                
+                return new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald"));
             default:
                 return new Struct();
         }
@@ -182,19 +187,24 @@ public class MonomythReasoner implements IReasoner {
                 new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var()),
                 new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser"))
             ),
-            new TermRule(
+            new TermRule (
                 new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                new Struct(PREDICATE_POSSIBLE_HERALD, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var("Herald"))
+            ),
+            new TermRule(
+                new Struct(PREDICATE_POSSIBLE_HERALD, new Var("DayWinnerStains"), new Var("Winner"), new Var("Loser"), new Var("Spot")),
                 new Struct(EventFactory.CAN_IMPROVE_SELF_SIMILARITY, new Var("DayLoserWantedSpot"), new Var("Loser"), new Var("Spot")),
                 new Struct(EventFactory.STAINS, new Var("DayWinnerStains"), new Var("Winner"), new Var("Spot")),
                 new Struct("not", new Struct(EventFactory.STAINS, new Var(), new Var("Loser"), new Var("Spot"))),
                 new Struct(">=", new Var("DayWinnerStains"), new Var("DayLoserWantedSpot")),
-                new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser"))
+                new Struct(PREDICATE_REAL_ENEMIES, new Var ("DayWinnerStains"), new Var("Winner"), new Var("Loser"))
             ),
             new TermRule(
-                new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                new Struct(PREDICATE_POSSIBLE_HERALD, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var("Friend")),
                 new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Friend"), new Var()),
                 new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("Loser"), new Var("Friend")),
-                new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser"))
+                new Struct(PREDICATE_REAL_ENEMIES, new Var ("Day"), new Var("Winner"), new Var("Loser")),
+                new Struct("!")
             ),
             new TermRule(
                 new Struct(PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY, new Var("MaxDay"), new Var("TransferDay"), new Var("Subject")),
@@ -290,6 +300,17 @@ public class MonomythReasoner implements IReasoner {
                     new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter")),
                     new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
                         new Var("Shapeshifter"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Herald")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(PREDICATE_POSSIBLE_HERALD, new Var("DayBegin"), new Var("Shadow"), new Var("Hero"), new Var("Herald"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald")),
+                    new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), 
+                        new Var("Herald"))
             )
                 
         };

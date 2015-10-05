@@ -197,7 +197,7 @@ public class MonomythReasonerTest {
     }
     
     @Test
-    public void UT_WhenTwoCharactersAreFriendsAndOtherPieceDisplacesOne_BothHaveAConflictWithIt() {
+    public void UT_WhenTwoCharactersAreFriendsAndOtherPiecethatIsAnEnemyDisplacesOneOfThem_ThereIsAConflictWithIt() {
         Term[] terms = new Term[]{
             eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
             eventFactory.characterAppears(characterMaggie, 25).toLogicalTerm(),
@@ -291,7 +291,7 @@ public class MonomythReasonerTest {
     }
     
     @Test
-    public void UT_WhenAnSomeoneGivesATurnToTheHeroAlongAJourney_HeIsAnAllied() {
+    public void UT_WhenSomeoneGivesATurnToTheHeroAlongAJourney_HeIsAnAllied() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
@@ -316,7 +316,7 @@ public class MonomythReasonerTest {
     }
     
     @Test
-    public void UT_WhenAnSomeoneDisplacesTheHeroAlongAJourney_HeIsAGuardian() {
+    public void UT_WhenSomeoneDisplacesTheHeroAlongAJourney_HeIsAGuardian() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
@@ -343,7 +343,7 @@ public class MonomythReasonerTest {
     }
     
     @Test
-    public void UT_WhenAnSomeoneScaresTheHeroAlongAJourney_HeIsAGuardian() {
+    public void UT_WhenSomeoneScaresTheHeroAlongAJourney_HeIsAGuardian() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
@@ -371,7 +371,7 @@ public class MonomythReasonerTest {
     }
     
     @Test
-    public void UT_WhenAnSomeoneIsAnAlliedButAlsoAGuardian_HeIsAShapeShifter() {
+    public void UT_WhenSomeoneIsAnAlliedButAlsoAGuardian_HeIsAShapeShifter() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
             eventFactory.newDay().toLogicalTerm(),
@@ -396,6 +396,44 @@ public class MonomythReasonerTest {
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
         assertNumberOfTropes(worldDeductions, Trope.SHAPESHIFTER, 1);
+    }
+    
+    @Test
+    public void UT_TheReasonForTheJourney_IsTheHerald() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isFriendOf(characterMaggie, characterPeter).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm(),
+            eventFactory.displaces(characterArthur, characterMaggie, 22).toLogicalTerm(),
+            
+            eventFactory.transfersColor(characterPeter, characterMaggie).toLogicalTerm(),
+            
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.hasFear(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.movesAway(characterArthur, 46).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterPeter, characterArthur).toLogicalTerm()
+        };
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
+        assertNumberOfTropes(worldDeductions, Trope.JOURNEY, 1);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">
