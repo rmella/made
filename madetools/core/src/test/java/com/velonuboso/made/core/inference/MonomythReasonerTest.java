@@ -432,8 +432,8 @@ public class MonomythReasonerTest {
         };
         Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
         
-        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
-        assertNumberOfTropes(worldDeductions, Trope.JOURNEY, 1);
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, new Trope[]{Trope.HERALD});
+        assertNumberOfTropes(worldDeductions, Trope.HERALD, 1);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">

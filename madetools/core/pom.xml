@@ -26,6 +26,20 @@
             <artifactId>tuprolog</artifactId>
             <version>2.1.1</version>
         </dependency>
+        <!--<dependency>
+            <artifactId>2p</artifactId>
+            <groupId>it.unibo.alice.tuprolog</groupId>
+            <scope>system</scope>
+            <version>3.0.1</version>
+            <systemPath>${basedir}/lib/2p-3.0.1/bin/2p.jar</systemPath>
+        </dependency>
+        <dependency>
+            <artifactId>tuprolog</artifactId>
+            <groupId>it.unibo.alice.tuprolog</groupId>
+            <scope>system</scope>
+            <version>3.0.1</version>
+            <systemPath>${basedir}/lib/2p-3.0.1/bin/tuprolog.jar</systemPath>
+        </dependency>-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
