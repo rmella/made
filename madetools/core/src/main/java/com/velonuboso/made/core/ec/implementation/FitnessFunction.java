@@ -16,8 +16,19 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.abm.api.IAbm;
+import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.entity.EventsLogEntity;
+import com.velonuboso.made.core.common.entity.InferencesEntity;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.customization.api.ICustomization;
 import com.velonuboso.made.core.ec.api.IFitnessFunction;
 import com.velonuboso.made.core.ec.api.IIndividual;
+import com.velonuboso.made.core.inference.api.IReasoner;
+import com.velonuboso.made.core.inference.entity.WorldDeductions;
+import java.util.Arrays;
+import java.util.Collections;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
@@ -27,7 +38,19 @@ public class FitnessFunction implements IFitnessFunction{
 
     @Override
     public float evaluateIndividual(IIndividual individual) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ICustomization customization = ObjectFactory.createObject(ICustomization.class);
+        
+        IAbm abm = ObjectFactory.createObject(IAbm.class);
+        abm.setCustomization(customization);
+        abm.setInferences(new InferencesEntity());
+        
+        Float chromosome[] = Arrays.stream(individual.getGenes()).map(gene -> gene.getValue()).toArray(Float[]::new);
+        abm.run(new AbmConfigurationEntity(ArrayUtils.toPrimitive(chromosome)));
+        EventsLogEntity events = abm.getEventsLog();
+        
+        IReasoner reasoner = ObjectFactory.createObject(IReasoner.class);
+        WorldDeductions deductions = reasoner.getWorldDeductions(events.getLogicalTerms());
+        return deductions.values().size();
     }
     
 }
