@@ -43,7 +43,7 @@ public class SelectionOperator implements ISelectionOperator{
         IIndividual firstIndividualIndex = selectRandomIndividual(sourcePopulation);
         IIndividual secondIIndividual = selectRandomIndividual(sourcePopulation);
         
-        IIndividual selected =  firstIndividualIndex.getCurrentFitness()>secondIIndividual.getCurrentFitness()?
+        IIndividual selected =  firstIndividualIndex.getCurrentFitness().compareTo(secondIIndividual.getCurrentFitness())>0?
                 firstIndividualIndex: secondIIndividual;
         
         matingPool.add(selected);

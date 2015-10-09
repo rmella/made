@@ -23,9 +23,11 @@ import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithm;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
 import com.velonuboso.made.core.ec.api.IIndividual;
+import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.entity.GeneType;
 import com.velonuboso.made.core.ec.entity.GeneDefinition;
 import com.velonuboso.made.core.ec.entity.IndividualDefinition;
+import com.velonuboso.made.core.ec.entity.TrialInformation;
 import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
 import java.util.Arrays;
 import org.junit.After;
@@ -109,15 +111,16 @@ public class GeneticAlgorithmImplementationsTest {
     public class SampleFitnessFunction implements IFitnessFunction{
 
         @Override
-        public float evaluateIndividual(IIndividual individual) {
+        public Fitness evaluateIndividual(IIndividual individual) {
             float targetValue = (float)Math.PI;
             
             IGene[] genes = individual.getGenes();
             try{
                 float calculation = calculatePhenotypeForIndividual(individual);
-                return 1/Math.abs(targetValue - calculation);
+                float fitnessValue = 1/Math.abs(targetValue - calculation);
+                return new Fitness(new TrialInformation(1, fitnessValue, 0));
             }catch(Exception e){
-                return 0;
+                return new Fitness();
             }
         }
         

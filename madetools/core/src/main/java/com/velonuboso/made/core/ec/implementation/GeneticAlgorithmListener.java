@@ -18,6 +18,7 @@ package com.velonuboso.made.core.ec.implementation;
 
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
 import com.velonuboso.made.core.ec.api.IIndividual;
+import com.velonuboso.made.core.ec.entity.Fitness;
 
 /**
  *
@@ -26,7 +27,7 @@ import com.velonuboso.made.core.ec.api.IIndividual;
 public class GeneticAlgorithmListener implements IGeneticAlgorithmListener{
 
     @Override
-    public void notifyIterationSummary(int iteration, IIndividual bestIndividual, float bestFitnessValue, float averagePopulationFitness) {
+    public void notifyIterationSummary(int iteration, IIndividual bestIndividual, Fitness bestFitnessValue, float averagePopulationFitness) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

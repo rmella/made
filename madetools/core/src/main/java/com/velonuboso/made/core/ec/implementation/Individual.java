@@ -24,6 +24,7 @@ import com.velonuboso.made.core.ec.api.IFloatGene;
 import com.velonuboso.made.core.ec.api.IGene;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.api.IIntGene;
+import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.entity.GeneDefinition;
 import com.velonuboso.made.core.ec.entity.IndividualDefinition;
 import java.util.ArrayList;
@@ -39,13 +40,13 @@ public class Individual implements IIndividual {
     private ArrayList<IGene> genes;
     private IndividualDefinition definition;
     IProbabilityHelper probabilityHelper;
-    private float currentFitnessValue;
+    private Fitness currentFitnessValue;
     
     public Individual() {
         genes = new ArrayList<>();
         definition = null;
         probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
-        currentFitnessValue = Float.MIN_VALUE;
+        currentFitnessValue = new Fitness();
     }
 
     @Override
@@ -73,7 +74,7 @@ public class Individual implements IIndividual {
     }
 
     @Override
-    public float getCurrentFitness() {
+    public Fitness getCurrentFitness() {
         return currentFitnessValue;
     }
 

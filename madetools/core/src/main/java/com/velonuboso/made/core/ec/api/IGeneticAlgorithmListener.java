@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.implementation.GeneticAlgorithmListener;
 
 /**
@@ -26,5 +27,5 @@ import com.velonuboso.made.core.ec.implementation.GeneticAlgorithmListener;
 @ImplementedBy(targetClass = GeneticAlgorithmListener.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IGeneticAlgorithmListener {
 
-    void notifyIterationSummary(int iteration, IIndividual bestIndividual, float bestFitnessValue, float averagePopulationFitness);
+    void notifyIterationSummary(int iteration, IIndividual bestIndividual, Fitness bestFitnessValue, float averagePopulationFitness);
 }

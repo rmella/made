@@ -50,13 +50,13 @@ public class Population implements IPopulation {
         individuals.stream().forEach(individual -> individual.reEvaluate());
         
         averageFitness =  (float) individuals.stream()
-                .mapToDouble(IIndividual::getCurrentFitness)
+                .mapToDouble(individual -> individual.getCurrentFitness().getValue().getAverage())
                 .average()
                 .orElse(0f);
         
         bestIndividual =  individuals.stream()
                 .max((IIndividual firstIndividual, IIndividual secondIndividual) -> 
-                        Float.compare(firstIndividual.getCurrentFitness(), secondIndividual.getCurrentFitness()))
+                        firstIndividual.getCurrentFitness().compareTo(secondIndividual.getCurrentFitness()))
                 .orElse(null);
         
         return bestIndividual;

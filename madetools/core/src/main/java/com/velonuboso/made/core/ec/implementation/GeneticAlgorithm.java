@@ -83,7 +83,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
             IPopulation newGeneration = matingPool.createOffspring(blxAlpha, distanceParameterMutationDistribution);
             
             IIndividual bestIndividualInGeneration = newGeneration.getBestIndividual();
-            if (bestIndividualInGeneration.getCurrentFitness()>bestIndividual.getCurrentFitness()){
+            if (bestIndividualInGeneration.getCurrentFitness().compareTo(bestIndividual.getCurrentFitness())>0){
                 bestIndividual = bestIndividualInGeneration;
             }
             

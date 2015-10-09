@@ -24,6 +24,7 @@ import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
 import com.velonuboso.made.core.ec.api.IFitnessFunction;
 import com.velonuboso.made.core.ec.api.IIndividual;
+import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import org.apache.commons.lang.ArrayUtils;
 public class FitnessFunction implements IFitnessFunction{
 
     @Override
-    public float evaluateIndividual(IIndividual individual) {
+    public Fitness evaluateIndividual(IIndividual individual) {
         ICustomization customization = ObjectFactory.createObject(ICustomization.class);
         
         IAbm abm = ObjectFactory.createObject(IAbm.class);
@@ -50,7 +51,10 @@ public class FitnessFunction implements IFitnessFunction{
         
         IReasoner reasoner = ObjectFactory.createObject(IReasoner.class);
         WorldDeductions deductions = reasoner.getWorldDeductions(events.getLogicalTerms());
-        return deductions.values().size();
+        
+        Fitness fitness = new Fitness();
+        fitness.setValue(1, deductions.values().size(), 0);
+        return fitness;
     }
     
 }

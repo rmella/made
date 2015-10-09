@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.implementation.FitnessFunction;
 
 /**
@@ -25,5 +26,5 @@ import com.velonuboso.made.core.ec.implementation.FitnessFunction;
  */
 @ImplementedBy(targetClass = FitnessFunction.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IFitnessFunction {
-    public float evaluateIndividual(IIndividual individual);
+    public Fitness evaluateIndividual(IIndividual individual);
 }

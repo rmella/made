@@ -14,27 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.api;
-
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.entity.Fitness;
-import com.velonuboso.made.core.ec.entity.IndividualDefinition;
-import com.velonuboso.made.core.ec.implementation.Individual;
-import java.util.List;
+package com.velonuboso.made.core.ec.entity;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Individual.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IIndividual {
-    void setGenes(IndividualDefinition definition, IGene ... gene);
-    void setRandomGenes(IndividualDefinition definition);
-    void copyFromIndividual (IIndividual target);
-    IGene[] getGenes();
-    void reEvaluate();
-    Fitness getCurrentFitness();
-    @Override
-    String toString();
-    IndividualDefinition getIndividualDefinition();
+public class TrialInformation {
+
+    int numberOfTrials;
+    float average;
+    float standardDeviation;
+
+    public TrialInformation(int singleValue) {
+        numberOfTrials = 1;
+        average = singleValue;
+        standardDeviation = 0;
+    }
+    
+    public TrialInformation(int numberOfTrials, float average, float standardDeviation) {
+        this.numberOfTrials = numberOfTrials;
+        this.average = average;
+        this.standardDeviation = standardDeviation;
+    }
+
+    public float getAverage() {
+        return average;
+    }
+
+    public int getNumberOfTrials() {
+        return numberOfTrials;
+    }
+
+    public float getStandardDeviation() {
+        return standardDeviation;
+    }
 }
