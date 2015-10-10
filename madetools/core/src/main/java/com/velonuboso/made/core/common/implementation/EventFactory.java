@@ -61,14 +61,14 @@ public class EventFactory implements IEventFactory {
     public static final String TRUSTS = "trusts";
     public static final String GIVES_TURN = "giveTurn";
     
-    private int currentDay;
+    private float currentDay;
 
     public EventFactory() {
         currentDay = 0;
     }
 
     @Override
-    public void setDay(int day) {
+    public void setDay(float day) {
         currentDay = day;
     }
     

@@ -109,18 +109,29 @@ public class MonomythReasoner implements IReasoner {
 
         SolveInfo solveInfo = engine.solve(predicateToSolve);
 
+        ArrayList<Term> temporalSolutions = new ArrayList<>();
+        
         if (solveInfo.isSuccess()) {
-            System.out.println("Bindings: " + solveInfo.getSolution());
-            solutions.add(solveInfo.getSolution());
+            //System.out.println("Bindings: " + solveInfo.getSolution());
+            temporalSolutions.add(solveInfo.getSolution());
 
             while (engine.hasOpenAlternatives()) {
                 solveInfo = engine.solveNext();
                 if (solveInfo.isSuccess()) {
-                    System.out.println("Bindings: " + solveInfo.getSolution());
-                    solutions.add(solveInfo.getSolution());
+                    //System.out.println("Bindings: " + solveInfo.getSolution());
+                    temporalSolutions.add(solveInfo.getSolution());
                 }
             }
         }
+        temporalSolutions.stream()
+                .map(TermWrapper::new)
+                .distinct()
+                .map(TermWrapper::unwrap)
+                .forEachOrdered(element -> solutions.add(element));
+        
+        if (solutions.size() != temporalSolutions.size()){
+            System.out.println("DIFFERENT");
+        } 
     }
 
     private Term getpredicateToSolve(Trope trope) {

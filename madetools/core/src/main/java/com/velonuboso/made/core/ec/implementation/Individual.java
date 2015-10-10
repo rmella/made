@@ -64,7 +64,8 @@ public class Individual implements IIndividual {
 
     @Override
     public void copyFromIndividual(IIndividual target) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.genes = new ArrayList(Arrays.asList(target.getGenes()));
+        this.definition = target.getIndividualDefinition();
     }
 
     @Override

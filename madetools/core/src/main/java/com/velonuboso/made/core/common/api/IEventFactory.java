@@ -34,7 +34,7 @@ import javafx.scene.paint.Color;
 
 @ImplementedBy(targetClass = EventFactory.class, targetMode = ImplementedBy.Mode.SINGLETON)
 public interface IEventFactory {
-    public void setDay(int day);
+    public void setDay(float day);
     IEvent inhabitantExists(ICharacter inhabitant);
     IEvent worldExists(IWorld world);
     IEvent newDay(); 

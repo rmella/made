@@ -46,7 +46,9 @@ public class SelectionOperator implements ISelectionOperator{
         IIndividual selected =  firstIndividualIndex.getCurrentFitness().compareTo(secondIIndividual.getCurrentFitness())>0?
                 firstIndividualIndex: secondIIndividual;
         
-        matingPool.add(selected);
+        IIndividual newIndividual = ObjectFactory.createObject(IIndividual.class);
+        newIndividual.copyFromIndividual(selected);
+        matingPool.add(newIndividual);
     }
 
     private IIndividual selectRandomIndividual(IPopulation sourcePopulation) {

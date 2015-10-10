@@ -102,15 +102,21 @@ public class Abm implements IAbm {
         for (int day = 0; day < numberOfDays; day++) {
             setDayToEventFactory(day);
             logNewDay();
+            
             placeSpotsInMap(map);
             runCharactersInMap(map);
+            
+            setDayToEventFactory(day+0.5f);
+            logNewDay();
+            
             runExtraTurns(map);
             map.cleanExtraTurns();
+            
             removeSpotsFromMap();
         }
     }
 
-    private void setDayToEventFactory(int day) {
+    private void setDayToEventFactory(float day) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         factory.setDay(day);
     }

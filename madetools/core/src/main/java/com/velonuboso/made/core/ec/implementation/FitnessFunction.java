@@ -28,7 +28,10 @@ import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
@@ -37,27 +40,39 @@ import org.apache.commons.lang.ArrayUtils;
  */
 public class FitnessFunction implements IFitnessFunction{
 
+    public static final int NUMBER_OF_TRIALS = 30;
+    
     @Override
     public Fitness evaluateIndividual(IIndividual individual) {
-        ICustomization customization = ObjectFactory.createObject(ICustomization.class);
+        ArrayList<Float> trials = new ArrayList<>();
         
-        IAbm abm = ObjectFactory.createObject(IAbm.class);
-        abm.setCustomization(customization);
-        abm.setInferences(new InferencesEntity());
-        
-        Float chromosome[] = Arrays.stream(individual.getGenes()).map(gene -> gene.getValue()).toArray(Float[]::new);
-        abm.run(new AbmConfigurationEntity(ArrayUtils.toPrimitive(chromosome)));
-        EventsLogEntity events = abm.getEventsLog();
-        
-        IReasoner reasoner = ObjectFactory.createObject(IReasoner.class);
-        WorldDeductions deductions = reasoner.getWorldDeductions(events.getLogicalTerms());
+        for (int trialIndex = 0; trialIndex < NUMBER_OF_TRIALS; trialIndex++){
+            ICustomization customization = ObjectFactory.createObject(ICustomization.class);
+
+            IAbm abm = ObjectFactory.createObject(IAbm.class);
+            abm.setCustomization(customization);
+            abm.setInferences(new InferencesEntity());
+
+            Float chromosome[] = Arrays.stream(individual.getGenes()).map(gene -> gene.getValue()).toArray(Float[]::new);
+            abm.run(new AbmConfigurationEntity(ArrayUtils.toPrimitive(chromosome)));
+            EventsLogEntity events = abm.getEventsLog();
+
+            IReasoner reasoner = ObjectFactory.createObject(IReasoner.class);
+            WorldDeductions deductions = reasoner.getWorldDeductions(events.getLogicalTerms());
+
+            int numberOfTropes = 0;
+            numberOfTropes = deductions.values().stream().map((tropes) -> tropes.length).reduce(numberOfTropes, Integer::sum);
+            
+            trials.add((float)numberOfTropes);
+        }
         
         Fitness fitness = new Fitness();
-        int numberOfTropes = 0;
-        numberOfTropes = deductions.values().stream().map((tropes) -> tropes.length).reduce(numberOfTropes, Integer::sum);
+        float average = (float) trials.stream().mapToDouble(val -> (double)val).average().orElse(0f);
+        float variance = (float) trials.stream().mapToDouble(val -> Math.pow(average-val, 2)).sum()/(trials.size()-1f);
+        float standardDeviation = (float) Math.sqrt(variance);
         
+        fitness.setValue(trials.size(), average, standardDeviation);
         
-        fitness.setValue(1, numberOfTropes, 0);
         return fitness;
     }
     
