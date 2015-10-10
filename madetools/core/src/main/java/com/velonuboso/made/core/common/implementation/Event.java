@@ -16,11 +16,13 @@
  */
 package com.velonuboso.made.core.common.implementation;
 
+import alice.tuprolog.Int;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import com.velonuboso.made.core.common.api.IEvent;
 import java.util.Arrays;
 import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
 
 /**
  *
@@ -44,34 +46,38 @@ public class Event implements IEvent {
     @Override
     public String toLogicalPredicate() {
         final StringBuilder logicalPredicate = new StringBuilder();
-        
+
         logicalPredicate.append(name);
         logicalPredicate.append(ARGUMENT_BEGIN);
         logicalPredicate.append(getCommaSeparatedArguments());
         logicalPredicate.append(ARGUMENT_END);
-        
+
         return logicalPredicate.toString();
     }
 
-    
     @Override
     public Term toLogicalTerm() {
         Term[] argumentsAsTerms = Arrays.stream(arguments).map(argument -> objectToTerm(argument)).toArray(Term[]::new);
         return new Struct(name, argumentsAsTerms);
     }
-    
-    private Term objectToTerm(Object object){
-        if (object instanceof Integer){
-            return new alice.tuprolog.Int((int)object);
-        }else if (object instanceof String){
-            return new Struct((String)object);
-        }else if (object instanceof Float){
-            return new alice.tuprolog.Float((float)object);
-        }else{
-            throw new RuntimeException("Could not convert object "+object+" to term");
+
+    private Term objectToTerm(Object object) {
+        if (object instanceof Integer) {
+            return new alice.tuprolog.Int((int) object);
+        } else if (object instanceof String) {
+            return new Struct((String) object);
+        } else if (object instanceof Float) {
+            return new alice.tuprolog.Float((float) object);
+        } else if (object instanceof int[]) {
+            Int[] terms = Arrays.stream((int[])object)
+                    .mapToObj(element -> new Int(element))
+                    .toArray(Int[]::new);
+            return new Struct(terms);
+        } else {
+            throw new RuntimeException("Could not convert object " + object + " to term");
         }
     }
-    
+
     private String getCommaSeparatedArguments() {
         String[] argumentsArray = Arrays.stream(arguments).map(argument -> argumentAsString(argument)).toArray(String[]::new);
         String commaSeparatedArguments = String.join(ARGUMENT_SEPARATOR, argumentsArray);
@@ -81,15 +87,15 @@ public class Event implements IEvent {
     private String decorateStringWithQuotes(Object argument) {
         return ARGUMENT_QUOTE + argument.toString() + ARGUMENT_QUOTE;
     }
-    
+
     private boolean isANumber(Object argument) {
         return argument instanceof Integer || argument instanceof Float;
     }
 
     private String argumentAsString(Object argument) {
-        if(argument == null) {
+        if (argument == null) {
             argument = "NULL";
         }
-        return isANumber(argument)? argument.toString(): decorateStringWithQuotes(argument);
+        return isANumber(argument) ? argument.toString() : decorateStringWithQuotes(argument);
     }
 }

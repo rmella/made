@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
@@ -52,7 +53,11 @@ public class FitnessFunction implements IFitnessFunction{
         WorldDeductions deductions = reasoner.getWorldDeductions(events.getLogicalTerms());
         
         Fitness fitness = new Fitness();
-        fitness.setValue(1, deductions.values().size(), 0);
+        int numberOfTropes = 0;
+        numberOfTropes = deductions.values().stream().map((tropes) -> tropes.length).reduce(numberOfTropes, Integer::sum);
+        
+        
+        fitness.setValue(1, numberOfTropes, 0);
         return fitness;
     }
     

@@ -69,6 +69,7 @@ public class MonomythReasonerTest {
     private ICharacter characterPeter;
     private ICharacter characterArthur;
     private ICharacter characterMaggie;
+    private ICharacter characterSomeone;
     private IColorSpot spotEmerald;
     private IColorSpot spotRuby;
     private IReasoner reasoner;
@@ -84,6 +85,7 @@ public class MonomythReasonerTest {
         characterPeter = buildPuppetCharacter(20, Color.ALICEBLUE, Color.YELLOW, CharacterShape.CIRCLE);
         characterArthur = buildPuppetCharacter(21, Color.BLACK, Color.WHITE, CharacterShape.TRIANGLE);
         characterMaggie = buildPuppetCharacter(23, Color.AZURE, Color.DARKSALMON, CharacterShape.CIRCLE);
+        characterSomeone = buildPuppetCharacter(24, Color.ALICEBLUE, Color.ALICEBLUE, CharacterShape.CIRCLE);
         spotEmerald = buildPuppetSpot(100, Color.GREEN);
         spotRuby = buildPuppetSpot(100, Color.RED);
         reasoner = ObjectFactory.createObject(IReasoner.class);
@@ -134,6 +136,26 @@ public class MonomythReasonerTest {
         assertNumberOfTropes(worldDeductions, Trope.CONFLICT, 0);
     }
 
+    @Test
+    public void UT_WhenTwoCharactersHaveAffinityWithEachOther_TheyAreRealFriends() {
+        Term[] terms = new Term[]{
+            eventFactory.isFriendOf(characterPeter, characterArthur, characterSomeone).toLogicalTerm(),
+            eventFactory.isFriendOf(characterArthur, characterPeter, characterSomeone).toLogicalTerm()
+        };
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, new Trope[]{Trope.REAL_FRIENDS});
+        assertNumberOfTropes(worldDeductions, Trope.REAL_FRIENDS, 2);
+    }
+    
+    @Test
+    public void UT_WhenTwoCharactersDoNotHaveAffinityWithEachOther_TheyAreRealEnemies() {
+        Term[] terms = new Term[]{
+            eventFactory.isEnemyOf(characterPeter, characterArthur, characterSomeone).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter, characterSomeone).toLogicalTerm()
+        };
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(terms, new Trope[]{Trope.REAL_ENEMIES});
+        assertNumberOfTropes(worldDeductions, Trope.REAL_ENEMIES, 2);
+    }
+    
     @Test
     public void UT_WhenACharacterAndASpotappear_TwoElementsAreFound() {
         Term[] terms = new Term[]{
@@ -262,7 +284,7 @@ public class MonomythReasonerTest {
         };
         Term allTerms[] = addArraysToguether(termsDay0, termsDay1, termsDay2);
         
-        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.getTropesInFromMonomyth());
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, Trope.values());
         assertNumberOfTropes(worldDeductions, Trope.JOURNEY, 1);
     }
     

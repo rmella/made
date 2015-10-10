@@ -16,7 +16,6 @@
  */
 package com.velonuboso.made.core.inference.implementation;
 
-import alice.tuprolog.ExecutionContext;
 import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.NoMoreSolutionException;
 import alice.tuprolog.NoSolutionException;
@@ -32,7 +31,6 @@ import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +63,8 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_ENEMY_BETWEEN = "enemyBetween";
     public static final String PREDICATE_POSSIBLE_HERALD = "possibleHerald";
     public static final String PREDICATE_HERALD = "herald";
+    public static final String PREDICATE_IS_ENEMY_OF_CHARACTER = "enemyOfCharacter";
+    public static final String PREDICATE_IS_FRIEND_OF_CHARACTER = "friendOfCharacter";
 
     private Prolog engine;
     private List<String> stack;
@@ -106,7 +106,7 @@ public class MonomythReasoner implements IReasoner {
         engine.setTheory(new Theory(getMonomythRules()));
         engine.addTheory(new Theory(new Struct(events)));
         stack = new ArrayList();
-        
+
         SolveInfo solveInfo = engine.solve(predicateToSolve);
 
         if (solveInfo.isSuccess()) {
@@ -125,6 +125,14 @@ public class MonomythReasoner implements IReasoner {
 
     private Term getpredicateToSolve(Trope trope) {
         switch (trope) {
+            case FRIEND_OF_CHARACTER:
+                return new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B"));
+            case ENEMY_OF_CHARACTER:
+                return new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B"));
+            case REAL_FRIENDS:
+                return new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B"));
+            case REAL_ENEMIES:
+                return new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("A"), new Var("B"));
             case ELEMENT:
                 return new Struct(PREDICATE_ELEMENT, new Var());
             case CONFLICT:
@@ -177,14 +185,24 @@ public class MonomythReasoner implements IReasoner {
             new Struct(PREDICATE_COLOR_SPOT, new Var("X"))
             ),
             new TermRule(
+            new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+            new Struct(EventFactory.IS_FRIEND_OF, new Var("DAY"), new Var("A"), new Var("ListOfFriends")),
+            new Struct("member", new Var("B"), new Var("ListOfFriends"))
+            ),
+            new TermRule(
             new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("B"), new Var("A"))
+            new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+            new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A"))
+            ),
+            new TermRule(
+            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+            new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("A"), new Var("ListOfEnemies")),
+            new Struct("member", new Var("B"), new Var("ListOfEnemies"))
             ),
             new TermRule(
             new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("B"), new Var("A"))
+            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A"))
             ),
             new TermRule(
             new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
@@ -338,10 +356,10 @@ public class MonomythReasoner implements IReasoner {
         engine.addSpyListener(new SpyListener() {
             @Override
             public void onSpy(SpyEvent e) {
-                if (stack!=null){
+                if (stack != null) {
                     Pattern patt = Pattern.compile("^spy:\\s+[0-9]+\\s+Eval\\s+([^_]*)$");
                     Matcher matcher = patt.matcher(e.getMsg());
-                    if (matcher.find()){
+                    if (matcher.find()) {
                         stack.add(matcher.group(1));
                         //spy: 2  Back  journey(1,DayEnd_e3,20,21)
                     }

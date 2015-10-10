@@ -18,11 +18,9 @@ package com.velonuboso.made.core.optimization;
 
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.optimization.api.IOptimizer;
-import com.velonuboso.made.core.optimization.implementation.Optimizer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Ignore;
 
 /**
@@ -48,7 +46,7 @@ public class OptimizerIT {
     @Ignore
     @Test
     public void optimizer_can_run_50_executions() {
-        optimizer.configure(100, 50, 0.5f, 20);
+        optimizer.configure(10, 50, 0.5f, 20);
         optimizer.run();
     }
 }

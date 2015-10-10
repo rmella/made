@@ -56,8 +56,8 @@ public interface IEventFactory {
     IEvent colorSpotDisappears(IColorSpot spot, int cellId);
     IEvent exception(String message);
     IEvent joy(ICharacter aThis, float joy);
-    IEvent isFriendOf(ICharacter subject, ICharacter friend);
-    IEvent isEnemyOf(ICharacter subject, ICharacter enemy);
+    IEvent isFriendOf(ICharacter subject, ICharacter ... friends);
+    IEvent isEnemyOf(ICharacter subject, ICharacter ... enemies);
     IEvent naturalChange(Piece aThis, Color currentColor, Color newColor);
     IEvent characterAppears (ICharacter subject, int cellId);
     IEvent trusts(ICharacter subject, ICharacter friendWithMostAffinity);

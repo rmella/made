@@ -24,16 +24,16 @@ import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
  */
 public class AbmConfigurationHelperWorld {
 
-    public static int MIN_WORLD_SIZE = 10;
-    public static int MAX_WORLD_SIZE = 20;
+    public static int MIN_WORLD_SIZE = 6;
+    public static int MAX_WORLD_SIZE = 10;
     public static int MIN_NUMBER_OF_CIRCLES = 0;
-    public static int MAX_NUMBER_OF_CIRCLES = 30;
+    public static int MAX_NUMBER_OF_CIRCLES = 10;
     public static int MIN_NUMBER_OF_TRIANGLES = 0;
-    public static int MAX_NUMBER_OF_TRIANGLES = 30;
+    public static int MAX_NUMBER_OF_TRIANGLES = 10;
     public static int MIN_NUMBER_OF_SQUARES = 0;
-    public static int MAX_NUMBER_OF_SQUARES = 30;
+    public static int MAX_NUMBER_OF_SQUARES = 10;
     public static int MIN_NUMBER_OF_DAYS = 1;
-    public static int MAX_NUMBER_OF_DAYS = 1000;
+    public static int MAX_NUMBER_OF_DAYS = 100;
 
     private AbmConfigurationEntity abmConfiguration;
 

@@ -24,6 +24,7 @@ import com.velonuboso.made.core.abm.api.IWorld;
 import com.velonuboso.made.core.abm.entity.CharacterShape;
 import com.velonuboso.made.core.abm.implementation.piece.Piece;
 import com.velonuboso.made.core.abm.implementation.piece.PieceUtilities;
+import java.util.Arrays;
 import javafx.scene.paint.Color;
 
 /**
@@ -177,13 +178,18 @@ public class EventFactory implements IEventFactory {
     }
 
     @Override
-    public IEvent isFriendOf(ICharacter subject, ICharacter friend) {
-        return new Event(IS_FRIEND_OF, currentDay, subject.getId(), friend.getId());
+    public IEvent isFriendOf(ICharacter subject, ICharacter ... friends) {
+        return new Event(
+                IS_FRIEND_OF, currentDay, subject.getId(),
+                Arrays.stream(friends).mapToInt(friend-> friend.getId()).toArray());
     }
     
     @Override
-    public IEvent isEnemyOf(ICharacter subject, ICharacter enemy) {
-        return new Event(IS_ENEMY_OF, currentDay, subject.getId(), enemy.getId());
+    public IEvent isEnemyOf(ICharacter subject, ICharacter ... enemies) {
+        return new Event(
+                IS_ENEMY_OF, currentDay, subject.getId(), 
+                Arrays.stream(enemies).mapToInt(enemy-> enemy.getId()).toArray()
+        );
     }
 
     @Override

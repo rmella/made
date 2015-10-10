@@ -26,6 +26,10 @@ public enum Trope {
     BEFORE, MORE_EVIL, IMMEDIATE,
     WISER, HELPS, ENCOURAGES,
     ACCOMPANIES, TRICKIER,
+    REAL_FRIENDS, REAL_ENEMIES, 
+    
+    ENEMY_OF_CHARACTER,
+    FRIEND_OF_CHARACTER,
     
     JOURNEY, SHADOW, HERO,
     MENTOR, HERALD, GUARDIAN, ALLIED,
@@ -37,6 +41,7 @@ public enum Trope {
             BEFORE, MORE_EVIL, IMMEDIATE,
             WISER, HELPS, ENCOURAGES,
             ACCOMPANIES, TRICKIER,
+            REAL_FRIENDS, REAL_ENEMIES, 
         };
     }
     

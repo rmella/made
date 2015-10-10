@@ -453,13 +453,19 @@ public class Piece implements ICharacter {
     }
 
     private void writeAffinityEvents(HashMap<ICharacter, Float> affinityMatrix) {
-        affinityMatrix.keySet().stream().forEach(target -> writeAffinityEvent(target, affinityMatrix.get(target)));
-    }
-
-    private void writeAffinityEvent(ICharacter target, Float affinity) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        IEvent event = affinity < 0 ? factory.isEnemyOf(this, target) : factory.isFriendOf(this, target);
-        eventsWriter.add(event);
+        
+        ICharacter friends[] = affinityMatrix.keySet().stream()
+                .filter(character -> affinityMatrix.get(character) > 0)
+                .toArray(ICharacter[]::new);
+        IEvent eventFriends = factory.isFriendOf(this, friends);
+        eventsWriter.add(eventFriends);
+        
+        ICharacter enemies[] = affinityMatrix.keySet().stream()
+                .filter(character -> affinityMatrix.get(character) < 0)
+                .toArray(ICharacter[]::new);
+        IEvent eventEnemies = factory.isEnemyOf(this, enemies); 
+        eventsWriter.add(eventEnemies);
     }
 
     private float getNewRandomPolynomialColorComponent(int crowdingDegree, float colorValue) {

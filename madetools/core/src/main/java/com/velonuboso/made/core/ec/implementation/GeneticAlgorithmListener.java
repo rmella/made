@@ -19,6 +19,9 @@ package com.velonuboso.made.core.ec.implementation;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  *
@@ -28,7 +31,15 @@ public class GeneticAlgorithmListener implements IGeneticAlgorithmListener{
 
     @Override
     public void notifyIterationSummary(int iteration, IIndividual bestIndividual, Fitness bestFitnessValue, float averagePopulationFitness) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
+        
+        ArrayList<String> elements = new ArrayList<>();
+        elements.add(format.format(iteration));
+        elements.add(format.format(bestFitnessValue.getValue().getAverage()));
+        elements.add(format.format(bestFitnessValue.getValue().getStandardDeviation()));
+        elements.add(format.format(bestFitnessValue.getValue().getNumberOfTrials()));
+        String csvLine = String.join(";", elements);
+        System.out.println(csvLine);
     }
     
 }
