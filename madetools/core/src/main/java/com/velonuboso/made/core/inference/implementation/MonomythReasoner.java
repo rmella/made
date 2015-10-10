@@ -186,7 +186,7 @@ public class MonomythReasoner implements IReasoner {
             ),
             new TermRule(
             new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(EventFactory.IS_FRIEND_OF, new Var("DAY"), new Var("A"), new Var("ListOfFriends")),
+            new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("ListOfFriends")),
             new Struct("member", new Var("B"), new Var("ListOfFriends"))
             ),
             new TermRule(
