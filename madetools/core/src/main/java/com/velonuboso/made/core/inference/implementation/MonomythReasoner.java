@@ -71,7 +71,7 @@ public class MonomythReasoner implements IReasoner {
 
     @Override
     public WorldDeductions getWorldDeductions(Term[] events) {
-        return getWorldDeductionsWithTropesInWhiteList(events, Trope.values());
+        return getWorldDeductionsWithTropesInWhiteList(events, Trope.getTropesInFromMonomyth());
     }
 
     @Override

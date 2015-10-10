@@ -28,7 +28,6 @@ import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.util.Arrays;
-import java.util.Collections;
 import org.apache.commons.lang.ArrayUtils;
 
 /**

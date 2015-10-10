@@ -14,17 +14,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.optimization.api;
+package com.velonuboso.made.core.optimization;
 
-import com.velonuboso.made.core.common.util.ImplementedBy;
+import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.optimization.api.IOptimizer;
 import com.velonuboso.made.core.optimization.implementation.Optimizer;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = Optimizer.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IOptimizer {
-    public void configure(int populationSize, int maximumIterations, float blxAlpha, float distanceParameterMutationDistribution);
-    public void run();
+public class OptimizerIT {
+    
+    private IOptimizer optimizer;
+    
+    public OptimizerIT() {
+    }
+    
+    @Before
+    public void setUp() {
+        optimizer = ObjectFactory.createObject(IOptimizer.class);
+    }
+    
+    @After
+    public void tearDown() {
+    }
+
+    @Ignore
+    @Test
+    public void optimizer_can_run_50_executions() {
+        optimizer.configure(100, 50, 0.5f, 20);
+        optimizer.run();
+    }
 }

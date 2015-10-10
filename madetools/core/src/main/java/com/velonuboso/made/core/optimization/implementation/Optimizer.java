@@ -16,16 +16,13 @@
  */
 package com.velonuboso.made.core.optimization.implementation;
 
-import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelper;
 import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperWorld;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithm;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
-import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.GeneDefinition;
 import com.velonuboso.made.core.ec.entity.GeneType;
 import com.velonuboso.made.core.ec.entity.IndividualDefinition;
-import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
 import com.velonuboso.made.core.optimization.api.*;
 import java.util.Arrays;
 
@@ -79,6 +76,11 @@ public class Optimizer implements IOptimizer {
         
         IndividualDefinition definition = new IndividualDefinition(definitions);
         return definition;
+    }
+
+    @Override
+    public void run() {
+        geneticAlgorithm.run();
     }
 
 }
