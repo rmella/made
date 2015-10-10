@@ -38,11 +38,13 @@ public class Population implements IPopulation {
     ArrayList<IIndividual> individuals;
     IIndividual bestIndividual;
     float averageFitness;
+    float standardDeviation;
 
     public Population() {
         individuals = new ArrayList<>();
         bestIndividual = null;
         averageFitness = 0;
+        standardDeviation = 0;
     }
 
     @Override
@@ -53,6 +55,11 @@ public class Population implements IPopulation {
                 .mapToDouble(individual -> individual.getCurrentFitness().getValue().getAverage())
                 .average()
                 .orElse(0f);
+        
+        float variance = (float) individuals.stream()
+                .mapToDouble(individual -> Math.pow(averageFitness-individual.getCurrentFitness().getValue().getAverage(), 2))
+                .sum()/(individuals.size()-1f);
+        standardDeviation = (float) Math.sqrt(variance);
         
         bestIndividual =  individuals.stream()
                 .max((IIndividual firstIndividual, IIndividual secondIndividual) -> 
@@ -67,6 +74,11 @@ public class Population implements IPopulation {
         return averageFitness;
     }
 
+    @Override
+    public float getStandardDeviation() {
+        return standardDeviation;
+    }
+    
     @Override
     public void add(IIndividual individual) {
         individuals.add(individual);

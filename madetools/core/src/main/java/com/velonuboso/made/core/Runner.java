@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.common.entity.InferencesEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
+import com.velonuboso.made.core.optimization.api.IOptimizer;
 
 /**
  *
@@ -27,7 +28,10 @@ import com.velonuboso.made.core.customization.api.ICustomization;
  */
 public class Runner {
     
-    public static void Main(String[] arguments){
-        // TODO
+    public static void main(String[] arguments){
+        // Sample code, for profiling purposes
+        IOptimizer optimizer = ObjectFactory.createObject(IOptimizer.class);
+        optimizer.configure(2, 0, 0.5f, 20);
+        optimizer.run();
     }
 }

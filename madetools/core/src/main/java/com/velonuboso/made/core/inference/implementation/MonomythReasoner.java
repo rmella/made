@@ -34,6 +34,8 @@ import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,18 +78,29 @@ public class MonomythReasoner implements IReasoner {
 
     @Override
     public WorldDeductions getWorldDeductionsWithTropesInWhiteList(Term[] events, Trope[] tropesWhiteList) {
+        
         WorldDeductions deductions = new WorldDeductions();
-        Arrays.stream(tropesWhiteList, 0, tropesWhiteList.length)
-                .forEach(trope -> searchTrope(events, trope, deductions));
+        try {
+            engine = new Prolog();
+            
+            addListenersToEngine();
+            
+            engine.setTheory(new Theory(getMonomythRules()));
+            engine.addTheory(new Theory(new Struct(events)));
+            
+            
+            Arrays.stream(tropesWhiteList, 0, tropesWhiteList.length)
+                    .forEach(trope -> searchTrope(events, trope, deductions));
+            return deductions;
+            
+        } catch (InvalidTheoryException ex) {
+            Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return deductions;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     private void searchTrope(Term[] events, Trope trope, WorldDeductions deductions) {
-
-        engine = new Prolog();
-
-        addListenersToEngine();
 
         Term predicateToSolve = getpredicateToSolve(trope);
         ArrayList<Term> solutions = new ArrayList<>();
@@ -100,11 +113,8 @@ public class MonomythReasoner implements IReasoner {
         deductions.put(trope, solutions.toArray(new Term[0]));
     }
 
-    private void createTheoryAndSolveTrope(Term[] events, Term predicateToSolve, ArrayList<Term> solutions)
-            throws InvalidTheoryException, NoSolutionException, NoMoreSolutionException {
+    private void createTheoryAndSolveTrope(Term[] events, Term predicateToSolve, ArrayList<Term> solutions) throws NoSolutionException, NoMoreSolutionException {
 
-        engine.setTheory(new Theory(getMonomythRules()));
-        engine.addTheory(new Theory(new Struct(events)));
         stack = new ArrayList();
 
         SolveInfo solveInfo = engine.solve(predicateToSolve);
@@ -129,9 +139,6 @@ public class MonomythReasoner implements IReasoner {
                 .map(TermWrapper::unwrap)
                 .forEachOrdered(element -> solutions.add(element));
         
-        if (solutions.size() != temporalSolutions.size()){
-            System.out.println("DIFFERENT");
-        } 
     }
 
     private Term getpredicateToSolve(Trope trope) {

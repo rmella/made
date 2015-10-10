@@ -32,4 +32,5 @@ public interface IPopulation {
     List<IIndividual> getIndividuals();
     IPopulation selectMatingPool();
     IPopulation createOffspring(float blxAlpha, float distanceParameterMutationDistribution);
+    float getStandardDeviation();
 }

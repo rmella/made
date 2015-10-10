@@ -75,32 +75,33 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
         condition.setMaximumIterations(maximumIterations);
 
         IPopulation population = buildInitialPopulation();
-        IIndividual bestIndividual = population.getBestIndividual();
+        IIndividual bestIndividualEver = population.getBestIndividual();
         
         int iteration = 0;
-        while (!condition.mustFinish(iteration, bestIndividual)) {
+        while (!condition.mustFinish(iteration, bestIndividualEver)) {
             IPopulation matingPool = population.selectMatingPool();
             IPopulation newGeneration = matingPool.createOffspring(blxAlpha, distanceParameterMutationDistribution);
             
             IIndividual bestIndividualInGeneration = newGeneration.getBestIndividual();
-            if (bestIndividualInGeneration.getCurrentFitness().compareTo(bestIndividual.getCurrentFitness())>0){
-                bestIndividual = bestIndividualInGeneration;
+            if (bestIndividualInGeneration.getCurrentFitness().compareTo(bestIndividualEver.getCurrentFitness())>0){
+                bestIndividualEver = bestIndividualInGeneration;
             }
+            float populationAverage = newGeneration.getAverageFitness();
+            float populationStandardDeviation = newGeneration.getStandardDeviation();
             
-            notifyAllListeners(iteration, bestIndividual, newGeneration);
+            notifyAllListeners(iteration, bestIndividualEver, populationAverage, populationStandardDeviation);
             
             population = newGeneration;
             iteration++;
         }
         
-        return bestIndividual;
+        return bestIndividualEver;
     }
 
-    private void notifyAllListeners(int iteration, IIndividual bestIndividual, IPopulation newGeneration) {
+    private void notifyAllListeners(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
         listeners.stream().forEach((listener) -> {
-            listener.notifyIterationSummary(iteration, bestIndividual,
-                    bestIndividual.getCurrentFitness(),
-                    newGeneration.getAverageFitness());
+            listener.notifyIterationSummary(iteration, bestIndividualEver,
+                    populationAverage, populationStandardDeviation);
         });
     }
 
