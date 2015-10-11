@@ -21,4 +21,48 @@
             <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
         </license>
     </licenses>
+    
+    <build>  
+        <plugins>  
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>hack-binary-2p</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <file>${basedir}/lib/2p-3.0.1/bin/2p.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>it.unibo.alice.tuprolog</groupId>
+                            <artifactId>2p</artifactId>
+                            <version>3.0.1</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>hack-binary-tuprolog</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <file>${basedir}/lib/2p-3.0.1/bin/tuprolog.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>it.unibo.alice.tuprolog</groupId>
+                            <artifactId>tuprolog</artifactId>
+                            <version>3.0.1</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

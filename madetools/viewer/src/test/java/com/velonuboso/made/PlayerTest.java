@@ -20,6 +20,7 @@ package com.velonuboso.made;
 import com.velonuboso.made.viewer.Player;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -31,6 +32,7 @@ public class PlayerTest {
     public PlayerTest() {
     }
 
+    @Ignore
     @Test
     public void UT_Main_must_throw_exception_when_args_is_null() {
         String[] args = null;
@@ -40,6 +42,7 @@ public class PlayerTest {
                 exceptionCalled);
     }
     
+    @Ignore
     @Test
     public void UT_Main_must_throw_exception_when_args_is_empty() {
         String[] args = new String[0];
@@ -49,6 +52,7 @@ public class PlayerTest {
                 exceptionCalled);
     }
     
+    @Ignore
     @Test
     public void UT_Main_must_throw_exception_when_first_arg_is_a_invalid_file() {
         String[] args = new String[]{"unexistingFile.json"};

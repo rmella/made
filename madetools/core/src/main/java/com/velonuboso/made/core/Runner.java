@@ -18,20 +18,136 @@ package com.velonuboso.made.core;
 
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.common.entity.InferencesEntity;
+import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
+import com.velonuboso.made.core.experiments.implementation.BaseExperiment;
 import com.velonuboso.made.core.optimization.api.IOptimizer;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import org.reflections.Reflections;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class Runner {
-    
-    public static void main(String[] arguments){
-        // Sample code, for profiling purposes
-        IOptimizer optimizer = ObjectFactory.createObject(IOptimizer.class);
-        optimizer.configure(2, 0, 0.5f, 20);
-        optimizer.run();
+
+    private static final String ARGUMENT_EXPERIMENT = "experiment";
+    private static final String ARGUMENT_EXPERIMENT_LIST = "experimentList";
+    private static final String ARGUMENT_HELP = "help";
+
+    private String[] arguments;
+
+    public static void main(String[] arguments) {
+        Runner runner = new Runner(arguments);
+        runner.run();
+    }
+
+    public Runner(String[] arguments) {
+        this.arguments = arguments;
+    }
+
+    public void run() {
+        Reflections.log = null;
+
+        printVersion();
+
+        OptionParser parser = buildOptionParser();
+
+        OptionSet options = parser.parse(arguments);
+        if (options.has(ARGUMENT_EXPERIMENT)) {
+            runExperiment(options.valueOf(ARGUMENT_EXPERIMENT).toString());
+            System.exit(0);
+        }
+        if (options.has(ARGUMENT_EXPERIMENT_LIST)) {
+            printExperimentList();
+            System.exit(0);
+        }
+        if (options.has(ARGUMENT_HELP)) {
+            printHelp(parser);
+            System.exit(0);
+        }
+        printHelp(parser);
+    }
+
+    private OptionParser buildOptionParser() {
+        OptionParser parser = new OptionParser();
+        parser.accepts(ARGUMENT_EXPERIMENT, "Pre selected experiment").withRequiredArg().ofType(String.class);
+        parser.accepts(ARGUMENT_EXPERIMENT_LIST, "Retrieves the current list of available experiments");
+        parser.accepts(ARGUMENT_HELP, "Displays this help").forHelp();
+        return parser;
+    }
+
+    private void printExperimentList() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Experiment list:\n");
+
+        Set<Class<? extends BaseExperiment>> subTypes = getExperimentClasses();
+        subTypes.stream().forEach((experimentClass) -> {
+            try {
+                BaseExperiment experiment = (BaseExperiment) experimentClass.getConstructor().newInstance();
+                String line = experiment.getCodeName() + ": " + experiment.getDescription();
+                stringBuilder.append("\t" + line + "\n");
+            } catch (Exception e) {
+            }
+        });
+        System.out.println(stringBuilder.toString());
+    }
+
+    private Set<Class<? extends BaseExperiment>> getExperimentClasses() {
+        final Reflections reflections = new Reflections("com.velonuboso.made.core.experiments.implementation");
+        Set<Class<? extends BaseExperiment>> subTypes = reflections.getSubTypesOf(BaseExperiment.class);
+        return subTypes;
+    }
+
+    private void printVersion() {
+        String title = Runner.class.getPackage().getImplementationTitle();
+        String version = Runner.class.getPackage().getImplementationVersion();
+        System.out.println("Running MADE " + title + " v" + version + " ...");
+    }
+
+    private void printHelp(OptionParser parser) {
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            parser.printHelpOn(byteArrayOutputStream);
+            System.out.println(byteArrayOutputStream.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void runExperiment(String experimentCode) {
+        Set<Class<? extends BaseExperiment>> subTypes = getExperimentClasses();
+        Class experimentClass = subTypes.stream()
+                .filter(new Predicate<Class<? extends BaseExperiment>>() {
+                    @Override
+                    public boolean test(Class<? extends BaseExperiment> filteredexperimentClass) {
+                        try {
+                            return filteredexperimentClass.getConstructor().newInstance().getCodeName().compareTo(experimentCode) == 0;
+                        } catch (Exception ex) {
+                            Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        return false;
+                    }
+                })
+                .findFirst()
+                .orElse(null);
+
+        if (experimentClass != null) {
+            try {
+                BaseExperiment experiment = (BaseExperiment) experimentClass.getConstructor().newInstance();
+                experiment.run(arguments);
+            } catch (Exception ex) {
+                Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
 }

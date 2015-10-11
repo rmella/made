@@ -22,6 +22,11 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.4</version>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -29,4 +34,23 @@
         <netbeans.hint.license>gpl30</netbeans.hint.license>
         <user>Rubén Héctor García (raiben@gmail.com)</user>
     </properties>
+    <build>  
+        <plugins>  
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>hack-binary-2p</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>hack-binary-tuprolog</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>    
 </project>
