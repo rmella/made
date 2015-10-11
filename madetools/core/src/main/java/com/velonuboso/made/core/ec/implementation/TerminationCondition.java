@@ -18,6 +18,11 @@ package com.velonuboso.made.core.ec.implementation;
 
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.api.ITerminationCondition;
+import java.util.AbstractQueue;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.Stack;
+import org.apache.commons.collections.buffer.CircularFifoBuffer;
 
 /**
  *
@@ -25,11 +30,43 @@ import com.velonuboso.made.core.ec.api.ITerminationCondition;
  */
 public class TerminationCondition implements ITerminationCondition{
 
+    private static final int DEFAULT_BUFFER_SIZE = 30;
+    private static final int DEFAULT_MAXIMUM_ITERATIONS = 10000;
+    
+    private CircularFifoBuffer lastBestFitness;
     private int maximumIterations;
+    private int bufferSize;
+    
+    public TerminationCondition() {
+        maximumIterations = DEFAULT_MAXIMUM_ITERATIONS;
+        bufferSize = DEFAULT_BUFFER_SIZE;
+        lastBestFitness = null;
+    }
     
     @Override
     public boolean mustFinish(int iteration, IIndividual bestIndividual) {
-        return iteration>=maximumIterations;
+        
+        if (lastBestFitness == null){
+            lastBestFitness = new CircularFifoBuffer(bufferSize);
+        }
+        
+        addFitnessToCircularBuffer(bestIndividual);
+        
+        boolean fitnessChanges = fitnessChangesInTheLastIterations(bestIndividual);
+        boolean overMaximumIterations =  iteration>=maximumIterations;
+        
+        return !fitnessChanges || overMaximumIterations;
+    }
+
+    private void addFitnessToCircularBuffer(IIndividual bestIndividual) {
+        lastBestFitness.add(bestIndividual.getCurrentFitness().getValue().getAverage());
+    }
+
+    private boolean fitnessChangesInTheLastIterations(IIndividual bestIndividual) {
+        if (lastBestFitness.size()<bufferSize){
+            return true;
+        }
+        return lastBestFitness.stream().distinct().toArray().length > 1;
     }
 
     @Override
@@ -37,4 +74,9 @@ public class TerminationCondition implements ITerminationCondition{
         this.maximumIterations = maximumIterations;
     }
     
+    @Override
+    public void setSizeOfBufferToCheckChanges(int bufferSize) {
+        this.bufferSize = bufferSize;
+        
+    }
 }
