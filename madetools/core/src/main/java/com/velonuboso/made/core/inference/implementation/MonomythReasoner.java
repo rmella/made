@@ -83,7 +83,7 @@ public class MonomythReasoner implements IReasoner {
         try {
             engine = new Prolog();
             
-            addListenersToEngine();
+            //addListenersToEngine();
             
             engine.setTheory(new Theory(getMonomythRules()));
             engine.addTheory(new Theory(new Struct(events)));
