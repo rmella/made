@@ -88,11 +88,14 @@ public class MonomythReasoner implements IReasoner {
             engine.setTheory(new Theory(getMonomythRules()));
             engine.addTheory(new Theory(new Struct(events)));
             
-            
             Arrays.stream(tropesWhiteList, 0, tropesWhiteList.length)
                     .forEach(trope -> searchTrope(events, trope, deductions));
             return deductions;
-            
+        } catch(StackOverflowError error){
+            Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, error);
+            Arrays.stream(events).forEach(event ->
+                Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, event.toString())
+            );
         } catch (InvalidTheoryException ex) {
             Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, ex);
         }
