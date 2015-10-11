@@ -24,6 +24,7 @@ import com.velonuboso.made.core.common.entity.InferencesEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
 import com.velonuboso.made.core.ec.api.IFitnessFunction;
+import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.inference.api.IReasoner;
@@ -64,6 +65,7 @@ public class FitnessFunction implements IFitnessFunction{
             numberOfTropes = deductions.values().stream().map((tropes) -> tropes.length).reduce(numberOfTropes, Integer::sum);
             
             trials.add((float)numberOfTropes);
+            ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyTrial(deductions, numberOfTropes);
         }
         
         Fitness fitness = new Fitness();
@@ -72,6 +74,8 @@ public class FitnessFunction implements IFitnessFunction{
         float standardDeviation = (float) Math.sqrt(variance);
         
         fitness.setValue(trials.size(), average, standardDeviation);
+       
+        ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyIndividualEvaluation(fitness);
         
         return fitness;
     }

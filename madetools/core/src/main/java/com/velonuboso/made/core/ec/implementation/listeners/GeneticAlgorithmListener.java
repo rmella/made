@@ -20,6 +20,7 @@ import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.entity.TrialInformation;
+import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 public class GeneticAlgorithmListener implements IGeneticAlgorithmListener{
 
     boolean headerprinted = false;
+    boolean inEvaluation = false;
     
     public GeneticAlgorithmListener() {
     }
@@ -61,6 +63,23 @@ public class GeneticAlgorithmListener implements IGeneticAlgorithmListener{
         });
         
         String csvLine = String.join(";", elements);
-        System.out.println(csvLine);
+        System.out.print(csvLine+"\n");
+        
+        inEvaluation = false;
+    }
+
+    @Override
+    public void notifyTrial(WorldDeductions deductions, float fitnessValue) {
+        if (!inEvaluation){
+            inEvaluation = true;
+            System.out.print("#");
+        }
+        System.out.print("*");
+    }
+
+    @Override
+    public void notifyIndividualEvaluation(Fitness fitness) {
+        System.out.print(" " + fitness.getValue().getAverage()+"\n");
+        inEvaluation = false;
     }
 }

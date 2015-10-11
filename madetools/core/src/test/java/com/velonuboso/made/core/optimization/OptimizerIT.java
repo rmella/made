@@ -46,7 +46,7 @@ public class OptimizerIT {
     @Ignore
     @Test
     public void optimizer_can_run_50_executions() {
-        optimizer.configure(2, 50, 0.5f, 20);
+        optimizer.configure(10, 50, 0.5f, 20);
         optimizer.run();
     }
 }
