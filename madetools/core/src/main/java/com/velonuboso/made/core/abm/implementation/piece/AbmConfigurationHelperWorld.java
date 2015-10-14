@@ -16,7 +16,10 @@
  */
 package com.velonuboso.made.core.abm.implementation.piece;
 
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 
 /**
  *
@@ -24,19 +27,8 @@ import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
  */
 public class AbmConfigurationHelperWorld {
 
-    public static int MIN_WORLD_SIZE = 6;
-    public static int MAX_WORLD_SIZE = 10;
-    public static int MIN_NUMBER_OF_CIRCLES = 0;
-    public static int MAX_NUMBER_OF_CIRCLES = 10;
-    public static int MIN_NUMBER_OF_TRIANGLES = 0;
-    public static int MAX_NUMBER_OF_TRIANGLES = 10;
-    public static int MIN_NUMBER_OF_SQUARES = 0;
-    public static int MAX_NUMBER_OF_SQUARES = 10;
-    public static int MIN_NUMBER_OF_DAYS = 1;
-    public static int MAX_NUMBER_OF_DAYS = 100;
-
     private AbmConfigurationEntity abmConfiguration;
-
+    
     public AbmConfigurationHelperWorld(AbmConfigurationEntity abmConfiguration) {
         this.abmConfiguration = abmConfiguration;
     }
@@ -46,11 +38,15 @@ public class AbmConfigurationHelperWorld {
     }
 
     public void validateTypes() throws Exception {
-        checkValueInteger(Gene.WORLD_SIZE, MIN_WORLD_SIZE, MAX_WORLD_SIZE);
-        checkValueInteger(Gene.NUMBER_OF_CIRCLES, MIN_NUMBER_OF_CIRCLES, MAX_NUMBER_OF_CIRCLES);
-        checkValueInteger(Gene.NUMBER_OF_TRIANGLES, MIN_NUMBER_OF_TRIANGLES, MAX_NUMBER_OF_TRIANGLES);
-        checkValueInteger(Gene.NUMBER_OF_SQUARES, MIN_NUMBER_OF_SQUARES, MAX_NUMBER_OF_SQUARES);
-        checkValueInteger(Gene.NUMBER_OF_DAYS, MIN_NUMBER_OF_DAYS, MAX_NUMBER_OF_DAYS);
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonAbmConfiguration config = globalConfigurationFactory.getCommonAbmConfiguration();
+        
+        checkValueInteger(Gene.WORLD_SIZE, config.MIN_WORLD_SIZE, config.MAX_WORLD_SIZE);
+        checkValueInteger(Gene.NUMBER_OF_CIRCLES, config.MIN_NUMBER_OF_CIRCLES, config.MAX_NUMBER_OF_CIRCLES);
+        checkValueInteger(Gene.NUMBER_OF_TRIANGLES, config.MIN_NUMBER_OF_TRIANGLES, config.MAX_NUMBER_OF_TRIANGLES);
+        checkValueInteger(Gene.NUMBER_OF_SQUARES, config.MIN_NUMBER_OF_SQUARES, config.MAX_NUMBER_OF_SQUARES);
+        checkValueInteger(Gene.NUMBER_OF_DAYS, config.MIN_NUMBER_OF_DAYS, config.MAX_NUMBER_OF_DAYS);
         checkValueProbability(Gene.PROBABILITY_TO_ADD_SPOT);
         checkValueProbability(Gene.PROBABILITY_TO_REMOVE_SPOT);
     }

@@ -18,7 +18,10 @@ package com.velonuboso.made.core.abm;
 
 import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelper;
 import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperWorld;
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,11 +33,16 @@ import static org.junit.Assert.*;
  */
 public class AbmConfigurationHelperTest {
 
+    private CommonAbmConfiguration config;
+    
     public AbmConfigurationHelperTest() {
     }
 
     @Before
     public void setUp() {
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        config = globalConfigurationFactory.getCommonAbmConfiguration();
     }
 
     @Test
@@ -60,11 +68,11 @@ public class AbmConfigurationHelperTest {
     public void Prepare_when_chromosome_values_for_the_world_are_below_the_range_it_throws_exception() throws Exception {
         int size = 46;
         float[] chromosome = new float[size];
-        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
-        chromosome[1] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_CIRCLES;
-        chromosome[2] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_TRIANGLES;
-        chromosome[3] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_SQUARES;
-        chromosome[4] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_DAYS - 1;
+        chromosome[0] = config.MIN_WORLD_SIZE;
+        chromosome[1] = config.MIN_NUMBER_OF_CIRCLES;
+        chromosome[2] = config.MIN_NUMBER_OF_TRIANGLES;
+        chromosome[3] = config.MIN_NUMBER_OF_SQUARES;
+        chromosome[4] = config.MIN_NUMBER_OF_DAYS - 1;
         Arrays.fill(chromosome, 5, size, 0.5f);
 
         boolean success = prepareAbmConfigurationHelper(chromosome);
@@ -75,11 +83,11 @@ public class AbmConfigurationHelperTest {
     public void Prepare_when_chromosome_values_for_the_world_are_over_the_range_it_throws_exception() throws Exception {
         int size = 46;
         float[] chromosome = new float[size];
-        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
-        chromosome[1] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_CIRCLES;
-        chromosome[2] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_TRIANGLES;
-        chromosome[3] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_SQUARES;
-        chromosome[4] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_DAYS + 1;
+        chromosome[0] = config.MIN_WORLD_SIZE;
+        chromosome[1] = config.MIN_NUMBER_OF_CIRCLES;
+        chromosome[2] = config.MIN_NUMBER_OF_TRIANGLES;
+        chromosome[3] = config.MIN_NUMBER_OF_SQUARES;
+        chromosome[4] = config.MAX_NUMBER_OF_DAYS + 1;
         Arrays.fill(chromosome, 5, size, 0.5f);
 
         boolean success = prepareAbmConfigurationHelper(chromosome);
@@ -90,11 +98,11 @@ public class AbmConfigurationHelperTest {
     public void Prepare_when_chromosome_int_values_for_the_world_have_decimals_it_throws_exception() throws Exception {
         int size = 46;
         float[] chromosome = new float[size];
-        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
-        chromosome[1] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_CIRCLES;
-        chromosome[2] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_TRIANGLES;
-        chromosome[3] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_SQUARES;
-        chromosome[4] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_DAYS + 0.5f;
+        chromosome[0] = config.MIN_WORLD_SIZE;
+        chromosome[1] = config.MIN_NUMBER_OF_CIRCLES;
+        chromosome[2] = config.MIN_NUMBER_OF_TRIANGLES;
+        chromosome[3] = config.MIN_NUMBER_OF_SQUARES;
+        chromosome[4] = config.MIN_NUMBER_OF_DAYS + 0.5f;
         Arrays.fill(chromosome, 5, size, 0.5f);
 
         boolean success = prepareAbmConfigurationHelper(chromosome);
@@ -105,11 +113,11 @@ public class AbmConfigurationHelperTest {
     public void Prepare_when_chromosome_float_values_for_the_piece_are_not_in_the_range_throws_exception() throws Exception {
         int size = 46;
         float[] chromosome = new float[size];
-        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
-        chromosome[1] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_CIRCLES;
-        chromosome[2] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_TRIANGLES;
-        chromosome[3] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_SQUARES;
-        chromosome[4] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_DAYS;
+        chromosome[0] = config.MIN_WORLD_SIZE;
+        chromosome[1] = config.MIN_NUMBER_OF_CIRCLES;
+        chromosome[2] = config.MIN_NUMBER_OF_TRIANGLES;
+        chromosome[3] = config.MIN_NUMBER_OF_SQUARES;
+        chromosome[4] = config.MIN_NUMBER_OF_DAYS;
         Arrays.fill(chromosome, 5, size, 2f);
 
         boolean success = prepareAbmConfigurationHelper(chromosome);
@@ -121,11 +129,11 @@ public class AbmConfigurationHelperTest {
     public void Prepare_when_chromosome_is_valid_it_does_not_throw_exception() throws Exception {
         int size = 52;
         float[] chromosome = new float[size];
-        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
-        chromosome[1] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_CIRCLES;
-        chromosome[2] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_TRIANGLES;
-        chromosome[3] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_SQUARES;
-        chromosome[4] = AbmConfigurationHelperWorld.MIN_NUMBER_OF_DAYS;
+        chromosome[0] = config.MIN_WORLD_SIZE;
+        chromosome[1] = config.MIN_NUMBER_OF_CIRCLES;
+        chromosome[2] = config.MIN_NUMBER_OF_TRIANGLES;
+        chromosome[3] = config.MIN_NUMBER_OF_SQUARES;
+        chromosome[4] = config.MIN_NUMBER_OF_DAYS;
         Arrays.fill(chromosome, 5, size, 0.5f);
 
         boolean success = prepareAbmConfigurationHelper(chromosome);

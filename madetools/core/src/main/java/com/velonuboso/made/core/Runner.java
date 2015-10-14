@@ -126,16 +126,13 @@ public class Runner {
     private void runExperiment(String experimentCode) {
         Set<Class<? extends BaseExperiment>> subTypes = getExperimentClasses();
         Class experimentClass = subTypes.stream()
-                .filter(new Predicate<Class<? extends BaseExperiment>>() {
-                    @Override
-                    public boolean test(Class<? extends BaseExperiment> filteredexperimentClass) {
-                        try {
-                            return filteredexperimentClass.getConstructor().newInstance().getCodeName().compareTo(experimentCode) == 0;
-                        } catch (Exception ex) {
-                            Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        return false;
+                .filter((Class<? extends BaseExperiment> filteredexperimentClass) -> {
+                    try {
+                        return filteredexperimentClass.getConstructor().newInstance().getCodeName().compareTo(experimentCode) == 0;
+                    } catch (Exception ex) {
+                        Logger.getLogger(Runner.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    return false;
                 })
                 .findFirst()
                 .orElse(null);

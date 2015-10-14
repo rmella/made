@@ -35,7 +35,6 @@ public class ExperimentEvostar2015 extends BaseExperiment{
     @Override
     public void run(String[] arguments) {
         IOptimizer optimizer = ObjectFactory.createObject(IOptimizer.class);
-        optimizer.configure(10, 50, 0.5f, 20);
         optimizer.run();
     }
 

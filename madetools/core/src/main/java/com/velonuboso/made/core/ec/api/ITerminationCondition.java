@@ -27,6 +27,4 @@ import com.velonuboso.made.core.ec.implementation.TerminationCondition;
 public interface ITerminationCondition {
     
     public boolean mustFinish(int iteration, IIndividual bestIndividual);
-    public void setMaximumIterations(int maximumIterations);
-    void setSizeOfBufferToCheckChanges(int bufferSize);
 }

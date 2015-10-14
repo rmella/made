@@ -16,6 +16,8 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
+import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithm;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
@@ -36,20 +38,16 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
 
     private List<IGeneticAlgorithmListener> listeners;
     private IndividualDefinition definition;
-    private int populationSize;
-    private int maximumIterations;
-    private float blxAlpha;
-    private float distanceParameterMutationDistribution;
-
+    CommonEcConfiguration config;
     private static final IndividualDefinition EmptyDefinition = new IndividualDefinition(new GeneDefinition[0]);
 
     public GeneticAlgorithm() {
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        config = globalConfigurationFactory.getCommonEcConfiguration();
+        
         listeners = new ArrayList<>();
         definition = EmptyDefinition;
-        populationSize = 0;
-        maximumIterations = 0;
-        blxAlpha = 0;
-        distanceParameterMutationDistribution = 0;
     }
 
     @Override
@@ -58,21 +56,16 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
     }
 
     @Override
-    public void configure (IndividualDefinition definition, int populationSize, int maximumIterations, 
-            float blxAlpha, float distanceParameterMutationDistribution) {
+    public void configure (IndividualDefinition definition) {
         this.listeners = listeners;
         this.definition = definition;
-        this.populationSize = populationSize;
-        this.maximumIterations = maximumIterations;
-        this.blxAlpha = blxAlpha;
-        this.distanceParameterMutationDistribution = distanceParameterMutationDistribution;
     }
 
     @Override
     public IIndividual run() {
         
+        
         ITerminationCondition condition = ObjectFactory.createObject(ITerminationCondition.class);
-        condition.setMaximumIterations(maximumIterations);
 
         IPopulation population = buildInitialPopulation();
         IIndividual bestIndividualEver = population.getBestIndividual();
@@ -80,7 +73,8 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
         int iteration = 0;
         while (!condition.mustFinish(iteration, bestIndividualEver)) {
             IPopulation matingPool = population.selectMatingPool();
-            IPopulation newGeneration = matingPool.createOffspring(blxAlpha, distanceParameterMutationDistribution);
+            IPopulation newGeneration = matingPool.createOffspring(
+                    config.BLX_ALPHA, config.ETA_DISTANCE_MUTATION_DISTRIBUTION);
             
             IIndividual bestIndividualInGeneration = newGeneration.getBestIndividual();
             if (bestIndividualInGeneration.getCurrentFitness().compareTo(bestIndividualEver.getCurrentFitness())>0){
@@ -107,7 +101,7 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
 
     private IPopulation buildInitialPopulation() {
         IPopulation population = ObjectFactory.createObject(IPopulation.class);
-        IntStream.range(0, populationSize).forEach(index -> addNewRandomIndividualToPopulation(population));
+        IntStream.range(0, config.POPULATION_SIZE).forEach(index -> addNewRandomIndividualToPopulation(population));
         return population;
     }
 

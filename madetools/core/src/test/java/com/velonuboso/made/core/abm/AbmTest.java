@@ -16,11 +16,12 @@
  */
 package com.velonuboso.made.core.abm;
 
-import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperWorld;
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
 import com.velonuboso.made.core.common.entity.InferencesEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
@@ -68,11 +69,15 @@ public class AbmTest {
         int size = 52;
         float[] chromosome = new float[size];
         
-        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
-        chromosome[1] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_CIRCLES;
-        chromosome[2] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_TRIANGLES;
-        chromosome[3] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_SQUARES;
-        chromosome[4] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_DAYS/10;
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonAbmConfiguration config = globalConfigurationFactory.getCommonAbmConfiguration();
+        
+        chromosome[0] = config.MIN_WORLD_SIZE;
+        chromosome[1] = config.MAX_NUMBER_OF_CIRCLES;
+        chromosome[2] = config.MAX_NUMBER_OF_TRIANGLES;
+        chromosome[3] = config.MAX_NUMBER_OF_SQUARES;
+        chromosome[4] = config.MAX_NUMBER_OF_DAYS/10;
         chromosome[5] = 1;
         chromosome[6] = 0.2f;
         Arrays.fill(chromosome, 5, size, 0.5f);
@@ -91,13 +96,17 @@ public class AbmTest {
     @Test
     public void testRun_one_character() {
         int size = 52;
-        float[] chromosome = new float[size];
         
-        chromosome[0] = AbmConfigurationHelperWorld.MIN_WORLD_SIZE;
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonAbmConfiguration config = globalConfigurationFactory.getCommonAbmConfiguration();
+        
+        float[] chromosome = new float[size];
+        chromosome[0] = config.MIN_WORLD_SIZE;
         chromosome[1] = 1;
         chromosome[2] = 0;
         chromosome[3] = 0;
-        chromosome[4] = AbmConfigurationHelperWorld.MAX_NUMBER_OF_DAYS;
+        chromosome[4] = config.MAX_NUMBER_OF_DAYS;
         chromosome[5] = 1;
         chromosome[6] = 0.4f;
         Arrays.fill(chromosome, 5, size, 0.5f);

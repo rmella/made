@@ -18,7 +18,10 @@ package com.velonuboso.made.core.ec.implementation;
 
 import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IAbm;
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
+import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.common.entity.InferencesEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
@@ -40,14 +43,15 @@ import org.apache.commons.lang.ArrayUtils;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class FitnessFunction implements IFitnessFunction{
-
-    public static final int NUMBER_OF_TRIALS = 30;
     
     @Override
     public Fitness evaluateIndividual(IIndividual individual) {
-        ArrayList<Float> trials = new ArrayList<>();
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
         
-        for (int trialIndex = 0; trialIndex < NUMBER_OF_TRIALS; trialIndex++){
+        ArrayList<Float> trials = new ArrayList<>();
+        for (int trialIndex = 0; trialIndex < config.NUMBER_OF_TRIALS; trialIndex++){
             ICustomization customization = ObjectFactory.createObject(ICustomization.class);
 
             IAbm abm = ObjectFactory.createObject(IAbm.class);

@@ -16,6 +16,8 @@
  */
 package com.velonuboso.made.core.optimization;
 
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
+import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.optimization.api.IOptimizer;
 import org.junit.After;
@@ -46,7 +48,12 @@ public class OptimizerIT {
     @Ignore
     @Test
     public void optimizer_can_run_50_executions() {
-        optimizer.configure(10, 50, 0.5f, 20);
+        
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
+        
+        config.MAXIMUM_ITERATIONS = 50;
         optimizer.run();
     }
 }

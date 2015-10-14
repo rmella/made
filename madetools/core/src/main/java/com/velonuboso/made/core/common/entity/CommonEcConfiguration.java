@@ -14,19 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.api;
-
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.entity.IndividualDefinition;
-import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
+package com.velonuboso.made.core.common.entity;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = GeneticAlgorithm.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IGeneticAlgorithm {
-    public void configure(IndividualDefinition definition);
-    public void addListener(IGeneticAlgorithmListener listener);
-    public IIndividual run();
+public class CommonEcConfiguration {
+    public int NUMBER_OF_TRIALS = 30;
+    public int POPULATION_SIZE = 50; 
+    public int MAXIMUM_ITERATIONS = 1000;
+    public float BLX_ALPHA = 0.5f;
+    public int ETA_DISTANCE_MUTATION_DISTRIBUTION = 20;
+    public int TERMINATE_IF_NOT_IMPROVES_IN_ITERATIONS = 30;
 }

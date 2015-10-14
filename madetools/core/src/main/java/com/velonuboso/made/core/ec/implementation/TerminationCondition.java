@@ -16,6 +16,9 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
+import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.api.ITerminationCondition;
 import java.util.AbstractQueue;
@@ -29,31 +32,27 @@ import org.apache.commons.collections.buffer.CircularFifoBuffer;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class TerminationCondition implements ITerminationCondition{
-
-    private static final int DEFAULT_BUFFER_SIZE = 30;
-    private static final int DEFAULT_MAXIMUM_ITERATIONS = 10000;
     
     private CircularFifoBuffer lastBestFitness;
-    private int maximumIterations;
-    private int bufferSize;
     
     public TerminationCondition() {
-        maximumIterations = DEFAULT_MAXIMUM_ITERATIONS;
-        bufferSize = DEFAULT_BUFFER_SIZE;
         lastBestFitness = null;
     }
     
     @Override
     public boolean mustFinish(int iteration, IIndividual bestIndividual) {
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
         
         if (lastBestFitness == null){
-            lastBestFitness = new CircularFifoBuffer(bufferSize);
+            lastBestFitness = new CircularFifoBuffer(config.TERMINATE_IF_NOT_IMPROVES_IN_ITERATIONS);
         }
         
         addFitnessToCircularBuffer(bestIndividual);
         
         boolean fitnessChanges = fitnessChangesInTheLastIterations(bestIndividual);
-        boolean overMaximumIterations =  iteration>=maximumIterations;
+        boolean overMaximumIterations =  iteration>=config.MAXIMUM_ITERATIONS;
         
         return !fitnessChanges || overMaximumIterations;
     }
@@ -63,20 +62,13 @@ public class TerminationCondition implements ITerminationCondition{
     }
 
     private boolean fitnessChangesInTheLastIterations(IIndividual bestIndividual) {
-        if (lastBestFitness.size()<bufferSize){
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
+        
+        if (lastBestFitness.size()<config.TERMINATE_IF_NOT_IMPROVES_IN_ITERATIONS){
             return true;
         }
         return lastBestFitness.stream().distinct().toArray().length > 1;
-    }
-
-    @Override
-    public void setMaximumIterations(int maximumIterations) {
-        this.maximumIterations = maximumIterations;
-    }
-    
-    @Override
-    public void setSizeOfBufferToCheckChanges(int bufferSize) {
-        this.bufferSize = bufferSize;
-        
     }
 }

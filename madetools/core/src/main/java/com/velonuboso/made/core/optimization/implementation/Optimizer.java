@@ -16,7 +16,9 @@
  */
 package com.velonuboso.made.core.optimization.implementation;
 
-import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperWorld;
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
+import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithm;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
@@ -41,46 +43,44 @@ public class Optimizer implements IOptimizer {
     private static final int GENE_NUMBER_OF_SQUARES = 3;
     private static final int GENE_NUMBER_OF_DAYS = 4;
     private static final int GENE_BEGIN_INDEX_OF_FLOATS = 5;
-    
+
     public Optimizer() {
         geneticAlgorithm = null;
     }
 
     @Override
-    public void configure(int populationSize, int maximumIterations, float blxAlpha, float distanceParameterMutationDistribution) {
+    public void run() {
+        configure();
+        geneticAlgorithm.run();
+    }
+    
+    public void configure() {
         geneticAlgorithm = ObjectFactory.createObject(IGeneticAlgorithm.class);
         IndividualDefinition definition = getIndividualDefinition();
-        geneticAlgorithm.configure(definition, populationSize, maximumIterations, blxAlpha, distanceParameterMutationDistribution);
+        geneticAlgorithm.configure(definition);
         geneticAlgorithm.addListener(ObjectFactory.createObject(IGeneticAlgorithmListener.class));
     }
 
     private IndividualDefinition getIndividualDefinition() {
         GeneDefinition[] definitions = new GeneDefinition[NUMBER_OF_GENES];
-        
+
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonAbmConfiguration config = globalConfigurationFactory.getCommonAbmConfiguration();
+
         definitions[GENE_WORLD_SIZE] = new GeneDefinition(GeneType.INTEGER,
-                AbmConfigurationHelperWorld.MIN_WORLD_SIZE,
-                AbmConfigurationHelperWorld.MAX_WORLD_SIZE);
+                config.MIN_WORLD_SIZE, config.MAX_WORLD_SIZE);
         definitions[GENE_NUMBER_OF_CIRCLES] = new GeneDefinition(GeneType.INTEGER,
-                AbmConfigurationHelperWorld.MIN_NUMBER_OF_CIRCLES,
-                AbmConfigurationHelperWorld.MAX_NUMBER_OF_CIRCLES);
+                config.MIN_NUMBER_OF_CIRCLES, config.MAX_NUMBER_OF_CIRCLES);
         definitions[GENE_NUMBER_OF_TRIANGLES] = new GeneDefinition(GeneType.INTEGER,
-                AbmConfigurationHelperWorld.MIN_NUMBER_OF_TRIANGLES,
-                AbmConfigurationHelperWorld.MAX_NUMBER_OF_TRIANGLES);
+                config.MIN_NUMBER_OF_TRIANGLES, config.MAX_NUMBER_OF_TRIANGLES);
         definitions[GENE_NUMBER_OF_SQUARES] = new GeneDefinition(GeneType.INTEGER,
-                AbmConfigurationHelperWorld.MIN_NUMBER_OF_SQUARES,
-                AbmConfigurationHelperWorld.MAX_NUMBER_OF_SQUARES);
+                config.MIN_NUMBER_OF_SQUARES, config.MAX_NUMBER_OF_SQUARES);
         definitions[GENE_NUMBER_OF_DAYS] = new GeneDefinition(GeneType.INTEGER,
-                AbmConfigurationHelperWorld.MIN_NUMBER_OF_DAYS,
-                AbmConfigurationHelperWorld.MAX_NUMBER_OF_DAYS);
+                config.MIN_NUMBER_OF_DAYS, config.MAX_NUMBER_OF_DAYS);
         Arrays.fill(definitions, GENE_BEGIN_INDEX_OF_FLOATS, NUMBER_OF_GENES, new GeneDefinition(GeneType.FLOAT, 0, 1));
-        
+
         IndividualDefinition definition = new IndividualDefinition(definitions);
         return definition;
     }
-
-    @Override
-    public void run() {
-        geneticAlgorithm.run();
-    }
-
 }

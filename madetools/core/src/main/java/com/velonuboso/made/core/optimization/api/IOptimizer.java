@@ -25,6 +25,5 @@ import com.velonuboso.made.core.optimization.implementation.Optimizer;
  */
 @ImplementedBy(targetClass = Optimizer.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IOptimizer {
-    public void configure(int populationSize, int maximumIterations, float blxAlpha, float distanceParameterMutationDistribution);
     public void run();
 }

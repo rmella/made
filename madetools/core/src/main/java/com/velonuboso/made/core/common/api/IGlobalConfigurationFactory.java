@@ -14,19 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.velonuboso.made.core.ec.api;
+package com.velonuboso.made.core.common.api;
 
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
+import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
+import com.velonuboso.made.core.common.implementation.GlobalConfigurationFactory;
 import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.entity.IndividualDefinition;
-import com.velonuboso.made.core.ec.implementation.GeneticAlgorithm;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = GeneticAlgorithm.class, targetMode = ImplementedBy.Mode.NORMAL)
-public interface IGeneticAlgorithm {
-    public void configure(IndividualDefinition definition);
-    public void addListener(IGeneticAlgorithmListener listener);
-    public IIndividual run();
+@ImplementedBy(targetClass = GlobalConfigurationFactory.class, targetMode = ImplementedBy.Mode.SINGLETON)
+public interface IGlobalConfigurationFactory {
+    CommonAbmConfiguration getCommonAbmConfiguration();
+    CommonEcConfiguration getCommonEcConfiguration();
+    public void setCommonAbmConfiguration(CommonAbmConfiguration commonAbmConfiguration);
+    public void setCommonEcConfiguration(CommonEcConfiguration commonEcConfiguration);
 }
