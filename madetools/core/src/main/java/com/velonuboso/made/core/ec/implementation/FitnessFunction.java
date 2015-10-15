@@ -16,11 +16,9 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
-import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
-import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
 import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.common.entity.InferencesEntity;
@@ -34,8 +32,6 @@ import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.DoubleSummaryStatistics;
-import java.util.stream.Collectors;
 import org.apache.commons.lang.ArrayUtils;
 
 /**

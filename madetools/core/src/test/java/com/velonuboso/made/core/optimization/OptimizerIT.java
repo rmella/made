@@ -17,6 +17,7 @@
 package com.velonuboso.made.core.optimization;
 
 import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
 import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.optimization.api.IOptimizer;
@@ -54,6 +55,31 @@ public class OptimizerIT {
         CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
         
         config.MAXIMUM_ITERATIONS = 50;
+        optimizer.run();
+    }
+    
+    @Test
+    public void tuprolog_does_not_thrown_exception_when_using_45_agents_500_days() {
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
+        config.MAXIMUM_ITERATIONS = 0;
+        config.POPULATION_SIZE = 2;
+        config.NUMBER_OF_TRIALS = 1;
+        
+        CommonAbmConfiguration abmConfig = globalConfigurationFactory.getCommonAbmConfiguration();
+        abmConfig.MAX_NUMBER_OF_CIRCLES = 15;
+        abmConfig.MIN_NUMBER_OF_CIRCLES = 15;
+        abmConfig.MAX_NUMBER_OF_TRIANGLES = 15;
+        abmConfig.MIN_NUMBER_OF_TRIANGLES = 15;
+        abmConfig.MAX_NUMBER_OF_SQUARES = 15;
+        abmConfig.MIN_NUMBER_OF_SQUARES = 15;
+        abmConfig.MIN_NUMBER_OF_DAYS = 500;
+        abmConfig.MAX_NUMBER_OF_DAYS = 500;
+        abmConfig.MAX_WORLD_SIZE = 100;
+        abmConfig.MIN_WORLD_SIZE = 100;
+
+        
         optimizer.run();
     }
 }

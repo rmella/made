@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Ruben
+ * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import javafx.scene.paint.Color;
 
 /**
  *
- * @author Ruben
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
 class PuppetColorSpot implements IColorSpot {
 

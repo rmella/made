@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm;
 
+import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperWorld;
@@ -25,9 +26,12 @@ import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
 import com.velonuboso.made.core.common.entity.InferencesEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -122,5 +126,39 @@ public class AbmTest {
         */
     }
 
+    @Ignore
+    @Test
+    public void testRun_multiple_characters_big_log() throws FileNotFoundException {
+        int size = 52;
+        
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonAbmConfiguration config = globalConfigurationFactory.getCommonAbmConfiguration();
+        config.MAX_NUMBER_OF_CIRCLES = 20;
+        config.MAX_NUMBER_OF_TRIANGLES = 20;
+        config.MAX_NUMBER_OF_SQUARES = 20;
+        config.MAX_NUMBER_OF_DAYS = 200;
+        config.MAX_WORLD_SIZE = 11;
+        
+        
+        float[] chromosome = new float[size];
+        chromosome[0] = config.MAX_WORLD_SIZE;
+        chromosome[1] = config.MAX_NUMBER_OF_CIRCLES;
+        chromosome[2] = config.MAX_NUMBER_OF_TRIANGLES;
+        chromosome[3] = config.MAX_NUMBER_OF_SQUARES;
+        chromosome[4] = config.MAX_NUMBER_OF_DAYS;
+        chromosome[5] = 1;
+        chromosome[6] = 0.2f;
+        Arrays.fill(chromosome, 5, size, 0.5f);
+        AbmConfigurationEntity entity = new AbmConfigurationEntity(chromosome);
+        
+        abm.run(entity);
+        
+        PrintWriter writer = new PrintWriter("sample_virtual_world.pl");
+        for(Term term : abm.getEventsLog().getLogicalTerms()){
+            writer.println(term.toString()+".");
+        }
+        writer.close();
+    }
     
 }

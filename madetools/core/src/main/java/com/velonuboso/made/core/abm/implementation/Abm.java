@@ -190,8 +190,10 @@ public class Abm implements IAbm {
 
     private void AddCharacters(int numberOfPieces, List<Integer> cells, CharacterShape shape) {
         for (int characterIndex = 0; characterIndex < numberOfPieces; characterIndex++) {
-            int cell = cells.remove(0);
-            addNewCharacterToMap(counterForId++, shape, cell);
+            if (cells.size()>0){
+                int cell = cells.remove(0);
+                addNewCharacterToMap(counterForId++, shape, cell);
+            }
         }
     }
 

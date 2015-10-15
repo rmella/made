@@ -31,6 +31,11 @@ import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,20 +91,33 @@ public class MonomythReasoner implements IReasoner {
             //addListenersToEngine();
             
             engine.setTheory(new Theory(getMonomythRules()));
-            engine.addTheory(new Theory(new Struct(events)));
+            System.out.println("Number of events = "+events.length);
+            
+            File temporalFileName = writeEventsToTemporalFile(events);
+            FileInputStream fis = new FileInputStream(temporalFileName);
+            
+            engine.addTheory(new Theory(fis));
+            
+            fis.close();
+            temporalFileName.delete();
             
             Arrays.stream(tropesWhiteList, 0, tropesWhiteList.length)
                     .forEach(trope -> searchTrope(events, trope, deductions));
             return deductions;
-        } catch(StackOverflowError error){
-            Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, error);
-            Arrays.stream(events).forEach(event ->
-                Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, event.toString())
-            );
-        } catch (InvalidTheoryException ex) {
-            Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(Exception error){
+            Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, error.getMessage());
         }
         return deductions;
+    }
+
+    private File writeEventsToTemporalFile(Term[] events) throws FileNotFoundException, IOException {
+        File temporalFileName = File.createTempFile("madetemp_", ".tmp");
+        PrintWriter writer = new PrintWriter(temporalFileName);
+        for(Term term : events){
+            writer.println(term.toString()+".");
+        }
+        writer.close();
+        return temporalFileName;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Private methods">
