@@ -16,7 +16,6 @@
  */
 package com.velonuboso.made.core.inference.implementation;
 
-import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.NoMoreSolutionException;
 import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.Prolog;
@@ -91,7 +90,7 @@ public class MonomythReasoner implements IReasoner {
             //addListenersToEngine();
             
             engine.setTheory(new Theory(getMonomythRules()));
-            System.out.println("Number of events = "+events.length);
+            //System.out.println("Number of events = "+events.length);
             
             File temporalFileName = writeEventsToTemporalFile(events);
             FileInputStream fis = new FileInputStream(temporalFileName);
@@ -122,7 +121,6 @@ public class MonomythReasoner implements IReasoner {
 
     // <editor-fold defaultstate="collapsed" desc="Private methods">
     private void searchTrope(Term[] events, Trope trope, WorldDeductions deductions) {
-
         Term predicateToSolve = getpredicateToSolve(trope);
         ArrayList<Term> solutions = new ArrayList<>();
 

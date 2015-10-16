@@ -21,6 +21,7 @@ import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.entity.TrialInformation;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,45 +33,75 @@ import java.util.stream.Collectors;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class GeneticAlgorithmListener implements IGeneticAlgorithmListener{
+public class GeneticAlgorithmListener implements IGeneticAlgorithmListener {
 
     boolean headerprinted = false;
     boolean inEvaluation = false;
-    
+    private File outputFile;
+
     public GeneticAlgorithmListener() {
+        outputFile = null;
     }
 
     @Override
     public void notifyIterationSummary(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
+        if (!headerprinted) {
+            headerprinted = true;
+            printHeader(bestIndividualEver);
+        }
+        printLine(iteration, populationAverage, populationStandardDeviation, bestIndividualEver);
+        inEvaluation = false;
+    }
+
+    private void printLine(int iteration, float populationAverage, float populationStandardDeviation, IIndividual bestIndividualEver) {
         NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
         
         ArrayList<String> elements = new ArrayList<>();
         elements.add(format.format(iteration));
-        
-        elements.add(format.format(bestIndividualEver.getCurrentFitness().getValue().getAverage()));
+
         elements.add(format.format(populationAverage));
         elements.add(format.format(populationStandardDeviation));
-        
+
         elements.add(format.format(bestIndividualEver.getCurrentFitness().getValue().getAverage()));
         elements.add(format.format(bestIndividualEver.getCurrentFitness().getValue().getStandardDeviation()));
         elements.add(format.format(bestIndividualEver.getCurrentFitness().getValue().getNumberOfTrials()));
-        
+
         HashMap<String, TrialInformation> extraMeasures = bestIndividualEver.getCurrentFitness().getExtraMeasures();
         List<String> tags = extraMeasures.keySet().stream().sorted().collect(Collectors.toList());
         tags.stream().forEach(tag -> {
             elements.add(format.format(extraMeasures.get(tag).getAverage()));
             elements.add(format.format(extraMeasures.get(tag).getStandardDeviation()));
         });
+
+        String csvLine = String.join(";", elements);
+        System.out.print(csvLine + "\n");
+    }
+
+    private void printHeader(IIndividual bestIndividualEver) {
+        ArrayList<String> elements = new ArrayList<>();
+        elements.add("Iteration");
+        
+        elements.add("Population average");
+        elements.add("Population std dev.");
+        
+        elements.add("Best fitness");
+        elements.add("Best Fitness Std. dev. (trials)");
+        elements.add("Number of trials");
+        
+        HashMap<String, TrialInformation> extraMeasures = bestIndividualEver.getCurrentFitness().getExtraMeasures();
+        List<String> tags = extraMeasures.keySet().stream().sorted().collect(Collectors.toList());
+        tags.stream().forEach(tag -> {
+            elements.add(tag);
+            elements.add(tag + " Std. dev.");
+        });
         
         String csvLine = String.join(";", elements);
-        System.out.print(csvLine+"\n");
-        
-        inEvaluation = false;
+        System.out.print(csvLine + "\n");
     }
 
     @Override
-    public void notifyTrial(WorldDeductions deductions, float fitnessValue) {
-        if (!inEvaluation){
+    public void notifyTrial(WorldDeductions deductions) {
+        if (!inEvaluation) {
             inEvaluation = true;
             System.out.print("#");
         }
@@ -79,7 +110,12 @@ public class GeneticAlgorithmListener implements IGeneticAlgorithmListener{
 
     @Override
     public void notifyIndividualEvaluation(Fitness fitness) {
-        System.out.print(" " + fitness.getValue().getAverage()+"\n");
+        System.out.print(" " + fitness.getValue().getAverage() + "\n");
         inEvaluation = false;
+    }
+
+    @Override
+    public void setOutputFile(File outpitFile) {
+        this.outputFile = outpitFile;
     }
 }

@@ -69,8 +69,11 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
 
         IPopulation population = buildInitialPopulation();
         IIndividual bestIndividualEver = population.getBestIndividual();
-        
         int iteration = 0;
+        notifyAllListeners(iteration, bestIndividualEver, population.getAverageFitness(), 
+                population.getStandardDeviation());
+            
+        
         while (!condition.mustFinish(iteration, bestIndividualEver)) {
             IPopulation matingPool = population.selectMatingPool();
             IPopulation newGeneration = matingPool.createOffspring(

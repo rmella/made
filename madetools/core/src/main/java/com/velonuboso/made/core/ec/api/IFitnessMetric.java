@@ -17,19 +17,18 @@
 package com.velonuboso.made.core.ec.api;
 
 import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.ec.entity.Fitness;
-import com.velonuboso.made.core.ec.implementation.listeners.GeneticAlgorithmListener;
+import com.velonuboso.made.core.ec.entity.TrialInformation;
+import com.velonuboso.made.core.ec.implementation.metrics.SummaryOfOccurrencesMetric;
+import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
-import java.io.File;
+import java.util.ArrayList;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-@ImplementedBy(targetClass = GeneticAlgorithmListener.class, targetMode = ImplementedBy.Mode.SINGLETON)
-public interface IGeneticAlgorithmListener {
-    void setOutputFile(File outpitFile);
-    void notifyTrial(WorldDeductions deductions);
-    void notifyIndividualEvaluation(Fitness fitness);
-    void notifyIterationSummary(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation);
+@ImplementedBy(targetClass = SummaryOfOccurrencesMetric.class, targetMode = ImplementedBy.Mode.NORMAL)
+public interface IFitnessMetric {
+    public TrialInformation getTrialInformation(ArrayList<WorldDeductions> deductions);
+    public TrialInformation getTrialInformationForSpecificTrope(ArrayList<WorldDeductions> deductions, Trope tropeToLookAt);
 }

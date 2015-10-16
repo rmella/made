@@ -43,6 +43,10 @@ public class Fitness implements Comparable<Fitness> {
         return extraMeasures;
     }
 
+    public void setExtraMeasures(HashMap<String, TrialInformation> extraMeasures) {
+        this.extraMeasures = extraMeasures;
+    }
+    
     public TrialInformation getValue() {
         return value;
     }

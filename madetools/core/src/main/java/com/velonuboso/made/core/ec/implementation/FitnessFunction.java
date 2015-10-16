@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.ec.implementation;
 
+import com.velonuboso.made.core.ec.api.IFitnessMetric;
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
@@ -28,10 +29,13 @@ import com.velonuboso.made.core.ec.api.IFitnessFunction;
 import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
+import com.velonuboso.made.core.ec.entity.TrialInformation;
 import com.velonuboso.made.core.inference.api.IReasoner;
+import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
@@ -42,42 +46,55 @@ public class FitnessFunction implements IFitnessFunction{
     
     @Override
     public Fitness evaluateIndividual(IIndividual individual) {
+        
         IGlobalConfigurationFactory globalConfigurationFactory = 
             ObjectFactory.createObject(IGlobalConfigurationFactory.class);
         CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
         
-        ArrayList<Float> trials = new ArrayList<>();
+        ArrayList<WorldDeductions> deductionsForAllTrials = new ArrayList<>();
+        
         for (int trialIndex = 0; trialIndex < config.NUMBER_OF_TRIALS; trialIndex++){
             ICustomization customization = ObjectFactory.createObject(ICustomization.class);
 
-            IAbm abm = ObjectFactory.createObject(IAbm.class);
-            abm.setCustomization(customization);
-            abm.setInferences(new InferencesEntity());
-
-            Float chromosome[] = Arrays.stream(individual.getGenes()).map(gene -> gene.getValue()).toArray(Float[]::new);
-            abm.run(new AbmConfigurationEntity(ArrayUtils.toPrimitive(chromosome)));
-            EventsLogEntity events = abm.getEventsLog();
-
-            IReasoner reasoner = ObjectFactory.createObject(IReasoner.class);
-            WorldDeductions deductions = reasoner.getWorldDeductions(events.getLogicalTerms());
-
-            int numberOfTropes = 0;
-            numberOfTropes = deductions.values().stream().map((tropes) -> tropes.length).reduce(numberOfTropes, Integer::sum);
+            EventsLogEntity events = runVirtualWorld(customization, individual);
+            WorldDeductions deductions = InferTropesFromEvents(events);
+            deductionsForAllTrials.add(deductions);
             
-            trials.add((float)numberOfTropes);
-            ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyTrial(deductions, numberOfTropes);
+            ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyTrial(deductions);
         }
         
-        Fitness fitness = new Fitness();
-        float average = (float) trials.stream().mapToDouble(val -> (double)val).average().orElse(0f);
-        float variance = (float) trials.stream().mapToDouble(val -> Math.pow(average-val, 2)).sum()/(trials.size()-1f);
-        float standardDeviation = (float) Math.sqrt(variance);
+        IFitnessMetric metric = ObjectFactory.createObject(IFitnessMetric.class);
+        TrialInformation trialInformation = metric.getTrialInformation(deductionsForAllTrials);
         
-        fitness.setValue(trials.size(), average, standardDeviation);
+        HashMap<String, TrialInformation> informationByTrope = new HashMap<>();
+        for (Trope trope : Trope.getTropesInFromMonomyth()){
+           TrialInformation trialInformationForTrope = metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, trope);
+           informationByTrope.put(trope.toString(), trialInformationForTrope);
+        }
        
+        Fitness fitness = new Fitness();
+        fitness.setValue(trialInformation);
+        fitness.setExtraMeasures(informationByTrope);
+        
         ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyIndividualEvaluation(fitness);
         
         return fitness;
+    }
+
+    private WorldDeductions InferTropesFromEvents(EventsLogEntity events) {
+        IReasoner reasoner = ObjectFactory.createObject(IReasoner.class);
+        WorldDeductions deductions = reasoner.getWorldDeductions(events.getLogicalTerms());
+        return deductions;
+    }
+
+    private EventsLogEntity runVirtualWorld(ICustomization customization, IIndividual individual) {
+        IAbm abm = ObjectFactory.createObject(IAbm.class);
+        abm.setCustomization(customization);
+        abm.setInferences(new InferencesEntity());
+        Float chromosome[] = Arrays.stream(individual.getGenes()).map(gene -> gene.getValue()).toArray(Float[]::new);
+        abm.run(new AbmConfigurationEntity(ArrayUtils.toPrimitive(chromosome)));
+        EventsLogEntity events = abm.getEventsLog();
+        return events;
     }
     
 }
