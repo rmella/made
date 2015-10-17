@@ -21,6 +21,8 @@ import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
 import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
+import com.velonuboso.made.core.ec.implementation.listeners.ExcelWriterGeneticAlgorithmListener;
 import com.velonuboso.made.core.experiments.api.IExperiment;
 import com.velonuboso.made.core.optimization.api.IOptimizer;
 
@@ -28,7 +30,7 @@ import com.velonuboso.made.core.optimization.api.IOptimizer;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ExperimentEvostar2015 extends BaseExperiment{
+public class ExperimentEvostar2016 extends BaseExperiment{
     
     @Override
     public String getDescription() {
@@ -37,6 +39,9 @@ public class ExperimentEvostar2015 extends BaseExperiment{
     
     @Override
     public void run(String[] arguments) {
+        ExcelWriterGeneticAlgorithmListener listener = new ExcelWriterGeneticAlgorithmListener();
+        ObjectFactory.installMock(IGeneticAlgorithmListener.class, listener);
+        
         IGlobalConfigurationFactory globalConfigurationFactory = 
             ObjectFactory.createObject(IGlobalConfigurationFactory.class);
         CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
@@ -57,7 +62,9 @@ public class ExperimentEvostar2015 extends BaseExperiment{
         abmConfig.MIN_WORLD_SIZE = 8;
         
         IOptimizer optimizer = ObjectFactory.createObject(IOptimizer.class);
+        
+        ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyNewExperimentExecuting(this);
+        
         optimizer.run();
     }
-
 }

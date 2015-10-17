@@ -20,27 +20,54 @@ import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
 import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.entity.TrialInformation;
+import com.velonuboso.made.core.experiments.api.IExperiment;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class GeneticAlgorithmListener implements IGeneticAlgorithmListener {
+public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmListener {
 
     boolean headerprinted = false;
     boolean inEvaluation = false;
-    private File outputFile;
 
-    public GeneticAlgorithmListener() {
-        outputFile = null;
+    public ExcelWriterGeneticAlgorithmListener() {
+    }
+
+    @Override
+    public void notifyNewExperimentExecuting(IExperiment experiment) {
+
+        String SEPARATOR = "_";
+        String OUTPUT_PATH = "data/";
+        String suffix = new SimpleDateFormat("yyyyMMddHHmmss.S").format(new Date());
+        String fileName = "experiment" + SEPARATOR + experiment.getCodeName() + SEPARATOR + suffix + ".xlsx";
+        File dest = new File(OUTPUT_PATH + fileName);
+        copyBaseFileToTarget(dest);
+    }
+
+    private void copyBaseFileToTarget(File dest) throws RuntimeException {
+        try {
+            URL inputUrl = getClass().getResource("/ExperimentSummary.xlsx");
+            FileUtils.copyURLToFile(inputUrl, dest);
+        } catch (IOException ex) {
+            Logger.getLogger(ExcelWriterGeneticAlgorithmListener.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
@@ -54,8 +81,9 @@ public class GeneticAlgorithmListener implements IGeneticAlgorithmListener {
     }
 
     private void printLine(int iteration, float populationAverage, float populationStandardDeviation, IIndividual bestIndividualEver) {
+
         NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
-        
+
         ArrayList<String> elements = new ArrayList<>();
         elements.add(format.format(iteration));
 
@@ -80,27 +108,27 @@ public class GeneticAlgorithmListener implements IGeneticAlgorithmListener {
     private void printHeader(IIndividual bestIndividualEver) {
         ArrayList<String> elements = new ArrayList<>();
         elements.add("Iteration");
-        
+
         elements.add("Population average");
         elements.add("Population std dev.");
-        
+
         elements.add("Best fitness");
         elements.add("Best Fitness Std. dev. (trials)");
         elements.add("Number of trials");
-        
+
         HashMap<String, TrialInformation> extraMeasures = bestIndividualEver.getCurrentFitness().getExtraMeasures();
         List<String> tags = extraMeasures.keySet().stream().sorted().collect(Collectors.toList());
         tags.stream().forEach(tag -> {
             elements.add(tag);
             elements.add(tag + " Std. dev.");
         });
-        
+
         String csvLine = String.join(";", elements);
         System.out.print(csvLine + "\n");
     }
 
     @Override
-    public void notifyTrial(WorldDeductions deductions) {
+    public void notifyTrialExecuted(WorldDeductions deductions) {
         if (!inEvaluation) {
             inEvaluation = true;
             System.out.print("#");
@@ -112,10 +140,5 @@ public class GeneticAlgorithmListener implements IGeneticAlgorithmListener {
     public void notifyIndividualEvaluation(Fitness fitness) {
         System.out.print(" " + fitness.getValue().getAverage() + "\n");
         inEvaluation = false;
-    }
-
-    @Override
-    public void setOutputFile(File outpitFile) {
-        this.outputFile = outpitFile;
     }
 }

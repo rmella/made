@@ -60,7 +60,7 @@ public class FitnessFunction implements IFitnessFunction{
             WorldDeductions deductions = InferTropesFromEvents(events);
             deductionsForAllTrials.add(deductions);
             
-            ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyTrial(deductions);
+            ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyTrialExecuted(deductions);
         }
         
         IFitnessMetric metric = ObjectFactory.createObject(IFitnessMetric.class);
