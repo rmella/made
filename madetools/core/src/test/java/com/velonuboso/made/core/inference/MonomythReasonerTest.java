@@ -630,7 +630,6 @@ public class MonomythReasonerTest {
         assertNumberOfTropes(worldDeductions, Trope.TRICKSTER, 2);
     }
     
-    @Ignore
     @Test
     public void UT_WhenThereIsAJourneyWithHeraldMentorAlliedGuardianShapeshifterTrickster_ThereIsAMonomyth() {
         Int dayBegin = new Int(0);
@@ -655,7 +654,7 @@ public class MonomythReasonerTest {
         };
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(extraTerms, new Trope[]{Trope.MONOMYTH});
-        assertNumberOfTropes(worldDeductions, Trope.MONOMYTH, 2);
+        assertNumberOfTropes(worldDeductions, Trope.MONOMYTH, 1);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">

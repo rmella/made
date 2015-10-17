@@ -199,7 +199,13 @@ public class MonomythReasoner implements IReasoner {
             case TRICKSTER:
                 return new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"));
             case MONOMYTH:
-                return new Struct(PREDICATE_MONOMYTH, new Var("DayBegin"), new Var("DayEnd"), new Var("Monomyth"));
+                return new Struct(PREDICATE_MONOMYTH,
+                        new Term[]{
+                            new Var("DayBengin"), new Var("DayEnd"),
+                            new Var("Hero"), new Var("Shadow") /*, new Var("Herald"), new Var("Mentor"),
+                            new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")*/
+                        }
+                );
             default:
                 return new Struct();
         }
@@ -421,9 +427,45 @@ public class MonomythReasoner implements IReasoner {
             new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Target"), new Var("JoyTarget")),
             new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Subject"), new Var("JoySubject")),
             new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("OneDay"), new Var("DayEnd")),
-            new Struct("\\+", new Struct(">=",new Var("JoyTarget"), new Var("JoySubject"))),
+            new Struct("\\+", new Struct(">=", new Var("JoyTarget"), new Var("JoySubject"))),
             new Struct("!")
-            )        
+            ),
+            new TermRule(
+            new Struct(PREDICATE_MONOMYTH,
+            new Term[]{
+                new Var("DayBengin"), new Var("DayEnd"),
+                new Var("Hero"), new Var("Shadow"), new Var("Herald"), new Var("Mentor"),
+                new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")
+            }
+            ),
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY,
+            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+            new Struct(MonomythReasoner.PREDICATE_HERALD,
+            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Herald")),
+            new Struct(MonomythReasoner.PREDICATE_MENTOR,
+            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Mentor")),
+            new Struct(MonomythReasoner.PREDICATE_ALLIED,
+            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
+            new Struct(MonomythReasoner.PREDICATE_GUARDIAN,
+            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Guardian")),
+            new Struct(MonomythReasoner.PREDICATE_TRICKSTER,
+            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster")),
+            new Struct(MonomythReasoner.PREDICATE_SHAPESHIFTER,
+            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Shapeshifter"))
+            ),
+            new TermRule(
+            new Struct(PREDICATE_MONOMYTH,
+            new Var("DayBengin"), new Var("DayEnd"),
+            new Var("Hero"), new Var("Shadow")
+            ),
+            new Struct(PREDICATE_MONOMYTH,
+            new Term[]{
+                new Var("DayBengin"), new Var("DayEnd"),
+                new Var("Hero"), new Var("Shadow"), new Var("Herald"), new Var("Mentor"),
+                new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")
+            }
+            )
+            )
         };
 
         String[] rulesAsStringArray = Arrays
