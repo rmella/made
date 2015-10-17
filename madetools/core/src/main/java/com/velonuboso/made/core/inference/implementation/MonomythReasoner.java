@@ -75,6 +75,7 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_MONOMYTH = "monomyth";
     public static final String PREDICATE_NEAR_OF_CHARACTER = "nearOfCharacter";
     public static final String PREDICATE_ACCOMPANIES = "accompanies";
+    public static final String PREDICATE_TRICKIER = "trickier";
 
     private Prolog engine;
     private List<String> stack;
@@ -404,8 +405,25 @@ public class MonomythReasoner implements IReasoner {
             new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald")),
             new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
             new Var("Herald"))
-            )
-
+            ),
+            new TermRule(
+            new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster")),
+            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Trickster")),
+            new Struct(PREDICATE_TRICKIER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"), new Var("Hero"))
+            ),
+            new TermRule(
+            new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster")),
+            new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster"))
+            ),
+            new TermRule(
+            new Struct(PREDICATE_TRICKIER, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Target")),
+            new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Target"), new Var("JoyTarget")),
+            new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Subject"), new Var("JoySubject")),
+            new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("OneDay"), new Var("DayEnd")),
+            new Struct("\\+", new Struct(">=",new Var("JoyTarget"), new Var("JoySubject"))),
+            new Struct("!")
+            )        
         };
 
         String[] rulesAsStringArray = Arrays
