@@ -73,6 +73,7 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_IS_FRIEND_OF_CHARACTER = "friendOfCharacter";
     public static final String PREDICATE_TRICKSTER = "trickster";
     public static final String PREDICATE_MONOMYTH = "monomyth";
+    public static final String PREDICATE_NEAR_OF_CHARACTER = "nearOfCharacter";
     public static final String PREDICATE_ACCOMPANIES = "accompanies";
 
     private Prolog engine;
@@ -233,7 +234,7 @@ public class MonomythReasoner implements IReasoner {
             new Struct("member", new Var("B"), new Var("ListOfFriends"))
             ),
             new TermRule(
-            new Struct(PREDICATE_ACCOMPANIES, new Var("Day"), new Var("B"), new Var("A")),
+            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A")),
             new Struct(EventFactory.ARE_NEAR, new Var("Day"), new Var("A"), new Var("ListOfCharacters")),
             new Struct("member", new Var("B"), new Var("ListOfCharacters"))
             ),
@@ -330,15 +331,19 @@ public class MonomythReasoner implements IReasoner {
             new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
             ),
             new TermRule(
-            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(PREDICATE_ACCOMPANIES, new Var("DayHappened1"), new Var("Allied"), new Var("Hero")),
-            new Struct(PREDICATE_ACCOMPANIES, new Var("DayHappened2"), new Var("Allied"), new Var("Hero")),
-            new Struct(PREDICATE_ACCOMPANIES, new Var("DayHappened3"), new Var("Allied"), new Var("Hero")),
+            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Companion")),
+            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("DayHappened1"), new Var("Companion"), new Var("Subject")),
+            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("DayHappened2"), new Var("Companion"), new Var("Subject")),
+            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("DayHappened3"), new Var("Companion"), new Var("Subject")),
             new Struct(">=", new Var("DayEnd"), new Var("DayHappened3")),
             new Struct(">", new Var("DayHappened3"), new Var("DayHappened2")),
             new Struct(">", new Var("DayHappened2"), new Var("DayHappened1")),
-            new Struct(">=", new Var("DayHappened1"), new Var("DayBegin")),
+            new Struct(">=", new Var("DayHappened1"), new Var("DayBegin"))
+            ),
+            new TermRule(
+            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
+            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied")),
             new Struct("not", new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied"), new Var("Hero")))
             ),
             new TermRule(
