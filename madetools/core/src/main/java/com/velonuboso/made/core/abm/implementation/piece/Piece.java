@@ -216,6 +216,7 @@ public class Piece implements ICharacter {
     private void addBlackBoardInitializerToNode(IBehaviourTreeNode node) {
         node.setAction((IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) -> {
             initializeBlackboard(currentBlackBoard);
+            writeNearnessEvents();
             return true;
         });
     }
@@ -465,6 +466,16 @@ public class Piece implements ICharacter {
                 .filter(character -> affinityMatrix.get(character) < 0)
                 .toArray(ICharacter[]::new);
         IEvent eventEnemies = factory.isEnemyOf(this, enemies); 
+        eventsWriter.add(eventEnemies);
+    }
+    
+     private void writeNearnessEvents() {
+        IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
+        
+        ICharacter[] charactersThatAreNear = this.map.getCellsAround(id,1).stream()
+                .filter(cell -> map.getCharacter(cell)!=null)
+                .map(map::getCharacter).toArray(ICharacter[]::new);
+        IEvent eventEnemies = factory.areNear(this, charactersThatAreNear); 
         eventsWriter.add(eventEnemies);
     }
 

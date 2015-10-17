@@ -71,6 +71,9 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_HERALD = "herald";
     public static final String PREDICATE_IS_ENEMY_OF_CHARACTER = "enemyOfCharacter";
     public static final String PREDICATE_IS_FRIEND_OF_CHARACTER = "friendOfCharacter";
+    public static final String PREDICATE_TRICKSTER = "trickster";
+    public static final String PREDICATE_MONOMYTH = "monomyth";
+    public static final String PREDICATE_ACCOMPANIES = "accompanies";
 
     private Prolog engine;
     private List<String> stack;
@@ -82,28 +85,27 @@ public class MonomythReasoner implements IReasoner {
 
     @Override
     public WorldDeductions getWorldDeductionsWithTropesInWhiteList(Term[] events, Trope[] tropesWhiteList) {
-        
+
         WorldDeductions deductions = new WorldDeductions();
         try {
             engine = new Prolog();
-            
+
             //addListenersToEngine();
-            
             engine.setTheory(new Theory(getMonomythRules()));
             //System.out.println("Number of events = "+events.length);
-            
+
             File temporalFileName = writeEventsToTemporalFile(events);
             FileInputStream fis = new FileInputStream(temporalFileName);
-            
+
             engine.addTheory(new Theory(fis));
-            
+
             fis.close();
             temporalFileName.delete();
-            
+
             Arrays.stream(tropesWhiteList, 0, tropesWhiteList.length)
                     .forEach(trope -> searchTrope(events, trope, deductions));
             return deductions;
-        } catch(Exception error){
+        } catch (Exception error) {
             Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, error.getMessage());
         }
         return deductions;
@@ -112,8 +114,8 @@ public class MonomythReasoner implements IReasoner {
     private File writeEventsToTemporalFile(Term[] events) throws FileNotFoundException, IOException {
         File temporalFileName = File.createTempFile("madetemp_", ".tmp");
         PrintWriter writer = new PrintWriter(temporalFileName);
-        for(Term term : events){
-            writer.println(term.toString()+".");
+        for (Term term : events) {
+            writer.println(term.toString() + ".");
         }
         writer.close();
         return temporalFileName;
@@ -139,7 +141,7 @@ public class MonomythReasoner implements IReasoner {
         SolveInfo solveInfo = engine.solve(predicateToSolve);
 
         ArrayList<Term> temporalSolutions = new ArrayList<>();
-        
+
         if (solveInfo.isSuccess()) {
             //System.out.println("Bindings: " + solveInfo.getSolution());
             temporalSolutions.add(solveInfo.getSolution());
@@ -157,7 +159,7 @@ public class MonomythReasoner implements IReasoner {
                 .distinct()
                 .map(TermWrapper::unwrap)
                 .forEachOrdered(element -> solutions.add(element));
-        
+
     }
 
     private Term getpredicateToSolve(Trope trope) {
@@ -192,6 +194,10 @@ public class MonomythReasoner implements IReasoner {
                 return new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter"));
             case HERALD:
                 return new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald"));
+            case TRICKSTER:
+                return new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"));
+            case MONOMYTH:
+                return new Struct(PREDICATE_MONOMYTH, new Var("DayBegin"), new Var("DayEnd"), new Var("Monomyth"));
             default:
                 return new Struct();
         }
@@ -225,6 +231,11 @@ public class MonomythReasoner implements IReasoner {
             new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
             new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("ListOfFriends")),
             new Struct("member", new Var("B"), new Var("ListOfFriends"))
+            ),
+            new TermRule(
+            new Struct(PREDICATE_ACCOMPANIES, new Var("Day"), new Var("B"), new Var("A")),
+            new Struct(EventFactory.ARE_NEAR, new Var("Day"), new Var("A"), new Var("ListOfCharacters")),
+            new Struct("member", new Var("B"), new Var("ListOfCharacters"))
             ),
             new TermRule(
             new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B")),
@@ -319,6 +330,18 @@ public class MonomythReasoner implements IReasoner {
             new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
             ),
             new TermRule(
+            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
+            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+            new Struct(PREDICATE_ACCOMPANIES, new Var("DayHappened1"), new Var("Allied"), new Var("Hero")),
+            new Struct(PREDICATE_ACCOMPANIES, new Var("DayHappened2"), new Var("Allied"), new Var("Hero")),
+            new Struct(PREDICATE_ACCOMPANIES, new Var("DayHappened3"), new Var("Allied"), new Var("Hero")),
+            new Struct(">=", new Var("DayEnd"), new Var("DayHappened3")),
+            new Struct(">", new Var("DayHappened3"), new Var("DayHappened2")),
+            new Struct(">", new Var("DayHappened2"), new Var("DayHappened1")),
+            new Struct(">=", new Var("DayHappened1"), new Var("DayBegin")),
+            new Struct("not", new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied"), new Var("Hero")))
+            ),
+            new TermRule(
             new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied")),
             new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
             new Var("Allied"))
@@ -337,7 +360,7 @@ public class MonomythReasoner implements IReasoner {
             ),
             new TermRule(
             new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Enemy")),
-            new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("Subject"), new Var("Enemy")),
+            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("Subject"), new Var("Enemy")),
             new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("Day"), new Var("DayEnd"))
             ),
             new TermRule(
@@ -346,7 +369,7 @@ public class MonomythReasoner implements IReasoner {
             new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
             new Struct(EventFactory.TRANSFERS_COLOR, new Var("DayHappened"), new Var("Mentor"), new Var("Hero")),
             new Struct("not",
-            new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Enemy"))
+            new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor"), new Var("Hero"))
             ),
             new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
             ),

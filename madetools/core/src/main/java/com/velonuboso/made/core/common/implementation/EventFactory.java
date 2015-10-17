@@ -60,6 +60,7 @@ public class EventFactory implements IEventFactory {
     public static final String NEW_DAY = "newDay";
     public static final String TRUSTS = "trusts";
     public static final String GIVES_TURN = "giveTurn";
+    public static final String ARE_NEAR = "areNear";
     
     private float currentDay;
 
@@ -216,6 +217,14 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent givesTurn(ICharacter subject, ICharacter target) {
         return new Event(GIVES_TURN, currentDay, subject.getId(), target.getId());
+    }
+    
+    @Override
+    public IEvent areNear(ICharacter subject, ICharacter... charactersThatAreNear) {
+    return new Event(
+                ARE_NEAR, currentDay, subject.getId(), 
+                Arrays.stream(charactersThatAreNear).mapToInt(enemy-> enemy.getId()).toArray()
+        );
     }
     
     private String colorToHexadecimal(Color color){

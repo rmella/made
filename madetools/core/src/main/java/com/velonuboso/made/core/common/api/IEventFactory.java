@@ -62,5 +62,6 @@ public interface IEventFactory {
     IEvent characterAppears (ICharacter subject, int cellId);
     IEvent trusts(ICharacter subject, ICharacter friendWithMostAffinity);
     IEvent givesTurn(ICharacter subject, ICharacter target);
+    IEvent areNear(ICharacter subject, ICharacter ... charactersThatAreNear);
 
 }

@@ -56,6 +56,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 
 /**
@@ -456,6 +457,134 @@ public class MonomythReasonerTest {
         
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, new Trope[]{Trope.HERALD});
         assertNumberOfTropes(worldDeductions, Trope.HERALD, 1);
+    }
+    
+    @Test
+    public void UT_WhenSomeoneIsAFriendOfTheHeroAndAcoompaniesHimAlongThejourney_HeIsAnAllied() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(3);
+        Term[] termsDay3 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new Int(0), new Int(3), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId()))
+        };
+        
+        
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1,termsDay2, termsDay3, extraTerms);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, new Trope[]{Trope.ALLIED});
+        assertNumberOfTropes(worldDeductions, Trope.ALLIED, 1);
+    }
+    
+    @Test
+    public void UT_WhenSomeoneIsAnEnemyOfTheHeroAndAcoompaniesHimAlongThejourney_HeIsNotAnAllied() {
+         eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterArthur, characterPeter).toLogicalTerm(),
+            eventFactory.isEnemyOf(characterMaggie, characterPeter).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(3);
+        Term[] termsDay3 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.isFriendOf(characterPeter, characterMaggie).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new Int(0), new Int(3), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId()))
+        };
+        
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1,termsDay2, termsDay3, extraTerms);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, new Trope[]{Trope.ALLIED});
+        assertNumberOfTropes(worldDeductions, Trope.ALLIED, 0);
+    }
+    
+    @Ignore
+    @Test
+    public void UT_WhenSomeoneIsAnAlliedAndHasAlwaysBeenHappierThanTheHeroAlongTheJourney_HeIsATrickster() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.5f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.6f).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.2f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.3f).toLogicalTerm()
+        };
+        eventFactory.setDay(3);
+        Term[] termsDay3 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm()
+        };
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new Int(0), new Int(3), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId())),
+            new Struct(MonomythReasoner.PREDICATE_ALLIED, new Int(0), new Int(3), new Int(characterMaggie.getId()))
+        };
+        
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1,termsDay2, termsDay3, extraTerms);
+        
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, new Trope[]{Trope.TRICKSTER});
+        assertNumberOfTropes(worldDeductions, Trope.TRICKSTER, 1);
+    }
+    
+    @Ignore
+    @Test
+    public void UT_WhenThereIsAJourneyWithHeraldMentorAlliedGuardianShapeshifterTrickster_ThereIsAMonomyth() {
+        assertFalse(true);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Private methods">

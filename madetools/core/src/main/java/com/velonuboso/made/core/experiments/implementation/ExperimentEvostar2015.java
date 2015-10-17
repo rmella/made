@@ -17,6 +17,9 @@
 
 package com.velonuboso.made.core.experiments.implementation;
 
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
+import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
+import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.experiments.api.IExperiment;
 import com.velonuboso.made.core.optimization.api.IOptimizer;
@@ -34,6 +37,25 @@ public class ExperimentEvostar2015 extends BaseExperiment{
     
     @Override
     public void run(String[] arguments) {
+        IGlobalConfigurationFactory globalConfigurationFactory = 
+            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
+        config.MAXIMUM_ITERATIONS = 10000;
+        config.POPULATION_SIZE = 50;
+        config.NUMBER_OF_TRIALS = 30;
+        
+        CommonAbmConfiguration abmConfig = globalConfigurationFactory.getCommonAbmConfiguration();
+        abmConfig.MAX_NUMBER_OF_CIRCLES = 15;
+        abmConfig.MIN_NUMBER_OF_CIRCLES = 0;
+        abmConfig.MAX_NUMBER_OF_TRIANGLES = 15;
+        abmConfig.MIN_NUMBER_OF_TRIANGLES = 0;
+        abmConfig.MAX_NUMBER_OF_SQUARES = 15;
+        abmConfig.MIN_NUMBER_OF_SQUARES = 0;
+        abmConfig.MIN_NUMBER_OF_DAYS = 1;
+        abmConfig.MAX_NUMBER_OF_DAYS = 100;
+        abmConfig.MAX_WORLD_SIZE = 15;
+        abmConfig.MIN_WORLD_SIZE = 8;
+        
         IOptimizer optimizer = ObjectFactory.createObject(IOptimizer.class);
         optimizer.run();
     }
