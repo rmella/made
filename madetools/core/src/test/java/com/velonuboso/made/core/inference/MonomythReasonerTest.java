@@ -489,7 +489,7 @@ public class MonomythReasonerTest {
         };
         Term[] extraTerms = new Term[]{
             new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
-                    new Int(0), new Int(3), 
+                    new alice.tuprolog.Float(0), new alice.tuprolog.Float(3), 
                     new Int(characterPeter.getId()), new Int(characterArthur.getId()))
         };
         
@@ -531,7 +531,7 @@ public class MonomythReasonerTest {
         };
         Term[] extraTerms = new Term[]{
             new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
-                    new Int(0), new Int(3), 
+                    new alice.tuprolog.Float(0), new alice.tuprolog.Float(3), 
                     new Int(characterPeter.getId()), new Int(characterArthur.getId()))
         };
         
@@ -545,6 +545,10 @@ public class MonomythReasonerTest {
     public void UT_WhenSomeoneAccompaniesTheHeroAndHasAlwaysBeenHappierThanTheHeroAlongTheJourney_HeIsATrickster() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            
             eventFactory.newDay().toLogicalTerm(),
             eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
             eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm(),
@@ -576,7 +580,7 @@ public class MonomythReasonerTest {
         };
         Term[] extraTerms = new Term[]{
             new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
-                    new Int(0), new Int(3), 
+                    new alice.tuprolog.Float(0), new alice.tuprolog.Float(3), 
                     new Int(characterPeter.getId()), new Int(characterArthur.getId()))
         };
         
@@ -590,6 +594,10 @@ public class MonomythReasonerTest {
     public void UT_WhenTwoCharactersAccompaniesTheHeroAndHasAlwaysBeenHappierThanTheHeroAlongTheJourney_HeIsATrickster() {
         eventFactory.setDay(0);
         Term[] termsDay0 = new Term[]{
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+            
             eventFactory.newDay().toLogicalTerm(),
             eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
             eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm(),
@@ -621,11 +629,76 @@ public class MonomythReasonerTest {
         };
         Term[] extraTerms = new Term[]{
             new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
-                    new Int(0), new Int(3), 
+                    new alice.tuprolog.Float(0), new alice.tuprolog.Float(3), 
                     new Int(characterPeter.getId()), new Int(characterArthur.getId()))
         };
         
         Term allTerms[] = addArraysToguether(termsDay0, termsDay1,termsDay2, termsDay3, extraTerms);
+        WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, new Trope[]{Trope.TRICKSTER});
+        assertNumberOfTropes(worldDeductions, Trope.TRICKSTER, 2);
+    }
+    
+    @Test
+    public void UT_TrickstersWorksWellWithMultipleCompanionsAlongTheJourney() {
+        eventFactory.setDay(0);
+        Term[] termsDay0 = new Term[]{
+            eventFactory.characterAppears(characterPeter, 20).toLogicalTerm(),
+            eventFactory.characterAppears(characterMaggie, 23).toLogicalTerm(),
+            eventFactory.characterAppears(characterArthur, 21).toLogicalTerm(),
+                
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm(),
+            eventFactory.joy(characterArthur, 0.3f).toLogicalTerm()
+        };
+        eventFactory.setDay(1);
+        Term[] termsDay1 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.5f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.6f).toLogicalTerm(),
+            eventFactory.joy(characterArthur, 0.7f).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(2);
+        Term[] termsDay2 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.2f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.3f).toLogicalTerm(),
+            eventFactory.joy(characterArthur, 0.4f).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(3);
+        Term[] termsDay3 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm(),
+            eventFactory.joy(characterArthur, 0.3f).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(4);
+        Term[] termsDay4 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm(),
+            eventFactory.joy(characterArthur, 0.3f).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        eventFactory.setDay(5);
+        Term[] termsDay5 = new Term[]{
+            eventFactory.newDay().toLogicalTerm(),
+            eventFactory.joy(characterPeter, 0.1f).toLogicalTerm(),
+            eventFactory.joy(characterMaggie, 0.2f).toLogicalTerm(),
+            eventFactory.joy(characterArthur, 0.3f).toLogicalTerm(),
+            eventFactory.areNear(characterPeter, characterArthur, characterMaggie).toLogicalTerm()
+        };
+        
+        Term[] extraTerms = new Term[]{
+            new Struct(MonomythReasoner.PREDICATE_JOURNEY, 
+                    new alice.tuprolog.Float(0), new alice.tuprolog.Float(5), 
+                    new Int(characterPeter.getId()), new Int(characterArthur.getId()))
+        };
+        
+        Term allTerms[] = addArraysToguether(termsDay0, termsDay1,termsDay2, termsDay3, termsDay4, termsDay5, extraTerms);
         WorldDeductions worldDeductions = reasoner.getWorldDeductionsWithTropesInWhiteList(allTerms, new Trope[]{Trope.TRICKSTER});
         assertNumberOfTropes(worldDeductions, Trope.TRICKSTER, 2);
     }

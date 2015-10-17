@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.inference.implementation;
 
+import alice.tuprolog.Int;
 import alice.tuprolog.NoMoreSolutionException;
 import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.Prolog;
@@ -56,6 +57,7 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_REAL_ENEMIES = "realEnemies";
     public static final String PREDICATE_CONFLICT = "conflict";
     public static final String PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY = "transferColorBeforeMaxday";
+    public static final String PREDICATE_ACCOMPANIES_BETWEEN_DAYS = "accompaniesBetweenDays";
     public static final String PREDICATE_HELPED_COUNTER = "helpedCounter";
     public static final String PREDICATE_MORE_EVIL = "moreEvil";
     public static final String PREDICATE_JOURNEY = "journey";
@@ -74,6 +76,7 @@ public class MonomythReasoner implements IReasoner {
     public static final String PREDICATE_TRICKSTER = "trickster";
     public static final String PREDICATE_MONOMYTH = "monomyth";
     public static final String PREDICATE_NEAR_OF_CHARACTER = "nearOfCharacter";
+    public static final String PREDICATE_ACCOMPANY_COUNTER = "accompanieCounter";
     public static final String PREDICATE_ACCOMPANIES = "accompanies";
     public static final String PREDICATE_TRICKIER = "trickier";
 
@@ -197,14 +200,18 @@ public class MonomythReasoner implements IReasoner {
             case HERALD:
                 return new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald"));
             case TRICKSTER:
-                return new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"));
+                return new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster"));
+//new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"));
+            case SAMPLE:
+                return new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied"));
+                //return new Struct(PREDICATE_ACCOMPANY_COUNTER, new alice.tuprolog.Float(0), new alice.tuprolog.Float(5), new Var("Subject"), new Var("Companion"), new Var("Count"));
+                //return new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied"));
             case MONOMYTH:
                 return new Struct(PREDICATE_MONOMYTH,
                         new Term[]{
                             new Var("DayBengin"), new Var("DayEnd"),
                             new Var("Hero"), new Var("Shadow") /*, new Var("Herald"), new Var("Mentor"),
-                            new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")*/
-                        }
+                         new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")*/}
                 );
             default:
                 return new Struct();
@@ -299,6 +306,17 @@ public class MonomythReasoner implements IReasoner {
             new Struct(">=", new Var("MaxDay"), new Var("TransferDay"))
             ),
             new TermRule(
+            new Struct(PREDICATE_ACCOMPANIES_BETWEEN_DAYS, new Var("DayBegin"), new Var("DayEnd"), new Var("AccompaniesDay"), new Var("Subject"), new Var("Target")),
+            new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
+            new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
+            new Struct(EventFactory.NEW_DAY, new Var("AccompaniesDay")),
+            new Struct(PREDICATE_CHARACTER, new Var("Subject")),
+            new Struct(PREDICATE_CHARACTER, new Var("Target")),
+            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("AccompaniesDay"), new Var("Subject"), new Var("Target")),
+            new Struct(">=", new Var("DayEnd"), new Var("AccompaniesDay")),
+            new Struct(">=", new Var("AccompaniesDay"), new Var("DayBegin"))
+            ),
+            new TermRule(
             new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Subject"), new Var("Count")),
             new Struct(EventFactory.NEW_DAY, new Var("Day")),
             new Struct(PREDICATE_CHARACTER, new Var("Subject")),
@@ -338,15 +356,31 @@ public class MonomythReasoner implements IReasoner {
             new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
             ),
             new TermRule(
-            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Companion")),
-            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("DayHappened1"), new Var("Companion"), new Var("Subject")),
-            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("DayHappened2"), new Var("Companion"), new Var("Subject")),
-            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("DayHappened3"), new Var("Companion"), new Var("Subject")),
-            new Struct(">=", new Var("DayEnd"), new Var("DayHappened3")),
-            new Struct(">", new Var("DayHappened3"), new Var("DayHappened2")),
-            new Struct(">", new Var("DayHappened2"), new Var("DayHappened1")),
-            new Struct(">=", new Var("DayHappened1"), new Var("DayBegin"))
+            new Struct(PREDICATE_ACCOMPANY_COUNTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Companion"), new Var("Count")),
+            new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
+            new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
+            new Struct(PREDICATE_CHARACTER, new Var("Subject")),
+            new Struct(PREDICATE_CHARACTER, new Var("Companion")),
+            new Struct("findall",
+            new Var("AccompaniesDay"),
+            new Struct(PREDICATE_ACCOMPANIES_BETWEEN_DAYS, new Var("DayBegin"), new Var("DayEnd"), new Var("AccompaniesDay"), new Var("Companion"), new Var("Subject")),
+            new Var("List")
             ),
+            new Struct("\\==", new Var("Subject"), new Var("Companion")),
+            new Struct("length", new Var("List"), new Var("Count"))
+            ),
+            
+            new TermRule(
+            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied")),
+            new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
+            new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
+            new Struct(PREDICATE_CHARACTER, new Var("Hero")),
+            new Struct(PREDICATE_CHARACTER, new Var("Allied")),
+            new Struct(PREDICATE_ACCOMPANY_COUNTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied"), new Var("Count")),
+            //new Struct("is", new Var("MinimumCompanion"), new Struct("ceiling", new Struct ("div", new Struct("-", new Var("DayEnd"), new Var("DayBegin")), new Int(3)))),
+            new Struct(">", new Var("Count"), new Struct("ceiling", new Struct ("div", new Struct("-", new Var("DayEnd"), new Var("DayBegin")), new Int(3))))//new Var("MinimumCompanion"))
+            ),
+            
             new TermRule(
             new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
             new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
@@ -414,7 +448,8 @@ public class MonomythReasoner implements IReasoner {
             ),
             new TermRule(
             new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+            
+            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("_")),
             new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Trickster")),
             new Struct(PREDICATE_TRICKIER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"), new Var("Hero"))
             ),
@@ -475,7 +510,6 @@ public class MonomythReasoner implements IReasoner {
         return String.join("\n", rulesAsStringArray);
     }
 
-    //</editor-fold>
     private void addListenersToEngine() {
         engine.setSpy(true);
         engine.addSpyListener(new SpyListener() {
@@ -492,4 +526,6 @@ public class MonomythReasoner implements IReasoner {
             }
         });
     }
+    //</editor-fold>
+
 }

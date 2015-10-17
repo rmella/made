@@ -22,6 +22,8 @@ package com.velonuboso.made.core.inference.entity;
  */
 public enum Trope {
     
+    SAMPLE,
+    
     ELEMENT, TIME, CONFLICT,
     BEFORE, MORE_EVIL, IMMEDIATE,
     WISER, HELPS, ENCOURAGES,
