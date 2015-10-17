@@ -16,17 +16,12 @@
  */
 package com.velonuboso.made.core;
 
-import com.velonuboso.made.core.abm.api.IAbm;
-import com.velonuboso.made.core.common.entity.InferencesEntity;
-import com.velonuboso.made.core.common.util.ImplementedBy;
-import com.velonuboso.made.core.common.util.ObjectFactory;
-import com.velonuboso.made.core.customization.api.ICustomization;
 import com.velonuboso.made.core.experiments.implementation.BaseExperiment;
-import com.velonuboso.made.core.optimization.api.IOptimizer;
+import com.velonuboso.made.core.experiments.implementation.ExperimentEvostar2016;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import joptsimple.OptionParser;
@@ -44,6 +39,10 @@ public class Runner {
     private static final String ARGUMENT_HELP = "help";
 
     private String[] arguments;
+    
+    private static Class<? extends BaseExperiment>[] experimentsAvailable = new Class[]{
+        ExperimentEvostar2016.class
+    };
 
     public static void main(String[] arguments) {
         Runner runner = new Runner(arguments);
@@ -82,6 +81,7 @@ public class Runner {
         parser.accepts(ARGUMENT_EXPERIMENT, "Pre selected experiment").withRequiredArg().ofType(String.class);
         parser.accepts(ARGUMENT_EXPERIMENT_LIST, "Retrieves the current list of available experiments");
         parser.accepts(ARGUMENT_HELP, "Displays this help").forHelp();
+        parser.allowsUnrecognizedOptions();
         return parser;
     }
 
@@ -89,8 +89,7 @@ public class Runner {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Experiment list:\n");
 
-        Set<Class<? extends BaseExperiment>> subTypes = getExperimentClasses();
-        subTypes.stream().forEach((experimentClass) -> {
+        Arrays.stream(experimentsAvailable).forEach((experimentClass) -> {
             try {
                 BaseExperiment experiment = (BaseExperiment) experimentClass.getConstructor().newInstance();
                 String line = experiment.getCodeName() + ": " + experiment.getDescription();
@@ -99,12 +98,6 @@ public class Runner {
             }
         });
         System.out.println(stringBuilder.toString());
-    }
-
-    private Set<Class<? extends BaseExperiment>> getExperimentClasses() {
-        final Reflections reflections = new Reflections("com.velonuboso.made.core.experiments.implementation");
-        Set<Class<? extends BaseExperiment>> subTypes = reflections.getSubTypesOf(BaseExperiment.class);
-        return subTypes;
     }
 
     private void printVersion() {
@@ -124,8 +117,7 @@ public class Runner {
     }
 
     private void runExperiment(String experimentCode) {
-        Set<Class<? extends BaseExperiment>> subTypes = getExperimentClasses();
-        Class experimentClass = subTypes.stream()
+        Class experimentClass = Arrays.stream(experimentsAvailable)
                 .filter((Class<? extends BaseExperiment> filteredexperimentClass) -> {
                     try {
                         return filteredexperimentClass.getConstructor().newInstance().getCodeName().compareTo(experimentCode) == 0;

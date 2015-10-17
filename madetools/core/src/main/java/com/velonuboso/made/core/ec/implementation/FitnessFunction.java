@@ -65,9 +65,9 @@ public class FitnessFunction implements IFitnessFunction{
         
         IFitnessMetric metric = ObjectFactory.createObject(IFitnessMetric.class);
         
-        TrialInformation trialInformation = config.FITNESS_TROPE== null? 
+        TrialInformation trialInformation = config.PROMOTE_TROPE== null? 
                 metric.getTrialInformation(deductionsForAllTrials)
-                : metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, config.FITNESS_TROPE);
+                : metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, config.PROMOTE_TROPE);
         
         HashMap<String, TrialInformation> informationByTrope = new HashMap<>();
         for (Trope trope : Trope.getTropesInFromMonomyth()){

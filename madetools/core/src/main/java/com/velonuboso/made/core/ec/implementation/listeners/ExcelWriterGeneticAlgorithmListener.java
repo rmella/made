@@ -54,7 +54,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmListener {
 
     private boolean headerprinted = false;
-    private boolean inEvaluation = false;
     private String outputFilePath = null;
     private IExperiment experiment = null;
     ConsoleWriterGeneticAlgorithmListener consoleListener;
@@ -83,26 +82,16 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
             printHeader(bestIndividualEver);
         }
         printLine(iteration, populationAverage, populationStandardDeviation, bestIndividualEver);
-        inEvaluation = false;
     }
 
     @Override
     public void notifyTrialExecuted(WorldDeductions deductions) {
         consoleListener.notifyTrialExecuted(deductions);
-        
-        if (!inEvaluation) {
-            inEvaluation = true;
-            System.out.print("#");
-        }
-        System.out.print("*");
     }
 
     @Override
     public void notifyIndividualEvaluation(Fitness fitness) {
         consoleListener.notifyIndividualEvaluation(fitness);
-        
-        System.out.print(" " + fitness.getValue().getAverage() + "\n");
-        inEvaluation = false;
     }
     
     private String buildTargetFileName() {
