@@ -16,6 +16,8 @@
  */
 package com.velonuboso.made.core.common.entity;
 
+import com.velonuboso.made.core.inference.entity.Trope;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
@@ -27,4 +29,5 @@ public class CommonEcConfiguration {
     public float BLX_ALPHA = 0.5f;
     public int ETA_DISTANCE_MUTATION_DISTRIBUTION = 20;
     public int TERMINATE_IF_NOT_IMPROVES_IN_ITERATIONS = 30;
+    public Trope FITNESS_TROPE = null;
 }

@@ -200,12 +200,7 @@ public class MonomythReasoner implements IReasoner {
             case HERALD:
                 return new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald"));
             case TRICKSTER:
-                return new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster"));
-//new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"));
-            case SAMPLE:
-                return new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied"));
-                //return new Struct(PREDICATE_ACCOMPANY_COUNTER, new alice.tuprolog.Float(0), new alice.tuprolog.Float(5), new Var("Subject"), new Var("Companion"), new Var("Count"));
-                //return new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied"));
+                return new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"));
             case MONOMYTH:
                 return new Struct(PREDICATE_MONOMYTH,
                         new Term[]{
