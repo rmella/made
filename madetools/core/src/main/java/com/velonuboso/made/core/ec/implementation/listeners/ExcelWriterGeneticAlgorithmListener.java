@@ -25,6 +25,7 @@ import com.velonuboso.made.core.ec.api.IIndividual;
 import com.velonuboso.made.core.ec.entity.Fitness;
 import com.velonuboso.made.core.ec.entity.TrialInformation;
 import com.velonuboso.made.core.experiments.api.IExperiment;
+import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,7 +66,7 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
     @Override
     public void notifyNewExperimentExecuting(IExperiment experiment) {
         consoleListener.notifyNewExperimentExecuting(experiment);
-        
+
         this.experiment = experiment;
         outputFilePath = buildTargetFileName();
         copyBaseFileToTarget();
@@ -74,9 +75,9 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
 
     @Override
     public void notifyIterationSummary(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
-        consoleListener.notifyIterationSummary(iteration, bestIndividualEver, 
+        consoleListener.notifyIterationSummary(iteration, bestIndividualEver,
                 populationAverage, populationStandardDeviation);
-        
+
         if (!headerprinted) {
             headerprinted = true;
             printHeader(bestIndividualEver);
@@ -93,12 +94,19 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
     public void notifyIndividualEvaluation(Fitness fitness) {
         consoleListener.notifyIndividualEvaluation(fitness);
     }
-    
+
     private String buildTargetFileName() {
         String SEPARATOR = "_";
         String OUTPUT_PATH = "data/";
+
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration ecConfig = globalConfigurationFactory.getCommonEcConfiguration();
+        String currentTrope = ecConfig.PROMOTE_TROPE==null? "ALL": ecConfig.PROMOTE_TROPE.name();
+
         String suffix = new SimpleDateFormat("yyyyMMddHHmmss.S").format(new Date());
-        String fileName = "experiment" + SEPARATOR + experiment.getCodeName() + SEPARATOR + suffix + ".xlsx";
+        String fileName = "experiment" + SEPARATOR + experiment.getCodeName() 
+                + SEPARATOR + currentTrope + SEPARATOR + suffix + ".xlsx";
         return OUTPUT_PATH + fileName;
     }
 
@@ -119,28 +127,28 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
             input_document = new FileInputStream(new File(outputFilePath));
             XSSFWorkbook report = new XSSFWorkbook(input_document);
             input_document.close();
-            
-            writeInfo(report, 1, iteration+2, 0, iteration, null);
-            writeInfo(report, 1, iteration+2, 1, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
-            writeInfo(report, 1, iteration+2, 2, populationAverage, null);
-            writeInfo(report, 1, iteration+2, 3, populationStandardDeviation, null);
-            writeInfo(report, 1, iteration+2, 4, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
-            writeInfo(report, 1, iteration+2, 5, bestIndividualEver.getCurrentFitness().getValue().getStandardDeviation(), null);
-            writeInfo(report, 1, iteration+2, 6, bestIndividualEver.getCurrentFitness().getValue().getNumberOfTrials(), null);
-            writeInfo(report, 1, iteration+2, 7, Arrays.deepToString(bestIndividualEver.getGenes()), null);
-            
+
+            writeInfo(report, 1, iteration + 2, 0, iteration, null);
+            writeInfo(report, 1, iteration + 2, 1, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
+            writeInfo(report, 1, iteration + 2, 2, populationAverage, null);
+            writeInfo(report, 1, iteration + 2, 3, populationStandardDeviation, null);
+            writeInfo(report, 1, iteration + 2, 4, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
+            writeInfo(report, 1, iteration + 2, 5, bestIndividualEver.getCurrentFitness().getValue().getStandardDeviation(), null);
+            writeInfo(report, 1, iteration + 2, 6, bestIndividualEver.getCurrentFitness().getValue().getNumberOfTrials(), null);
+            writeInfo(report, 1, iteration + 2, 7, Arrays.deepToString(bestIndividualEver.getGenes()), null);
+
             HashMap<String, TrialInformation> extraMeasures = bestIndividualEver.getCurrentFitness().getExtraMeasures();
             List<String> extraTags = extraMeasures.keySet().stream().sorted().collect(Collectors.toList());
-            for (int i=0; i<extraTags.size(); i++){
+            for (int i = 0; i < extraTags.size(); i++) {
                 String tag = extraTags.get(i);
-                writeInfo(report, 1, iteration+2, 8+(i*2), extraMeasures.get(tag).getAverage() , null);
-                writeInfo(report, 1, iteration+2, 8+(i*2)+1, extraMeasures.get(tag).getStandardDeviation(), null);
+                writeInfo(report, 1, iteration + 2, 8 + (i * 2), extraMeasures.get(tag).getAverage(), null);
+                writeInfo(report, 1, iteration + 2, 8 + (i * 2) + 1, extraMeasures.get(tag).getStandardDeviation(), null);
             }
-            
-            writeInfo(report, 2, iteration+1, 0, iteration, null);
-            writeInfo(report, 2, iteration+1, 1, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
-            writeInfo(report, 2, iteration+1, 2, populationAverage, null);
-            
+
+            writeInfo(report, 2, iteration + 1, 0, iteration, null);
+            writeInfo(report, 2, iteration + 1, 1, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
+            writeInfo(report, 2, iteration + 1, 2, populationAverage, null);
+
             saveChanges(report);
         } catch (Exception ex) {
             Logger.getLogger(ExcelWriterGeneticAlgorithmListener.class.getName()).log(Level.SEVERE, null, ex);
@@ -160,22 +168,21 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
             input_document = new FileInputStream(new File(outputFilePath));
             XSSFWorkbook report = new XSSFWorkbook(input_document);
             input_document.close();
-            
-            
+
             XSSFSheet experimentInfoSheet = report.getSheetAt(1);
             CellStyle titleStyle = experimentInfoSheet.getRow(0).getCell(3).getCellStyle();
             CellStyle subtitleStyle = experimentInfoSheet.getRow(1).getCell(3).getCellStyle();
-            
+
             HashMap<String, TrialInformation> extraMeasures = bestIndividualEver.getCurrentFitness().getExtraMeasures();
             List<String> tags = extraMeasures.keySet().stream().sorted().collect(Collectors.toList());
-            for (int i=0; i<tags.size(); i++){
+            for (int i = 0; i < tags.size(); i++) {
                 String tag = tags.get(i);
-                writeInfo(report, 1, 0, 8+(i*2), tag.toLowerCase(), titleStyle);
-                
-                writeInfo(report, 1, 1, 8+(i*2), "Trials average", subtitleStyle);
-                writeInfo(report, 1, 1, 8+(i*2)+1, "Trials Std. Dev.", subtitleStyle);
+                writeInfo(report, 1, 0, 8 + (i * 2), tag.toLowerCase(), titleStyle);
+
+                writeInfo(report, 1, 1, 8 + (i * 2), "Trials average", subtitleStyle);
+                writeInfo(report, 1, 1, 8 + (i * 2) + 1, "Trials Std. Dev.", subtitleStyle);
             }
-            
+
             saveChanges(report);
         } catch (Exception ex) {
             Logger.getLogger(ExcelWriterGeneticAlgorithmListener.class.getName()).log(Level.SEVERE, null, ex);
@@ -189,7 +196,7 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
         }
 
     }
-    
+
     private void insertInfoIntoExcel() {
         FileInputStream input_document = null;
         try {
@@ -227,10 +234,10 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
         Cell cell = row.getCell(cellIndex);
         if (cell == null) {
             cell = experimentInfoSheet.getRow(rowIndex).createCell(cellIndex);
-            if (alternativeStyle == null){
+            if (alternativeStyle == null) {
                 cell.getCellStyle().setWrapText(true);
-                report.getFontAt(cell.getCellStyle().getFontIndex()).setFontHeightInPoints((short)10);
-            }else{
+                report.getFontAt(cell.getCellStyle().getFontIndex()).setFontHeightInPoints((short) 10);
+            } else {
                 cell.setCellStyle(alternativeStyle);
             }
         }
@@ -240,6 +247,9 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
             cell.setCellValue(Double.parseDouble(value.toString()));
         } else if (value instanceof Date) {
             cell.setCellValue((Date) value);
+        } else if (value instanceof Trope) {
+            String tropeName = ((Trope) value).name();
+            cell.setCellValue(tropeName);
         }
     }
 

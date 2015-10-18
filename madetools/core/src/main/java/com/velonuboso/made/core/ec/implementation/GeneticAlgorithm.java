@@ -69,12 +69,14 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
 
         IPopulation population = buildInitialPopulation();
         IIndividual bestIndividualEver = population.getBestIndividual();
+        
         int iteration = 0;
         notifyAllListeners(iteration, bestIndividualEver, population.getAverageFitness(), 
                 population.getStandardDeviation());
-            
         
         while (!condition.mustFinish(iteration, bestIndividualEver)) {
+            iteration++;
+            
             IPopulation matingPool = population.selectMatingPool();
             IPopulation newGeneration = matingPool.createOffspring(
                     config.BLX_ALPHA, config.ETA_DISTANCE_MUTATION_DISTRIBUTION);
@@ -89,7 +91,6 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
             notifyAllListeners(iteration, bestIndividualEver, populationAverage, populationStandardDeviation);
             
             population = newGeneration;
-            iteration++;
         }
         
         return bestIndividualEver;
