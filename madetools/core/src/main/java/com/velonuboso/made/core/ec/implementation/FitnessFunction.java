@@ -65,12 +65,12 @@ public class FitnessFunction implements IFitnessFunction{
         
         IFitnessMetric metric = ObjectFactory.createObject(IFitnessMetric.class);
         
-        TrialInformation trialInformation = config.PROMOTE_TROPE== null? 
+        TrialInformation trialInformation = config.TROPE_TO_PROMOTE== null? 
                 metric.getTrialInformation(deductionsForAllTrials)
-                : metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, config.PROMOTE_TROPE);
+                : metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, config.TROPE_TO_PROMOTE);
         
         HashMap<String, TrialInformation> informationByTrope = new HashMap<>();
-        for (Trope trope : Trope.getTropesInFromMonomyth()){
+        for (Trope trope : config.TROPES_TO_FOLLOW_UP){
            TrialInformation trialInformationForTrope = metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, trope);
            informationByTrope.put(trope.toString(), trialInformationForTrope);
         }

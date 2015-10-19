@@ -29,5 +29,7 @@ public class CommonEcConfiguration {
     public float BLX_ALPHA = 0.5f;
     public int ETA_DISTANCE_MUTATION_DISTRIBUTION = 20;
     public int TERMINATE_IF_NOT_IMPROVES_IN_ITERATIONS = 30;
-    public Trope PROMOTE_TROPE = null;
+    public Trope TROPE_TO_PROMOTE = null;
+    public Trope[] TROPES_TO_FOLLOW_UP = Trope.getTropesInFromMonomyth();
+    public int MAXIMUM_SECONDS_TO_GET_ALL_OCCURRENCES = 300;
 }

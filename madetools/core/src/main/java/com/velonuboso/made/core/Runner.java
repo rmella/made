@@ -17,7 +17,7 @@
 package com.velonuboso.made.core;
 
 import com.velonuboso.made.core.experiments.implementation.BaseExperiment;
-import com.velonuboso.made.core.experiments.implementation.ExperimentEvostar2016;
+import com.velonuboso.made.core.experiments.implementation.ExperimentEvostar2016_1;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class Runner {
     private String[] arguments;
     
     private static Class<? extends BaseExperiment>[] experimentsAvailable = new Class[]{
-        ExperimentEvostar2016.class
+        ExperimentEvostar2016_1.class
     };
 
     public static void main(String[] arguments) {

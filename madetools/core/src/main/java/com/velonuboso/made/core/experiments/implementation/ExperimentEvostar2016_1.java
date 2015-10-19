@@ -26,7 +26,6 @@ import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.optimization.api.IOptimizer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,9 +38,8 @@ import joptsimple.OptionSet;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ExperimentEvostar2016 extends BaseExperiment {
+public class ExperimentEvostar2016_1 extends BaseExperiment {
 
-    private static final String ARGUMENT_EXPERIMENT = "experiment";
     private static final String ARGUMENT_TROPE = "trope";
     private static final String ARGUMENT_TROPE_LIST = "tropeList";
     private static final String ARGUMENT_HELP = "help";
@@ -49,13 +47,14 @@ public class ExperimentEvostar2016 extends BaseExperiment {
 
     private Trope fitnessTrope;
 
-    public ExperimentEvostar2016() {
+    public ExperimentEvostar2016_1() {
         fitnessTrope = null;
     }
 
     @Override
     public String getDescription() {
-        return "Experiment for EvoGames 2016";
+        return "Experiment n.1 for EvoGames 2016: The fitness function is the summary "
+                + "of the target trope's occurrences.";
     }
 
     @Override
@@ -124,8 +123,12 @@ public class ExperimentEvostar2016 extends BaseExperiment {
         CommonEcConfiguration ecConfig = globalConfigurationFactory.getCommonEcConfiguration();
         ecConfig.MAXIMUM_ITERATIONS = 1000;
         ecConfig.POPULATION_SIZE = 30;
-        ecConfig.NUMBER_OF_TRIALS = 30;
-        ecConfig.PROMOTE_TROPE = fitnessTrope;
+        ecConfig.NUMBER_OF_TRIALS = 15;
+        ecConfig.TROPE_TO_PROMOTE = fitnessTrope;
+        ecConfig.BLX_ALPHA = 0.5f;
+        ecConfig.ETA_DISTANCE_MUTATION_DISTRIBUTION = 20;
+        ecConfig.TROPES_TO_FOLLOW_UP = Trope.getTropesInFromMonomyth();
+        ecConfig.MAXIMUM_SECONDS_TO_GET_ALL_OCCURRENCES = 600;
     }
 
     private void configureAbmModule(IGlobalConfigurationFactory globalConfigurationFactory) {
@@ -145,7 +148,7 @@ public class ExperimentEvostar2016 extends BaseExperiment {
             parser.printHelpOn(byteArrayOutputStream);
             System.out.println(byteArrayOutputStream.toString());
         } catch (IOException ex) {
-            Logger.getLogger(ExperimentEvostar2016.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExperimentEvostar2016_1.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

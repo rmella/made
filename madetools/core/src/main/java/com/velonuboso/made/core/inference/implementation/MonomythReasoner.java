@@ -25,9 +25,13 @@ import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import alice.tuprolog.Theory;
 import alice.tuprolog.Var;
+import alice.tuprolog.event.ExceptionEvent;
+import alice.tuprolog.event.ExceptionListener;
 import alice.tuprolog.event.SpyEvent;
 import alice.tuprolog.event.SpyListener;
+import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.implementation.EventFactory;
+import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.inference.api.IReasoner;
 import com.velonuboso.made.core.inference.entity.Trope;
 import com.velonuboso.made.core.inference.entity.WorldDeductions;
@@ -36,9 +40,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -94,6 +101,7 @@ public class MonomythReasoner implements IReasoner {
         WorldDeductions deductions = new WorldDeductions();
         try {
             engine = new Prolog();
+            initializeExceptionListener();
 
             //addListenersToEngine();
             engine.setTheory(new Theory(getMonomythRules()));
@@ -109,11 +117,19 @@ public class MonomythReasoner implements IReasoner {
 
             Arrays.stream(tropesWhiteList, 0, tropesWhiteList.length)
                     .forEach(trope -> searchTrope(events, trope, deductions));
-            return deductions;
         } catch (Exception error) {
             Logger.getLogger(MonomythReasoner.class.getName()).log(Level.SEVERE, null, error.getMessage());
         }
         return deductions;
+    }
+
+    private void initializeExceptionListener() {
+        engine.addExceptionListener(new ExceptionListener() {
+            @Override
+            public void onException(ExceptionEvent event) {
+                System.out.println("Exception found: "+event.getMsg());
+            }
+        });
     }
 
     private File writeEventsToTemporalFile(Term[] events) throws FileNotFoundException, IOException {
@@ -132,39 +148,75 @@ public class MonomythReasoner implements IReasoner {
         ArrayList<Term> solutions = new ArrayList<>();
 
         try {
-            createTheoryAndSolveTrope(events, predicateToSolve, solutions);
+            solveTrope(events, predicateToSolve, solutions);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
         deductions.put(trope, solutions.toArray(new Term[0]));
     }
 
-    private void createTheoryAndSolveTrope(Term[] events, Term predicateToSolve, ArrayList<Term> solutions) throws NoSolutionException, NoMoreSolutionException {
-
+    private void solveTrope(Term[] events, Term predicateToSolve, ArrayList<Term> solutions){
         stack = new ArrayList();
 
+        TimerTask engineHalter = buildEngineHalter();
+        Timer timer = buildTimerHalter(engineHalter);
+        
         SolveInfo solveInfo = engine.solve(predicateToSolve);
 
         ArrayList<Term> temporalSolutions = new ArrayList<>();
 
-        if (solveInfo.isSuccess()) {
-            //System.out.println("Bindings: " + solveInfo.getSolution());
-            temporalSolutions.add(solveInfo.getSolution());
+        try{
+            if (solveInfo.isSuccess()) {
+                //System.out.println("Bindings: " + solveInfo.getSolution());
+                temporalSolutions.add(solveInfo.getSolution());
 
-            while (engine.hasOpenAlternatives()) {
-                solveInfo = engine.solveNext();
-                if (solveInfo.isSuccess()) {
-                    //System.out.println("Bindings: " + solveInfo.getSolution());
-                    temporalSolutions.add(solveInfo.getSolution());
+                while (engine.hasOpenAlternatives()) {
+                    solveInfo = engine.solveNext();
+                    if (solveInfo.isSuccess()) {
+                        //System.out.println("Bindings: " + solveInfo.getSolution());
+                        temporalSolutions.add(solveInfo.getSolution());
+                    }
                 }
             }
+        }catch(Exception exception){
+            System.out.println("Exception thrown when solving: "+exception.getMessage());
         }
+        
+        timer.cancel();
+        engineHalter.cancel();
+        
         temporalSolutions.stream()
                 .map(TermWrapper::new)
                 .distinct()
                 .map(TermWrapper::unwrap)
                 .forEachOrdered(element -> solutions.add(element));
 
+    }
+
+    private Timer buildTimerHalter(TimerTask engineHalter) {
+        Timer timer = new Timer();
+        long maximumTimeToSolve = getMaximumTimeToSolve();
+        timer.schedule(engineHalter, maximumTimeToSolve);
+        return timer;
+    }
+
+    private long getMaximumTimeToSolve() {
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        long maximumTimeToSolve = 1000*(long)globalConfigurationFactory.getCommonEcConfiguration().MAXIMUM_SECONDS_TO_GET_ALL_OCCURRENCES;
+        return maximumTimeToSolve;
+    }
+
+    private TimerTask buildEngineHalter() {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                
+                
+                System.out.println("Halting ... ");
+                engine.solveHalt();
+            }
+        };
     }
 
     private Term getpredicateToSolve(Trope trope) {

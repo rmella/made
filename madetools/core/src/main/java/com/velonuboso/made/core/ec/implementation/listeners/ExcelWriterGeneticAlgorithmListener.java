@@ -102,7 +102,7 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
         IGlobalConfigurationFactory globalConfigurationFactory
                 = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
         CommonEcConfiguration ecConfig = globalConfigurationFactory.getCommonEcConfiguration();
-        String currentTrope = ecConfig.PROMOTE_TROPE==null? "ALL": ecConfig.PROMOTE_TROPE.name();
+        String currentTrope = ecConfig.TROPE_TO_PROMOTE==null? "ALL": ecConfig.TROPE_TO_PROMOTE.name();
 
         String suffix = new SimpleDateFormat("yyyyMMddHHmmss.S").format(new Date());
         String fileName = "experiment" + SEPARATOR + experiment.getCodeName() 
@@ -250,6 +250,10 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
         } else if (value instanceof Trope) {
             String tropeName = ((Trope) value).name();
             cell.setCellValue(tropeName);
+        } else if (value instanceof Trope[]){
+            String[] tropeNames = Arrays.stream(((Trope[])value)).map(Trope::toString).toArray(String[]::new);
+            String tropes = String.join(", ", tropeNames);
+            cell.setCellValue(tropes);
         }
     }
 
