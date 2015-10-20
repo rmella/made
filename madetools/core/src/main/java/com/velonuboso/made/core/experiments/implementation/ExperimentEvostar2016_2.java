@@ -38,7 +38,7 @@ import joptsimple.OptionSet;
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ExperimentEvostar2016_1 extends BaseExperiment {
+public class ExperimentEvostar2016_2 extends BaseExperiment {
 
     private static final String ARGUMENT_TROPE = "trope";
     private static final String ARGUMENT_TROPE_LIST = "tropeList";
@@ -47,15 +47,14 @@ public class ExperimentEvostar2016_1 extends BaseExperiment {
 
     private Trope fitnessTrope;
 
-    public ExperimentEvostar2016_1() {
+    public ExperimentEvostar2016_2() {
         fitnessTrope = null;
     }
 
     @Override
     public String getDescription() {
         return "Experiment n.1 for EvoGames 2016: The fitness function is the summary "
-                + "of the target trope's occurrences. Extra information for all the tropes "
-                + "is collected.";
+                + "of the target trope's occurrences. No extra information is collected.";
     }
 
     @Override
@@ -128,7 +127,7 @@ public class ExperimentEvostar2016_1 extends BaseExperiment {
         ecConfig.TROPE_TO_PROMOTE = fitnessTrope;
         ecConfig.BLX_ALPHA = 0.5f;
         ecConfig.ETA_DISTANCE_MUTATION_DISTRIBUTION = 20;
-        ecConfig.TROPES_TO_FOLLOW_UP = Trope.getTropesInFromMonomyth();
+        ecConfig.TROPES_TO_FOLLOW_UP = new Trope[0];
         ecConfig.MAXIMUM_SECONDS_TO_GET_ALL_OCCURRENCES = 600;
     }
 
@@ -149,7 +148,7 @@ public class ExperimentEvostar2016_1 extends BaseExperiment {
             parser.printHelpOn(byteArrayOutputStream);
             System.out.println(byteArrayOutputStream.toString());
         } catch (IOException ex) {
-            Logger.getLogger(ExperimentEvostar2016_1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExperimentEvostar2016_2.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
