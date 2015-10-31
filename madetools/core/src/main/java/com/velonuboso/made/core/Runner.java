@@ -20,6 +20,7 @@ import com.velonuboso.made.core.experiments.implementation.BaseExperiment;
 import com.velonuboso.made.core.experiments.implementation.ExperimentEvostar2016_1;
 import com.velonuboso.made.core.experiments.implementation.ExperimentEvostar2016_2;
 import com.velonuboso.made.core.experiments.implementation.ExperimentEvostar2016_3;
+import com.velonuboso.made.core.experiments.implementation.ExperimentEvostar2016_Utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -45,7 +46,8 @@ public class Runner {
     private static Class<? extends BaseExperiment>[] experimentsAvailable = new Class[]{
         ExperimentEvostar2016_1.class,
         ExperimentEvostar2016_2.class,
-        ExperimentEvostar2016_3.class
+        ExperimentEvostar2016_3.class,
+        ExperimentEvostar2016_Utils.class
     };
 
     public static void main(String[] arguments) {

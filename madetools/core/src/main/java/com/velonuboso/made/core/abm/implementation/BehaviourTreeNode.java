@@ -16,6 +16,7 @@
  */
 package com.velonuboso.made.core.abm.implementation;
 
+import com.velonuboso.made.core.abm.api.IAction;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.IBlackBoard;
 import com.velonuboso.made.core.abm.api.ICharacter;
@@ -23,6 +24,7 @@ import com.velonuboso.made.core.abm.api.IMap;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -60,6 +62,11 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
     }
 
     @Override
+    public BiPredicate<IBlackBoard, IBlackBoard> getAction() {
+        return action;
+    }
+    
+    @Override
     public void setProbability(float probability) {
         this.probability = probability;
     }
@@ -88,6 +95,10 @@ public class BehaviourTreeNode implements IBehaviourTreeNode {
         }
     }
 
+    public List<IBehaviourTreeNode> getChildren() {
+        return children;
+    }
+    
     private boolean isInProbability() {
         return probabilityHelper.getNextProbability(this.getClass())<probability;
     }

@@ -45,6 +45,7 @@ import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.common.util.PolynomialHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.BiPredicate;
 import javafx.scene.paint.Color;
 
 /**
@@ -52,6 +53,7 @@ import javafx.scene.paint.Color;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class Piece implements ICharacter {
+
     private Integer id;
     private IEventsWriter eventsWriter;
     private IBehaviourTreeNode rootNode;
@@ -182,15 +184,15 @@ public class Piece implements ICharacter {
 
     @Override
     public void applyColorChange() {
-        int crowdingDegree = 1+ (int)(abmConfigurationHelper.getColorChangeCrowdingDegree() * CROWDING_DEGREE_FACTOR);
+        int crowdingDegree = 1 + (int) (abmConfigurationHelper.getColorChangeCrowdingDegree() * CROWDING_DEGREE_FACTOR);
         float red = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getForegroundColor().getRed());
         float green = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getForegroundColor().getGreen());
         float blue = getNewRandomPolynomialColorComponent(crowdingDegree, (float) getForegroundColor().getBlue());
-        
+
         Color currentColor = getBackgroundColor();
         Color newColor = new Color(red, green, blue, 1f);
         this.setForegroundColor(newColor);
-        
+
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
         IEvent event = factory.naturalChange(this, currentColor, newColor);
         eventsWriter.add(event);
@@ -215,9 +217,9 @@ public class Piece implements ICharacter {
 
     private void addBlackBoardInitializerToNode(IBehaviourTreeNode node) {
         node.setAction((IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard) -> {
-            initializeBlackboard(currentBlackBoard);
-            writeNearnessEvents();
-            return true;
+                    initializeBlackboard(currentBlackBoard);
+                    writeNearnessEvents();
+                    return true;
         });
     }
 
@@ -269,7 +271,7 @@ public class Piece implements ICharacter {
         parentNode.addChildNode(trustCondition);
         trustCondition.addChildNode(giveTurnStrategy);
     }
-    
+
     private void addChildForSadnessBehaviour(IBehaviourTreeNode parentNode) {
         IBehaviourTreeNode sadnessCondition = createActionNode(
                 ObjectFactory.createObject(IConditionSadness.class),
@@ -455,27 +457,27 @@ public class Piece implements ICharacter {
 
     private void writeAffinityEvents(HashMap<ICharacter, Float> affinityMatrix) {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        
+
         ICharacter friends[] = affinityMatrix.keySet().stream()
                 .filter(character -> affinityMatrix.get(character) > 0)
                 .toArray(ICharacter[]::new);
         IEvent eventFriends = factory.isFriendOf(this, friends);
         eventsWriter.add(eventFriends);
-        
+
         ICharacter enemies[] = affinityMatrix.keySet().stream()
                 .filter(character -> affinityMatrix.get(character) < 0)
                 .toArray(ICharacter[]::new);
-        IEvent eventEnemies = factory.isEnemyOf(this, enemies); 
+        IEvent eventEnemies = factory.isEnemyOf(this, enemies);
         eventsWriter.add(eventEnemies);
     }
-    
-     private void writeNearnessEvents() {
+
+    private void writeNearnessEvents() {
         IEventFactory factory = ObjectFactory.createObject(IEventFactory.class);
-        
-        ICharacter[] charactersThatAreNear = this.map.getCellsAround(id,1).stream()
-                .filter(cell -> map.getCharacter(cell)!=null)
+
+        ICharacter[] charactersThatAreNear = this.map.getCellsAround(id, 1).stream()
+                .filter(cell -> map.getCharacter(cell) != null)
                 .map(map::getCharacter).toArray(ICharacter[]::new);
-        IEvent eventEnemies = factory.areNear(this, charactersThatAreNear); 
+        IEvent eventEnemies = factory.areNear(this, charactersThatAreNear);
         eventsWriter.add(eventEnemies);
     }
 
@@ -483,6 +485,6 @@ public class Piece implements ICharacter {
         PolynomialHelper helper = new PolynomialHelper();
         return helper.mutate(0, 1, colorValue, crowdingDegree);
     }
-    
+
     // </editor-fold>
 }

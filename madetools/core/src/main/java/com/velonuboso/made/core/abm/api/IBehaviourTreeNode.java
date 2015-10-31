@@ -18,6 +18,8 @@ package com.velonuboso.made.core.abm.api;
 
 import com.velonuboso.made.core.abm.implementation.BehaviourTreeNode;
 import com.velonuboso.made.core.common.util.ImplementedBy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -31,9 +33,9 @@ import java.util.function.Predicate;
 public interface IBehaviourTreeNode {
     void setCharacter (ICharacter character);
     void setAction(BiPredicate<IBlackBoard, IBlackBoard> action);
+    BiPredicate<IBlackBoard, IBlackBoard> getAction();
     void setProbability(float probability);
-    
     void addChildNode(IBehaviourTreeNode child);
-    
+    public List<IBehaviourTreeNode> getChildren();
     boolean run(IBlackBoard currentBlackBoard, IBlackBoard oldBlackBoard);
 }
