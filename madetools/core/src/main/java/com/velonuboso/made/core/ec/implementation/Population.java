@@ -49,7 +49,7 @@ public class Population implements IPopulation {
 
     @Override
     public IIndividual getBestIndividual() {
-        individuals.stream().forEach(individual -> individual.reEvaluate());
+        individuals.parallelStream().forEach(individual -> individual.reEvaluate());
         
         averageFitness =  (float) individuals.stream()
                 .mapToDouble(individual -> individual.getCurrentFitness().getValue().getAverage())
