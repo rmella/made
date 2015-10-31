@@ -64,18 +64,21 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
     @Override
     public IIndividual run() {
         
-        
+        long firstTimestamp = System.currentTimeMillis();
         ITerminationCondition condition = ObjectFactory.createObject(ITerminationCondition.class);
-
         IPopulation population = buildInitialPopulation();
         IIndividual bestIndividualEver = population.getBestIndividual();
+        long secondTimestamp = System.currentTimeMillis();
         
         int iteration = 0;
-        notifyAllListeners(iteration, bestIndividualEver, population.getAverageFitness(), 
+        long timeDifference = secondTimestamp-firstTimestamp;
+        notifyAllListeners(iteration, timeDifference, bestIndividualEver, population.getAverageFitness(), 
                 population.getStandardDeviation());
         
         while (!condition.mustFinish(iteration, bestIndividualEver)) {
             iteration++;
+            
+            firstTimestamp = System.currentTimeMillis();
             
             IPopulation matingPool = population.selectMatingPool();
             IPopulation newGeneration = matingPool.createOffspring(
@@ -88,7 +91,10 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
             float populationAverage = newGeneration.getAverageFitness();
             float populationStandardDeviation = newGeneration.getStandardDeviation();
             
-            notifyAllListeners(iteration, bestIndividualEver, populationAverage, populationStandardDeviation);
+            secondTimestamp = System.currentTimeMillis();
+            timeDifference = secondTimestamp-firstTimestamp;
+            
+            notifyAllListeners(iteration, timeDifference, bestIndividualEver, populationAverage, populationStandardDeviation);
             
             population = newGeneration;
         }
@@ -96,9 +102,9 @@ public class GeneticAlgorithm implements IGeneticAlgorithm {
         return bestIndividualEver;
     }
 
-    private void notifyAllListeners(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
+    private void notifyAllListeners(int iteration, long timeInMs, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
         listeners.stream().forEach((listener) -> {
-            listener.notifyIterationSummary(iteration, bestIndividualEver,
+            listener.notifyIterationSummary(iteration, timeInMs, bestIndividualEver,
                     populationAverage, populationStandardDeviation);
         });
     }

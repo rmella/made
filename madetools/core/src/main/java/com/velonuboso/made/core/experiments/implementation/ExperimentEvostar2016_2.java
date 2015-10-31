@@ -128,7 +128,7 @@ public class ExperimentEvostar2016_2 extends BaseExperiment {
         ecConfig.BLX_ALPHA = 0.5f;
         ecConfig.ETA_DISTANCE_MUTATION_DISTRIBUTION = 20;
         ecConfig.TROPES_TO_FOLLOW_UP = new Trope[0];
-        ecConfig.MAXIMUM_SECONDS_TO_GET_ALL_OCCURRENCES = 600;
+        ecConfig.MAXIMUM_SECONDS_TO_GET_ALL_OCCURRENCES = 300;
     }
 
     private void configureAbmModule(IGlobalConfigurationFactory globalConfigurationFactory) {

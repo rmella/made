@@ -59,6 +59,8 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
     private IExperiment experiment = null;
     ConsoleWriterGeneticAlgorithmListener consoleListener;
 
+    private static final int FIRST_COLUMN_EXTRA_INFO = 9;
+    
     public ExcelWriterGeneticAlgorithmListener() {
         consoleListener = new ConsoleWriterGeneticAlgorithmListener();
     }
@@ -74,15 +76,15 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
     }
 
     @Override
-    public void notifyIterationSummary(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
-        consoleListener.notifyIterationSummary(iteration, bestIndividualEver,
+    public void notifyIterationSummary(int iteration, long timeInMs, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
+        consoleListener.notifyIterationSummary(iteration, timeInMs, bestIndividualEver,
                 populationAverage, populationStandardDeviation);
 
         if (!headerprinted) {
             headerprinted = true;
             printHeader(bestIndividualEver);
         }
-        printLine(iteration, populationAverage, populationStandardDeviation, bestIndividualEver);
+        printLine(iteration, timeInMs, populationAverage, populationStandardDeviation, bestIndividualEver);
     }
 
     @Override
@@ -121,7 +123,7 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
         }
     }
 
-    private void printLine(int iteration, float populationAverage, float populationStandardDeviation, IIndividual bestIndividualEver) {
+    private void printLine(int iteration, long timeInMs, float populationAverage, float populationStandardDeviation, IIndividual bestIndividualEver) {
         FileInputStream input_document = null;
         try {
             input_document = new FileInputStream(new File(outputFilePath));
@@ -129,20 +131,21 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
             input_document.close();
 
             writeInfo(report, 1, iteration + 2, 0, iteration, null);
-            writeInfo(report, 1, iteration + 2, 1, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
-            writeInfo(report, 1, iteration + 2, 2, populationAverage, null);
-            writeInfo(report, 1, iteration + 2, 3, populationStandardDeviation, null);
-            writeInfo(report, 1, iteration + 2, 4, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
-            writeInfo(report, 1, iteration + 2, 5, bestIndividualEver.getCurrentFitness().getValue().getStandardDeviation(), null);
-            writeInfo(report, 1, iteration + 2, 6, bestIndividualEver.getCurrentFitness().getValue().getNumberOfTrials(), null);
-            writeInfo(report, 1, iteration + 2, 7, Arrays.deepToString(bestIndividualEver.getGenes()), null);
+            writeInfo(report, 1, iteration + 2, 1, timeInMs, null);
+            writeInfo(report, 1, iteration + 2, 2, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
+            writeInfo(report, 1, iteration + 2, 3, populationAverage, null);
+            writeInfo(report, 1, iteration + 2, 4, populationStandardDeviation, null);
+            writeInfo(report, 1, iteration + 2, 5, bestIndividualEver.getCurrentFitness().getValue().getAverage(), null);
+            writeInfo(report, 1, iteration + 2, 6, bestIndividualEver.getCurrentFitness().getValue().getStandardDeviation(), null);
+            writeInfo(report, 1, iteration + 2, 7, bestIndividualEver.getCurrentFitness().getValue().getNumberOfTrials(), null);
+            writeInfo(report, 1, iteration + 2, 8, Arrays.deepToString(bestIndividualEver.getGenes()), null);
 
             HashMap<String, TrialInformation> extraMeasures = bestIndividualEver.getCurrentFitness().getExtraMeasures();
             List<String> extraTags = extraMeasures.keySet().stream().sorted().collect(Collectors.toList());
             for (int i = 0; i < extraTags.size(); i++) {
                 String tag = extraTags.get(i);
-                writeInfo(report, 1, iteration + 2, 8 + (i * 2), extraMeasures.get(tag).getAverage(), null);
-                writeInfo(report, 1, iteration + 2, 8 + (i * 2) + 1, extraMeasures.get(tag).getStandardDeviation(), null);
+                writeInfo(report, 1, iteration + 2, FIRST_COLUMN_EXTRA_INFO + (i * 2), extraMeasures.get(tag).getAverage(), null);
+                writeInfo(report, 1, iteration + 2, FIRST_COLUMN_EXTRA_INFO + (i * 2) + 1, extraMeasures.get(tag).getStandardDeviation(), null);
             }
 
             writeInfo(report, 2, iteration + 1, 0, iteration, null);
@@ -177,10 +180,10 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
             List<String> tags = extraMeasures.keySet().stream().sorted().collect(Collectors.toList());
             for (int i = 0; i < tags.size(); i++) {
                 String tag = tags.get(i);
-                writeInfo(report, 1, 0, 8 + (i * 2), tag.toLowerCase(), titleStyle);
+                writeInfo(report, 1, 0, FIRST_COLUMN_EXTRA_INFO + (i * 2), tag.toLowerCase(), titleStyle);
 
-                writeInfo(report, 1, 1, 8 + (i * 2), "Trials average", subtitleStyle);
-                writeInfo(report, 1, 1, 8 + (i * 2) + 1, "Trials Std. Dev.", subtitleStyle);
+                writeInfo(report, 1, 1, FIRST_COLUMN_EXTRA_INFO + (i * 2), "Trials average", subtitleStyle);
+                writeInfo(report, 1, 1, FIRST_COLUMN_EXTRA_INFO + (i * 2) + 1, "Trials Std. Dev.", subtitleStyle);
             }
 
             saveChanges(report);
@@ -247,6 +250,8 @@ public class ExcelWriterGeneticAlgorithmListener implements IGeneticAlgorithmLis
             cell.setCellValue(Double.parseDouble(value.toString()));
         } else if (value instanceof Date) {
             cell.setCellValue((Date) value);
+        } else if (value instanceof Long) {
+            cell.setCellValue((long)value);
         } else if (value instanceof Trope) {
             String tropeName = ((Trope) value).name();
             cell.setCellValue(tropeName);

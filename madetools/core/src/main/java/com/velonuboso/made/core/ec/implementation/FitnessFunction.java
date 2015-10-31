@@ -36,51 +36,57 @@ import com.velonuboso.made.core.inference.entity.WorldDeductions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class FitnessFunction implements IFitnessFunction{
-    
+public class FitnessFunction implements IFitnessFunction {
+
     @Override
     public Fitness evaluateIndividual(IIndividual individual) {
-        
-        IGlobalConfigurationFactory globalConfigurationFactory = 
-            ObjectFactory.createObject(IGlobalConfigurationFactory.class);
-        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
-        
-        ArrayList<WorldDeductions> deductionsForAllTrials = new ArrayList<>();
-        
-        for (int trialIndex = 0; trialIndex < config.NUMBER_OF_TRIALS; trialIndex++){
-            ICustomization customization = ObjectFactory.createObject(ICustomization.class);
 
-            EventsLogEntity events = runVirtualWorld(customization, individual);
-            WorldDeductions deductions = InferTropesFromEvents(events);
-            deductionsForAllTrials.add(deductions);
-            
-            ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyTrialExecuted(deductions);
-        }
-        
+        IGlobalConfigurationFactory globalConfigurationFactory
+                = ObjectFactory.createObject(IGlobalConfigurationFactory.class);
+        CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
+
+        ArrayList<WorldDeductions> deductionsForAllTrials = new ArrayList<>();
+
+        IntStream.range(0, config.NUMBER_OF_TRIALS).parallel().forEach(new IntConsumer() {
+
+            @Override
+            public void accept(int trialIndex) {
+                ICustomization customization = ObjectFactory.createObject(ICustomization.class);
+
+                EventsLogEntity events = runVirtualWorld(customization, individual);
+                WorldDeductions deductions = InferTropesFromEvents(events);
+                deductionsForAllTrials.add(deductions);
+
+                ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyTrialExecuted(deductions);
+            }
+        });
+
         IFitnessMetric metric = ObjectFactory.createObject(IFitnessMetric.class);
-        
-        TrialInformation trialInformation = config.TROPE_TO_PROMOTE== null? 
-                metric.getTrialInformation(deductionsForAllTrials)
+
+        TrialInformation trialInformation = config.TROPE_TO_PROMOTE == null
+                ? metric.getTrialInformation(deductionsForAllTrials)
                 : metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, config.TROPE_TO_PROMOTE);
-        
+
         HashMap<String, TrialInformation> informationByTrope = new HashMap<>();
-        for (Trope trope : config.TROPES_TO_FOLLOW_UP){
-           TrialInformation trialInformationForTrope = metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, trope);
-           informationByTrope.put(trope.toString(), trialInformationForTrope);
+        for (Trope trope : config.TROPES_TO_FOLLOW_UP) {
+            TrialInformation trialInformationForTrope = metric.getTrialInformationForSpecificTrope(deductionsForAllTrials, trope);
+            informationByTrope.put(trope.toString(), trialInformationForTrope);
         }
-       
+
         Fitness fitness = new Fitness();
         fitness.setValue(trialInformation);
         fitness.setExtraMeasures(informationByTrope);
-        
+
         ObjectFactory.createObject(IGeneticAlgorithmListener.class).notifyIndividualEvaluation(fitness);
-        
+
         return fitness;
     }
 
@@ -99,5 +105,5 @@ public class FitnessFunction implements IFitnessFunction{
         EventsLogEntity events = abm.getEventsLog();
         return events;
     }
-    
+
 }

@@ -32,5 +32,5 @@ public interface IGeneticAlgorithmListener {
     void notifyNewExperimentExecuting(IExperiment experiment);
     void notifyTrialExecuted(WorldDeductions deductions);
     void notifyIndividualEvaluation(Fitness fitness);
-    void notifyIterationSummary(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation);
+    void notifyIterationSummary(int iteration, long timeInMs, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation);
 }

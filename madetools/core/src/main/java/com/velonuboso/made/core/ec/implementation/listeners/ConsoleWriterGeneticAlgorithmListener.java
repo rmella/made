@@ -43,20 +43,21 @@ public class ConsoleWriterGeneticAlgorithmListener implements IGeneticAlgorithmL
     }
 
     @Override
-    public void notifyIterationSummary(int iteration, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
+    public void notifyIterationSummary(int iteration, long timeInMs, IIndividual bestIndividualEver, float populationAverage, float populationStandardDeviation) {
         if (!headerprinted) {
             headerprinted = true;
             printHeader(bestIndividualEver);
         }
-        printLine(iteration, populationAverage, populationStandardDeviation, bestIndividualEver);
+        printLine(iteration, timeInMs, populationAverage, populationStandardDeviation, bestIndividualEver);
         inEvaluation = false;
     }
 
-    private void printLine(int iteration, float populationAverage, float populationStandardDeviation, IIndividual bestIndividualEver) {
+    private void printLine(int iteration, long timeInMs, float populationAverage, float populationStandardDeviation, IIndividual bestIndividualEver) {
         NumberFormat format = NumberFormat.getInstance(Locale.ENGLISH);
         
         ArrayList<String> elements = new ArrayList<>();
         elements.add(format.format(iteration));
+        elements.add(format.format(timeInMs));
 
         elements.add(format.format(populationAverage));
         elements.add(format.format(populationStandardDeviation));
@@ -79,6 +80,7 @@ public class ConsoleWriterGeneticAlgorithmListener implements IGeneticAlgorithmL
     private void printHeader(IIndividual bestIndividualEver) {
         ArrayList<String> elements = new ArrayList<>();
         elements.add("Iteration");
+        elements.add("Time (ms)");
         
         elements.add("Population average");
         elements.add("Population std dev.");
