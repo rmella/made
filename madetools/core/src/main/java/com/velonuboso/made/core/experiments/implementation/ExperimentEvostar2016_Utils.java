@@ -21,6 +21,8 @@ import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.experiments.helper.BehaviourTreePrinter;
+import com.velonuboso.made.core.inference.implementation.MonomythReasoner;
+import com.velonuboso.made.core.inference.implementation.TermRule;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,10 +37,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import joptsimple.HelpFormatter;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -48,8 +48,10 @@ import org.apache.commons.lang.StringUtils;
 public class ExperimentEvostar2016_Utils extends BaseExperiment {
 
     private static final String ARGUMENT_EXPORT_BEHAVIOUR_TREE = "exportBehaviourTree";
-    final String EXECUTABLE = "dot";
-    BehaviourTreePrinter printer;
+    private static final String ARGUMENT_EXPORT_THEORY = "exportTheory";
+    
+    private final String EXECUTABLE = "dot";
+    private BehaviourTreePrinter printer;
 
     public ExperimentEvostar2016_Utils() {
         printer = new BehaviourTreePrinter();
@@ -72,19 +74,37 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
             exportBehaviourTree(outputFileName);
             System.exit(0);
         }
+        if (options.has(ARGUMENT_EXPORT_THEORY)) {
+            String outputFileName = options.valueOf(ARGUMENT_EXPORT_THEORY).toString();
+            exportTheory(outputFileName); 
+            System.exit(0);
+        }
         printHelp(parser);
     }
 
     private void exportBehaviourTree(String outputFileName) {
+        
+        IBehaviourTreeNode node = getDefaultBehaviourTree();
+        String graph = printer.getBehaviourTreeAsDigraph(node);
+        
+        generateDiagram(graph, outputFileName);
+    }
+
+    private void exportTheory(String outputFileName) {
+        MonomythReasoner reasoner = new MonomythReasoner();
+        System.out.println(reasoner.getMonomythRulesAsString());
+        
+        String graph = printer.getTheoryAsDigraph(reasoner.getMonomythRules());
+        generateDiagram(graph, outputFileName);
+    }
+    
+    private void generateDiagram(String graph, String outputFileName) {
         final String DOT = ".";
         final String DEFAULT_EXTENSION = "jpg";
 
-        checkExecutableExists(EXECUTABLE);
-
-        IBehaviourTreeNode node = getDefaultBehaviourTree();
-        String graph = printer.getBehaviourTreeAsDigraph(node);
-
         try {
+            checkExecutableExists(EXECUTABLE);
+            
             File digraphTemporalFile = saveDotToTemporalFile(graph);
             if (!outputFileName.contains(DOT)) {
                 outputFileName = outputFileName + DOT + DEFAULT_EXTENSION;
@@ -93,14 +113,14 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
             redirectToSystemOutput(dotExecutionProcess.getInputStream());
             redirectToSystemOutput(dotExecutionProcess.getErrorStream());
 
-            digraphTemporalFile.delete();
+            //digraphTemporalFile.delete();
 
             showMessageSuccess(outputFileName);
         } catch (Exception e) {
             Logger.getLogger(ExperimentEvostar2016_Utils.class.getName()).log(Level.SEVERE, null, e.getMessage());
         }
     }
-
+    
     private void checkExecutableExists(String executableName) {
         boolean existsInPath = Stream.of(System.getenv("PATH").split(Pattern.quote(File.pathSeparator)))
                 .map(Paths::get)
@@ -165,6 +185,8 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
         OptionParser parser = new OptionParser();
         parser.accepts(ARGUMENT_EXPORT_BEHAVIOUR_TREE, "Export behaviour tree to "
                 + "the specified file (if none specified, jpg is used)").withRequiredArg().ofType(String.class);
+        parser.accepts(ARGUMENT_EXPORT_THEORY, "Export theory to "
+                + "the specified file (if none specified, txt is used)").withRequiredArg().ofType(String.class);
         parser.allowsUnrecognizedOptions();
         return parser;
     }

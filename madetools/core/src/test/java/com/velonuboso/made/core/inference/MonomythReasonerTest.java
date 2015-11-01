@@ -120,7 +120,7 @@ public class MonomythReasonerTest {
     @Test
     public void UT_ShowRulesFromTheMonomyth() {
         MonomythReasoner monomythReasoner = new MonomythReasoner();
-        String rules = monomythReasoner.getMonomythRules();
+        String rules = monomythReasoner.getMonomythRulesAsString();
         System.out.println("Rules:\n"+rules);
         assertFalse("The monomyth reasoner should use a non-empty set of rules",
                 StringUtils.isBlank(rules));

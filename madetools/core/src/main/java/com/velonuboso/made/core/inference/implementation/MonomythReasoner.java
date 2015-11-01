@@ -104,7 +104,7 @@ public class MonomythReasoner implements IReasoner {
             initializeExceptionListener();
 
             //addListenersToEngine();
-            engine.setTheory(new Theory(getMonomythRules()));
+            engine.setTheory(new Theory(getMonomythRulesAsString()));
             //System.out.println("Number of events = "+events.length);
 
             File temporalFileName = writeEventsToTemporalFile(events);
@@ -265,296 +265,301 @@ public class MonomythReasoner implements IReasoner {
         }
     }
 
-    public String getMonomythRules() {
+    public String getMonomythRulesAsString() {
 
-        TermRule rules[] = new TermRule[]{
-            new TermRule(
-            new Struct(PREDICATE_BETWEEN, new Var("Start"), new Var("NumberBetween"), new Var("End")),
-            new Struct(">=", new Var("NumberBetween"), new Var("Start")),
-            new Struct(">=", new Var("End"), new Var("NumberBetween"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_CHARACTER, new Var("X")),
-            new Struct(EventFactory.CHARACTER_APPEARS, new Var(), new Var("X"), new Var(), new Var(), new Var())
-            ),
-            new TermRule(
-            new Struct(PREDICATE_COLOR_SPOT, new Var("X")),
-            new Struct(EventFactory.COLOR_SPOT_APPEARS, new Var(), new Var("X"), new Var())
-            ),
-            new TermRule(
-            new Struct(PREDICATE_ELEMENT, new Var("X")),
-            new Struct(PREDICATE_CHARACTER, new Var("X"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_ELEMENT, new Var("X")),
-            new Struct(PREDICATE_COLOR_SPOT, new Var("X"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("ListOfFriends")),
-            new Struct("member", new Var("B"), new Var("ListOfFriends"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A")),
-            new Struct(EventFactory.ARE_NEAR, new Var("Day"), new Var("A"), new Var("ListOfCharacters")),
-            new Struct("member", new Var("B"), new Var("ListOfCharacters"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("A"), new Var("ListOfEnemies")),
-            new Struct("member", new Var("B"), new Var("ListOfEnemies"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
-            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
-            new Struct(EventFactory.HAS_FEAR, new Var("Day"), new Var("Loser"), new Var("Winner")),
-            new Struct(EventFactory.MOVES_AWAY, new Var("Day"), new Var("Loser"), new Var()),
-            new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("Winner"), new Var("Loser"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
-            new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var()),
-            new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("Winner"), new Var("Loser"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
-            new Struct(PREDICATE_POSSIBLE_HERALD, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var("Herald"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_POSSIBLE_HERALD, new Var("DayWinnerStains"), new Var("Winner"), new Var("Loser"), new Var("Spot")),
-            new Struct(EventFactory.CAN_IMPROVE_SELF_SIMILARITY, new Var("DayLoserWantedSpot"), new Var("Loser"), new Var("Spot")),
-            new Struct(EventFactory.STAINS, new Var("DayWinnerStains"), new Var("Winner"), new Var("Spot")),
-            new Struct("not", new Struct(EventFactory.STAINS, new Var(), new Var("Loser"), new Var("Spot"))),
-            new Struct(">=", new Var("DayWinnerStains"), new Var("DayLoserWantedSpot")),
-            new Struct(PREDICATE_REAL_ENEMIES, new Var("DayWinnerStains"), new Var("Winner"), new Var("Loser"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_POSSIBLE_HERALD, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var("Friend")),
-            new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Friend"), new Var()),
-            new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("Loser"), new Var("Friend")),
-            new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("Winner"), new Var("Loser")),
-            new Struct("!")
-            ),
-            new TermRule(
-            new Struct(PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY, new Var("MaxDay"), new Var("TransferDay"), new Var("Subject")),
-            new Struct(EventFactory.NEW_DAY, new Var("MaxDay")),
-            new Struct(EventFactory.NEW_DAY, new Var("TransferDay")),
-            new Struct(PREDICATE_CHARACTER, new Var("Subject")),
-            new Struct(EventFactory.TRANSFERS_COLOR, new Var("TransferDay"), new Var("Subject"), new Var()),
-            new Struct(">=", new Var("MaxDay"), new Var("TransferDay"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_ACCOMPANIES_BETWEEN_DAYS, new Var("DayBegin"), new Var("DayEnd"), new Var("AccompaniesDay"), new Var("Subject"), new Var("Target")),
-            new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
-            new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
-            new Struct(EventFactory.NEW_DAY, new Var("AccompaniesDay")),
-            new Struct(PREDICATE_CHARACTER, new Var("Subject")),
-            new Struct(PREDICATE_CHARACTER, new Var("Target")),
-            new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("AccompaniesDay"), new Var("Subject"), new Var("Target")),
-            new Struct(">=", new Var("DayEnd"), new Var("AccompaniesDay")),
-            new Struct(">=", new Var("AccompaniesDay"), new Var("DayBegin"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Subject"), new Var("Count")),
-            new Struct(EventFactory.NEW_DAY, new Var("Day")),
-            new Struct(PREDICATE_CHARACTER, new Var("Subject")),
-            new Struct("findall",
-            new Var("TransferDay"),
-            new Struct(PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY, new Var("Day"), new Var("TransferDay"), new Var("Subject")),
-            new Var("List")
-            ),
-            new Struct("length", new Var("List"), new Var("Count"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_MORE_EVIL, new Var("Day"), new Var("Evil"), new Var("Good")),
-            new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Evil"), new Var("EvilCounter")),
-            new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Good"), new Var("GoodCounter")),
-            new Struct("<", new Var("EvilCounter"), new Var("GoodCounter"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(PREDICATE_CONFLICT, new Var("DayBegin"), new Var("Shadow"), new Var("Hero")),
-            new Struct(PREDICATE_CONFLICT, new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(PREDICATE_MORE_EVIL, new Var("DayBegin"), new Var("Shadow"), new Var("Hero")),
-            new Struct(">", new Var("DayEnd"), new Var("DayBegin"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_HERO, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_SHADOW, new Var("DayBegin"), new Var("DayEnd"), new Var("Shadow")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Allied")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(EventFactory.GIVES_TURN, new Var("DayHappened"), new Var("Allied"), new Var("Hero")),
-            new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_ACCOMPANY_COUNTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Companion"), new Var("Count")),
-            new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
-            new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
-            new Struct(PREDICATE_CHARACTER, new Var("Subject")),
-            new Struct(PREDICATE_CHARACTER, new Var("Companion")),
-            new Struct("findall",
-            new Var("AccompaniesDay"),
-            new Struct(PREDICATE_ACCOMPANIES_BETWEEN_DAYS, new Var("DayBegin"), new Var("DayEnd"), new Var("AccompaniesDay"), new Var("Companion"), new Var("Subject")),
-            new Var("List")
-            ),
-            new Struct("\\==", new Var("Subject"), new Var("Companion")),
-            new Struct("length", new Var("List"), new Var("Count"))
-            ),
-            
-            new TermRule(
-            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied")),
-            new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
-            new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
-            new Struct(PREDICATE_CHARACTER, new Var("Hero")),
-            new Struct(PREDICATE_CHARACTER, new Var("Allied")),
-            new Struct(PREDICATE_ACCOMPANY_COUNTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied"), new Var("Count")),
-            //new Struct("is", new Var("MinimumCompanion"), new Struct("ceiling", new Struct ("div", new Struct("-", new Var("DayEnd"), new Var("DayBegin")), new Int(3)))),
-            new Struct(">", new Var("Count"), new Struct("ceiling", new Struct ("div", new Struct("-", new Var("DayEnd"), new Var("DayBegin")), new Int(3))))//new Var("MinimumCompanion"))
-            ),
-            
-            new TermRule(
-            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied")),
-            new Struct("not", new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied"), new Var("Hero")))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied")),
-            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Allied"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Guardian")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(PREDICATE_CONFLICT, new Var("DayHappened"), new Var("Guardian"), new Var("Hero")),
-            new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Guardian")),
-            new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Guardian"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Enemy")),
-            new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("Subject"), new Var("Enemy")),
-            new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("Day"), new Var("DayEnd"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Mentor")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(EventFactory.TRANSFERS_COLOR, new Var("DayHappened"), new Var("Mentor"), new Var("Hero")),
-            new Struct("not",
-            new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor"), new Var("Hero"))
-            ),
-            new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor")),
-            new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Mentor"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Shapeshifter")),
-            new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter")),
-            new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter")),
-            new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Shapeshifter"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Herald")),
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(PREDICATE_POSSIBLE_HERALD, new Var("DayBegin"), new Var("Shadow"), new Var("Hero"), new Var("Herald"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald")),
-            new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
-            new Var("Herald"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster")),
-            
-            new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("_")),
-            new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Trickster")),
-            new Struct(PREDICATE_TRICKIER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"), new Var("Hero"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster")),
-            new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_TRICKIER, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Target")),
-            new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Target"), new Var("JoyTarget")),
-            new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Subject"), new Var("JoySubject")),
-            new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("OneDay"), new Var("DayEnd")),
-            new Struct("\\+", new Struct(">=", new Var("JoyTarget"), new Var("JoySubject"))),
-            new Struct("!")
-            ),
-            new TermRule(
-            new Struct(PREDICATE_MONOMYTH,
-            new Term[]{
-                new Var("DayBengin"), new Var("DayEnd"),
-                new Var("Hero"), new Var("Shadow"), new Var("Herald"), new Var("Mentor"),
-                new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")
-            }
-            ),
-            new Struct(MonomythReasoner.PREDICATE_JOURNEY,
-            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
-            new Struct(MonomythReasoner.PREDICATE_HERALD,
-            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Herald")),
-            new Struct(MonomythReasoner.PREDICATE_MENTOR,
-            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Mentor")),
-            new Struct(MonomythReasoner.PREDICATE_ALLIED,
-            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
-            new Struct(MonomythReasoner.PREDICATE_GUARDIAN,
-            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Guardian")),
-            new Struct(MonomythReasoner.PREDICATE_TRICKSTER,
-            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster")),
-            new Struct(MonomythReasoner.PREDICATE_SHAPESHIFTER,
-            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Shapeshifter"))
-            ),
-            new TermRule(
-            new Struct(PREDICATE_MONOMYTH,
-            new Var("DayBengin"), new Var("DayEnd"),
-            new Var("Hero"), new Var("Shadow")
-            ),
-            new Struct(PREDICATE_MONOMYTH,
-            new Term[]{
-                new Var("DayBengin"), new Var("DayEnd"),
-                new Var("Hero"), new Var("Shadow"), new Var("Herald"), new Var("Mentor"),
-                new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")
-            }
-            )
-            )
-        };
+        TermRule rules[] = getMonomythRules();
 
         String[] rulesAsStringArray = Arrays
                 .stream(rules)
                 .map(rule -> rule.toString() + ".")
                 .toArray(String[]::new);
         return String.join("\n", rulesAsStringArray);
+    }
+
+    public TermRule[] getMonomythRules() {
+        TermRule rules[] = new TermRule[]{
+            new TermRule(
+                    new Struct(PREDICATE_BETWEEN, new Var("Start"), new Var("NumberBetween"), new Var("End")),
+                    new Struct(">=", new Var("NumberBetween"), new Var("Start")),
+                    new Struct(">=", new Var("End"), new Var("NumberBetween"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_CHARACTER, new Var("X")),
+                    new Struct(EventFactory.CHARACTER_APPEARS, new Var(), new Var("X"), new Var(), new Var(), new Var())
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_COLOR_SPOT, new Var("X")),
+                    new Struct(EventFactory.COLOR_SPOT_APPEARS, new Var(), new Var("X"), new Var())
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ELEMENT, new Var("X")),
+                    new Struct(PREDICATE_CHARACTER, new Var("X"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ELEMENT, new Var("X")),
+                    new Struct(PREDICATE_COLOR_SPOT, new Var("X"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(EventFactory.IS_FRIEND_OF, new Var("Day"), new Var("A"), new Var("ListOfFriends")),
+                    new Struct("member", new Var("B"), new Var("ListOfFriends"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A")),
+                    new Struct(EventFactory.ARE_NEAR, new Var("Day"), new Var("A"), new Var("ListOfCharacters")),
+                    new Struct("member", new Var("B"), new Var("ListOfCharacters"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(PREDICATE_IS_FRIEND_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(EventFactory.IS_ENEMY_OF, new Var("Day"), new Var("A"), new Var("ListOfEnemies")),
+                    new Struct("member", new Var("B"), new Var("ListOfEnemies"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("A"), new Var("B")),
+                    new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("B"), new Var("A"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                    new Struct(EventFactory.HAS_FEAR, new Var("Day"), new Var("Loser"), new Var("Winner")),
+                    new Struct(EventFactory.MOVES_AWAY, new Var("Day"), new Var("Loser"), new Var()),
+                    new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("Winner"), new Var("Loser"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                    new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var()),
+                    new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("Winner"), new Var("Loser"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_CONFLICT, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                    new Struct(PREDICATE_POSSIBLE_HERALD, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var("Herald"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_POSSIBLE_HERALD, new Var("DayWinnerStains"), new Var("Winner"), new Var("Loser"), new Var("Spot")),
+                    new Struct(EventFactory.CAN_IMPROVE_SELF_SIMILARITY, new Var("DayLoserWantedSpot"), new Var("Loser"), new Var("Spot")),
+                    new Struct(EventFactory.STAINS, new Var("DayWinnerStains"), new Var("Winner"), new Var("Spot")),
+                    new Struct("not", new Struct(EventFactory.STAINS, new Var(), new Var("Loser"), new Var("Spot"))),
+                    new Struct(">=", new Var("DayWinnerStains"), new Var("DayLoserWantedSpot")),
+                    new Struct(PREDICATE_REAL_ENEMIES, new Var("DayWinnerStains"), new Var("Winner"), new Var("Loser"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_POSSIBLE_HERALD, new Var("Day"), new Var("Winner"), new Var("Loser"), new Var("Friend")),
+                    new Struct(EventFactory.DISPLACES, new Var("Day"), new Var("Winner"), new Var("Friend"), new Var()),
+                    new Struct(PREDICATE_REAL_FRIENDS, new Var("Day"), new Var("Loser"), new Var("Friend")),
+                    new Struct(PREDICATE_REAL_ENEMIES, new Var("Day"), new Var("Winner"), new Var("Loser")),
+                    new Struct("!")
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY, new Var("MaxDay"), new Var("TransferDay"), new Var("Subject")),
+                    new Struct(EventFactory.NEW_DAY, new Var("MaxDay")),
+                    new Struct(EventFactory.NEW_DAY, new Var("TransferDay")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Subject")),
+                    new Struct(EventFactory.TRANSFERS_COLOR, new Var("TransferDay"), new Var("Subject"), new Var()),
+                    new Struct(">=", new Var("MaxDay"), new Var("TransferDay"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ACCOMPANIES_BETWEEN_DAYS, new Var("DayBegin"), new Var("DayEnd"), new Var("AccompaniesDay"), new Var("Subject"), new Var("Target")),
+                    new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
+                    new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
+                    new Struct(EventFactory.NEW_DAY, new Var("AccompaniesDay")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Subject")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Target")),
+                    new Struct(PREDICATE_NEAR_OF_CHARACTER, new Var("AccompaniesDay"), new Var("Subject"), new Var("Target")),
+                    new Struct(">=", new Var("DayEnd"), new Var("AccompaniesDay")),
+                    new Struct(">=", new Var("AccompaniesDay"), new Var("DayBegin"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Subject"), new Var("Count")),
+                    new Struct(EventFactory.NEW_DAY, new Var("Day")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Subject")),
+                    new Struct("findall",
+                            new Var("TransferDay"),
+                            new Struct(PREDICATE_TRANSFER_COLOR_BEFORE_MAXDAY, new Var("Day"), new Var("TransferDay"), new Var("Subject")),
+                            new Var("List")
+                    ),
+                    new Struct("length", new Var("List"), new Var("Count"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_MORE_EVIL, new Var("Day"), new Var("Evil"), new Var("Good")),
+                    new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Evil"), new Var("EvilCounter")),
+                    new Struct(PREDICATE_HELPED_COUNTER, new Var("Day"), new Var("Good"), new Var("GoodCounter")),
+                    new Struct("<", new Var("EvilCounter"), new Var("GoodCounter"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(PREDICATE_CONFLICT, new Var("DayBegin"), new Var("Shadow"), new Var("Hero")),
+                    new Struct(PREDICATE_CONFLICT, new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(PREDICATE_MORE_EVIL, new Var("DayBegin"), new Var("Shadow"), new Var("Hero")),
+                    new Struct(">", new Var("DayEnd"), new Var("DayBegin"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_HERO, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_SHADOW, new Var("DayBegin"), new Var("DayEnd"), new Var("Shadow")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Allied")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(EventFactory.GIVES_TURN, new Var("DayHappened"), new Var("Allied"), new Var("Hero")),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ACCOMPANY_COUNTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Companion"), new Var("Count")),
+                    new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
+                    new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Subject")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Companion")),
+                    new Struct("findall",
+                            new Var("AccompaniesDay"),
+                            new Struct(PREDICATE_ACCOMPANIES_BETWEEN_DAYS, new Var("DayBegin"), new Var("DayEnd"), new Var("AccompaniesDay"), new Var("Companion"), new Var("Subject")),
+                            new Var("List")
+                    ),
+                    new Struct("\\==", new Var("Subject"), new Var("Companion")),
+                    new Struct("length", new Var("List"), new Var("Count"))
+            ),
+            
+            new TermRule(
+                    new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied")),
+                    new Struct(EventFactory.NEW_DAY, new Var("DayBegin")),
+                    new Struct(EventFactory.NEW_DAY, new Var("DayEnd")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Hero")),
+                    new Struct(PREDICATE_CHARACTER, new Var("Allied")),
+                    new Struct(PREDICATE_ACCOMPANY_COUNTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied"), new Var("Count")),
+                    //new Struct("is", new Var("MinimumCompanion"), new Struct("ceiling", new Struct ("div", new Struct("-", new Var("DayEnd"), new Var("DayBegin")), new Int(3)))),
+                    new Struct(">", new Var("Count"), new Struct("ceiling", new Struct ("div", new Struct("-", new Var("DayEnd"), new Var("DayBegin")), new Int(3))))//new Var("MinimumCompanion"))
+            ),
+            
+            new TermRule(
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Allied")),
+                    new Struct("not", new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied"), new Var("Hero")))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Allied")),
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Allied"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Guardian")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(PREDICATE_CONFLICT, new Var("DayHappened"), new Var("Guardian"), new Var("Hero")),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Guardian")),
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Guardian"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Enemy")),
+                    new Struct(PREDICATE_IS_ENEMY_OF_CHARACTER, new Var("Day"), new Var("Subject"), new Var("Enemy")),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("Day"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Mentor")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(EventFactory.TRANSFERS_COLOR, new Var("DayHappened"), new Var("Mentor"), new Var("Hero")),
+                    new Struct("not",
+                            new Struct(PREDICATE_ENEMY_BETWEEN, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor"), new Var("Hero"))
+                    ),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("DayHappened"), new Var("DayEnd"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Mentor")),
+                    new Struct(PREDICATE_MENTOR, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Mentor"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Shapeshifter")),
+                    new Struct(PREDICATE_GUARDIAN, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter")),
+                    new Struct(PREDICATE_ALLIED, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Shapeshifter")),
+                    new Struct(PREDICATE_SHAPESHIFTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Shapeshifter"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Herald")),
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(PREDICATE_POSSIBLE_HERALD, new Var("DayBegin"), new Var("Shadow"), new Var("Hero"), new Var("Herald"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Herald")),
+                    new Struct(PREDICATE_HERALD, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"),
+                            new Var("Herald"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster")),
+                    
+                    new Struct(PREDICATE_JOURNEY, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("_")),
+                    new Struct(PREDICATE_ACCOMPANIES, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Trickster")),
+                    new Struct(PREDICATE_TRICKIER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster"), new Var("Hero"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Trickster")),
+                    new Struct(PREDICATE_TRICKSTER, new Var("DayBegin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_TRICKIER, new Var("DayBegin"), new Var("DayEnd"), new Var("Subject"), new Var("Target")),
+                    new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Target"), new Var("JoyTarget")),
+                    new Struct(EventFactory.JOY, new Var("OneDay"), new Var("Subject"), new Var("JoySubject")),
+                    new Struct(PREDICATE_BETWEEN, new Var("DayBegin"), new Var("OneDay"), new Var("DayEnd")),
+                    new Struct("\\+", new Struct(">=", new Var("JoyTarget"), new Var("JoySubject"))),
+                    new Struct("!")
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_MONOMYTH,
+                            new Term[]{
+                                new Var("DayBengin"), new Var("DayEnd"),
+                                new Var("Hero"), new Var("Shadow"), new Var("Herald"), new Var("Mentor"),
+                                new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")
+                            }
+                    ),
+                    new Struct(MonomythReasoner.PREDICATE_JOURNEY,
+                            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow")),
+                    new Struct(MonomythReasoner.PREDICATE_HERALD,
+                            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Herald")),
+                    new Struct(MonomythReasoner.PREDICATE_MENTOR,
+                            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Mentor")),
+                    new Struct(MonomythReasoner.PREDICATE_ALLIED,
+                            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Allied")),
+                    new Struct(MonomythReasoner.PREDICATE_GUARDIAN,
+                            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Guardian")),
+                    new Struct(MonomythReasoner.PREDICATE_TRICKSTER,
+                            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Trickster")),
+                    new Struct(MonomythReasoner.PREDICATE_SHAPESHIFTER,
+                            new Var("DayBengin"), new Var("DayEnd"), new Var("Hero"), new Var("Shadow"), new Var("Shapeshifter"))
+            ),
+            new TermRule(
+                    new Struct(PREDICATE_MONOMYTH,
+                            new Var("DayBengin"), new Var("DayEnd"),
+                            new Var("Hero"), new Var("Shadow")
+                    ),
+                    new Struct(PREDICATE_MONOMYTH,
+                            new Term[]{
+                                new Var("DayBengin"), new Var("DayEnd"),
+                                new Var("Hero"), new Var("Shadow"), new Var("Herald"), new Var("Mentor"),
+                                new Var("Allied"), new Var("Guardian"), new Var("Trickster"), new Var("Shapeshifter")
+                            }
+                    )
+            )
+        };
+        return rules;
     }
 
     private void addListenersToEngine() {

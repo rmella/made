@@ -16,8 +16,20 @@
  */
 package com.velonuboso.made.core.experiments.helper;
 
+import alice.tuprolog.Struct;
+import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
+import com.velonuboso.made.core.inference.entity.Trope;
+import com.velonuboso.made.core.inference.implementation.TermRule;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -26,17 +38,38 @@ import org.apache.commons.io.FilenameUtils;
 public class BehaviourTreePrinter {
 
     IBehaviourTreeNode node;
+    TermRule[] termRules;
     StringBuilder builder;
-    
+    HashSet<String> blackListWords;
+    HashMap<String, Boolean> nodes;
+
     public BehaviourTreePrinter() {
         builder = new StringBuilder();
+        initializeBlackListPredicates();
+        nodes = new HashMap<>();
+    }
+
+    private void initializeBlackListPredicates() {
+        String[] list = new String[]{
+            "length", "findall", "not", "div", "ceiling", "element", "colorSpot", "colorSpotAppears"
+        };
+        blackListWords = new HashSet<>(Arrays.asList(list));
     }
 
     public String getBehaviourTreeAsDigraph(IBehaviourTreeNode node) {
         this.node = node;
         builder.append("digraph bt{\n");
-        includeGeneralPropertieForGraph();
+        includeGeneralPropertieForBehaviourTreeGraph();
         recursivePrintChildren(node);
+        builder.append("}");
+        return builder.toString();
+    }
+
+    public String getTheoryAsDigraph(TermRule[] monomythRules) {
+        builder.append("digraph bt{\n");
+        includeGeneralPropertieForPredicatesDependency();
+        recursivePrintDependencies(monomythRules);
+        printNodesStyle();
         builder.append("}");
         return builder.toString();
     }
@@ -78,10 +111,16 @@ public class BehaviourTreePrinter {
                 + "-> {node_" + childName + " [label=\"" + childLabel + "\"]};\n");
     }
 
-    private void includeGeneralPropertieForGraph() {
+    private void includeGeneralPropertieForBehaviourTreeGraph() {
         builder.append("graph [pad=\".2\", ranksep=\"0.5\", nodesep=\"0.25\", rankdir=LR, ordering=out, splines=ortho];\n"
                 + "node [fontname=\"FreeSans\",fontsize=\"16\",shape=box,width=1.1, height=1.1 margin=0.1, style=rounded];\n"
                 + "edge [fontname=\"FreeSans\",fontsize=\"12\",labelfontname=\"FreeSans\",labelfontsize=\"10\"]\n;");
+    }
+
+    private void includeGeneralPropertieForPredicatesDependency() {
+        builder.append("graph [pad=\".1\", ranksep=\"0.2\", rankdir=LR];\n"
+                + "node [fontname=\"FreeSans\",fontsize=\"16\",shape=rectangle,width=1.1, margin=0.1, style=rounded];\n"
+                + "edge [color=\"#999999\", fontname=\"FreeSans\",fontsize=\"12\",labelfontname=\"FreeSans\",labelfontsize=\"10\"];\n");
     }
 
     private static String convertClassNameToReadableFormat(String text) {
@@ -113,14 +152,100 @@ public class BehaviourTreePrinter {
 
     private static String splitByCamelCase(String text) {
         return text.replaceAll(
-            String.format("%s|%s|%s",
-                    "(?<=[A-Z])(?=[A-Z][a-z])",
-                    "(?<=[^A-Z])(?=[A-Z])",
-                    "(?<=[A-Za-z])(?=[^A-Za-z])"
-            )," ");
+                String.format("%s|%s|%s",
+                        "(?<=[A-Z])(?=[A-Z][a-z])",
+                        "(?<=[^A-Z])(?=[A-Z])",
+                        "(?<=[A-Za-z])(?=[^A-Za-z])"
+                ), " ");
     }
-    
+
     public static String getExtensionFromFileName(String outputFileName) {
         return FilenameUtils.getExtension(outputFileName).toLowerCase();
     }
+
+    private void recursivePrintDependencies(TermRule[] monomythRules) {
+        Arrays.stream(monomythRules).
+                forEach(termRule -> {
+                    printTermRule(termRule);
+                });
+    }
+
+    private void printTermRule(TermRule termRule) {
+        String sourceTerm = termRule.getThenTerm().toString();
+
+        String source = "Unknown";
+        String sourceLabel = "Unknown";
+
+        Pattern pattern = Pattern.compile("[A-Za-z0-9_]+\\s*\\(");
+
+        Matcher matcher = pattern.matcher(sourceTerm);
+        if (matcher.find()) {
+            source = matcher.group();
+            source = source.substring(0, source.length() - 1).trim();
+            addToNodes(source);
+            setNodeSource(source);
+            sourceLabel = convertClassNameToReadableFormat(source);
+        }
+
+        for (Term term : termRule.getIfTerms()) {
+            String targetTerm = term.toString();
+            matcher = pattern.matcher(targetTerm);
+            while (matcher.find()) {
+                String target = matcher.group();
+                target = target.substring(0, target.length() - 1).trim();
+                String targetLabel = convertClassNameToReadableFormat(target);
+
+                addToNodes(target);
+
+                if (!blackListWords.contains(target) && !blackListWords.contains(source)) {
+                    //builder.append(target + "-> "+ source+";\n");
+                    builder.append("{" + target + " [label=\"" + targetLabel + "\"]} -> {"
+                            + source + " [label=\"" + sourceLabel + "\"]};\n");
+                }
+            }
+        }
+    }
+
+    private void setNodeSource(String nodeSource) {
+        nodes.put(nodeSource, Boolean.TRUE);
+    }
+
+    private void addToNodes(String node) {
+        if (!nodes.containsKey(node)) {
+            nodes.put(node, Boolean.FALSE);
+        }
+    }
+
+    private void printNodesStyle() {
+        nodes.keySet().stream()
+                .filter(node -> !blackListWords.contains(node))
+                .forEach(node -> {
+                    boolean nodeIsAnArchetype = Arrays.stream(Trope.getTropesInFromMonomyth()).anyMatch(trope -> trope.toString().toLowerCase().equals(node));
+                    
+                    String color = nodes.get(node) ? nodeIsAnArchetype? "#CCCCCC": "#EEEEEE" : "#FFFFFF";
+                    String shape = nodeIsAnArchetype ? "ellipse" : "rectangle";
+                    
+                    builder.append(node + " [style=\"rounded, filled\", shape=" + shape + ", fillcolor = \"" + color + "\"];\n");
+                });
+        /*
+         builder.append("subgraph cluster_abm {\n");
+         nodes.keySet().stream()
+         .filter(node -> !blackListWords.contains(node))
+         .filter(node -> !nodes.get(node))
+         .forEach(node -> {
+         builder.append(node + ";\n");
+         });
+         builder.append("}\n");
+        
+         builder.append("subgraph cluster_base {\n");
+         nodes.keySet().stream()
+         .filter(node -> !blackListWords.contains(node))
+         .filter(node -> nodes.get(node))
+         .forEach(node -> {
+         builder.append(node + ";\n");
+         });
+         builder.append("}\n");
+         */
+    }
+
 }

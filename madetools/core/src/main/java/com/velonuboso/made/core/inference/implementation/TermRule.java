@@ -33,6 +33,14 @@ public class TermRule {
         this.ifTerms = ifTerms;
     }
 
+    public Term[] getIfTerms() {
+        return ifTerms;
+    }
+
+    public Term getThenTerm() {
+        return thenTerm;
+    }
+    
     @Override
     public String toString() {
         return thenTerm.toString()
