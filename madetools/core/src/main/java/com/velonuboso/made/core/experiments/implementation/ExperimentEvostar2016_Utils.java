@@ -18,17 +18,8 @@ package com.velonuboso.made.core.experiments.implementation;
 
 import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.ICharacter;
-import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
-import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
-import com.velonuboso.made.core.common.entity.CommonEcConfiguration;
 import com.velonuboso.made.core.common.util.ObjectFactory;
-import com.velonuboso.made.core.ec.api.IFitnessMetric;
-import com.velonuboso.made.core.ec.api.IGeneticAlgorithmListener;
-import com.velonuboso.made.core.ec.implementation.listeners.ExcelWriterGeneticAlgorithmListener;
-import com.velonuboso.made.core.ec.implementation.metrics.LogaritmicalMetric;
-import com.velonuboso.made.core.inference.entity.Trope;
-import com.velonuboso.made.core.optimization.api.IOptimizer;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,14 +30,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.TempFile;
 
 /**
  *
@@ -55,6 +47,7 @@ import joptsimple.OptionSet;
 public class ExperimentEvostar2016_Utils extends BaseExperiment {
 
     private static final String ARGUMENT_EXPORT_BEHAVIOUR_TREE = "exportBehaviourTree";
+    private static final String DEFAULT_EXTENSION = "jpg";
 
     public ExperimentEvostar2016_Utils() {
     }
@@ -86,21 +79,26 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
         checkExecutableExists(EXECUTABLE);
 
         ICharacter character = ObjectFactory.createObject(ICharacter.class);
-        
-        float [] chromosome = new float[50];
+
+        float[] chromosome = new float[50];
         Arrays.fill(chromosome, 0.5f);
         AbmConfigurationEntity entity = new AbmConfigurationEntity(chromosome);
         character.setAbmConfiguration(entity);
-        
+
         IBehaviourTreeNode node = character.getBehaviourTree();
         String graph = getBehaviourTreeAsDigraph(node);
         try {
             File digraphTemporalFile = File.createTempFile("made_", "_bt.tmp");
             Files.write(Paths.get(digraphTemporalFile.toURI()), graph.getBytes(), StandardOpenOption.WRITE);
 
+            if (!outputFileName.contains(".")){
+                outputFileName = outputFileName+"."+ DEFAULT_EXTENSION;
+            }
+            String extension = getExtensionFromFileName (outputFileName);
+            
             Process dotExecutionProcess = Runtime.getRuntime().exec(EXECUTABLE
-                    + " -Tjpg " + digraphTemporalFile.getAbsolutePath()
-                    + " -o " + outputFileName + ".jpg");
+                    + " -T"+extension+" " + digraphTemporalFile.getAbsolutePath()
+                    + " -o " + outputFileName);
 
             redirectToSystemOutput(dotExecutionProcess.getInputStream());
             redirectToSystemOutput(dotExecutionProcess.getErrorStream());
@@ -145,7 +143,8 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
     private String getBehaviourTreeAsDigraph(IBehaviourTreeNode node) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("digraph graphname{\n");
+        builder.append("digraph bt{\n");
+        includeGeneralPropertieForGraph(builder);
         recursivePrintChildren(node, builder);
         builder.append("}");
         return builder.toString();
@@ -154,7 +153,7 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
     private void checkExecutableExists(String executableName) {
         boolean existsInPath = Stream.of(System.getenv("PATH").split(Pattern.quote(File.pathSeparator)))
                 .map(Paths::get)
-                .anyMatch(path -> Files.exists(path.resolve(executableName)));
+                .anyMatch(path -> Files.exists(path.resolve(executableName)) || Files.exists(path.resolve(executableName + ".exe")));
         if (!existsInPath) {
             Logger.getLogger(ExperimentEvostar2016_Utils.class.getName()).log(Level.SEVERE,
                     "Could not find " + executableName + " in the path");
@@ -162,21 +161,66 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
     }
 
     private void recursivePrintChildren(IBehaviourTreeNode parent, StringBuilder builder) {
-
-        if (parent.getChildren()==null){
+        if (parent.getChildren() == null) {
             return;
         }
-        
         parent.getChildren().
                 forEach(child -> {
-                    String parentName = parent.getAction().getClass().getSimpleName();
-                    if (parentName.contains("Lambda")){
-                        parentName = "rootNode";
-                    }
-                    String childName = child.getAction().getClass().getSimpleName();
-                    builder.append(parentName + "->" + childName + ";");
+                    printChild(parent, child, builder);
                     recursivePrintChildren(child, builder);
                 });
+    }
 
+    private void printChild(IBehaviourTreeNode parent, IBehaviourTreeNode child, StringBuilder builder) {
+        String parentName = getNodeName(parent);
+        String parentLabel = convertClassNameToReadableFormat(parent.getAction().getClass().getSimpleName());
+        if (parentLabel.contains("lambda")) {
+            parentLabel = "Root node";
+            builder.append("node_" + parentName + " [shape=circle];\n");
+        }
+
+        String childClass = child.getAction().getClass().getSimpleName();
+        boolean isCondition = childClass.contains("Condition");
+
+        String childLabel = convertClassNameToReadableFormat(childClass);
+        String childName = getNodeName(child);
+
+        if (isCondition) {
+            builder.append("node_" + childName + " [shape=oval, height=1.1];\n");
+        }
+
+        builder.append("{node_" + parentName + " [label=\"" + parentLabel + "\"]} "
+                + "-> {node_" + childName + " [label=\"" + childLabel + "\"]};\n");
+    }
+
+    static String convertClassNameToReadableFormat(String s) {
+        String finalText = s.replaceAll(
+                String.format("%s|%s|%s",
+                        "(?<=[A-Z])(?=[A-Z][a-z])",
+                        "(?<=[^A-Z])(?=[A-Z])",
+                        "(?<=[A-Za-z])(?=[^A-Za-z])"
+                ),
+                " "
+        );
+        finalText = finalText.replaceAll("(Condition |Strategy )", "");
+        finalText = finalText.toLowerCase();
+        finalText = finalText.replace("friend similarity", "friend's similarity");
+        finalText = finalText.replace("enemy similarity", "enemy's similarity");
+        finalText = finalText.replace(" ", "\n");
+        return finalText;
+    }
+
+    private void includeGeneralPropertieForGraph(StringBuilder builder) {
+        builder.append("graph [pad=\".2\", ranksep=\"0.5\", nodesep=\"0.25\", rankdir=LR, ordering=out, splines=ortho];\n"
+                + "node [fontname=\"FreeSans\",fontsize=\"16\",shape=box,width=1.1, height=1.1 margin=0.1, style=rounded];\n"
+                + "edge [fontname=\"FreeSans\",fontsize=\"12\",labelfontname=\"FreeSans\",labelfontsize=\"10\"]\n;");
+    }
+
+    private String getNodeName(IBehaviourTreeNode parent) {
+        return Integer.toString(System.identityHashCode(parent));
+    }
+
+    private String getExtensionFromFileName(String outputFileName) {
+        return FilenameUtils.getExtension(outputFileName).toLowerCase();
     }
 }
