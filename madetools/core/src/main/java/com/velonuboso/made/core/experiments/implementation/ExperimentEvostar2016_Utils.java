@@ -20,6 +20,7 @@ import com.velonuboso.made.core.abm.api.IBehaviourTreeNode;
 import com.velonuboso.made.core.abm.api.ICharacter;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.util.ObjectFactory;
+import com.velonuboso.made.core.experiments.helper.BehaviourTreePrinter;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import joptsimple.HelpFormatter;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.apache.commons.io.FilenameUtils;
@@ -47,8 +49,10 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
 
     private static final String ARGUMENT_EXPORT_BEHAVIOUR_TREE = "exportBehaviourTree";
     final String EXECUTABLE = "dot";
+    BehaviourTreePrinter printer;
 
     public ExperimentEvostar2016_Utils() {
+        printer = new BehaviourTreePrinter();
     }
 
     @Override
@@ -78,7 +82,7 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
         checkExecutableExists(EXECUTABLE);
 
         IBehaviourTreeNode node = getDefaultBehaviourTree();
-        String graph = getBehaviourTreeAsDigraph(node);
+        String graph = printer.getBehaviourTreeAsDigraph(node);
 
         try {
             File digraphTemporalFile = saveDotToTemporalFile(graph);
@@ -120,7 +124,7 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
     }
 
     private Process runDot(File digraphTemporalFile, String outputFileName) throws IOException {
-        String extension = getExtensionFromFileName(outputFileName);
+        String extension = printer.getExtensionFromFileName(outputFileName);
         Process dotExecutionProcess = Runtime.getRuntime().exec(EXECUTABLE
                 + " -T" + extension + " " + digraphTemporalFile.getAbsolutePath()
                 + " -o " + outputFileName);
@@ -142,7 +146,7 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
 
     private void redirectToSystemOutput(InputStream stream) throws IOException {
         final String LINE_SEPARATOR_SYSTEM_PROPERTY = "line.separator";
-        
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         StringBuilder builder = new StringBuilder();
         String line = null;
@@ -173,100 +177,5 @@ public class ExperimentEvostar2016_Utils extends BaseExperiment {
         } catch (IOException ex) {
             Logger.getLogger(ExperimentEvostar2016_Utils.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private String getBehaviourTreeAsDigraph(IBehaviourTreeNode node) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("digraph bt{\n");
-        includeGeneralPropertieForGraph(builder);
-        recursivePrintChildren(node, builder);
-        builder.append("}");
-        return builder.toString();
-    }
-
-    private void recursivePrintChildren(IBehaviourTreeNode parent, StringBuilder builder) {
-        if (parent.getChildren() == null) {
-            return;
-        }
-        parent.getChildren().
-                forEach(child -> {
-                    printChild(parent, child, builder);
-                    recursivePrintChildren(child, builder);
-                });
-    }
-
-    private void printChild(IBehaviourTreeNode parent, IBehaviourTreeNode child, StringBuilder builder) {
-        final String SUBSTRING_IN_CONDITION = "Condition";
-        final String SUBSTRING_PRESENT_IN_LAMBDA_NODE_NAME = "lambda";
-        final String BASE_NODE_NAME = "Root node";
-
-        String parentName = getNodeName(parent);
-        String parentLabel = convertClassNameToReadableFormat(parent.getAction().getClass().getSimpleName());
-        if (parentLabel.contains(SUBSTRING_PRESENT_IN_LAMBDA_NODE_NAME)) {
-            parentLabel = BASE_NODE_NAME;
-            builder.append("node_" + parentName + " [shape=circle];\n");
-        }
-
-        String childClass = child.getAction().getClass().getSimpleName();
-        boolean isCondition = childClass.contains(SUBSTRING_IN_CONDITION);
-
-        String childLabel = convertClassNameToReadableFormat(childClass);
-        String childName = getNodeName(child);
-
-        if (isCondition) {
-            builder.append("node_" + childName + " [shape=oval, height=1.1];\n");
-        }
-
-        builder.append("{node_" + parentName + " [label=\"" + parentLabel + "\"]} "
-                + "-> {node_" + childName + " [label=\"" + childLabel + "\"]};\n");
-    }
-
-    private void includeGeneralPropertieForGraph(StringBuilder builder) {
-        builder.append("graph [pad=\".2\", ranksep=\"0.5\", nodesep=\"0.25\", rankdir=LR, ordering=out, splines=ortho];\n"
-                + "node [fontname=\"FreeSans\",fontsize=\"16\",shape=box,width=1.1, height=1.1 margin=0.1, style=rounded];\n"
-                + "edge [fontname=\"FreeSans\",fontsize=\"12\",labelfontname=\"FreeSans\",labelfontsize=\"10\"]\n;");
-    }
-
-    static String convertClassNameToReadableFormat(String text) {
-        String finalText = splitByCamelCase(text);
-        finalText = removePrefix(finalText);
-        finalText = finalText.toLowerCase();
-        finalText = addGenitives(finalText);
-        finalText = convertToMultiLine(finalText);
-        return finalText;
-    }
-
-    private static String removePrefix(String finalText) {
-        return finalText.replaceAll("(Condition |Strategy )", "");
-    }
-
-    private static String convertToMultiLine(String finalText) {
-        return finalText.replace(" ", "\n");
-    }
-
-    private static String addGenitives(String finalText) {
-        finalText = finalText.replace("friend similarity", "friend's similarity");
-        finalText = finalText.replace("enemy similarity", "enemy's similarity");
-        return finalText;
-    }
-
-    private String getNodeName(IBehaviourTreeNode parent) {
-        return Integer.toString(System.identityHashCode(parent));
-    }
-
-    private String getExtensionFromFileName(String outputFileName) {
-        return FilenameUtils.getExtension(outputFileName).toLowerCase();
-    }
-
-    private static String splitByCamelCase(String text) {
-        return text.replaceAll(
-                String.format("%s|%s|%s",
-                        "(?<=[A-Z])(?=[A-Z][a-z])",
-                        "(?<=[^A-Z])(?=[A-Z])",
-                        "(?<=[A-Za-z])(?=[^A-Za-z])"
-                ),
-                " "
-        );
     }
 }
