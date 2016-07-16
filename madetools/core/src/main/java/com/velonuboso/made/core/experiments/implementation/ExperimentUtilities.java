@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 raiben
+ * Copyright (C) 2016 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,15 @@ import com.velonuboso.made.core.ec.api.IIndividual;
 
 /**
  *
- * @author raiben
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class ExperimentUtiities {
+public class ExperimentUtilities {
+
     public static IIndividual getIndividualFromString(String toString) {
-        
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    static long getSeed(String toString) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

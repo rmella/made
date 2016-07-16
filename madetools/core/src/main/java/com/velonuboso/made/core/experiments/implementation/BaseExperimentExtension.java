@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 raiben
+ * Copyright (C) 2016 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import joptsimple.OptionSet;
 
 /**
  *
- * @author raiben
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
 public abstract class BaseExperimentExtension extends BaseExperiment {
 
@@ -73,6 +73,8 @@ public abstract class BaseExperimentExtension extends BaseExperiment {
             Logger.getLogger(ExperimentEvostar2016_1.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    // Abstract methods
     
     public abstract HashMap<String, String> getOptionsMapOfNamesAndDescriptions();
     public abstract void doRun(OptionSet options);

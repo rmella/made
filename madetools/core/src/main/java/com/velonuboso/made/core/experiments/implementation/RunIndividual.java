@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 raiben
+ * Copyright (C) 2016 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,22 +17,20 @@
 package com.velonuboso.made.core.experiments.implementation;
 
 import com.velonuboso.made.core.ec.api.IIndividual;
-import com.velonuboso.made.core.inference.entity.Trope;
 import java.util.HashMap;
-import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 /**
  *
- * @author raiben
+ * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class RunIndividual extends BaseExperimentExtension{
-    
+public class RunIndividual extends BaseExperimentExtension {
+
     private static final String ARGUMENT_INDIVIDUAL = "trope";
     private static final String ARGUMENT_SEED = "tropeList";
     private IIndividual individual;
-    
-    
+    private long seed;
+
     @Override
     public String getDescription() {
         return "Allows running an specific individual with an specific random "
@@ -49,16 +47,31 @@ public class RunIndividual extends BaseExperimentExtension{
 
     @Override
     public void doRun(OptionSet options) {
-        if (options.has(ARGUMENT_INDIVIDUAL)){
-            individual = ExperimentUtiities.getIndividualFromString(
-                    options.valueOf(ARGUMENT_INDIVIDUAL).toString());
-        }else{
-            individual = SAMPLE_INDIVIDUAL;
+        initializeSeed(options);
+
+        initializeIndividual(options);
+    }
+
+    private void initializeSeed(OptionSet options) {
+        if (options.has(ARGUMENT_SEED)) {
+            seed = ExperimentUtilities.getSeed(
+                    options.valueOf(ARGUMENT_SEED).toString());
+
+        } else {
+            seed = System.currentTimeMillis();
         }
-        
+    }
+
+    private void initializeIndividual(OptionSet options) throws UnsupportedOperationException {
+        if (options.has(ARGUMENT_INDIVIDUAL)) {
+            individual = ExperimentUtilities.getIndividualFromString(
+                    options.valueOf(ARGUMENT_INDIVIDUAL).toString());
+        } else {
+            // TODO add a sample individual
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
         // TODO: Argument seed
         // TODO: Logic
-    }    
-
-    
+    }
 }
