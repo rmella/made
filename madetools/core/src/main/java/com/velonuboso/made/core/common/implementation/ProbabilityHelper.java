@@ -18,6 +18,9 @@
 package com.velonuboso.made.core.common.implementation;
 
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import javafx.scene.paint.Color;
 
@@ -63,5 +66,10 @@ public class ProbabilityHelper implements IProbabilityHelper{
     public int getNextInt(int minValue, int maxValue) {
         return randomGenerator.nextInt(maxValue-minValue+1)+minValue;
     }
-    
+
+    @Override
+    public void shuffle(List list) {
+        Collections.shuffle(list, randomGenerator);
+    }
+
 }

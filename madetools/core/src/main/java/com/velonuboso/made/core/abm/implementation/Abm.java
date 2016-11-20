@@ -164,7 +164,8 @@ public class Abm implements IAbm {
         int numberOfCircles = helper.getWorldAbmConfigurationHelper().getNumberOfCircles();
 
         List<Integer> cells = map.getCells();
-        Collections.shuffle(cells);
+        IProbabilityHelper probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
+        probabilityHelper.shuffle(cells);
 
         AddCharacters(numberOfSquares, cells, CharacterShape.SQUARE);
         AddCharacters(numberOfCircles, cells, CharacterShape.CIRCLE);
@@ -223,7 +224,7 @@ public class Abm implements IAbm {
         List<Integer> freeCells = map.getCells().stream()
                 .filter(cell -> map.getColorSpot(cell) == null)
                 .collect(Collectors.toList());
-        Collections.shuffle(freeCells);
+        shuffleWithProbabilityHelper(freeCells);
         return freeCells;
     }
 
@@ -233,7 +234,7 @@ public class Abm implements IAbm {
                 .map(map::getCharacter)
                 .collect(Collectors.toList());
 
-        Collections.shuffle(characters);
+        shuffleWithProbabilityHelper(characters);
         characters.stream().forEach((character) -> {
             character.applyColorChange();
             character.run();
@@ -242,7 +243,7 @@ public class Abm implements IAbm {
 
     private void runExtraTurns(IMap map) {
         List<ICharacter> characters = map.getExtraTurns();
-        Collections.shuffle(characters);
+        shuffleWithProbabilityHelper(characters);
         characters.stream().forEach((character) -> {
             character.applyColorChange();
             character.run();
@@ -272,6 +273,11 @@ public class Abm implements IAbm {
         if (probabilityHelper.getNextProbability(Abm.class) >= probabilityToRemoveSpot) {
             map.removeSpot(cell);
         }
+    }
+
+    private void shuffleWithProbabilityHelper(List list){
+        IProbabilityHelper probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
+        probabilityHelper.shuffle(list);
     }
 
 }

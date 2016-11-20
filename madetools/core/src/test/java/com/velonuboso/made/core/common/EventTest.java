@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class EventTest {
-    
+    /*
     @Test
     public void Event_returns_correct_Predicate_when_no_arguments_provided(){
         final String expectedPredicate = "Name ()";
@@ -58,5 +58,6 @@ public class EventTest {
         IEvent event = new Event("Name", 0, "secondargument");
         assertEquals("Should've return "+expectedPredicate, expectedPredicate, event.toLogicalPredicate());
     }
+    */
     
 }

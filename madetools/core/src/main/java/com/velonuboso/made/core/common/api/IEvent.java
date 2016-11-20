@@ -18,6 +18,9 @@
 package com.velonuboso.made.core.common.api;
 
 import alice.tuprolog.Term;
+import com.velonuboso.made.core.common.entity.EventMood;
+import com.velonuboso.made.core.common.entity.EventType;
+import simplenlg.framework.NLGElement;
 
 /**
  *
@@ -26,4 +29,8 @@ import alice.tuprolog.Term;
 public interface IEvent {
     String toLogicalPredicate();
     Term toLogicalTerm();
+    NLGElement toPhrase();
+    EventMood getMood();
+    public EventType getType();
+    float getDay();
 }

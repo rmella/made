@@ -20,9 +20,14 @@ import alice.tuprolog.Int;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import com.velonuboso.made.core.common.api.IEvent;
+import com.velonuboso.made.core.common.entity.EventMood;
+import com.velonuboso.made.core.common.entity.EventType;
+import simplenlg.framework.NLGElement;
+import simplenlg.framework.NLGFactory;
+import simplenlg.lexicon.Lexicon;
+import simplenlg.phrasespec.SPhraseSpec;
+
 import java.util.Arrays;
-import java.util.function.Function;
-import java.util.function.IntUnaryOperator;
 
 /**
  *
@@ -37,8 +42,17 @@ public class Event implements IEvent {
 
     private final String name;
     private final Object[] arguments;
+    private NLGElement phrase = null;
+    private EventMood mood = EventMood.NEUTRAL;
+    private EventType type = EventType.DESCRIPTION;
+    private float currentDay;
 
-    public Event(final String name, final Object... arguments) {
+    public Event(float day, final EventMood mood, final EventType type, final NLGElement phrase, final String name,
+                 final Object... arguments){
+        this.currentDay = day;
+        this.mood = mood;
+        this.type = type;
+        this.phrase = phrase;
         this.name = name;
         this.arguments = arguments;
     }
@@ -59,6 +73,24 @@ public class Event implements IEvent {
     public Term toLogicalTerm() {
         Term[] argumentsAsTerms = Arrays.stream(arguments).map(argument -> objectToTerm(argument)).toArray(Term[]::new);
         return new Struct(name, argumentsAsTerms);
+    }
+
+    @Override
+    public NLGElement toPhrase() {
+        return this.phrase;
+    }
+
+    @Override
+    public EventMood getMood() {
+        return mood;
+    }
+
+    @Override
+    public EventType getType() { return type; }
+
+    @Override
+    public float getDay() {
+        return currentDay;
     }
 
     private Term objectToTerm(Object object) {
