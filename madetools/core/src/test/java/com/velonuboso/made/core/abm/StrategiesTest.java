@@ -35,15 +35,18 @@ import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import javafx.scene.paint.Color;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+
 import org.mockito.ArgumentMatcher;
+
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.*;
 
 /**
- *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class StrategiesTest {
@@ -63,6 +66,11 @@ public class StrategiesTest {
         map.setEventsWriter(fakeEventsWriter);
         ObjectFactory.cleanAllMocks();
         fakeBlackboard = spy(ObjectFactory.createObject(IBlackBoard.class));
+    }
+
+    @After
+    public void tearDown() {
+        ObjectFactory.cleanAllMocks();
     }
 
     @Test
@@ -310,7 +318,7 @@ public class StrategiesTest {
         verifyStrategyReturnedFalse();
     }
 
-    
+
     @Test
     public void UT_StrategyGiveTurn_When_run_the_target_cell_receives_an_extra_turn() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
@@ -319,11 +327,11 @@ public class StrategiesTest {
 
         setStrategyAndRun(targetCell, mainPiece, ObjectFactory.createObject(IStrategyGiveTurn.class));
         verifyEventAddedToFakeEventWriter(EventFactory.GIVES_TURN, 1, 3);
-        assertTrue("The target piece should've an extra turn", 
-                map.getExtraTurns().contains(targetPiece) && map.getExtraTurns().size()==1);
+        assertTrue("The target piece should've an extra turn",
+                map.getExtraTurns().contains(targetPiece) && map.getExtraTurns().size() == 1);
         verifyStrategyReturnedTrue();
     }
-    
+
     @Test
     public void UT_StrategySkipTurn_the_piece_does_not_move_or_stain() {
         Piece mainPiece = buildPiece(0, CharacterShape.CIRCLE, Color.BLUE, Color.RED, 0, 0);
@@ -520,7 +528,7 @@ public class StrategiesTest {
             }
         }));
     }
-    
+
     private void verifyEventAddedToFakeEventWriter(String beginswith, int times, int numberOfArguments) {
         verify(fakeEventsWriter, times(times)).add(argThat(new ArgumentMatcher<IEvent>() {
             @Override
@@ -528,7 +536,7 @@ public class StrategiesTest {
                 String predicate = ((IEvent) item).toLogicalPredicate();
                 boolean startsWithGivenWord = predicate.startsWith(beginswith);
                 int numberOfElements = predicate.split("[\\(,]").length;
-                return startsWithGivenWord && (numberOfArguments == numberOfElements-1);
+                return startsWithGivenWord && (numberOfArguments == numberOfElements - 1);
             }
         }));
     }
