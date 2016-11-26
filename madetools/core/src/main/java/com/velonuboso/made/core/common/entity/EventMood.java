@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Rubén Héctor García (raiben@gmail.com)
+ * Copyright (C) 2016 Rubén Héctor García (raiben@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,23 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.velonuboso.made.core.common.api;
-
-import alice.tuprolog.Term;
-import com.velonuboso.made.core.common.entity.EventMood;
-import com.velonuboso.made.core.common.entity.EventType;
-import simplenlg.framework.NLGElement;
+package com.velonuboso.made.core.common.entity;
 
 /**
- *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public interface IEvent {
-    String toLogicalPredicate();
-    Term toLogicalTerm();
-    NLGElement toPhrase();
-    EventMood getMood();
-    public EventType getType();
-    float getDay();
+
+public enum EventMood {
+    GOOD, NEUTRAL, BAD
 }

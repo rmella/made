@@ -21,6 +21,8 @@ import com.velonuboso.made.core.common.implementation.ProbabilityHelper;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 /**
  *
  * @author Rubén Héctor García (raiben@gmail.com)
@@ -32,4 +34,5 @@ public interface IProbabilityHelper {
     public Color getRandomColor();
     public float getNextFloat(float minValue, float maxValue);
     public int getNextInt(int i, int i0);
+    void shuffle(List list);
 }

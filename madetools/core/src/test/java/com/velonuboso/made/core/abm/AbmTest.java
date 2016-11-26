@@ -18,8 +18,11 @@ package com.velonuboso.made.core.abm;
 
 import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IAbm;
+import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
+import com.velonuboso.made.core.abm.implementation.EventsWriter;
 import com.velonuboso.made.core.abm.implementation.piece.AbmConfigurationHelperWorld;
+import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.entity.AbmConfigurationEntity;
 import com.velonuboso.made.core.common.entity.CommonAbmConfiguration;
@@ -40,6 +43,8 @@ import org.mockito.Mockito;
  * @author rhgarcia
  */
 public class AbmTest {
+
+    public boolean SHOW_EVENTS = false;
 
     private IAbm abm;
     private ICustomization fakeCustomization;
@@ -118,12 +123,12 @@ public class AbmTest {
         
         abm.run(entity);
         
-        /*
-        for(Term term : abm.getEventsLog().getLogicalTerms()){
-            System.out.println(term);
+        if (SHOW_EVENTS) {
+            for (Term term : abm.getEventsLog().getLogicalTerms()) {
+                System.out.println(term);
+            }
+            System.out.println(abm.getEventsLog().getLog());
         }
-        System.out.println(abm.getEventsLog().getLog());
-        */
     }
 
     @Ignore
