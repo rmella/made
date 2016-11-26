@@ -28,8 +28,6 @@ import com.velonuboso.made.core.common.implementation.Event;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
-import org.apache.poi.ss.formula.functions.Even;
-import org.apache.poi.wp.usermodel.Paragraph;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -37,18 +35,16 @@ import simplenlg.framework.*;
 import simplenlg.lexicon.*;
 import simplenlg.phrasespec.SPhraseSpec;
 import simplenlg.realiser.english.*;
+
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class SimpleNlg {
+public class SimpleNlgConceptualTest {
 
     private Lexicon lexicon;
     private NLGFactory factory;
@@ -85,24 +81,51 @@ public class SimpleNlg {
 
     @Test
     public void test_simple_nlg_when_event_provided_then_sentence_is_generated() {
-        IProbabilityHelper probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
-        probabilityHelper.setSeed(123);
+        int CURRENT_DAY = -1;
+        EventMood CURRENT_MOOD = EventMood.NEUTRAL;
+        EventType CURRENT_TYPE = EventType.ACTION;
+        int EXPECTED_MINIMUM_LENGTH = 250;
+
+        setProbabilityHelperSeed();
 
         NaturalLanguageEventsWriter naturalLanguageEventsWriter = new NaturalLanguageEventsWriter();
         ObjectFactory.installMock(IEventsWriter.class, naturalLanguageEventsWriter);
         runSample();
+        ArrayList<IEvent> events = naturalLanguageEventsWriter.getEvents();
 
-        //DocumentElement document = factory.createSection();
+        String document = buildDocumentFromEvents(CURRENT_DAY, CURRENT_MOOD, CURRENT_TYPE, events);
+        System.out.println(document);
 
-        float currentDay = -1;
-        EventMood currentMood = EventMood.NEUTRAL;
-        EventType currentType = EventType.ACTION;
+        assertTrue("Message should've been more than 250 characters long", document.length() > EXPECTED_MINIMUM_LENGTH);
+    }
 
+    // private methods
+
+    private void setProbabilityHelperSeed() {
+        int SEED = 123;
+        IProbabilityHelper probabilityHelper = ObjectFactory.createObject(IProbabilityHelper.class);
+        probabilityHelper.setSeed(SEED);
+    }
+
+    private String buildDocumentFromEvents(int CURRENT_DAY, EventMood CURRENT_MOOD, EventType CURRENT_TYPE,
+                                           ArrayList<IEvent> events) {
         StringBuilder stringBuilder = new StringBuilder();
+        CoordinatedPhraseElement complexPhrase = buildPhraseFromEvents(CURRENT_DAY, CURRENT_MOOD, CURRENT_TYPE,
+                stringBuilder, events);
+        String text = realiser.realiseSentence(complexPhrase);
+        stringBuilder.append(text);
+
+        String document = stringBuilder.toString().replaceAll("  *", " ");
+        document = document.replaceAll("^ *", "");
+        return document;
+    }
+
+    private CoordinatedPhraseElement buildPhraseFromEvents(float currentDay, EventMood currentMood,
+                                                           EventType currentType, StringBuilder stringBuilder,
+                                                           ArrayList<IEvent> events) {
 
         CoordinatedPhraseElement complexPhrase = factory.createCoordinatedPhrase();
-
-        for (IEvent iEvent : naturalLanguageEventsWriter.getEvents()) {
+        for (IEvent iEvent : events) {
             if (iEvent.toPhrase() != EventFactory.NULL_PHRASE) {
                 Event event = (Event) iEvent;
                 float newDay = event.getDay();
@@ -115,9 +138,9 @@ public class SimpleNlg {
 
                     String text = realiser.realiseSentence(complexPhrase);
                     stringBuilder.append(text);
-                    if (newDay != currentDay){
+                    if (newDay != currentDay) {
                         stringBuilder.append("\n\n");
-                    }else{
+                    } else {
                         stringBuilder.append(" ");
                     }
                     complexPhrase = factory.createCoordinatedPhrase();
@@ -129,14 +152,7 @@ public class SimpleNlg {
                 complexPhrase.addCoordinate(event.toPhrase());
             }
         }
-        //paragraph.addComponent(complexPhrase);
-        //document.addComponent(paragraph);
-        String text = realiser.realiseSentence(complexPhrase);
-        stringBuilder.append(text);
-
-        String document = stringBuilder.toString().replaceAll("  *", " ");
-        document = document.replaceAll("^ *", "");
-        System.out.println(document);
+        return complexPhrase;
     }
 
     public void runSample() {
@@ -150,7 +166,12 @@ public class SimpleNlg {
         ObjectFactory.cleanAllMocks();
         IMap map = ObjectFactory.createObject(IMap.class);
         ObjectFactory.installMock(IMap.class, map);
+        AbmConfigurationEntity entity = buildSampleConfigurationEntity();
 
+        abm.run(entity);
+    }
+
+    private AbmConfigurationEntity buildSampleConfigurationEntity() {
         int size = 52;
 
         IGlobalConfigurationFactory globalConfigurationFactory
@@ -166,9 +187,7 @@ public class SimpleNlg {
         chromosome[5] = 1;
         chromosome[6] = 0.4f;
         Arrays.fill(chromosome, 5, size, 0.5f);
-        AbmConfigurationEntity entity = new AbmConfigurationEntity(chromosome);
-
-        abm.run(entity);
+        return new AbmConfigurationEntity(chromosome);
     }
 
     class NaturalLanguageEventsWriter extends EventsWriter {
