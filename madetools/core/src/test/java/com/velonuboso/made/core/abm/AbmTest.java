@@ -44,7 +44,7 @@ import org.mockito.Mockito;
  */
 public class AbmTest {
 
-    public boolean SHOW_EVENTS = true;
+    public boolean SHOW_EVENTS = false;
 
     private IAbm abm;
     private ICustomization fakeCustomization;

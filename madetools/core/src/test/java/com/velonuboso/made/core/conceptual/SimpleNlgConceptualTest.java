@@ -28,6 +28,7 @@ import com.velonuboso.made.core.common.implementation.Event;
 import com.velonuboso.made.core.common.implementation.EventFactory;
 import com.velonuboso.made.core.common.util.ObjectFactory;
 import com.velonuboso.made.core.customization.api.ICustomization;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -59,6 +60,11 @@ public class SimpleNlgConceptualTest {
         lexicon = Lexicon.getDefaultLexicon();
         factory = new NLGFactory(lexicon);
         realiser = new Realiser(lexicon);
+    }
+
+    @After
+    public void cleanUp() {
+        ObjectFactory.cleanAllMocks();
     }
 
     @Test
