@@ -31,6 +31,6 @@ public interface IEvent {
     Term toLogicalTerm();
     NLGElement toPhrase();
     EventMood getMood();
-    public EventType getType();
+    EventType getType();
     float getDay();
 }

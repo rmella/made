@@ -124,7 +124,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent hasFear(final ICharacter subject, final ICharacter enemy) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "have", "fear");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "have", "fear");
         NLGElement phraseCause = phraseFactory.createClause(getCharacterNameAsObject(subject), "could", "damage it");
         phrase.setFeature(Feature.COMPLEMENTISER, "because");
         phrase.setFeature(Feature.TENSE, Tense.PAST);
@@ -136,7 +136,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent hasAnticipation(final ICharacter subject, final IColorSpot spot) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "have", "anticipation");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "have", "anticipation");
         SPhraseSpec phraseCause = phraseFactory.createClause(getCharacterNameAsObject(subject),
                 "want to get to", "spot " + Integer.toString(spot.getId()));
         phrase.setFeature(Feature.COMPLEMENTISER, "because");
@@ -149,7 +149,7 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent canImproveFriendSimilarity(ICharacter subject, ICharacter friend) {
         SPhraseSpec phrase = phraseFactory
-                .createClause(getCharacterNameAsSubJect(subject), "want to help", Integer.toString(friend.getId()));
+                .createClause(getCharacterNameAsSubject(subject), "want to help", Integer.toString(friend.getId()));
         return new Event(currentDay, EventMood.GOOD, EventType.DESCRIPTION, phrase, CAN_IMPROVE_FRIEND_SIMILARITY,
                 currentDay, subject.getId(), friend.getId());
     }
@@ -157,7 +157,7 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent canImproveSelfSimilarity(ICharacter subject, IColorSpot spot) {
         SPhraseSpec phrase =
-                phraseFactory.createClause(getCharacterNameAsSubJect(subject), "can improve", "self-similarity");
+                phraseFactory.createClause(getCharacterNameAsSubject(subject), "can improve", "self-similarity");
         return new Event(currentDay, EventMood.GOOD, EventType.DESCRIPTION, phrase, CAN_IMPROVE_SELF_SIMILARITY,
                 currentDay, subject.getId(),
                 spot.getId());
@@ -166,7 +166,7 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent canReduceEnemySimilarity(ICharacter subject, ICharacter enemy) {
         SPhraseSpec phrase =
-                phraseFactory.createClause(getCharacterNameAsSubJect(subject), "can reduce", "self-similarity");
+                phraseFactory.createClause(getCharacterNameAsSubject(subject), "can reduce", "self-similarity");
         return new Event(currentDay, EventMood.GOOD, EventType.DESCRIPTION, phrase, CAN_REDUCE_ENEMY_SIMILARITY,
                 currentDay, subject.getId(),
                 enemy.getId());
@@ -181,20 +181,20 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent isSad(ICharacter subject) {
 
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "be", "sad");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "be", "sad");
         return new Event(currentDay, EventMood.BAD, EventType.DESCRIPTION, phrase, IS_SAD, currentDay, subject.getId());
     }
 
     @Override
     public IEvent isSurprised(ICharacter subject) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "be", "surprised");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "be", "surprised");
         return new Event(currentDay, EventMood.BAD, EventType.DESCRIPTION, phrase, IS_SURPRISED, currentDay,
                 subject.getId());
     }
 
     @Override
     public IEvent movesAway(ICharacter subject, int cellId) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "moves ");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "moves ");
         phrase.addComplement("away");
         return new Event(currentDay, EventMood.BAD, EventType.ACTION, phrase, MOVES_AWAY, currentDay, subject.getId(),
                 cellId);
@@ -202,7 +202,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent moves(ICharacter subject, int cellId) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "move");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "move");
         phrase.addComplement("to " + Integer.toString(cellId));
 
         return new Event(currentDay, EventMood.NEUTRAL, EventType.ACTION, phrase, MOVES, currentDay, subject.getId(),
@@ -211,7 +211,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent displaces(ICharacter subject, ICharacter targetCharacter, int cellId) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject),
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject),
                 "displace", Integer.toString(targetCharacter.getId()));
         return new Event(currentDay, EventMood.BAD, EventType.ACTION, phrase, DISPLACES, currentDay, subject.getId(),
                 targetCharacter.getId(), cellId);
@@ -219,14 +219,14 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent skipsTurn(ICharacter subject) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "skip", "turn");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "skip", "turn");
         return new Event(currentDay, EventMood.NEUTRAL, EventType.ACTION, phrase, SKIPS_TURN, currentDay,
                 subject.getId());
     }
 
     @Override
     public IEvent stains(ICharacter subject, IColorSpot targetSpot) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "get color");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "get color");
         phrase.addComplement("from the spot " + Integer.toString(targetSpot.getId()));
         return new Event(currentDay, EventMood.GOOD, EventType.ACTION, phrase, STAINS, currentDay, subject.getId(),
                 targetSpot.getId());
@@ -234,7 +234,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent transfersColor(ICharacter subject, ICharacter targetCharacter) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "transfer color");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "transfer color");
         phrase.addComplement("to " + Integer.toString(targetCharacter.getId()));
         return new Event(currentDay, EventMood.GOOD, EventType.ACTION, phrase, TRANSFERS_COLOR, currentDay,
                 subject.getId(),
@@ -265,7 +265,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent joy(ICharacter subject, float joy) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "is");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "is");
         EventMood mood;
         if (joy > 0.5) {
             mood = EventMood.GOOD;
@@ -283,14 +283,14 @@ public class EventFactory implements IEventFactory {
 
         SPhraseSpec phrase;
         if (friends.length > 0) {
-            phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "be", "friend of");
+            phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "be", "friend of");
             CoordinatedPhraseElement phraseFriends = phraseFactory.createCoordinatedPhrase();
             for (ICharacter friend : friends) {
                 phraseFriends.addCoordinate(phraseFactory.createNounPhrase(getCharacterNameAsObject(friend)));
             }
             phrase.addComplement(phraseFriends);
         } else {
-            phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "have", "no friends");
+            phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "have", "no friends");
         }
 
         return new Event(currentDay, EventMood.GOOD, EventType.DESCRIPTION, phrase,
@@ -302,14 +302,14 @@ public class EventFactory implements IEventFactory {
     public IEvent isEnemyOf(ICharacter subject, ICharacter... enemies) {
         SPhraseSpec phrase;
         if (enemies.length > 0) {
-            phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "be", "enemy of");
+            phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "be", "enemy of");
             CoordinatedPhraseElement phraseEnemies = phraseFactory.createCoordinatedPhrase();
             for (ICharacter enemy : enemies) {
                 phraseEnemies.addCoordinate(phraseFactory.createNounPhrase(getCharacterNameAsObject(enemy)));
             }
             phrase.addComplement(phraseEnemies);
         } else {
-            phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "have", "no enemies");
+            phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "have", "no enemies");
         }
         return new Event(currentDay, EventMood.BAD, EventType.DESCRIPTION, phrase,
                 IS_ENEMY_OF, currentDay, subject.getId(),
@@ -319,7 +319,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent naturalChange(Piece subject, Color currentColor, Color newColor) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "change");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "change");
         float colorDifference = PieceUtilities.calculateColorDifference(currentColor, newColor);
         return new Event(currentDay, EventMood.NEUTRAL, EventType.ACTION, phrase, NATURAL_CHANGE, currentDay,
                 subject.getId(),
@@ -328,7 +328,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent characterAppears(ICharacter subject, int cellId) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "appear");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "appear");
         phrase.addComplement("in cell " + Integer.toString(cellId));
 
         Color foreground = subject.getForegroundColor() == null ? Color.BLACK : subject.getForegroundColor();
@@ -342,7 +342,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent trusts(ICharacter subject, ICharacter friendWithMostAffinity) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "trust");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "trust");
         phrase.addComplement("in " + Integer.toString(friendWithMostAffinity.getId()));
         return new Event(currentDay, EventMood.GOOD, EventType.ACTION, phrase, TRUSTS, currentDay, subject.getId(),
                 friendWithMostAffinity.getId());
@@ -350,7 +350,7 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent givesTurn(ICharacter subject, ICharacter target) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "give", "turn");
+        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubject(subject), "give", "turn");
         phrase.addComplement("to " + Integer.toString(target.getId()));
         return new Event(currentDay, EventMood.GOOD, EventType.ACTION, phrase, GIVES_TURN, currentDay, subject.getId(),
                 target.getId());
@@ -358,13 +358,14 @@ public class EventFactory implements IEventFactory {
 
     @Override
     public IEvent areNear(ICharacter subject, ICharacter... charactersThatAreNear) {
-        SPhraseSpec phrase = phraseFactory.createClause(getCharacterNameAsSubJect(subject), "be");
-        phrase.addComplement("near");
-        CoordinatedPhraseElement phraseEnemies = phraseFactory.createCoordinatedPhrase();
+
+        String phraseSubject = getCharacterNameAsSubject(subject);
+        CoordinatedPhraseElement phraseNeighbours = phraseFactory.createCoordinatedPhrase();
         for (ICharacter neighbor : charactersThatAreNear) {
-            phraseEnemies.addCoordinate(phraseFactory.createNounPhrase(Integer.toString(neighbor.getId())));
+            phraseNeighbours.addCoordinate(phraseFactory.createNounPhrase(getCharacterNameAsObject(neighbor)));
         }
-        phrase.addComplement(phraseEnemies);
+        SPhraseSpec phrase = phraseFactory.createClause(phraseSubject, "be near", phraseNeighbours);
+
         return new Event(currentDay, EventMood.NEUTRAL, EventType.DESCRIPTION, phrase,
                 ARE_NEAR, currentDay, subject.getId(),
                 Arrays.stream(charactersThatAreNear).mapToInt(enemy -> enemy.getId()).toArray()
@@ -376,7 +377,7 @@ public class EventFactory implements IEventFactory {
                 (int) (color.getBlue() * 255));
     }
 
-    private String getCharacterNameAsSubJect(ICharacter character) {
+    private String getCharacterNameAsSubject(ICharacter character) {
         if (lastSubjectId == character.getId()) {
             return "it";
         } else {
