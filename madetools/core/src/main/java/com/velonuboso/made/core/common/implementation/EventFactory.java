@@ -149,7 +149,9 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent canImproveFriendSimilarity(ICharacter subject, ICharacter friend) {
         SPhraseSpec phrase = phraseFactory
-                .createClause(getCharacterNameAsSubject(subject), "want to help", Integer.toString(friend.getId()));
+                .createClause(getCharacterNameAsSubject(subject), "be able to make", getCharacterNameAsObject(friend));
+        phrase.addComplement("happier");
+        phrase.addPostModifier("by transferring colors to it");
         return new Event(currentDay, EventMood.GOOD, EventType.DESCRIPTION, phrase, CAN_IMPROVE_FRIEND_SIMILARITY,
                 currentDay, subject.getId(), friend.getId());
     }
@@ -157,7 +159,8 @@ public class EventFactory implements IEventFactory {
     @Override
     public IEvent canImproveSelfSimilarity(ICharacter subject, IColorSpot spot) {
         SPhraseSpec phrase =
-                phraseFactory.createClause(getCharacterNameAsSubject(subject), "can improve", "self-similarity");
+                phraseFactory.createClause(getCharacterNameAsSubject(subject), "is able to become", "happier");
+        phrase.addPostModifier("by eating the color spot "+spot.getId());
         return new Event(currentDay, EventMood.GOOD, EventType.DESCRIPTION, phrase, CAN_IMPROVE_SELF_SIMILARITY,
                 currentDay, subject.getId(),
                 spot.getId());
