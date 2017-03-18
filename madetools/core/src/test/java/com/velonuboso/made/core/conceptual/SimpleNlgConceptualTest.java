@@ -115,21 +115,17 @@ public class SimpleNlgConceptualTest {
 
     private String buildDocumentFromEvents(int CURRENT_DAY, EventMood CURRENT_MOOD, EventType CURRENT_TYPE,
                                            ArrayList<IEvent> events) {
-        StringBuilder stringBuilder = new StringBuilder();
-        CoordinatedPhraseElement complexPhrase = buildPhraseFromEvents(CURRENT_DAY, CURRENT_MOOD, CURRENT_TYPE,
-                stringBuilder, events);
-        String text = realiser.realiseSentence(complexPhrase);
-        stringBuilder.append(text);
 
-        String document = stringBuilder.toString().replaceAll("  *", " ");
+        StringBuilder builder = buildPhraseFromEvents(CURRENT_DAY, CURRENT_MOOD, CURRENT_TYPE, events);
+        String document = builder.toString().replaceAll("  *", " ");
         document = document.replaceAll("^ *", "");
         return document;
     }
 
-    private CoordinatedPhraseElement buildPhraseFromEvents(float currentDay, EventMood currentMood,
-                                                           EventType currentType, StringBuilder stringBuilder,
+    private StringBuilder buildPhraseFromEvents(float currentDay, EventMood currentMood,
+                                                           EventType currentType,
                                                            ArrayList<IEvent> events) {
-
+        StringBuilder stringBuilder = new StringBuilder();
         CoordinatedPhraseElement complexPhrase = factory.createCoordinatedPhrase();
         for (IEvent iEvent : events) {
             if (iEvent.toPhrase() != EventFactory.NULL_PHRASE) {
@@ -158,7 +154,9 @@ public class SimpleNlgConceptualTest {
                 complexPhrase.addCoordinate(event.toPhrase());
             }
         }
-        return complexPhrase;
+        String text = realiser.realiseSentence(complexPhrase);
+        stringBuilder.append(text);
+        return stringBuilder;
     }
 
     public void runSample() {
