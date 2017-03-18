@@ -22,14 +22,20 @@ import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
 import com.velonuboso.made.core.common.util.ImplementedBy;
 
+import java.util.ArrayList;
+
 /**
- *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 @ImplementedBy(targetClass = EventsWriter.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IEventsWriter {
 
     void add(IEvent event);
-    public EventsLogEntity getEventsLog();
+
+    EventsLogEntity getEventsLog();
+
+    ArrayList<IEvent> getEvents();
+
+    String getNarration();
 
 }

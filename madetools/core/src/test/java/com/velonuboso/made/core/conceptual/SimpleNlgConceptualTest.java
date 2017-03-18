@@ -16,10 +16,11 @@
  */
 package com.velonuboso.made.core.conceptual;
 
+import com.velonuboso.made.core.testUtils.CommonMocks;
 import com.velonuboso.made.core.abm.api.IAbm;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.abm.api.IMap;
-import com.velonuboso.made.core.abm.implementation.EventsWriter;
+import com.velonuboso.made.core.abm.implementation.NaturalLanguageEventsWriter;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.api.IGlobalConfigurationFactory;
 import com.velonuboso.made.core.common.api.IProbabilityHelper;
@@ -45,7 +46,7 @@ import java.util.Arrays;
 /**
  * @author Rubén Héctor García (raiben@gmail.com)
  */
-public class SimpleNlgConceptualTest {
+public class SimpleNlgConceptualTest extends CommonMocks {
 
     private Lexicon lexicon;
     private NLGFactory factory;
@@ -60,6 +61,7 @@ public class SimpleNlgConceptualTest {
         lexicon = Lexicon.getDefaultLexicon();
         factory = new NLGFactory(lexicon);
         realiser = new Realiser(lexicon);
+        CommonMocks.setUpNaturalLanguageNarrator();
     }
 
     @After
@@ -87,19 +89,12 @@ public class SimpleNlgConceptualTest {
 
     @Test
     public void test_simple_nlg_when_event_provided_then_sentence_is_generated() {
-        int CURRENT_DAY = -1;
-        EventMood CURRENT_MOOD = EventMood.NEUTRAL;
-        EventType CURRENT_TYPE = EventType.ACTION;
         int EXPECTED_MINIMUM_LENGTH = 250;
 
         setProbabilityHelperSeed();
 
-        NaturalLanguageEventsWriter naturalLanguageEventsWriter = new NaturalLanguageEventsWriter();
-        ObjectFactory.installMock(IEventsWriter.class, naturalLanguageEventsWriter);
         runSample();
-        ArrayList<IEvent> events = naturalLanguageEventsWriter.getEvents();
-
-        String document = buildDocumentFromEvents(CURRENT_DAY, CURRENT_MOOD, CURRENT_TYPE, events);
+        String document = abm.getEventsWriter().getNarration();
         System.out.println(document);
 
         assertTrue("Message should've been more than 250 characters long", document.length() > EXPECTED_MINIMUM_LENGTH);
@@ -113,51 +108,6 @@ public class SimpleNlgConceptualTest {
         probabilityHelper.setSeed(SEED);
     }
 
-    private String buildDocumentFromEvents(int CURRENT_DAY, EventMood CURRENT_MOOD, EventType CURRENT_TYPE,
-                                           ArrayList<IEvent> events) {
-
-        StringBuilder builder = buildPhraseFromEvents(CURRENT_DAY, CURRENT_MOOD, CURRENT_TYPE, events);
-        String document = builder.toString().replaceAll("  *", " ");
-        document = document.replaceAll("^ *", "");
-        return document;
-    }
-
-    private StringBuilder buildPhraseFromEvents(float currentDay, EventMood currentMood,
-                                                           EventType currentType,
-                                                           ArrayList<IEvent> events) {
-        StringBuilder stringBuilder = new StringBuilder();
-        CoordinatedPhraseElement complexPhrase = factory.createCoordinatedPhrase();
-        for (IEvent iEvent : events) {
-            if (iEvent.toPhrase() != EventFactory.NULL_PHRASE) {
-                Event event = (Event) iEvent;
-                float newDay = event.getDay();
-                EventMood newMood = event.getMood();
-                EventType newType = event.getType();
-
-                if ((newDay != currentDay) || (newMood == EventMood.BAD && currentMood == EventMood.GOOD)
-                        || (newMood == EventMood.GOOD && currentMood == EventMood.BAD)
-                        || (newType != currentType)) {
-
-                    String text = realiser.realiseSentence(complexPhrase);
-                    stringBuilder.append(text);
-                    if (newDay != currentDay) {
-                        stringBuilder.append("\n\n");
-                    } else {
-                        stringBuilder.append(" ");
-                    }
-                    complexPhrase = factory.createCoordinatedPhrase();
-                }
-                currentDay = newDay;
-                currentMood = newMood;
-                currentType = newType;
-                String text = realiser.realiseSentence(complexPhrase);
-                complexPhrase.addCoordinate(event.toPhrase());
-            }
-        }
-        String text = realiser.realiseSentence(complexPhrase);
-        stringBuilder.append(text);
-        return stringBuilder;
-    }
 
     public void runSample() {
         fakeCustomization = Mockito.mock(ICustomization.class);
@@ -192,19 +142,5 @@ public class SimpleNlgConceptualTest {
         chromosome[6] = 0.4f;
         Arrays.fill(chromosome, 5, size, 0.5f);
         return new AbmConfigurationEntity(chromosome);
-    }
-
-    class NaturalLanguageEventsWriter extends EventsWriter {
-        ArrayList<IEvent> events = new ArrayList<>();
-
-        @Override
-        public void add(IEvent event) {
-            super.add(event);
-            events.add(event);
-        }
-
-        public ArrayList<IEvent> getEvents() {
-            return events;
-        }
     }
 }

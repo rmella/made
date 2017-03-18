@@ -63,6 +63,7 @@ public class OptimizerIT {
         IGlobalConfigurationFactory globalConfigurationFactory = 
             ObjectFactory.createObject(IGlobalConfigurationFactory.class);
         CommonEcConfiguration config = globalConfigurationFactory.getCommonEcConfiguration();
+
         config.MAXIMUM_ITERATIONS = 0;
         config.POPULATION_SIZE = 2;
         config.NUMBER_OF_TRIALS = 1;

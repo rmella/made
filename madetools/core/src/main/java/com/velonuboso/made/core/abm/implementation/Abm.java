@@ -280,4 +280,7 @@ public class Abm implements IAbm {
         probabilityHelper.shuffle(list);
     }
 
+    public IEventsWriter getEventsWriter(){
+        return eventsWriter;
+    }
 }

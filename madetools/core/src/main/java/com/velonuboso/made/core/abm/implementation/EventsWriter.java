@@ -20,22 +20,25 @@ import alice.tuprolog.Term;
 import com.velonuboso.made.core.abm.api.IEventsWriter;
 import com.velonuboso.made.core.common.api.IEvent;
 import com.velonuboso.made.core.common.entity.EventsLogEntity;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 public class EventsWriter implements IEventsWriter {
+
+    public static final ArrayList<IEvent> EMPTY_EVENTS = new ArrayList<IEvent>();
+    public static final String EMPTY_NARRATION = "";
 
     private StringBuilder stringBuilder;
     private ArrayList<Term> logicalTerms;
 
     public EventsWriter() {
-        stringBuilder =new StringBuilder();
+        stringBuilder = new StringBuilder();
         logicalTerms = new ArrayList<>();
     }
 
@@ -57,13 +60,24 @@ public class EventsWriter implements IEventsWriter {
         entity.setLogicalTerms(logicalTerms.toArray(new Term[0]));
         return entity;
     }
-    
+
+    @Override
+    public ArrayList<IEvent> getEvents() {
+        return EMPTY_EVENTS;
+    }
+
+    @Override
+    public String getNarration() {
+        return EMPTY_NARRATION;
+    }
+
     private StringBuilder appendPredicateToStringBuilder(IEvent event) {
         //System.out.println(event.toLogicalPredicate());
-        return stringBuilder.append(event.toLogicalPredicate()+"\n");
+        return stringBuilder.append(event.toLogicalPredicate() + "\n");
     }
 
     private void appendPredicateToTerms(IEvent event) {
         logicalTerms.add(event.toLogicalTerm());
     }
+
 }

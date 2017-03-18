@@ -25,14 +25,19 @@ import com.velonuboso.made.core.common.util.ImplementedBy;
 import com.velonuboso.made.core.customization.api.ICustomization;
 
 /**
- *
  * @author Rubén Héctor García (raiben@gmail.com)
  */
 @ImplementedBy(targetClass = Abm.class, targetMode = ImplementedBy.Mode.NORMAL)
 public interface IAbm {
-    public void setCustomization(ICustomization customization);
-    public void setInferences(InferencesEntity defaultInferences);
-    public EventsLogEntity getEventsLog();
-    public void reset();
-    public void run(AbmConfigurationEntity abmConfiguration);
+    void setCustomization(ICustomization customization);
+
+    void setInferences(InferencesEntity defaultInferences);
+
+    EventsLogEntity getEventsLog();
+
+    void reset();
+
+    void run(AbmConfigurationEntity abmConfiguration);
+
+    IEventsWriter getEventsWriter();
 }
